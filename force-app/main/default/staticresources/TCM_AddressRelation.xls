@@ -1,0 +1,2 @@
+cscrm__External_ID__c,cscrm__Country__c,cscrm__State_Province__c,cscrm__Zip_Postal_Code__c,cscrm__Street_Name__c,cscrm__Street_Type__c,cscrm__Street_Number_Start__c,Address_Line_1__c
+12345678,AUSTRALIA,VIC,3000,Lonsdale,ST,150,Lonsdale St

@@ -1,0 +1,27 @@
+<design:component>
+        <design:attribute name="accountId" label="Account Id"/>
+		<design:attribute name="varSourceOfFlow" label="Trigger origin of flow"/>
+    	<design:attribute name="varUITheme" label="Display theme of logged in User"/>
+    	<design:attribute name="objectAPIName" label="Object Name of Look up Object"/>
+    	<design:attribute name="IconName" label="Icon to be used example standard:contact"/>
+    	<design:attribute name="label" label="Field label"/>
+        <design:attribute name="selectedRecordId" label="Use,for store SELECTED sObject Record"/>
+    
+    	<!--EDGE-178650 added by Manish B-->
+        <design:attribute name="selectedOneFundType" label="Use,for store SELECTED OneFund Type"/>
+        <design:attribute name="isHelpTextVisible" label="Is Help Text Visible"/>
+        <design:attribute name="isMandatoryMessageVisible" label="Is Mandatory Message Visible"/>
+
+        <design:attribute name="customerRequestedTransferAmount" label="Customer requested Transfer Amount"/>
+        
+
+    	<design:attribute name="isLookUpMandatory" label="Makes Lookup Field Mandatory"/>
+    	<design:attribute name="helpMessage" label="Help text message to appear on the icon"/>
+		<design:attribute name="isFetchAccount" label="Fetches Account"/>
+    	<!--P2OB-5524 : New variable accepted for design attribute to identify partner account search-->
+    	<design:attribute name="isPartnerAccountSearch" label="Fetches Partner Account"/>
+        <design:attribute name="SOQLFilter" label="Additional SOQL to filter records"/>
+    	
+    	<!--DIGI-27861 : Mofit Pathan Team Jaipur :Added new variable for source of Billing Account and Invoice Number-->
+    <design:attribute name="Source" label="Billing Account/Invoice Number source"/>
+</design:component>

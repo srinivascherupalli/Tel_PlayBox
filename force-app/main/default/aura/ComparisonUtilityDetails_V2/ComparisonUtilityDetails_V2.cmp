@@ -1,0 +1,136 @@
+<!--
+===============================================================================================================================
+Component Name : ComparisonUtilityDetails_v2
+Developer Name : Ravi
+COntroller Class : CompUtilityReplicatorManager
+===============================================================================================================================
+Sr.No.    Developer Name       	Modified  Date          Story Description
+1.        Shubhi ,Harsh,Rohit   23/5/2019     			CheckEligibilitySolution (EDGE-66570 ,EDGE-72453,EDGE-73521)
+
+===============================================================================================================================
+-->
+
+<aura:component controller="CompUtilityReplicatorManager"
+    implements="force:appHostable,flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="oldConfigId" type="String" access="global" />
+    <aura:attribute name="adborid" type="String" access="global" />
+    <aura:attribute name="siteName" type="String" access="global" />
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global" />
+    <aura:attribute name="sites_new" type="ReplicatorGetServiceDataObject_V2" access="global" />
+    <aura:attribute name="sitesMap" type="Map" />
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <aura:attribute name="basketId" type="String" access="global" />
+    <aura:attribute name="selectedProd" type="String[]" access="global" />
+    <aura:attribute name="readOnlyProd" type="String[]" access="global" />
+    <aura:attribute name="readOnlySelectedProd" type="String[]" access="global" />
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" access="global" />
+    <aura:registerEvent name="getTabName" type="c:CompUtilityGetTab" />
+    <aura:handler event="c:GetServicesEvent" action="{!c.handleGetServicesEvent}" />
+    <aura:attribute name="reviewConfirmdisabled" type="Boolean" default="false"
+        description="used for handling review confirm button"></aura:attribute>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="hideCheckboxColumn" type="Boolean" default="false"
+        description="To hide checkbox of tree grid" />
+    <aura:attribute name="callFrom" type="string" default="fixSheet" description="" />
+    <aura:attribute name="selectedCIDN" type="List"/><!--Added as a part of EDGE-198196-->
+    <aura:attribute name="isCidnHierarchy" type="Boolean" default="false"/><!--Added as a part of EDGE-198196-->
+	<!--Start of EDGE-209985 by Abhishek(Osaka) for sending Product Family(Selected on-screen) to replicator -->
+    <aura:attribute name="productFamily" type="List" access="global" default="[]"/>
+    <!--End of EDGE-209985 by Abhishek(Osaka) -->
+    <aura:attribute name="sioConfigMode" type="String" access="global"/><!--Added for EDGE-1681-->
+    <aura:if isTrue="{!v.callFrom == 'fixSheet'}">
+        <div class="slds slds-grid" style="width:100%;padding-right:0px;padding-left:0px; background color: white;">
+            <div id='legacyDiv' class="slds-col slds-size_1-of-2 tab-background-color tab-padding"
+                onclick="{!c.displayGetService}">
+                <center><span>Legacy Services</span></center>
+            </div>
+            <div class="slds-col slds-size_1-of-2 tab-background-color tab-padding" onclick="{!c.displayExistSub}">
+                <center><span>Existing Subscription</span></center>
+            </div>
+        </div>
+        <div style="background color: GREY;">
+            <c:CompUtilityExistingSubscription oldConfigId="{!v.oldConfigId}" aura:id="GetExistingSubscription" />
+        </div>
+        <div style="background color: BLUE !important;">
+            <c:compUtilityGetServices_new sites="{!v.sites}" sites_new="{!v.sites_new}" sitesMap="{!v.sitesMap}"
+                sitesMap_V2="{!v.sitesMap_V2}" basketId="{!v.basketId}" selectedProd="{!v.selectedProd}"
+                readOnlyProd="{!v.readOnlyProd}" readOnlySelectedProd="{!v.readOnlySelectedProd}"
+                ProdBasket="{!v.ProdBasket}" adborid="{!v.adborid}" siteName="{!v.siteName}"
+                reviewConfirmdisabled="{!v.reviewConfirmdisabled}" hideCheckboxColumn="{!v.hideCheckboxColumn}"
+                aura:id="GetServiceComp" />
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.callFrom == 'Mobile'}">
+
+        <!-- <div class="slds slds-grid" style="width:100%;padding-right:0px;padding-left:0px; background color: white;">
+            <div id= 'legacyDiv' class="slds-col slds-size_1-of-2 selected-tab-background-color tab-padding"  onclick="{!c.displayGetService}">
+                <center><span>Legacy Services</span></center>
+            </div>
+            <div class="slds-col slds-size_1-of-2 tab-background-color tab-padding" onclick="{!c.displayExistSub}">
+                <center><span>Existing Subscription</span></center>
+            </div>
+        </div>
+        <div style="background color: BLUE !important;">
+            <c:compUtilityGetServicesMobile aura:id="GetServiceCompMobile" />
+        </div> -->
+        <div class="slds-tabs_default">
+            <ul class="slds-tabs_default__nav" role="tablist">
+                <li class="slds-tabs_default__item slds-is-active" title="Legacy Services" role="presentation"
+                    aura:id="legacyDiv" onclick="{!c.displayGetServiceMobileLegacy}">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="0"
+                        aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item">Legacy Services</a>
+                </li>
+                <li style="display: none;" class="slds-tabs_default__item" title="Existing Subscription"
+                    role="presentation" aura:id="existingSubscription"
+                    onclick="{!c.displayGetServiceMobileExistingSub}">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1"
+                        aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">Existing
+                        Subscription</a>
+                </li>
+            </ul>
+            <div aura:id="tab-default-1" style="padding: 0 0 0 .4rem !important;"
+                class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item">
+				<!--EDGE-209985: Added productFamily to send Product Family(selected on-screen) to replicator by Abhishek(Osaka) -->
+                <c:compUtilityGetServicesMobile aura:id="GetServiceCompMobile" callFor="mobile" ProdBasket="{!v.ProdBasket}"  selectedCIDN ="{!v.selectedCIDN}"
+                                                                     isCidnHierarchy ="{!v.isCidnHierarchy}" 
+																	 productFamily = "{!v.productFamily}"
+                                                                     sioConfigMode = "{!v.sioConfigMode}"
+                                                                     /><!--Added sioConfigMode for DIGI-1681-->
+                                                
+            </div>
+            <div aura:id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel"
+                aria-labelledby="tab-default-2__item"> <i>------Existing Subscription------</i></div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.callFrom == 'ngUC'}">
+        <div class="slds-tabs_default">
+            <ul class="slds-tabs_default__nav" role="tablist">
+                <li class="slds-tabs_default__item slds-is-active" title="Legacy Services" role="presentation"
+                    aura:id="legacyDiv" onclick="{!c.displayGetServiceMobileLegacy}">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="0"
+                       aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item">Legacy Services</a>
+                </li>
+                <!---
+                <li style="display: block;" class="slds-tabs_default__item" title="Existing Subscription"
+                    role="presentation" aura:id="existingSubscription"
+                    onclick="{!c.displayGetServiceMobileExistingSub}">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1"
+                       aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">Existing
+                        Subscription</a>
+                </li> -->
+            </ul>
+            <div aura:id="tab-default-1" style="padding: 0 0 0 .4rem !important;"
+                 class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item">
+				 <!--Added 2 parameters(selectedCIDN,isCidnHierarchy) for EDGE-209885 by Abhishek(Osaka) 
+				to enable CIDN Hierarchy for Nguc -->
+            <!--EDGE-209985: Added productFamily to send Product Family(selected on-screen) to replicator by Abhishek(Osaka)-->
+                <c:compUtilityGetServicesMobile aura:id="GetServiceCompMobilengUC" callFor="ngUC" 
+                                                selectedCIDN ="{!v.selectedCIDN}"
+                                 				isCidnHierarchy ="{!v.isCidnHierarchy}"
+                                                productFamily = "{!v.productFamily}"/>
+            </div>
+            <div aura:id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel"
+                 aria-labelledby="tab-default-2__item"> <i>------Existing Subscription------</i></div>
+        </div>
+    </aura:if>    
+</aura:component>

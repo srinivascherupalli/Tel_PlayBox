@@ -1,0 +1,36 @@
+<aura:component controller="SubmitOrderOrchestration" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+<aura:attribute name="isButtonDisabled" type="boolean" default="false"/>
+<aura:attribute name="ordRecord" type="Object"/>
+<aura:attribute name="isCAFormPresent" type="boolean"/><!-- EDGE-150285-Dheeraj Bhatt-Ability to regenerate CA form -->
+<aura:attribute name="isPpvApproved" type="boolean"/><!-- EDGE-149259-Aishwarya-Ability to regenerate CA form -->
+<aura:attribute name="isNotificationCreated" type="boolean" default="false"/><!-- EDGE-170965-AC1-->
+<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="csordtelcoa__Opportunity__c,csordtelcoa__Opportunity__r.Name"
+                      targetFields="{!v.ordRecord}"
+                      targetError="{!v.recordLoadError}"
+                      />
+    <br/> 
+    <!--EDGE-170965 Starts:Display Notifiaction info message-->
+    <aura:if isTrue="{!v.isNotificationCreated}">
+    <div class="slds-grid slds-theme_shade" >
+                    <div class="slds-col slds-size_1-of-9" style="padding-right:8px;">
+                        <lightning:icon iconName="utility:info" alternativeText="info" />
+                    </div>
+                    <div class="slds-col ">
+                        Notification Preferences for IR and Domestic Usage has been set.
+                        Please check with the customer to change the notification Preferences before submitting the order. <br />
+                    </div>
+    </div>
+    </aura:if>
+    <!--EDGE-170965 Ends-->
+    <br/> 
+    <div class="slds-text-heading_small slds-align_absolute-center">
+        Are you sure you want to submit this order?
+    </div><br/><br/>
+    <div class="slds-align_absolute-center">  
+                <lightning:button variant="brand" label="Ok" onclick="{!c.caValidation}" disabled="{!v.isButtonDisabled}"/>
+                <lightning:button variant="brand" label="Cancel" onclick="{!c.cancelBack}" />
+    </div>
+</aura:component>

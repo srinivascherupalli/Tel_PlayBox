@@ -1,0 +1,21 @@
+.THIS {
+}
+.THIS .tab-background-color
+{
+    background-color: #f4f4f4;
+}
+.THIS .selected-tab-background-color
+{
+    background-color: transparent;
+}
+.THIS .tab-padding
+{
+    padding-top:1%;padding-bottom:1%;
+}
+.THIS .tab-background-color:hover, .THIS .selected-tab-background-color:hover{
+    cursor:pointer;
+}
+.THIS .blue-text-tab {
+    color: rgb(0, 109, 204);
+    font-weight: bold;
+}

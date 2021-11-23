@@ -1,0 +1,3 @@
+<design:component >
+        <design:attribute name="assignOption" label="Enable Case Assign Option" datasource="true,false" default="false" />
+</design:component>

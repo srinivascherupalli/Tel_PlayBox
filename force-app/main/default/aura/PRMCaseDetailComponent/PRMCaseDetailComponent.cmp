@@ -1,0 +1,111 @@
+<!--
+Created By          :   Team Hawaii (Paresh)
+Created Date        :   30/8/2019
+Desc                :   Component is used to display fields on case object in read only mode
+Modified            :   P2OB-12617 : Added design parameters
+-->
+<aura:component controller= "PRMCaseDetail" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="AccountId" type="String" default = 'AccountId'/>
+    <aura:attribute name="ContactId" type="String" default = 'ContactId'/>
+    <aura:attribute name="CreatedDate" type="String" default = 'CreatedDate'/>
+    <aura:attribute name="ClosedDate" type="String" default = 'ClosedDate'/>
+    <aura:attribute name="SystemInformation" type="String[]"/>
+    <aura:attribute name="fields" type="String[]"/>
+    <aura:attribute name="CaseInformation" type="String[]" default="{Ravi,Vivian,Paresh}"/>
+    <aura:attribute name="title" type="String" default=""/>
+    <!--Created additional 3 attributes to store design attributes-->
+    <aura:attribute name="objectName" type="String"/>
+    <aura:attribute name="metaDataApiName" type="String"/>
+    <aura:attribute name="objMetaFieldJson" type="String"/>
+    <lightning:card title="{!v.title}">
+        <aura:if isTrue="{!not(empty(v.CaseInformation))}">
+			<lightning:layout multiplerows = 'true'>
+                <lightning:layoutItem padding="around-small" size="12" >
+					<lightning:accordion>
+                        <lightning:accordionSection name="A" label="Case Information">
+                            <lightning:card>
+                                <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Case">
+                                	<div class="slds-grid slds-wrap">
+                                    <aura:iteration items="{!v.CaseInformation}" var="item">
+                                        <div class="slds-form-element slds-p-left_small slds-size_1-of-2">
+                                            <aura:if isTrue="{!v.AccountId == item}">
+                                                <label class="slds-form-element__label">Account Name</label>
+                                                <lightning:outputField fieldName="{!item}" variant="label-hidden"/>
+                                                <aura:set attribute="else">
+                                                    <aura:if isTrue="{!v.ContactId == item}">
+                                                        <label class="slds-form-element__label">Contact Name</label>
+                                                        <lightning:outputField fieldName="{!item}" variant="label-hidden"/>
+                                                        <aura:set attribute="else">
+                                                            <lightning:outputField fieldName="{!item}"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                    </aura:iteration>
+                                    </div>
+                                </lightning:recordViewForm>
+                            </lightning:card>
+                        </lightning:accordionSection>
+                    </lightning:accordion>
+                </lightning:layoutItem>
+            </lightning:layout>
+    	</aura:if>
+        <aura:if isTrue="{!not(empty(v.fields))}">
+			<lightning:layout multiplerows = 'true'>
+                <lightning:layoutItem padding="around-small" size="12" >
+					<lightning:accordion>
+                        <lightning:accordionSection name="A" label="Request Information">
+                            <lightning:card>
+                                <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Case">
+                                	<div class="slds-grid slds-wrap">
+                                    <aura:iteration items="{!v.fields}" var="item">
+                                        <div class="slds-form-element slds-p-left_small slds-size_1-of-2">
+                                            <lightning:outputField fieldName="{!item}"/>
+                                        </div>
+                                    </aura:iteration>
+                                    </div>
+                                </lightning:recordViewForm>
+                            </lightning:card>
+                        </lightning:accordionSection>
+                    </lightning:accordion>
+                </lightning:layoutItem>
+            </lightning:layout>
+    	</aura:if>
+        <aura:if isTrue="{!not(empty(v.SystemInformation))}">
+			<lightning:layout multiplerows = 'true'>
+                <lightning:layoutItem padding="around-small" size="12" >
+					<lightning:accordion>
+                        <lightning:accordionSection name="A" label="System Information">
+                            <lightning:card>
+                                <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Case">
+                                	<div class="slds-grid slds-wrap">
+                                    <aura:iteration items="{!v.SystemInformation}" var="item">
+                                        <div class="slds-form-element slds-p-left_small slds-size_1-of-2">
+                                             <aura:if isTrue="{!v.CreatedDate == item}">
+                                                <label class="slds-form-element__label">Date/Time Opened</label>
+                                                <lightning:outputField fieldName="{!item}" variant="label-hidden"/>
+                                                <aura:set attribute="else">
+                                                    <aura:if isTrue="{!v.ClosedDate == item}">
+                                                        <label class="slds-form-element__label">Date/Time Closed</label>
+                                                        <lightning:outputField fieldName="{!item}" variant="label-hidden"/>
+                                                        <aura:set attribute="else">
+                                                            <lightning:outputField fieldName="{!item}"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                    </aura:iteration>
+                                    </div>
+                                </lightning:recordViewForm>
+                            </lightning:card>
+                        </lightning:accordionSection>
+                    </lightning:accordion>
+                </lightning:layoutItem>
+            </lightning:layout>
+    	</aura:if>
+    </lightning:card>
+</aura:component>

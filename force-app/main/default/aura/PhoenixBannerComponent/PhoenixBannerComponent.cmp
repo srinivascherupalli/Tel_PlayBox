@@ -1,0 +1,12 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="lstimg" type="Object[]"/>
+    <aura:attribute name="displayBanner" type="boolean" default="false"/>
+    <aura:handler name="init" action="{!c.listAction}" value="{!this}"/>
+    <aura:if isTrue="{!v.displayBanner}">
+        <aura:iteration items="{!v.lstimg}" var="img">                 
+            <a href = "{!img.imgUrl}" target = "_blank">
+                <img src = "{!img.image}" style="width:2200px"/>
+            </a>
+        </aura:iteration>
+    </aura:if>
+</aura:component>

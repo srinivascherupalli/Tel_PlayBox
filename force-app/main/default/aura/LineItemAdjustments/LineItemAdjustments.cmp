@@ -1,0 +1,50 @@
+<!-- **************************************************************************
+EDGE        -88294
+component   -LineItemAdjustments
+Description -LineItemAdjustments Component is used to show Submit button on CreditAndAdjustment
+             Line Item Credit recordType detail record for Sending Line Item Adjustments request to BDS
+Author      -Dheeraj Bhatt
+********************************************************************************* -->
+<aura:component controller="LineItemAdjustmentsController" implements="force:lightningQuickActionWithoutHeader,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:attribute name="CreditAndAdjustment" type="Credits_and_Adjustments__c"/>
+    <aura:attribute name="NewCreditAndAdjustment" type="Credits_and_Adjustments__c"/>
+    <aura:attribute name="showbutton" type="boolean" default="false"/>
+    <aura:attribute name="recordId" type="string" />
+    <aura:attribute name="recordIdNew" type="string" />
+    <aura:attribute name="message" type="string" />
+    <aura:attribute name="type" type="string" />
+    <aura:attribute name="handler" type="string" default="LineItemAdjustmentsRequest"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+    </aura:html>
+
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading--medium" ></h4>
+    </div>
+    
+    <div class="slds-modal__content slds-p-around--x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative" aura:id="modalbody" id="modalbody">
+       <b>{!v.message}</b>
+    </div>     
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <div class="forceChangeRecordTypeFooter">
+            <aura:if isTrue="{!v.showbutton}">
+                <lightning:button label="No"  onclick="{!c.cancel}" />
+                <lightning:button variant="brand" label="Yes" title="Brand action" onclick="{!c.submit}" />
+                <aura:set attribute="else">
+                    <lightning:button label="Close"  onclick="{!c.cancel}" />
+                </aura:set>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

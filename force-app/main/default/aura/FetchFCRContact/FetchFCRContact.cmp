@@ -1,0 +1,30 @@
+<aura:component controller="FetchFCRContactController" 
+                implements="lightning:availableForFlowScreens,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    
+    <aura:attribute name="usrList" type="User[]"/>
+    <aura:attribute name="mycolumns" type="List"/>
+	<aura:attribute name="fcrId" type="String" required="true"/>
+    <aura:attribute name="selectedRowStr" type="String"/>
+    <aura:attribute name="selectedRows" type="List" />
+    <aura:attribute name="recordExists" type="String" default="None"/>
+    <aura:handler name="init" value="{!this}" action="{!c.fetchUser}"/>
+    
+    <aura:if isTrue="{!v.recordExists == 'True'}">
+        <lightning:datatable data="{! v.usrList }"
+                             columns="{! v.mycolumns }"
+                             keyField="id"
+                             hideCheckboxColumn="false"
+                             selectedRows="{! v.selectedRows }"
+                             onrowselection="{! c.updateSelectedText }"/>                         
+        
+        <aura:set attribute="else">
+            <aura:if isTrue="{!v.recordExists == 'False'}">
+                <p>No records exist. Please click on the Next button to close.</p>              
+                <aura:set attribute="else">
+                    <p>Loading..</p>
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+        
+</aura:component>

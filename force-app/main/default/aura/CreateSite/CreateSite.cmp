@@ -1,0 +1,68 @@
+<aura:component controller="CreateSiteController" implements="force:appHostable,force:lightningQuickAction,lightning:actionOverride,force:hasRecordId" access="global" >
+	
+    <ltng:require styles="/resource/SLDS/assets/styles/salesforce-lightning-design-system-vf.css"/>
+    <aura:attribute name="hiddenSiteName" type="String" access="global"/> 
+	<aura:attribute name="hiddenAccountId" type="String" access="global"/> 
+    <aura:attribute name="hiddenAddressId" type="String" access="global"/>
+    
+    <aura:attribute name="accIDURL" type="String"/>
+    <aura:attribute name="Account" type="Account"/>
+    <aura:attribute name="siteName" type="String"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:handler event="c:strikeCreateAddress" action="{!c.navigateToSearchAddress}"/>
+    
+    <div class="slds-page-header">
+      <div class="slds-media">
+        <div class="slds-media__figure">
+          <span class="slds-icon_container">
+            <c:svgIcon svgPath="/resource/SLDS/assets/icons/standard-sprite/svg/symbols.svg#account" category="standard" size="small" name="account" />
+          </span>
+        </div>
+        <div class="slds-media__body">
+          <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="New Site">Create Site</h1>
+        </div>
+      </div>
+	</div>
+    <div>
+        <h2 class="slds-section__title slds-theme--shade primaryPaletteBorder test-id__section-header-container">
+            <span class="test-id__section-header-title section-header-title slds-p-horizontal--small slds-truncate">Information</span>
+        </h2>
+    </div>
+    <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+        	<div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength">
+        		<div class= "slds-form-element__control">
+                    <lightning:input type="text" name="SiteName" aria-describedby="form-Note" aura:id="SiteName" label="Site Name" value="{!v.siteName}" required="true"/>
+                </div>
+                <div class="slds-form-element__help" id="form-Note">Note: Site Name will be visible to the customer, as typed. Please use logical naming and check spelling.</div>
+        	</div>
+        	
+    </div> 
+    <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+    </div>
+    
+    <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+    	<div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength">
+        	<c:strike_lookup label="Account" aura:id="accountLookup" object="Account" searchField="Name" iconName="standard:account" disabled="true"/>
+        </div>
+    </div> 
+    
+    <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+    	<div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium slds-p-vertical_xx-small installationAddressLookup">
+            <c:strike_lookup filter="cscrm__Address__c.cscrm__Address_Type__c!='Postal Address' AND cscrm__Address__c.Source_System__c!='TCM'" label="Installation Address" 
+                             aura:id="addressLookup" object="cscrm__Address__c" searchField="Name" subtitleField="NBN_Address_Status__c" overrideNewEvent="true" limit="10" 
+                             allowNewRecords="true" showRecentRecords="true" placeholder="Search Addresses" customOnUpdateEvent="{!c.getSiteName}" iconName="custom:custom24" loadingMessage="Loading..." required="true"/>
+        </div>
+    </div>
+    <br></br>
+    <br></br>
+    <div class="slds-grid full forcePageBlockSectionRow createSiteFooter">
+    	<div class="forceModalActionContainer--footerAction forceModalActionContainer slds-hint-parent slds-p-horizontal_medium" onclick = "{!c.cancelSiteCreation}">
+            <lightning:button class="slds-button slds-button--neutral uiButton forceActionButton">
+            	<span class=" label bBody truncate">Cancel</span>
+            </lightning:button>
+            <lightning:button class="slds-button slds-button--neutral uiButton--default uiButton--brand uiButton forceActionButton" onclick="{!c.saveSite}">
+            	<span class=" label bBody truncate">Save</span>
+            </lightning:button>
+        </div>
+    </div>
+</aura:component>

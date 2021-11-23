@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>50.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage">
+            <supportedFormFactors>
+                <supportedFormFactor type="Small"/>
+            </supportedFormFactors>
+        </targetConfig>
+        <targetConfig targets="lightning__RecordPage">
+            <supportedFormFactors>
+                <supportedFormFactor type="Small"/>
+                <supportedFormFactor type="Large"/>
+            </supportedFormFactors>
+            <property name="createIncidentL" type="String" default="Services Requests/Changes" label="Services Requests/Changes"/>
+            <property name="createRequestL" type="String" default="Incidents" label="Incidents"/>
+            <property name="orderTrackingL" type="String" default="Orders" label="Orders"/>
+            <property name="requestsTrackingL" type="String" default="View other services" label="View other services"/>
+            <property name="monitorNetworkServicesL" type="String" default="Monitoring internet and networks servers" label="Monitoring internet and networks servers"/>
+            <property name="monitorMobileDataUsageL" type="String" default="Mobility services" label="Mobility services"/>
+            <property name="telstraConnectStoreL" type="String" default="View and order product and service Telstra Connect store" label="View and order product and service Telstra Connect store"/>
+            <property name="billingL" type="String" default="View and download invoices" label="View and download invoices"/>
+            <property name="userManagementL" type="String" default="Create and edit users" label="Create and edit users"/>
+            <property name="specialRequirementsL" type="String" default="Special Requirements" label="Special Requirements"/>
+        </targetConfig>
+        <targetConfig targets="lightning__HomePage">
+            <supportedFormFactors>
+                <supportedFormFactor type="Large"/>
+            </supportedFormFactors>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

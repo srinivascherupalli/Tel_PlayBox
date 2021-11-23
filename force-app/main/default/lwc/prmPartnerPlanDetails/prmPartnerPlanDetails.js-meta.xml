@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default,lightning__RecordPage">
+            <property name="rowLabels" type="String" default="Target_Q1__c, Target_Q2__c, Target_Q3__c, Target_Q4__c" label="Rows to display" description="Api names of Row Labels"/>
+            <property name="tableHeading" type="String" default="FY21 Quarterly Targets and Actuals" label="Table Header" description="Header Name for table"/>
+            <property name="recordId" type="String" label="Record Id" description="Automatically bind the page's record id to the component variable"/>
+            <property name="iconName" type="String" default="standard:sales_value" label="Icon Name" description="Icon API Name to be displayed"/>
+            <property name="allowCardView" type="Boolean" default="False" label="Show in card view?" description="Display in card view or table view"/>
+            <property name="showEditIcon" type="Boolean" default="True" label="Show edit Icon?" description="Uncheck only in case of record detail page"/>
+            <property name="showSalesLink" type="Boolean" default="False" label="Show Sales Activity Dashboard link?" description="Select True if Sales Activity Link is to be displayed"/>
+            <property name="linkLabel" type="String" label="Link Label" description="Link label to be displayed" default="Sales Activity"/>
+            <property name="linkURL" type="String" label="Link URL path" description="Link URL path" default="n/Sales_Insights"/>
+            <property name="imageLink" type="String" label="Image Link URL path" description="Image Link URL path"/>
+            <property name="helpText" type="String" label="Help Text for Link" description="Help text" default="To view the actuals and pipeline details of the partner, please launch the Sales Activity dashboard."/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

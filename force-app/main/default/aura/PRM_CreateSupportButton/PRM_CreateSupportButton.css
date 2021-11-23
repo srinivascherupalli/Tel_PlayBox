@@ -1,0 +1,60 @@
+.THIS .prmQuickCreateAction {
+    text-align: right;
+    margin: 3rem 0 4.5rem;
+}
+.THIS .prmQuickCreateAction * {
+    color: rgb(25, 100, 200);
+    font-size: 1rem;
+    vertical-align: middle;
+}
+.THIS .prmQuickCreateAction .slds-dropdown-trigger_click button.slds-button svg.slds-button__icon {
+    transition: 0.70s;
+    -webkit-transition: 0.70s;
+    -moz-transition: 0.70s;
+    -ms-transition: 0.70s;
+    -o-transition: 0.70s;
+}
+.THIS .prmQuickCreateAction .slds-dropdown-trigger_click.slds-is-open button.slds-button svg.slds-button__icon {
+    transition: 0.70s;
+    -webkit-transition: 0.70s;
+    -moz-transition: 0.70s;
+    -ms-transition: 0.70s;
+    -o-transition: 0.70s;
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+.THIS .prmQuickCreateAction .slds-dropdown-trigger_click.slds-is-open button.slds-button:focus {
+    box-shadow: none;
+}
+.THIS .prmQuickCreateAction > .slds-dropdown-trigger_click {
+    font-family: akkuratReg;
+}
+.THIS .prmQuickCreateAction .dropdown__list li.slds-dropdown__item {
+    padding: 0.5rem 0rem;
+    border-left: 3px solid transparent;
+}
+.THIS .prmQuickCreateAction .dropdown__list li.slds-dropdown__item:hover {
+    border-color: #0064D2;
+}
+.THIS .prmQuickCreateAction .dropdown__list li.slds-dropdown__item > a:hover,
+.THIS .prmQuickCreateAction .dropdown__list li.slds-dropdown__item > a:focus {
+    background: none;
+}
+.THIS .prmQuickCreateAction .dropdown__list li.slds-dropdown__item > a:hover {
+    font-weight: bold;
+}
+.THIS .prmQuickCreateAction .slds-dropdown.slds-dropdown_left {
+    left: auto;
+    right: 0px;
+}
+.THIS .incidentsIconconColor svg{
+    fill : rgb(0, 109, 204) !important;
+}
+.THIS .btn-xl {
+    padding: 15px 25px;
+    font-size: 20px;
+    width: 95%;
+}

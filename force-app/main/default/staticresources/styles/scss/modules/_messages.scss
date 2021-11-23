@@ -1,0 +1,8 @@
+.alert {
+  border-left: #0064d2 4px solid;
+  padding: 10px 10px 10px 28px;
+  font-size: 18px;
+  &.no-bg {
+    background: white;
+  }
+}

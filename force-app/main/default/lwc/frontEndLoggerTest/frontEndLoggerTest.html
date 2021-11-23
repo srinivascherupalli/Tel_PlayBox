@@ -1,0 +1,13 @@
+<template>
+    <lightning-card title="Transaction Log" icon-name="custom:custom14">
+      <div class="slds-m-around_medium">
+        <p>Click Info, Debug, Error button for transaction logging</p>
+        <p>Click Flush button for each transaction</p>
+        <lightning-button label="Info" title="Info" onclick={infoClick}></lightning-button>
+        <lightning-button label="Debug" title="Debug" onclick={debugClick}></lightning-button>
+        <lightning-button label="Warn" title="Warn" onclick={warnClick}></lightning-button>
+        <lightning-button variant="destructive-text" label="Error" title="Error" onclick={errorClick}></lightning-button>
+        <lightning-button variant="success" label="Flush" title="Flush" onclick={flushClick}></lightning-button>
+      </div>
+    </lightning-card>
+  </template>

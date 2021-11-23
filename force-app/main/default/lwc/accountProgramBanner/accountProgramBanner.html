@@ -1,0 +1,57 @@
+<template>
+			<!-- DIGI-1520 START-->
+		<template if:true={scenario1}>
+			<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+			  <lightning-icon icon-name="utility:warning" alternative-text="" title="" size="x-small" class="slds-icon-text-default"></lightning-icon>
+				<p class="textsize">{textMessage}
+				<template if:true={isInternalUser}>
+					<a href="https://phoenix.inside.telstra.com/s/article/Adaptive-Mobility-Digital-Quick-Hit" class="textColor" target="_blank">Adaptive Mobility on the digital platform</a>						
+				</template>
+				<template if:false={isInternalUser}>
+					<a href="https://partners.enterprise.telstra.com.au/s/article/Adaptive-Mobility-Digital-for-Partners-Quick-Hit" class="textColor" target="_blank">Adaptive Mobility on the digital platform</a>						
+				</template>					
+				{textMessage1}						
+					</p>
+			</div>
+		</template> 
+		<template if:true={scenario2}>
+			<div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+			  <lightning-icon icon-name="utility:warning" alternative-text="" title="" size="x-small" class="slds-icon-text-default"></lightning-icon>
+				<p class="textsize">{textMessage}
+				<template if:true={isInternalUser}>
+					<a href="https://phoenix.inside.telstra.com/s/article/Adaptive-Mobility-Digital-Quick-Hit" class="textColor" target="_blank">Adaptive Mobility on the digital platform.</a>							
+				</template>
+				<template if:false={isInternalUser}>
+					<a href="https://partners.enterprise.telstra.com.au/s/article/Adaptive-Mobility-Digital-for-Partners-Quick-Hit" class="textColor" target="_blank">Adaptive Mobility on the digital platform.</a>					
+				</template>
+					</p>
+			</div>
+		</template> 
+		<template if:true={scenario3}>
+			<div class="slds-notify slds-notify_alert" role="alert">
+				<lightning-icon icon-name="action:info" alternative-text="" title="" size="x-small" class="slds-icon-text-default"></lightning-icon>
+				<p class="textsize">	{textMessage}
+				<template if:true={isInternalUser}>
+					<a href="https://phoenix.inside.telstra.com/s/article/Adaptive-Mobility-Service-Query-Legacy-or-Digital" class="textColor" target="_blank"> here</a>							
+				</template>
+				<template if:false={isInternalUser}>
+					<a href="https://partners.enterprise.telstra.com.au/s/article/Adaptive-Mobility-Service-Query-for-Partners-Legacy-or-Digital" class="textColor" target="_blank"> here</a>					
+					</template>	
+				</p>				
+			</div>
+		</template> 
+		<template if:true={scenario4}>
+			<div class="slds-notify slds-notify_alert" role="alert">
+				 <lightning-icon icon-name="action:info" alternative-text="" title="" size="x-small" class="slds-icon-text-default"></lightning-icon>
+				&nbsp;<p class="textsize">{textMessage}
+				<template if:true={isInternalUser}>
+					<a href="https://phoenix.inside.telstra.com/s/article/Adaptive-Mobility-Service-Query-Legacy-or-Digital" class="textColor" target="_blank"> here </a>							
+				</template>
+				<template if:false={isInternalUser}>
+					<a href="https://partners.enterprise.telstra.com.au/s/article/Adaptive-Mobility-Service-Query-for-Partners-Legacy-or-Digital" class="textColor" target="_blank"> here </a>					
+				</template>	
+					</p>
+			</div>
+		</template> 
+		<!-- DIGI-1520 END-->
+</template>

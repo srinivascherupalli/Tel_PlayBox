@@ -1,0 +1,79 @@
+<!--
+//EDGE -66472/84934/66471
+Description: Appointment pop up component
+Author:Ila/Mahima/Kalashree
+-->
+<aura:component
+                implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction"
+                controller="AppointmentBOMBaseCtrl"
+                >
+   
+    <aura:attribute name="childAttribute" type="String" />
+    <aura:attribute name="product" type="String" />
+    <aura:attribute name="site" type="String" />
+    <aura:attribute name="appointmentid" type="String" />
+     <aura:attribute name="isModalOpen" type="Boolean" default="true"/>
+    <aura:attribute name="date_x" type="object" />
+    <aura:attribute name="time_x" type="object" />
+    
+    <div style="margin-left:5px;margin-right:5px;">
+        <div
+             class="slds-border_bottom slds-border_top slds-border_right slds-border_left container"
+             >
+            <div class="slds-box headercomp">
+                Appointment Details.
+                
+                <button class="slds-button slds-button_icon slds-float_right">
+                    <!--<lightning:icon
+                                    aura:id="articleOne"
+                                    iconName="utility:close"
+                                    onclick="{!c.hideModal}"
+                                    size="x-small"
+                                    alternativeText="Close"
+                                      /> -->
+                </button> 
+                 
+            </div>
+            
+            <div class="slds-box innercontainer">
+                <div class="slds-grid_medium">
+                    <div
+                         class="slds-col slds-border_bottom slds-m-bottom--small slds-m-top--small"
+                         >
+                        <div class="row">
+                            <span> Product <br />{!v.product} </span>
+                        </div>
+                    </div>
+                    <div
+                         class="slds-col slds-border_bottom slds-m-bottom--small slds-m-top--small"
+                         >
+                        <div class="row">
+                            <span> Site <br />{!v.site} </span>
+                        </div>
+                    </div>
+                    <div
+                         class="slds-col slds-border_bottom slds-m-bottom--small slds-m-top--small"
+                         >
+                        <div class="row">
+                            <span> Appointment ID <br />{!v.appointmentid} </span>
+                        </div>
+                    </div>
+                    <div
+                         class="slds-col slds-border_bottom slds-m-bottom--small slds-m-top--small"
+                         >
+                        <div class="row">
+                            <span> Date <br />{!v.date_x} </span>
+                        </div>
+                    </div>
+                    <div
+                         class="slds-col slds-border_bottom slds-m-bottom--small slds-m-top--small"
+                         >
+                        <div class="row">
+                            <span> Time <br />{!v.time_x} </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

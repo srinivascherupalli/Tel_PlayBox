@@ -1,0 +1,12 @@
+.THIS.relatedList {
+    height: 300px;overflow-x:scroll;
+}
+.THIS.viewAll {
+    height: 100%;overflow-x:auto;
+}
+.THIS .myCustomClass{ 
+    text-align: right;
+}
+.THIS .slds-form-element__label{
+    display : none;
+}

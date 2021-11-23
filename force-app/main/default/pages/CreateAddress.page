@@ -1,0 +1,39 @@
+<apex:page standardController="cscrm__Address__c" extensions="ValidateAddressExtension">
+
+    <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+
+
+    <apex:form id="createAddressForm">
+        <div class="slds">
+            <div class="slds-page-header">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <p class="slds-page-header__title slds-truncate"><b>Search Address</b>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!--<apex:repeat id="eastresult" value="{!$ObjectType.cscrm__Address__c.FieldSets.New_Address_Fields}" var="field">
+            <apex:inputField value="{!cscrm__Address__c[field]}" />
+            </apex:repeat>-->
+
+            <apex:pageBlock id="createAddPgBlk">
+                <apex:outputPanel id="addInfoPgBlkPanel" styleClass="slds-form--inline">
+                    <apex:pageBlockSection id="addInfoPgBlkPanelSec1">
+                        <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem1">
+                            <apex:outputLabel styleClass="slds-form-element__label" value="Address :" />
+                            <apex:inputText styleClass="slds-form-element__static" value="{!addressText}" id="address" size="150" maxlength="150" html-autocomplete="off" />
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+                <apex:pageBlockButtons location="bottom" styleClass="slds-docked-form-footer slds-grid--align-center">
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Validate" action="{!redirect}" />
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Cancel" immediate="true" action="{!cancel}" />
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+
+        </div>
+    </apex:form>
+</apex:page>

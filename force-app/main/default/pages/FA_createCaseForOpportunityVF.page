@@ -1,0 +1,49 @@
+<apex:page sidebar="false" showHeader="false" >
+    <apex:includeLightning />
+    <apex:slds />
+    <style>
+        #lightningApp {
+            background-color: transparent;
+        }
+    </style>
+    <div id="lightningApp"></div>
+    <script>
+    let queryString=window.location.search;
+    console.log(queryString);
+    let urlParams = new URLSearchParams (queryString);
+    console.log(urlParams);
+    let FrameId = urlParams.get('FrameId');
+    let OpportunityId = urlParams.get('OpportunityId');
+    let AccountId = urlParams.get('AccountId');
+    console.log('FrameId <><>'+FrameId);
+    console.log('OpportunityId <><>'+OpportunityId);
+    console.log('AccountId <><>'+AccountId);
+        $Lightning.use("c:FA_createCaseForOpportunityApp", function () {
+        $Lightning.createComponent("c:FA_createCaseForOpportunity",
+        {
+           FrameId:FrameId,
+           OpportunityId:OpportunityId,
+           AccountId:AccountId
+        },
+        "lightningApp",
+        function (cmp) {
+            console.log('Basket overiew Page loaded');
+        });
+    });
+    window.addEventListener("message", function(event) {
+        
+        // Handle message
+        console.log(event);
+        let pageloadPayload={
+        command: event.data.type,
+        data: event.data.displayMsg,
+        caller: 'FA_createCaseForOpportunityVF' };  
+          if(pageloadPayload.data != null || pageloadPayload.data != undefined){
+                      window.parent.postMessage(pageloadPayload, '*') ;
+
+          }
+    }, false); 
+    
+
+    </script>
+</apex:page>

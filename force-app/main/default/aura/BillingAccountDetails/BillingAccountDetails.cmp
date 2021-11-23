@@ -1,0 +1,141 @@
+<!-- **************************************************************************
+EDGE        -147537
+component   -BillingAccountDetails
+Description -This omponent is used to show the BillingAccount details for the 
+             related billing account number on detail page
+Author      -Aishwarya Yeware
+********************************************************************************* -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride,forceCommunity:availableForAllPageTypes" access="global" controller="BillingAccountCreate" >
+	<aura:attribute name="BillingAcc" type="Billing_Account__c"  /> 
+    <aura:attribute name="billingRecord" type="Object" />
+
+    <!--EDGE-151581. Kalashree Added isApprovalBtnDisabled,isApprovalBtnShown.-->
+    <aura:attribute name="isApprovalBtnDisabled" type="Boolean" default="true" />
+    <aura:attribute name="isApprovalBtnShown" type="Boolean"  default="false"/>
+    <aura:attribute name="loadingSpinner" 
+                    type="Boolean" default="false" />
+    <!--aura:handler name="init" value="{!this}" action="{!c.doInit}" /-->
+    <!--EDGE-151581 Added Written_Off__c-->
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="Id,Billing_Account_Number__c,Status__c,Written_Off__c"
+
+                      targetFields="{!v.billingRecord}"
+                      targetError="{!v.recordLoadError}"
+                      recordUpdated="{!c.updateRecord}"
+                      />
+	<br/>
+
+     <aura:if isTrue="{!v.loadingSpinner}"> 
+        <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+    </aura:if>
+
+	<div class="slds-box slds-theme_default c-container">
+        <lightning:layout >
+            <lightning:layoutItem size="4" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Balance Outstanding">Balance Outstanding</p>
+
+                    <aura:if isTrue ="{!and(v.BillingAcc.accountBalance.totalBalance !=Null,v.BillingAcc.accountBalance.totalBalance !=0)}">
+                        <p>$<ui:outputText value="{!v.BillingAcc.accountBalance.totalBalance}"/></p>
+
+                        <aura:set attribute="else">
+                             <p><ui:outputText value="$0.00"/></p>
+                        </aura:set>
+                    </aura:if>
+
+
+                </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="4" padding="around-small" title="Bill Cycle Date">
+                <div class="header-column">
+                    <p class="field-title" title="Bill Cycle Date">Bill Cycle Date
+                    <lightning:helptext content="The date of each calendar month the bill is scheduled to be issued" /></p>
+                    <p><ui:outputText value="{!v.BillingAcc.billCycleDay}"/></p>
+                </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="4" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Payment Terms">Payment Terms(Number Of Days)</p>
+                    <!--p> 30 </p-->
+                   <p> <ui:outputText value="{!v.BillingAcc.paymentTerms}"/></p>
+                </div>
+            </lightning:layoutItem>
+
+
+        </lightning:layout>
+        <lightning:layout >
+            <lightning:layoutItem size="4"  padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Written Off">Written Off</p>
+                    <p><ui:outputCheckbox class="myCheckbox"  value="{!v.BillingAcc.writtenOffStatus}"/>
+					</p>
+                </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="4" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Written Off Date">Written Off Date</p>
+                    <!--<p><ui:outputText value="3/02/2020"/></p>-->
+                    <p><ui:outputText value="{!v.BillingAcc.writtenOffDate}"/></p>
+
+
+                </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="4"  padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Payment Terms">Written Off Debt</p>
+
+                    <aura:if isTrue ="{!v.BillingAcc.accountBalance.writtenOffAmount !=Null}">
+                        <p> $<ui:outputText value="{!v.BillingAcc.accountBalance.writtenOffAmount}"/></p>
+
+                        <aura:set attribute="else">
+                            <!--<p> <ui:outputText value="{!v.BillingAcc.accountBalance.writtenOffAmount}"/></p>-->
+                             <p><ui:outputText value="$0.00"/></p>
+                        </aura:set>
+                    </aura:if>
+
+                </div>
+            </lightning:layoutItem>
+
+        </lightning:layout>
+        <lightning:layout >
+            <lightning:layoutItem size="4" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Currency">Currency</p>
+                    <!--<p> AUD </p>-->
+                    <p> <ui:outputText value="{!v.BillingAcc.currencyCode}"/></p>
+
+
+                </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="4" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Language">Language</p>
+                     <!--<p>English</p>-->
+                    <p> <ui:outputText value="{!v.BillingAcc.language}"/></p>
+
+
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="4" padding="around-small"/>
+       </lightning:layout>
+
+        <!--EDGE-151581. Kalashree. Button for submitting Write off approval-->
+        <br/>
+        <aura:if isTrue="{!v.isApprovalBtnShown}">
+            <div class="slds-grid">
+                <div class="slds-col_bump-right">
+                </div>
+                <div >
+                    <lightning:button
+                                      variant="brand"
+                                      label="Submit Write off Approval"
+                                      disabled="{!v.isApprovalBtnDisabled}"   
+                                      onclick="{!c.handleApprovalProcessInitiation}"
+                                      />
+                </div>	
+            </div>
+        </aura:if>  
+    </div>
+
+</aura:component>

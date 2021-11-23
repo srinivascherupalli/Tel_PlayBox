@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>47.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="sobjectName" type="String" default="Knowledge__kav" label="Object API Name" description="Api name of Object"/>
+            <property name="category" type="String" default="Event" label="Category" description="Article Category"/>
+            <property name="showImage" type="Boolean" default="True" label="Show Image" description="Show image - Supported for knowledge object"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

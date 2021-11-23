@@ -1,0 +1,38 @@
+<!--
+-----------------------------------------------------------------------------------------------------------------------------
+Name        : CaptureSubNicknameOrderVF
+Description : UX Layout to capture the nickname against mobile service in order journey
+Author      : Aman Soni
+Story       : EDGE-199911 (Sprint 21.04) || New Component
+====================================================================
+S.No.  Developer         Date            Story            Sprint  Description
+1.     Aman Soni         26/05/2021      EDGE-203822      21.07   Removed code to make 'Search by List' searchbox working
+2.     Pradeep Mudenur   10/11/2021      DIGI-1767        21.15   Loading the tableName Dynamically for conditional edit of Nickname
+-----------------------------------------------------------------------------------------------------------------------------
+-->
+<apex:page standardController="csord__Order__c" showHeader="false" sidebar="false" lightningStylesheets="true">
+    <apex:includeLightning />
+    <div id="lightningCapture"></div>
+    <!--DIGI-1767 Loading the tableName Dynamically for conditional edit of Nickname by Pradeep(Osaka)-->
+    <script>
+    var orderId = "{! JSENCODE($CurrentPage.parameters.Id) }";
+    var userTheme ="{!$User.UITheme}";
+    var currProfileName = "{!$Profile.Name}";
+    var tableName;
+    if(currProfileName=='Migration BOH'){
+        tableName=SubscriptionNicknameOrder_Migration;
+    }else{
+        tableName=SubscriptionNicknameOrder;
+    }
+    $Lightning.use("c:CaptureSubNicknameOrderApp", function(){
+        $Lightning.createComponent(
+            "c:captureSubNicknameOrder",
+            {"orderId":orderId},
+            {"tableName":tableName},
+            "lightningCapture",
+            function(cmp){
+                console.log("Component created!");
+            });
+        });
+    </script>
+</apex:page>

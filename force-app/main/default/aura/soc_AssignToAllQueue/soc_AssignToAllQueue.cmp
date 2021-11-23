@@ -1,0 +1,197 @@
+<aura:component controller="soc_AssignToAllQueue"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >
+    
+    <aura:attribute name="recordId" type="String" access="global" />
+    <aura:attribute name="errorMessage" type="String" access="global" />
+    <aura:attribute name="showSpinner" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="profileName" type="String" access="global" default="System Administrator"/>
+    <aura:attribute name="recordTypeDevName" type="String" access="global" default="true"/>
+    <aura:attribute name="offshoreRestricted" type="Boolean" access="global" default="true"/>
+    <aura:attribute name="isButtonVisible" type="boolean" default="false"/>
+    <aura:attribute name="isQueueOne" type="boolean" default="false"/>
+
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="pageType" type="String" default="datatable"/>
+    <aura:attribute name="selectedData" type="Object" access="global"/>
+    <aura:attribute name="parentRecord" type="Object" access="global"/>
+    <aura:attribute name="cliSizeOne" type="Boolean" access="global"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    
+    
+    <aura:if isTrue="{!v.showSpinner}" >
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="large" />
+        </div> 
+    </aura:if>
+    <!--##########################################################SFD Request#################################################################-->
+    <!-- Modified P2OB-12557 Moved conditions to helper -->
+    <aura:if isTrue="{!v.isButtonVisible}">
+    
+        <aura:if isTrue="{!v.isQueueOne}">
+    <!-- End of P2OB-12557-->
+            <!--{!v.offshoreRestricted}-->
+            <div class="slds-box slds-theme_default slds-size_5-of-5">
+                <lightning:layout horizontalAlign="center" multipleRows="true" >
+                    <lightning:layoutItem size="3" smallDeviceSize="3" mediumDeviceSize="3" largeDeviceSize="3" padding="none">
+                        <lightning:button class="mybuttonCust" 
+                                          variant="neutral" 
+                                          label="Concierge Queue" 
+                                          title="Assign to Concierge Queue" 
+                                          onclick="{! c.assignToQueue }" 
+                                          iconName="utility:send" 
+                                          iconPosition="left"
+                                          name="{!v.offshoreRestricted ? 'SOC_Queue' : 'soc_SFD_Concierge_Offshore'}"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="3" smallDeviceSize="3" mediumDeviceSize="3" largeDeviceSize="3" padding="none">
+                        <lightning:button class="mybuttonCust" 
+                                          variant="neutral" 
+                                          label="Detailer Queue" 
+                                          title="Assign to Detailer Queue" 
+                                          onclick="{! c.assignToQueue }" 
+                                          iconName="utility:send" 
+                                          iconPosition="left"
+                                          name="{!v.offshoreRestricted ? 'soc_SIMPLEX_Level_1_Detail_Ordering' : 'soc_SIMPLEX_Offshore_Level_1_Detail'}"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="3" smallDeviceSize="3" mediumDeviceSize="3" largeDeviceSize="3" padding="none">
+                        <lightning:button class="mybuttonCust" 
+                                          variant="neutral" 
+                                          label="Specialist Queue" 
+                                          title="Assign to Specialist Queue" 
+                                          onclick="{! c.assignToQueue }" 
+                                          iconName="utility:send" 
+                                          iconPosition="left"
+                                          name="soc_MEDIUM_COMPLEX_Level_2_Detail_Orderi"/>
+                    </lightning:layoutItem>
+                    <aura:if isTrue="{!equals($Label.c.soc_SHOW_CTS_Button,'true')}">
+                        <lightning:layoutItem size="3" smallDeviceSize="3" mediumDeviceSize="3" largeDeviceSize="3" padding="none">
+                                <lightning:button class="mybuttonCust" 
+                                                  variant="neutral" 
+                                                  label="CTS Queue" 
+                                                  title="Assign to CTS Queue" 
+                                                  onclick="{! c.assignToQueue }" 
+                                                  iconName="utility:send" 
+                                                  iconPosition="left"
+                                                  name="soc_Complex_Level_3_Detail_Queue"/>
+                                                <!--<aura:set attribute="else">
+                                                      <SHOW NOTHING>
+                            <This button when made visible will not work because there is a validation rule
+                            written on case that prevents case to be assigned to these queues>
+                                                  </aura:set>-->
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem size="3" smallDeviceSize="3" mediumDeviceSize="3" largeDeviceSize="3" padding="none">
+                    	<aura:if isTrue="{!equals(v.recordTypeDevName,'soc_SFD_Product')}">
+                            <lightning:button variant="neutral" 
+                                              class="mybuttonCust"
+                                              label="Clone Case"
+                                              title="Clone Case"
+                                              iconName="utility:send" 
+                                              iconPosition="left"
+                                              onclick="{! c.openModel }" />
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+        </aura:if>
+        
+        <!--##########################################################SFD Support Request#################################################################-->
+        
+        <aura:if isTrue="{!or(equals(v.recordTypeDevName,'soc_Support_Request'),equals(v.recordTypeDevName,'soc_Support_Request_without_SOC'))}">
+            <div class="slds-box slds-theme_default slds-size_3-of-3"> 
+                <lightning:layout horizontalAlign="center" multipleRows="true" >
+                    <lightning:layoutItem size="4" smallDeviceSize="4" mediumDeviceSize="4" largeDeviceSize="4" padding="none">
+                        <lightning:button class="mybuttonCust" 
+                                          variant="neutral" 
+                                          label="Concierge Support Queue" 
+                                          title="Assign to Concierge Support Queue" 
+                                          onclick="{! c.assignToQueue }" 
+                                          iconName="utility:send" 
+                                          iconPosition="left"
+                                          name="{!v.offshoreRestricted ? 'soc_Concierge_Support_requests' : 'soc_Concierge_Offshore_Support_request'}"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" smallDeviceSize="4" mediumDeviceSize="4" largeDeviceSize="4" padding="none">
+                        <lightning:button class="mybuttonCust" 
+                                          variant="neutral" 
+                                          label="Detailer Support Queue" 
+                                          title="Assign to Detailer Support Queue" 
+                                          onclick="{! c.assignToQueue }" 
+                                          iconName="utility:send" 
+                                          iconPosition="left"
+                                          name="{!v.offshoreRestricted ? 'soc_Simplex_Support_Request' : 'soc_SIMPLEX_Offshore_Support_Requests'}"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" smallDeviceSize="4" mediumDeviceSize="4" largeDeviceSize="4" padding="none">
+                        <lightning:button class="mybuttonCust" 
+                                          variant="neutral" 
+                                          label="Specialist Support Queue" 
+                                          title="Assign to Specialist Support Queue" 
+                                          onclick="{! c.assignToQueue }" 
+                                          iconName="utility:send" 
+                                          iconPosition="left"
+                                          name="soc_Medium_Complex_Support_Requests"/>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="4" smallDeviceSize="4" mediumDeviceSize="4" largeDeviceSize="4" padding="none">
+                        <aura:if isTrue="{!equals($Label.c.soc_SHOW_Support_CTS_Button,'true')}">
+                            <lightning:button class="mybuttonCust" 
+                                              variant="neutral" 
+                                              label="CTS Support Queue" 
+                                              title="Assign to CTS Support Queue" 
+                                              onclick="{! c.assignToQueue }" 
+                                              iconName="utility:send" 
+                                              iconPosition="left"
+                                              name="Complex_Support_Requests"/>
+                            <!--<aura:set attribute="else">
+                                  <SHOW NOTHING>
+                              </aura:set>-->
+                        </aura:if>
+                    </lightning:layoutItem> 
+                </lightning:layout>
+            </div>
+        </aura:if>
+        
+        <div class="slds-m-around_xx-large">
+        <aura:if isTrue="{!v.isOpen}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Manual child Case Creation Form</b></h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <aura:if isTrue="{!and(v.pageType=='datatable', not(cliSizeOne))}">
+                            <c:soc_ManageProductDataTable  isOpen="{!v.isOpen}" selectedRows="{!v.selectedData}" pageType="{!v.pageType}" recordId="{!v.recordId}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!v.pageType=='caseEditForm'}">
+                            <c:soc_ManageProductCreateCloneCase  isOpen="{!v.isOpen}" cliSizeOne="{!v.cliSizeOne}" selectedRows="{!v.selectedData}" pageType="{!v.pageType}" clonedCase="{!v.parentRecord}" recordId="{!v.recordId}" aura:id="mpcCmp"/>
+                        </aura:if>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    </div>
+    </aura:if> 
+    
+    
+    <!--<members>SOC_Queue</members>
+ <members>soc_SFD_Concierge_Offshore</members>
+      <members>soc_Complex_Level_3_Detail_Queue</members>
+      <members>soc_Concierge_Support_requests</members>
+     <members>soc_Concierge_Offshore_Support_request </members>	
+      <members>soc_MEDIUM_COMPLEX_Level_2_Detail_Orderi</members>
+      <members>soc_Medium_Complex_Support_Requests</members>
+      <members>soc_SIMPLEX_Level_1_Detail_Ordering</members>
+  <members>soc_SIMPLEX_Offshore_Level_1_Detail</members>
+     <members>Complex_Support_Requests</members>
+      <members>soc_SME_Support_requests</members>
+      <members>soc_Simplex_Support_Request</members>
+  <members>soc_SIMPLEX_Offshore_Support_Requests</members>
+   <members>soc_SFD_Product_Table_Queue</members>-->    
+    
+</aura:component>

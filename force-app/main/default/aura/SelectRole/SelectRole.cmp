@@ -1,0 +1,121 @@
+<aura:component controller="SelectRolesController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    
+<!--*****************************************************************************
+@Name: SelectRoles.cmp
+@Author: Shaik Mahaboob Subani
+@CreateDate: 20/09/2019
+@Description: P2OB-1659. this componet used for quick action to select roles and upate
+			  Selection Of Role
+@LastModified:Subani and Sravanthi [P2OB-3297]
+*******************************************************************************-->
+    <!-- Attributes Declaration -->
+    <aura:attribute name="rolesList" type="Object"/>
+    <aura:attribute name="rolesList1" type="Object"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    <aura:attribute name="filteredData" type="List" />
+    <aura:attribute name="filter" type="String" />
+    <aura:attribute name="selectedRadio" type="String" access="public"/> 
+    <aura:attribute name="roleDetailsList" type="list" access="public"/>
+    <aura:attribute name="spinner" type="boolean"  default="false" />
+    <aura:attribute name="recmap" type="map"  default="" />
+    
+    <!-- On Component Load -->
+    <aura:handler name="init" value="{!this }" action="{!c.init }"/>
+    
+    <!-- Modal Box attributes-->
+    <aura:html tag="style">
+        .slds-modal__container{
+        height : auto;
+        width: 70%;
+        max-width: 70rem;
+        }
+        .modal-body{
+        height : 500px !important;
+        max-height: 500px !important;
+        }
+        .customFooter{
+        display: inline !important;
+        }
+    </aura:html>
+    
+    <!-- Header of the Modal-->
+    <div class="modal-header slds-modal__header">
+        <div class="forceChangeRecordTypeHeader">
+            <div class="title slds-text-heading--medium">
+                Select Role
+            </div>
+        </div>
+    </div>
+    
+    <!--Spinner Component-->
+    <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--medium slds-is-relative" role="alert" >
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <!--Lightning Input Text Component for Search Functionality -->
+    <lightning:input type="text" name="SearchBar"  value = "{!v.filter}" label="Roles Search" placeholder="Search for Role Name here" onchange="{!c.searchRoleName}"></lightning:input><br></br>
+    <!-- Table of Roles along with Parent Role Name -->
+    <div class="slds-scrollable" style="height:100%;width:100%">
+        <div class="slds-scrollable_y" style="height:100%;">
+            <div class="slds-scrollable_x" style="height:100%;">
+                <table class="slds-scrollable slds-table slds-table_bordered slds-border_top slds-table_stripped slds-table_cell-buffer  slds-border_left slds-border_right" >
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th style="width:3.25rem;" class="slds-text-align--right">
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                    </div>
+                                </div>
+                            </th>
+                            <!-- <th>
+                                <span class="slds-truncate" title="Role Id">Role Id</span>      
+                            </th>-->
+                            <th>
+                                <span class="slds-truncate" title="Role Name">Role Name</span>
+                            </th>
+                            <!-- <th>       
+                                <span class="slds-truncate" title="Parent Role Id">Parent Role Id</span>
+                            </th>-->
+                            <th >
+                                <div class="slds-truncate" title="Parent Role Name">Parent Role Name</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.rolesList}" var="rec">
+                            <tr>
+                                <td><ui:inputRadio aura:id="inputradiocmp" text="{!rec.roleId}" change="{!c.onRadioSelection}" /></td>
+                                
+                                <!--<td scope="row">
+                                    <div class="slds-truncate" title="{!rec.roleId}">{!rec.roleId}</div>
+                                </td>-->
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!rec.roleName}">{!rec.roleName}</div>
+                                </td>
+                                <!--<td scope="row">
+                                    <div class="slds-truncate" title="{!rec.parentRoleId}">{!rec.parentRoleId}</div>
+                                </td>-->
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!rec.parentRoleName}">{!rec.parentRoleName}</div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Footer-->
+    <div class="slds-docked-form-footer">
+        <lightning:button variant="Neutral" label="Cancel" type="cancel" onclick="{!c.cancel}"/>
+        <lightning:button variant="brand" label="Save" onclick="{!c.save}" />
+    </div>
+    
+</aura:component>

@@ -1,0 +1,28 @@
+<template>
+    <template if:true={loadSpinner}>
+        <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+        </template>
+    <div class="slds-table slds-table_fixed-layout">
+    <div class="slds-clearfix">            
+        <div class="slds-float_left slds-p-left_medium slds-p-top_medium">
+             {paginationWrapper.currentPage} of total {paginationWrapper.totalPages} pages
+        </div>
+        <div class="slds-float_right slds-p-bottom_medium slds-p-top_medium">
+            <lightning-button variant="Brand" label="First"     title="First"    onclick={first} disabled={paginationWrapper.disableFirstButton}/> </lightning-button>&nbsp;&nbsp;
+            <lightning-button variant="Brand" label="Previous"  title="Previous" onclick={previous} disabled={paginationWrapper.disablePreviousButton}/> </lightning-button>&nbsp;&nbsp;
+            <lightning-button variant="Brand" label="Next"      title="Next"     onclick={next} disabled={paginationWrapper.disableNextButton}/> </lightning-button>&nbsp;&nbsp;
+            <lightning-button variant="Brand" label="Last"      title="Last"     onclick={last} disabled={paginationWrapper.disableLastButton}/> </lightning-button>&nbsp;&nbsp;
+        </div> 
+    </div>
+    
+    <lightning-datatable
+        key-field="chargeIdentifier"
+        data={records} 
+        columns={columns}
+        onrowselection={rowSelection}
+        selected-rows = {selection}
+        >
+    </lightning-datatable><br/>
+    
+     </div>  
+</template>

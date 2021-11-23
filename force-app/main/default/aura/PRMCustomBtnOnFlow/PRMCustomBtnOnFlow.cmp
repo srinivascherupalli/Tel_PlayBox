@@ -1,0 +1,28 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:availableForFlowScreens" access="global" >
+	<aura:attribute name="flowName" type="string"/>
+    <aura:attribute name="buttonLabel" type="string" />
+    <aura:attribute name="recId" type="string" />
+    <aura:attribute name="Param1" type="string" />
+    <aura:attribute name="setRedirection" type="Boolean" default="true" />
+    
+    <aura:attribute name="OutParam1" type="string" />
+    <aura:attribute name="OutParam2" type="string" />
+    <aura:attribute name="launchFlow" type="Boolean" />
+    
+   <ui:button aura:id="button" buttonTitle="{!v.buttonLabel}" class="button" label="{!v.buttonLabel}" press="{!c.callFlow}"/>
+    <aura:if isTrue="{!v.launchFlow}">
+            <div>
+                <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header slds-modal__header_empty">
+                            <lightning:buttonIcon iconName="utility:close" class="slds-modal__close" onclick="{!c.closeFlowModal}"/>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">                            
+                            <lightning:flow aura:id="flowData" onstatuschange="{!c.closeModalOnFinish}"/>
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div> 
+    </aura:if> 
+</aura:component>

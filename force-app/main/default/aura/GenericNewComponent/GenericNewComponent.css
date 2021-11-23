@@ -1,0 +1,10 @@
+.THIS button.slds-button.slds-modal__close svg.slds-button__icon {    
+     fill : rgb(255, 255, 255);
+}
+.THIS .slds-modal__close.slds-button_icon-border {
+    border: unset; 
+    border-color: unset;
+}
+.THIS .claim-button {
+    padding: 1rem 2rem;
+}

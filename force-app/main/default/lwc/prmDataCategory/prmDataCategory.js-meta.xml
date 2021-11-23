@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>47.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="categoryName" type="String" default="Products" label="Category Name" description="Api name of category"/>
+            <property name="headerName" type="String" default="Product Categories" label="Header Name" description="Header Name"/>
+            <!--Exclude category Added by Team Hawaii for P2OB-9636--><property name="excludeCategory" type="String" default="" label="Exclude Category" description="Comma separated API names of categories to be excluded"/>
+            <property name="categoriesToDisplay" type="Integer" default="9" label="Categories to display initially" description="Number of categories to display before view all button"/>
+            <!--property name="tilesPerRow" type="Integer" default="3" label="Tiles Per Row" description="Number of categories to be shown per page" /--><property name="viewAllCategories" type="Boolean" default="True" label="View All" description="View All Categories"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

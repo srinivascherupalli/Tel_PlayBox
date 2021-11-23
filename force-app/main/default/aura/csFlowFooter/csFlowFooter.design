@@ -1,0 +1,4 @@
+<design:component>
+	<design:attribute name="canBack" label="canBack" />
+    <design:attribute name="can_go_back" label="can_go_back" />
+</design:component>

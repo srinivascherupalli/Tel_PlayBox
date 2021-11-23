@@ -1,0 +1,175 @@
+<aura:component implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" controller="SearchAddressController">
+    
+    <aura:attribute name="addresses" type="AddressSummary[]" access="global"/>
+    <aura:attribute name="nbnAddresses" type="AddressResponseDTO" access="global"/>
+    <aura:attribute name="searchByAddressFlag" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="searchByAdboridFlag" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="searchBy" type="String" access="global" default=""/>
+    <aura:attribute name="searchText" type="String" access="global" default=""/>
+    <aura:attribute name="space" type="String" access="global" default=" "/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="errorMsg" type="String" access="global"/>
+    <aura:attribute name="searchedAddressId" type="String" access="global"/>
+    <aura:attribute name="isOpen" type="boolean" default="true"/>
+    <!--EDGE-122625 Kalashree Borgaonkar. start--> 
+    <aura:attribute name="PageSize" type="Integer" default="20" />
+    <aura:attribute name="CurrentPage" type="Integer" default="1" />
+    <aura:attribute name="TotalPages" type="Integer" default="1" />
+    <aura:attribute name="columnsPage" type="Integer" />
+    <aura:registerEvent name="paginationEvent" type="c:paginationEvent" />
+    <aura:handler event="c:paginationEvent" action="{!c.changeData}" />
+    <aura:attribute name="addressesPage" type="AddressSummary[]" access="global"/>
+    <!--EDGE-122625 Kalashree Borgaonkar. End-->
+    <!--   for lightning:datatable   -->
+    <aura:attribute name="dataAddress" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <!--   for lightning:datatable   -->
+    
+    
+    <aura:handler event="c:AddressResultEvent" action="{!c.handleInputRecord}"/>
+    
+     <aura:if isTrue="{!v.loadingSpinner}">
+   <div class="demo-only demo--inverse" style="height:6rem">
+  <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+    <span class="slds-assistive-text">Loading</span>
+    <div class="slds-spinner__dot-a"></div>
+    <div class="slds-spinner__dot-b"></div>
+  </div>
+</div>
+    </aura:if>
+    
+    <!--Use "slds-m-around_xx-large" class to add standard X-Large padding to the component--> 
+    <div class="slds-modal_medium">
+        
+        <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->   
+        <aura:if isTrue="{!v.isOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Search Result for {!v.searchText}</h2>
+                        <br/>
+                        <h2 class="slds-text-align_left">Please select a record from the list</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="overflow-x:auto; display:grid">
+                        
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-size_12-of-12"> 
+                                <aura:if isTrue="{!v.searchByAddressFlag}">
+                                    <!-- **************** Data table code goes here ***************** -->
+                                    
+                                    
+                                    
+                                    <!-- **************** Data table code goes here ****************** -->
+                                    
+                                    
+                                    <table class="slds-table slds-table--bordered slds-table--striped">
+                                        <thead>
+                                            <tr class="slds-text-heading--label">
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">ADBOR ID</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Address</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Locality</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">State</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Postcode</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Status</strong></div></th>
+                                                <!--th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">NBN Status</strong></div></th-->
+                                                <!--  <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Action</strong></div></th>  -->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Added blank row -->
+                                            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                            <aura:iteration items="{!v.addresses}" var="ad">
+                                                <aura:if isTrue="{!and(ad.addressId != null, ad.addressLine != '')}">
+                                                    <tr class="slds-line-height_reset" style="cursor: -webkit-pointer; cursor: pointer; line-height:2;">
+                                                        <td class="cell" id="{!ad.addressId}"  onclick="{!c.saveAddress}">{!ad.addressId}</td>
+                                                        <td class="slds-cell-shrink" id="{!ad.addressId}"  onclick="{!c.saveAddress}">{!ad.addressLine}</td>
+                                                        <td class="cell" id="{!ad.addressId}"  onclick="{!c.saveAddress}">{!ad.locality}</td>
+                                                        <td class="cell" id="{!ad.addressId}"  onclick="{!c.saveAddress}">{!ad.state}</td>
+                                                        <td class="cell" id="{!ad.addressId}"  onclick="{!c.saveAddress}">{!ad.postcode}</td>
+                                                        <td class="cell" id="{!ad.addressId}"  onclick="{!c.saveAddress}">{!ad.status}</td>
+                                                        <td class="cell" id="{!ad.addressId}"  onclick="{!c.saveAddress}">{!ad.nbnStatus}</td>
+                                                        <!--    <td class="cell">{!ad.addressType}</td>  -->
+                                                        <!-- <td class="cell" >
+                                            <aura:if isTrue="{!(ad.addressId!=null)}">
+                                                <lightning:button variant="brand" disabled="false" label="Select" name="{!ad.addressId}"  aura:id="{!ad.addressId}" onclick="{!c.saveAddress}" />
+                                            </aura:if>
+                                        </td> -->
+                                                    </tr>
+                                                </aura:if>
+                                            </aura:iteration>
+                                        </tbody>
+                                    </table> 
+                                    <!--EDGE-122625 Kalashree Borgaonkar. start--> 
+                                    <br/>
+                                    <c:paginationCmp
+                                                     PageSize="{!v.PageSize}"
+                                                     data="{!v.addressesPage}"
+                                                     columns="{!v.columnsPage}"
+                                                     TotalPages="{!v.TotalPages}"
+                                                     />
+                                    <!--EDGE-122625 Kalashree Borgaonkar. End-->
+                                </aura:if>
+                                
+                                <!-- Search result from Id -->
+                                
+                                <aura:if isTrue="{!v.searchByAdboridFlag}">
+                                    <table class="slds-table slds-table--bordered slds-table--striped">
+                                        <thead>
+                                            <tr class="slds-text-heading--label">
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">ADBOR ID</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Address</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Locality</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">State</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Postcode</strong></div></th>
+                                                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Status</strong></div></th>
+                                                <!--  <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Action</strong></div></th>  -->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Added blank row -->
+                                            <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                            <tr class="slds-line-height_reset" style="cursor: -webkit-pointer; cursor: pointer; line-height: 2" >
+                                                <td class="cell" id="{!v.addresses[0].addressId}" onclick="{!c.saveAddress}">{!v.addresses[0].addressId}</td>
+                                                <td class="cell" id="{!v.addresses[0].addressId}" onclick="{!c.saveAddress}">{!v.addresses[0].addressLine}</td>
+                                                <td class="cell" id="{!v.addresses[0].addressId}" onclick="{!c.saveAddress}">{!v.addresses[0].locality}</td>
+                                                <td class="cell" id="{!v.addresses[0].addressId}" onclick="{!c.saveAddress}">{!v.addresses[0].state}</td>
+                                                <td class="cell" id="{!v.addresses[0].addressId}" onclick="{!c.saveAddress}">{!v.addresses[0].postcode}</td>
+                                                <td class="cell" id="{!v.addresses[0].addressId}" onclick="{!c.saveAddress}">{!v.addresses[0].status}</td>
+                                                <!-- <td class="cell">
+                                <aura:if isTrue="{!(v.nbnAddresses.data.unstructuredAUPost.addresses!=null)}">
+                                    <lightning:button variant="brand" disabled="false" label="Select" name="{!v.nbnAddresses.data.unstructuredAUPost.addresses.addressId}"  
+                                                      aura:id="{!v.nbnAddresses.data.unstructuredAUPost.addresses.addressId}" onclick="{!c.saveAddress}" />
+                                </aura:if>
+                            </td> -->
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </aura:if>            
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Back"
+                                          title="Back"
+                                          onclick="{! c.goToSearchAddress }"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+        </aura:if>
+    </div>
+</aura:component>

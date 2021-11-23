@@ -1,0 +1,10 @@
+.THIS .noPaddingIcon {
+    padding : 0px !important;
+}
+.THIS .slds-icon-action-approval{
+    padding : 0px !important;
+}
+.THIS .slds-icon-text-default{
+		fill : rgb(255, 183, 93) !important;
+    
+}

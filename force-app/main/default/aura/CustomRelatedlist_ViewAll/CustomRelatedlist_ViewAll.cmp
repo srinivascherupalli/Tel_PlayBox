@@ -1,0 +1,29 @@
+<aura:component implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable">
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>    
+    <aura:attribute name="parRecordId" type="String"  description="Parent Id"/>
+    <aura:attribute name="strTitle" type="String"  description="Enter the title"/>
+    <aura:attribute name="headerIcon" type="String"  description="Enter the headerIcon"/>
+    <aura:attribute name="objectName" type="String"  description="Enter the object name"/>
+    <aura:attribute name="hyperlinkField" type="String"  description="Enter the field api name that should be a hyperlink"/>
+    <aura:attribute name="parentObjectName" type="String" description="Enter the parent object name"/>
+    <aura:attribute name="relationshipApiName" type="String"  description="Enter the relationship API name"/>
+    <aura:attribute name="paramsList" type="String" description="Enter comma separated parent object fields(to be replaced with params in search criteria. like ACN__c, ABN__c etc)"/>
+    <aura:attribute name="filterStr" type="String"  description="Enter the search criteria(Ex: Name = param1 AND Type = param2 ..etc)"/>
+    <aura:attribute name="fieldsList" type="String"  description="Enter the field API names separated by coma. like {name,phone__c,.. etc}"/>
+    <aura:attribute name="fieldsLabelLst" type="String"  description="Enter the field labels separated by coma. like {Name,Phone,.. etc}"/>
+   
+
+    <c:reusableRelatedListNew strTitle="{!v.strTitle}"
+                                objectName="{!v.objectName}"
+                                headerIcon="{!v.headerIcon}"
+                                hyperlinkField="{!v.hyperlinkField}"
+                                parentObjectName="{!v.parentObjectName}"
+                                relationshipApiName="{!v.relationshipApiName}"
+                                paramsList="{!v.paramsList}"
+                                filterStr="{!v.filterStr}"
+                                fieldsList="{!v.fieldsList}"
+                                fieldsLabelLst="{!v.fieldsLabelLst}"
+                              	recordId="{!v.parRecordId}"
+                              	isViewAll = "true"
+                             />
+</aura:component>

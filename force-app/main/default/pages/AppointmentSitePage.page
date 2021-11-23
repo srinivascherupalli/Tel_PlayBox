@@ -1,0 +1,483 @@
+<apex:page showHeader="false" sidebar="false" controller="AppointmentSitePageHandler" docType="html-5.0">
+        <apex:includeScript value="{!$Resource.cscfga__jQuery_min}" />
+        <style type="text/css">
+            .viewDetailmodal {
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+             .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                padding-top: 100px; /* Location of the box */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+            
+            /* Modal Content */
+            .modal-content {
+                background-color: #fefefe;
+                margin: auto;
+                padding: 20px;
+                width: 80%;
+                border-radius:4px;
+            }
+            .modalOkButton{
+                width:50px !important;
+            }
+            .viewDetailModalOkButton{
+            width:35px !important;
+            left: 50%;
+            position: relative;
+            background: #005fb2 !important;
+            border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+            color: #fff !important;
+            text-decoration: none;
+            }        
+            .titleHeader{
+            text-decoration: solid;
+            font-weight: bold;
+            padding-left: 1rem;
+            top: 1rem;
+            position: relative;
+            }
+            .innerTitleHeader{
+            text-decoration: solid;
+            font-weight: bold;
+                display: block;
+            }
+            .displayBookApptOuterBlockStyle{
+            border: 2px solid;
+            padding: 30px;
+            border-color : #0070D2 !important;
+            }
+            .submitButton{  
+            height: 30px;
+            min-width: 110px;
+            width:auto;
+            background: #005fb2 !important;
+            border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+            color: #fff !important;
+            text-decoration: none;
+            margin: 0 15px !important;
+            border:1px solid rgb(221, 219, 218) !important;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            }
+            .closeSiteApptBtnStyle{
+            position:relative;
+            float:right;
+            }
+            .continueBtnStyle{
+                position:relative;
+                float:right;
+            }
+            .apptSiteBox{
+            border:none !important;
+            }
+            .erroMessageClose:hover{
+                cursor:pointer !important;
+            }
+            .secondaryPalette.bPageBlock{
+                    border-top: 1px solid #eaeaea !important;
+            }
+            .disabledButton{
+            cursor: not-allowed !important;
+            background : #e8e8e9 !important;
+            border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+            }
+            .disabledCloseButton{
+                height: 30px;
+                min-width: 100px;
+                width: auto;
+                cursor: not-allowed !important;
+                background : #e8e8e9 !important;
+                border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+                color: rgb(196, 196, 196) !important;
+            }
+                 .custPopup{
+                background-color: #fefefe;
+                margin: auto;
+                padding: 20px;
+                border: 3px solid #888;
+                width: 80%;
+            }
+            .help-icon{
+                display: inline-block;
+                position: relative;
+                margin-left: .3rem;
+                cursor: pointer;
+                font-family: 'Times New Roman', serif !important;
+                text-align: center;
+                height: 1rem;
+                width: 1rem;
+                background-color: #54698d;
+                color: #fff;
+                border-radius: 50%;
+                font-size: .8rem;
+                line-height: 1rem;
+                opacity: 0.85;
+            }
+            .help-popup{
+                display: none;
+                position: absolute;
+                border-radius: .25rem;
+                background-color: #54698d;
+                bottom: 1.5rem;
+                left: -300px;
+                color: #fff;
+                padding: .5rem;
+                font-family: 'Salesforce Sans' !important;
+                text-align: left;
+                width: 420px;
+                z-index:100 !important;
+            }
+            .help-icon:hover .help-popup{
+                display: block;
+                
+            }
+            .help-icon .help-popup p {
+                margin: 0;
+                position: relative;
+                box-sizing: border-box;
+            }
+            .help-icon .help-popup:before {
+                width: 1rem;
+                height: 1rem;
+                position: absolute;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+                content: '';
+                background-color: #54698d;
+                bottom: -.2rem;
+                right: 7rem;
+                z-index:0 !important;
+                box-sizing: border-box;
+            }
+            .bPageBlock .detailList .labelCol {
+                   width: 19%;
+            }
+        </style>
+        <script type="text/javascript">
+        $(document).ready(function(){
+            $('.enabledfor').attr('disabled', 'disabled');
+            $('.enabledfor').addClass("disabledButton");
+        });
+        function changeSelected(apptStatus){
+            //do something here if there is a need to trigger first event on click of radio button
+            clearAll();
+            var checkedRadioValue = $('input:radio[name="isSelectedRadio"]:checked').val();
+                $('.enabledfor').attr('disabled', 'disabled');
+                $('.enabledfor').addClass("disabledButton");
+                $('#'+checkedRadioValue).find("*").removeAttr('disabled');
+                $('#'+checkedRadioValue).find("*").removeClass("disabledButton");
+            //populateAction(checkedRadioValue,apptStatus);
+        }
+        function populateAction(spanID,apptStatus){
+            
+            if (apptStatus == '') {
+                   //do something when appointment status is blank
+            }else{
+                 $('#'+ spanID +' .enabledfor >option').each(function() {
+                //alert($(this).val());
+                    if (apptStatus == 'SCHEDULED' && $(this).val() == 'Schedule' ) {
+                        $(this).remove();
+                        $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                            .attr("value",'Reschedule')
+                            .text('Reschedule'));
+                        $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                            .attr("value",'View Details')
+                            .text('View Details'));
+                    }
+                    if (apptStatus == 'PARTIAL_COMPLETE' && $(this).val() == 'PARTIAL_COMPLETE') {
+                        $(this).remove();
+                        $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                            .attr("value",'Rebook Appointment')
+                            .text('Rebook Appointment'));
+                        $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                            .attr("value",'View Details')
+                            .text('View Details'));
+                    }
+                });
+            }
+        }
+        function actionChange(actionValue,subID){
+            if(actionValue == '--None--'){
+                clearAll();
+            }
+            if(actionValue == 'View Details'){
+                getAppDetailsPopup(subID,actionValue);
+            }
+            if(actionValue == 'Schedule' || actionValue == 'Reschedule' || actionValue == 'Rebook'){
+                setBookAppt(subID,actionValue);
+            }
+        }
+        function setIframeSRC(actionValue,subID){
+            var windowURL = window.location.href;
+            var firstPart  = windowURL.split('/apex')[0];
+            var apptBookURL = firstPart +'/apex/AppointmentBookPageV2?id=' + subID;
+            if(actionValue == 'Schedule'){
+                document.getElementById('bookApptIframe').src=apptBookURL +'&operation=Schedule';
+            }else if (actionValue == 'Reschedule'){
+                document.getElementById('bookApptIframe').src=apptBookURL +'&operation=Reschedule';
+            }else if (actionValue == 'Rebook'){
+                document.getElementById('bookApptIframe').src=apptBookURL +'&operation=FollowOn';
+            }
+        }
+        function checkMessages(hasMessage) {
+            if (hasMessage == true || hasMessage == 'true') {
+                //document.getElementById("msg_block").style.display = "block";
+                //document.getElementById("err_text").innerHTML = 'Appointment should be scheduled for all the sites to proceed.';
+            } else {
+                document.getElementById("msg_block").style.display = "none";
+            }
+        }
+        function closeError(){
+            document.getElementById("msg_block").style.display = "none";
+            document.getElementById("err_text").innerHTML = "";
+        }
+        function iFrameCallbackAppt(){
+            rerenderApptDetailsVF();
+        }
+        function disableAllSelect(){
+            $('.enabledfor').attr('disabled', 'disabled');
+            $('.enabledfor').addClass("disabledButton");
+        }function showPopup()
+        {
+            document.getElementById("ModalPopup").style.display = "block";
+        }
+        function hidePopup()
+        {   
+            document.getElementById("ModalPopup").style.display = "none";
+        }
+        function showPopupOnSave()
+        {       
+            //alert(allscheduledSites);
+            if(allscheduledSites == 'true' && primaryOrderStatus=='Appointment Required'){
+                document.getElementById("ModalPopup1").style.display = "block";
+            }
+            else{
+               navigateBackToPrimaryOrderVF();
+            }
+        }
+        function OkPopUp()
+        {
+            closePopUpWithRedirection();
+        }
+        function CancelPopUp()
+        {
+             document.getElementById("ModalPopup1").style.display = "none";
+        }
+        
+        </script>
+        <apex:form >
+            
+            <apex:actionFunction action="{!getAppDetails}" name="getAppDetailsPopup" rerender="tstpopup">
+                <apex:param name="subscriptionId" assignTo="{!SubscriptionId}" value="" />
+                <apex:param name="actionValue" assignTo="{!selectedActionVF}" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction action="{!setBookAppointmentParams}" name="setBookAppt" oncomplete="setIframeSRC('{!JSENCODE(selectedActionVF)}','{!JSENCODE(SubscriptionId)}')" reRender="bookAppointmentPanel">
+                <apex:param name="subscriptionId" assignTo="{!SubscriptionId}" value="" />
+                <apex:param name="actionValue" assignTo="{!selectedActionVF}" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction action="{!clearAllOnNoneAction}" name="clearAll" reRender="tstpopup, bookAppointmentPanel">
+            </apex:actionFunction>
+            <apex:actionFunction action="{!setPrimaryOrderID}" name="setPrimOrdId">
+                <apex:param name="primaryOrderId" assignTo="{!primaryOrderIdGlobal}" value=""/>
+            </apex:actionFunction>
+            <apex:actionFunction action="{!reRenderApptDetails}" name="rerenderApptDetailsVF" reRender="testingParent,post_processing" oncomplete="disableAllSelect()">
+                </apex:actionFunction>
+            <apex:actionFunction action="{!OKPopup}" name="closePopUpWithRedirection" reRender="Modelpopup1" />
+            <apex:actionFunction action="{!navigateBackToPrimaryOrder}" name="navigateBackToPrimaryOrderVF" reRender="Modelpopup1" />
+            <apex:slds />
+            
+            <!-- ERROR ALERT DIV -->
+            <div id="msg_block" style="display: none;">
+                <div id="err_wrapper"
+                     class="slds-notify slds-notify--alert slds-theme--{!alertType} slds-theme--alert-texture"
+                     role="alert">
+                    
+                    <h2>
+                        <div xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <svg aria-hidden="true"
+                                 class="slds-icon icon-text-email slds-icon--small slds-m-right--x-small" style="position:absolute;top:15%;left:1rem;">
+                                <use xlink:href="{!URLFOR($Resource.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#' + if(alertType = 'success','check','warning'))}"></use>
+                            </svg>
+                            <span id="err_text"></span>
+                        </div>
+                    </h2>
+                    <span style="position: absolute;right:1rem;color:#fff;" class="erroMessageClose" onclick="closeError()">X</span>
+                </div>
+            </div>
+            <span class="titleHeader">Set Appointments for {!primaryOrderName}</span>
+            <div class="slds-box slds-theme--default apptSiteBox" id="div2">
+                <apex:outputPanel id="testingParent">
+                <table class="slds-table slds-no-row-hover" border="2px" style="border-color : #0070D2 !important;">
+                    <thead>
+                        <tr>
+                            <th>Site Address</th>
+                            <th>Appointment ID</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Appointment Status</th>
+                            <th>Action</th>
+                            <th>Selected</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!siteApptWrapperList}" var="siteAppt" >
+                        <apex:repeat value="{!siteAppt.subApptWrapperList}" var="childAppt" >
+                            <tr>    
+                            <apex:outputText rendered="{!childAppt.iteratorFlag}">
+                                <td style="width:500px;" rowspan="{!siteAppt.appointmentCount}" >
+                                    <apex:outputLabel styleClass="" value="{!siteAppt.Address}" style="width:500px;" />                                 
+                                </td>
+                            </apex:outputText>                   
+                            
+                            <td>
+                                <apex:outputLabel styleClass="" value="{!childAppt.AppointmentID}" ></apex:outputLabel>
+                            </td>
+                            <td>
+                                <apex:outputLabel styleClass="" value="{!childAppt.StartDate}" ></apex:outputLabel>
+                            </td>
+                            <td>
+                                <apex:outputLabel styleClass="" value="{!childAppt.EndDate}" ></apex:outputLabel>
+                            </td>
+                            <td>
+                                <apex:outputLabel styleClass="" value="{!childAppt.Status}" ></apex:outputLabel>
+                            </td>
+                            <td>
+                                <span id="{!siteAppt.SubscriptionId}">
+                                    <apex:selectList value="{!selectedAction}" size="1" onchange="actionChange(this.value,'{!JSENCODE(siteAppt.SubscriptionId)}')" styleClass="slds-input slds-combobox__input slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid enabledfor" style="width:100px !important; position:static;transform:none;cursor:pointer;">
+                                        <apex:selectOptions value="{!childAppt.actionOptions}"/>
+                                    </apex:selectList>
+                                    <!--<select value="{!selectedAction}" onchange="actionChange(this.value,'{!JSENCODE(siteAppt.SubscriptionId)}')" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid enabledfor" style="width:100px !important; position:static;transform:none;">-->
+                                        <!--<option value="--None--">--None--</option>
+                                        <option value="Schedule">Schedule</option>
+                                        <apex:selectOption itemValue="View Details" itemLabel="View Details"/>
+                                    </select>-->
+                                </span>
+                            </td> 
+                            <td>
+                                <input type="radio" name="isSelectedRadio" onclick="changeSelected('{!JSENCODE(childAppt.Status)}')" value="{!siteAppt.SubscriptionId}"/>
+                            </td>
+                        </tr>
+                            </apex:repeat>
+                        
+                        </apex:repeat>
+                    </tbody>
+                </table>
+                </apex:outputPanel>
+                <br/>
+                <br/>
+                <apex:outputPanel id="bookAppointmentPanel" >
+                    <apex:outputPanel layout="block" rendered="{!displayBookAppointment}">
+                        <div class="displayBookApptOuterBlockStyle" id="displayBookApptOuterBlock">
+                            <span class="innerTitleHeader">Connected Workplace - {!selectedSite}</span>
+                            <apex:iframe id="bookApptIframe" src="" width="850" height="700" frameborder="0" scrolling="no"/>
+                        </div>
+                    </apex:outputPanel>    
+                </apex:outputPanel>
+                <br/>
+                <!--<div id="saveAndContinueButtonID" class="continueBtnStyle">
+                    <apex:commandButton value="Save Update" styleClass="submitButton" action="{!navigateBackToPrimaryOrder}"/>
+                </div> -->
+                <apex:outputPanel layout="block" rendered="{!NOT(isOrderSubmitted)}">
+                    <!--<div id="CloseSiteApptId" class="closeSiteApptBtnStyle">
+                        <apex:commandButton value="Save and Progress " styleClass="submitButton" action="{!pollAppointmentStatus}" onclick="showPopup()" reRender="post_processing"/>
+                    </div>-->
+                    <div id="CloseSiteApptId" class="closeSiteApptBtnStyle">
+                        <span class="help-icon ">i<span class="help-popup">
+                            <p> 1. On Click of Save and Progress you will be redirected to primary order.<br/>
+                            2. All site appointments must be scheduled before order can be submitted.<br/>   
+                            </p></span></span>
+                        <apex:commandButton value="Save and Progress" styleClass="submitButton" onclick="showPopupOnSave()" reRender="Modalpopup1"/>
+                    </div>
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" rendered="{!(isOrderSubmitted)}">
+                <div id="CloseSiteApptIdDisabled" class="closeSiteApptBtnStyle" >
+                    <!--<apex:commandButton value="Save" styleClass="disabledCloseButton" action="{!pollAppointmentStatus}" disabled="true"/>-->
+                    <span class="help-icon ">i<span class="help-popup"><p> 1. On Click of Save and Progress you will be redirected to primary order.<br/>
+                            2. All site appointments must be scheduled before order can be submitted.<br/>                          
+                            </p></span></span>
+                    <apex:commandButton value="Save and Progress" styleClass="submitButton" onclick="showPopupOnSave()"  reRender="Modalpopup1"/>
+                </div>
+                </apex:outputPanel>
+                <br/><br/>
+                <apex:outputPanel id="tstpopup">
+                    <apex:outputPanel styleClass="viewDetailmodal" layout="block" rendered="{!displayPopUp}">
+                        <div class='modal-content'>
+                            <apex:pageBlock >
+                                <apex:pageBlockSection columns="1">
+                                    <h1 style="font-size: large; font-weight: bold;">Appointment Details</h1>
+                                    <br/>
+                                    <apex:outputText label="Site Address :" value="{!viewDetailMap['address']}" id="address"/>
+                                    <apex:outputText label="Appointment ID :" value="{!viewDetailMap['appointmentID']}" id="appointmentId"/>
+                                    <apex:outputText label="Appointment Status :" value="{!viewDetailMap['status']}" id="status"/>                                 
+                                    <apex:outputText label="Appointment Start Date :" value="{!viewDetailMap['startDate']}" id="startDate"/>                                    
+                                    <apex:outputText label="Appointment End Date :" value="{!viewDetailMap['endDate']}" id="endDate"/>
+                                    <!--<apex:outputText label="Subscription ID :" value="{!viewDetailMap['subscriptionID']}" id="subscriptionID"/>-->
+                                    <apex:outputText label="User ID :" value="{!viewDetailMap['createdBy']}" id="createdBy"/>
+                                    <apex:outputText label="Last Modified Date Time :" value="{!viewDetailMap['lastModifiedDate']}" id="lastModifiedDate"/>
+                                    <apex:outputText label="Site Primary Contact Name :" value="{!viewDetailMap['primaryContactName']}" id="primaryContactName"/>
+                                    <apex:outputText label="Site Primary Contact Phone :" value="{!viewDetailMap['primaryContactPhone']}" id="primaryContactPhone"/>
+                                    <apex:outputText label="Site Technical Contact Name :" value="{!viewDetailMap['technicalContactName']}" id="technicalContactName"/>
+                                    <apex:outputText label="Site Technical Contact Phone :" value="{!viewDetailMap['technicalContactPhone']}" id="technicalContactPhone"/>
+                                    <apex:outputText label="Parent Appointment ID :" value="{!viewDetailMap['parentappointment']}" id="parentAppointmentID" rendered="{!viewDetailMap['status'] == 'Partial Complete'}"/>
+                                    
+                                </apex:pageBlockSection> 
+                            </apex:pageBlock>
+                            <apex:commandButton value="OK" styleClass="viewDetailModalOkButton" action="{!closePopup}" rerender="tstpopup"/>
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                
+                <!--APEX VARIABLES DIV-->
+                <apex:outputPanel id="post_processing">
+                    <script>
+                    var hasMessage = '{!JSENCODE(hasMessageString)}';
+                    var allscheduledSites='{!JSENCODE(AppointmentCompletedForAllsitesText)}';
+                    var primaryOrderStatus='{!JSENCODE(primaryOrderStatus)}';
+                    //if(hasMessage!=''){
+                        checkMessages(hasMessage);    
+                    //}
+                    </script>
+                </apex:outputPanel>
+            </div>
+        </apex:form>
+         <div id = "ModalPopup1" class ="modal">
+            <div class='modal-content'>
+                <apex:outputPanel id="ModelPopup1">
+                    <apex:form >
+                        <div>
+                            <h1></h1>    
+                        </div>
+                        <div>
+                            <center>
+                                <span>{!popupMessage}</span> 
+                            </center>       
+                        </div>
+                        <br/>
+                        <center>
+                             <apex:commandButton value="OK" styleclass="submitButton modalOkButton" onClick="OkPopUp()" rerender="ModelPopup1"/>
+                            <apex:commandButton value="Cancel" styleclass="submitButton modalOkButton" onClick="CancelPopUp()" rerender="ModelPopup1"/>
+                        </center>
+                    </apex:form>
+                </apex:outputPanel>
+            </div>
+        </div>
+        
+    </apex:page>

@@ -1,0 +1,27 @@
+<template>
+        <!--Display view in tiles below-->
+        <template if:true={categoryAtTop}>
+                <div class="slds-config-header--section">
+                        <h2 class="slds-config-h2Tag">{headerName}</h2>
+                </div>
+        </template>
+        <ul class="slds-grid slds-wrap">
+        <template for:each={productCategories} for:item="productName">
+            <li class="slds-col slds-p-around_small slds-size_1-of-3 slds-m-bottom_large" key={productName.categoryApi}>
+                <a href="#" class="slds-tile--detail slds-grid_align-center slds-grid" data-id={productName.categoryApi} onclick={getLandingPage}>
+                <img src={productName.imageURL} class="slds-tile--image"/>
+                <span class="slds-tile--name">{productName.label}</span>
+                </a>
+            </li>
+        </template>
+    </ul>
+        <!--Display View All Button and Handle Functionality-->
+        <br />
+        <template if:true={showViewAllButton}>
+            <div class="slds-text-align_center slds-p-top_x-small">
+                <a href="#" class="viewAll slds-p-horizontal_small slds-button slds-button_brand" onclick={showAllCategories}>
+                    <span>View All Categories</span>
+                </a>
+            </div>
+        </template>
+    </template>

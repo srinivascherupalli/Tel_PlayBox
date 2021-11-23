@@ -1,0 +1,18 @@
+<aura:component controller="NumberReservationController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="selectedoption" type="string" />
+    <aura:attribute name="basketId" type="string" /> <!--EDGE-165481,171843. Pass basket id -->
+    <aura:attribute name="selectedTab" type="string" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.selectedTab}" action="{!c.doInit}"/>
+    <aura:registerEvent name="NumberReservoptionevt" type="c:NumberReservationSelectOptionevt"/>
+    <aura:attribute name="profileName" type="string"/>
+	<aura:attribute name="searchoptions" type="List" />
+    <div aura:id="container"/> 
+    <lightning:radioGroup name="searchoptions" 
+                          label="I would like to : "
+                          options="{!v.searchoptions }"
+                          value="{!v.selectedoption }"
+                          type="radio"
+                          class="customRadioCls"
+                          onchange="{!c.handleChange }"/>
+</aura:component>

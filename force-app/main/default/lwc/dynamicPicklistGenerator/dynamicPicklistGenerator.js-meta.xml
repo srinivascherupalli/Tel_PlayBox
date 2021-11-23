@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>50.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="selObject" type="String" label="Object Name" role="inputOnly" description="Object Name"/>
+            <property name="selPicklistField" type="String" label="Picklist Field Name" role="inputOnly" description="Picklist Field Name"/>
+            <property name="selPicklistFieldLabel" type="String" label="Picklist Field Label" role="inputOnly" description="Picklist Field Label"/>
+            <property name="recTypeId" type="String" label="Current Recordtype Id" role="inputOnly" description="Current Recordtype Id"/>
+            <property name="currentPicklistValue" type="String" label="Current Picklist Value" role="inputOnly" description="Current Picklist Value"/>
+            <property name="selValue" type="String" label="Selected Value" role="outputOnly" description="Selected Value"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

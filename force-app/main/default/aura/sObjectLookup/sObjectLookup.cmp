@@ -1,0 +1,160 @@
+<!--
+* @Author   :   Maqsood Alam
+* @Date     :   10 Oct 2018
+* @Desc     :   Component for sObject Lookup Lightning Component
+* -->
+
+<aura:component controller="sObjectLookupController" description="Lightning component for lookup fields">
+    
+    <!--Declare Attributes-->
+    <aura:attribute name="objectAPIName" type="String" required="true"
+                    description="Object API name used for searching records"/>
+    
+    <aura:attribute name="fieldAPIName" type="String" required="true"
+                    description="API Name of field to be searched"/>
+    
+    <aura:attribute name="lookupIcon" type="String" default="standard:contact"
+                    description="Icon for lookup records"/>
+    
+    <aura:attribute name="placeholder" type="String" default="Search..."
+                    description="Placeholder text for input search filed"/>
+    
+    <aura:attribute name="fieldLabel" type="String" required="true"
+                    description="input search field Label"/>
+    
+    <aura:attribute name="selectedRecordId" type="String"
+                    description="Used to store the selected record id.
+                                 While calling this component from other component,
+                                 set this attribute to the lookup field API name"/>
+    
+    <aura:attribute name="selectedRecordName" type="String"
+                    description="This is used to show the selected record Name in search input"/>
+    
+    <aura:attribute name="selectedFieldOnClick" type="String"
+                    description="This is used to show the selected record field in search input when click from Dropdown"/> 
+    
+    <aura:attribute name="selectedRecordIdField" type="String"
+                    description="Id of the field when selected from the Dropdown"/>                    
+    
+    <aura:attribute name="subHeadingFieldsAPI" type="String[]"
+                    description="Field API for the fields to be shown under the record Name.
+                                 Must be comma separated. Example: Email,Phone"/>
+    
+    <aura:attribute name="matchingRecords" type="Object[]" access="private"
+                    description="List of records returned from server side call"/>
+    
+    <aura:attribute name="helptext" type="String" access="public"
+                    description="helptext for tooltip" />
+    
+    <aura:attribute name="isDisable" type="Boolean" access="public" default="false"
+                    description="helptext for tooltip" />
+    
+    <aura:attribute name="fieldId" type="String" access="public"
+                    description="field Id for the search field" />
+    
+    <aura:attribute name="errorMsgText" type="String" access="public"
+                    description="errorMsgText" />
+    
+    <aura:attribute name="recordLimit" type="Integer" access="public" default="5"
+                    description="Total number of record to be returned"/>
+    
+    <aura:attribute name="rawSOQLcriteria" type="String" access="public" default=""
+                    description="Pass raw soql criteria to be executed" />  
+    
+    <aura:attribute name="dyamicVariable" type="String" access="public"
+                    description="dyamicVariable with which this code is working" />
+    
+    <aura:attribute name="resultNotFound" type="String" access="public"
+                    description="No matching record" />
+    
+    <!--Declare Handlers-->
+    <aura:handler event="c:showErrorContractSign" action="{!c.handleshowErrorContract}"/>
+    
+    <aura:handler name="lookupSelect" event="c:sObjectLookupSelectEvent" action="{!c.handleLookupSelectEvent}"
+                  description="Event handler to get the selected record Id and Name from LookupItem component"/>
+    
+    <!--Component-->
+    <div class="slds-form-element__control">
+        <div class="slds-combobox_container slds-has-inline-listbox" style="border : None">
+            <div aura:id="divLookup"
+                 class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-combobox-lookup"
+                 aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                
+                <div class="slds-combobox__form-element" style="display: inline-block">
+                    <!--  <lightning:input type="search"
+                                     aura:id="searchinput"
+                                     label="{!v.fieldLabel}"
+                                     name="{!v.fieldLabel}"
+                                     value="{!v.selectedRecordName}"
+                                     onchange="{!c.handleSearchRecords}"
+                                     isLoading="false"
+                                     placeholder="{!v.placeholder}"
+                                     onfocus="{!c.handleSearchRecords}"
+                                     onblur="{!c.hideList}"
+                                     disabled="{!v.isDisable}"/>  -->
+                    <aura:if isTrue="{!v.isDisable}">
+                        <div class="" id="{!v.fieldId}">
+                            <lightning:input 
+                                             aura:id="searchinput"
+                                             label="{!v.fieldLabel}"
+                                             name="{!v.fieldLabel}"
+                                             value="{!v.selectedRecordName}"
+                                             onchange="{!c.handleSearchRecords}"
+                                             isLoading="false"
+                                             placeholder="{!v.placeholder}"
+                                             onfocus="{!c.handleSearchRecords}"
+                                             onblur="{!c.hideList}"
+                                             disabled="{!v.isDisable}"/>
+                            <div class="slds-form-element__help toggleClass" id="{!'error-message-unique-id_'+v.fieldId}">{!v.errorMsgText}</div>
+                        </div>
+                        <aura:set attribute="else">
+                            <div class="" id="{!v.fieldId}"> 
+                                <lightning:input type="search"
+                                                 aura:id="searchinput"
+                                                 label="{!v.fieldLabel}"
+                                                 name="{!v.fieldLabel}"
+                                                 value="{!v.selectedRecordName}"
+                                                 onchange="{!c.handleSearchRecords}"
+                                                 isLoading="false"
+                                                 placeholder="{!v.placeholder}"
+                                                 onfocus="{!c.handleSearchRecords}"
+                                                 onblur="{!c.hideList}"
+                                                 disabled="{!v.isDisable}"/>
+                                <div class="slds-form-element__help toggleClass" id="{!'error-message-unique-id_'+v.fieldId}">{!v.errorMsgText}</div>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                    <div class="popover">
+                        <c:customHelpTextContract text="{!v.helptext}" />   
+                    </div>
+                </div>
+                <div id="listbox-unique-id" role="listbox">
+                    <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid" role="presentation">
+                        <!--  <aura:iteration var="rec" items="{!v.matchingRecords}">
+                            <c:sObjectLookupItem record="{!rec}" subHeadingFieldsAPI="{!v.subHeadingFieldsAPI}" iconCategoryName="{!v.lookupIcon}" selectedFieldOnClick="{!v.selectedFieldOnClick}" selectedRecordIdField="{!v.selectedRecordIdField}" objectAPIName="{!v.objectAPIName}"/>
+                        </aura:iteration> -->
+                        <aura:if isTrue="{!(v.matchingRecords.length  > 0)}">
+                            <aura:iteration var="rec" items="{!v.matchingRecords}">
+                                <aura:if isTrue="{!and((v.matchingRecords.length  == 1), rec.Contact_Email == '~!!!!~Error~!!!!~', rec.Id != '' )}">
+                                    <div  style="padding-left: 2%">
+                                        <lightning:icon iconName="standard:unmatched" size="small" /> &nbsp;
+                                        {!v.resultNotFound}
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <c:sObjectLookupItem record="{!rec}" subHeadingFieldsAPI="{!v.subHeadingFieldsAPI}" iconCategoryName="{!v.lookupIcon}" selectedFieldOnClick="{!v.selectedFieldOnClick}" selectedRecordIdField="{!v.selectedRecordIdField}" objectAPIName="{!v.objectAPIName}"/>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:iteration>
+                            <aura:set attribute="else">
+                                <div  style="padding-left: 2%">
+                                    <lightning:icon iconName="standard:unmatched" size="small" /> &nbsp;
+                                    {!v.resultNotFound}
+                                </div>
+                            </aura:set>
+                        </aura:if> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

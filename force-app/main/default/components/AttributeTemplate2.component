@@ -1,0 +1,180 @@
+<apex:component access="global">
+    <apex:attribute name="domId" type="String" required="false" description="ID" access="global"/>
+    <apex:attribute name="ref" type="String" required="false" description="Reference" access="global"/>
+    <apex:attribute name="mini" type="Boolean" required="false" default="true" description="Use mini controls on mobile platforms" access="global"/>
+    <apex:attribute name="type" type="String" required="false" description="Attribute Type" access="global"/>
+    <apex:attribute name="flavour" type="String" required="false" default="standard" description="standard or mobile" access="global"/>
+    <apex:attribute name="definition" type="cscfga__Attribute_Definition__c" required="false" description="The Attribute's Definition" access="global"/>
+    <apex:attribute name="label" type="Boolean" required="false" default="true" access="global" description="Show Label" />
+    <apex:attribute name="cols" type="Integer" required="false" default="1" access="global" description="Column span" />
+
+    <apex:variable var="rendered" value="false" />
+    <apex:variable var="width" value="{!cols * 100}%" />
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Calculation' || type == 'Display Value'}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small slds-has-divider--bottom">
+            <span class="slds-form-element__label" data-cs-label="%ctx%{!ref}_%idx%"></span>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <div class="slds-form-element__control">
+                <span class="slds-form-element__static" id="{!domId}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%"></span>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Checkbox'}" >
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small">
+            <!--<span style="display: inline-block; font-size: 12px; line-height: 1.5; margin-right: 12px; margin-bottom: 2x;">&nbsp;</span>-->
+            <div>
+                <span class="slds-form-element__static">
+                    <label class="slds-checkbox" for="{!domId}_%idx%" >
+                        <input name="%ctx%{!ref}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%" type="checkbox" id="{!domId}_%idx%" />
+                        <span class="slds-checkbox--faux"></span>
+                        <label class="slds-form-element__label" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+                        <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+                    </label>
+                </span>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Date'}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small" >
+            <label class="slds-form-element__label {!IF(definition.cscfga__Required__c == true, ' required', '')}" style="display: block;" for="{!domId}_%idx%" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <apex:outputPanel layout="none" rendered="{!flavour == 'mobile'}">
+                <input type="date" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%" value="" data-role="none" data-mini="{!mini}" title="{!definition.cscfga__attribute_help_text__c}"/>
+            </apex:outputPanel>
+            <apex:outputPanel layout="none" rendered="{!flavour == 'standard'}">
+                <span class="dateInput dateOnlyInput">
+                    <input class="slds-textarea" style="height:34px; width: 85% !important;" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%" value="" data-role="none" data-mini="{!mini}"
+                           onfocus="DatePicker.pickDate(true, '{!domId}_%idx%', false );" size="12" />
+                    <span class="dateFormat">
+                        [&nbsp;<a href="" class="todayPicker" onclick="return (function(){ DatePicker.insertDate(CS.todayFormatted, '{!domId}_%idx%', true); return false; })();">___</a>&nbsp;]
+                    </span>
+                </span>
+            </apex:outputPanel>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Lookup' && definition.cscfga__Select_List_Lookup__c == false}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small">
+
+            <label class="slds-form-element__label {!IF(definition.cscfga__Required__c == true, ' required', '')}" for="{!domId}_%idx%" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <div class="slds-form-element__control" >
+                <input type="text" class="slds-input" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" readonly="readonly" data-cs-binding="%ctx%{!ref}_%idx%" value="" style="width: 80%" />
+                <!--<div data-cs-action="clearLookup" data-cs-ref="%ctx%{!ref}_%idx%" data-cs-control="%ctx%{!ref}_%idx%" data-cs-type="Clear" class="deleteIcon" title="Clear lookup field"></div>-->
+                <a href="#" data-cs-action="lookup" data-cs-params='{"ref": "%ctx%{!ref}_%idx%"}' data-cs-button="Lookup" data-cs-control="%ctx%{!ref}_%idx%" data-cs-type="Add" style="text-decoration: none; float: left;">
+                    <img src="/s.gif" alt="Lookup" class="lookupIcon"
+                         onblur="this.className = 'lookupIcon';"
+                         onfocus="this.className = 'lookupIconOn';"
+                         onmouseout="this.className = 'lookupIcon';"
+                         onmouseover="this.className = 'lookupIconOn';"
+                         title="Lookup" />
+                </a>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" style="width : 100;" rendered="{!type == 'Lookup' && definition.cscfga__Select_List_Lookup__c == true}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small" >
+            <label class="slds-form-element__label {!IF(definition.cscfga__Required__c == true, ' required', '')}" for="{!domId}_%idx%" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <span class="lookupInput">
+                <input type="text"
+                       id="{!domId}_%idx%"
+                       name="%ctx%{!ref}_%idx%"
+                       data-cs-binding="%ctx%{!ref}_%idx%"
+                       data-cs-select-list-lookup="true"
+                       data-role="none"
+                       data-mini="{!mini}"
+                       value=""
+                       size="20"
+                />
+            </span>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Related Product'}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small">
+            <label class="slds-form-element__label {!IF(definition.cscfga__Required__c == true, ' required', '')}" for="{!domId}_%idx%" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <div>
+                <input class="slds-input" type="text" readonly="readonly" data-cs-action="addOrEditRelatedProduct" data-cs-binding="%ctx%{!ref}_%idx%" data-cs-ref="%ctx%{!ref}_%idx%" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" value="" data-role="none" data-mini="{!mini}" style="width: 70%"/>
+                &nbsp;
+                <apex:outputPanel layout="none" rendered="{!flavour == 'standard'}">
+                    <span data-cs-control="%ctx%{!ref}_%idx%" data-cs-type="Add">
+                        <a href="#" data-cs-action="addRelatedProduct" data-cs-ref="%ctx%{!ref}_%idx%">Add</a>
+                        <!--<a href="#" data-cs-action="thisIsForTest" data-cs-ref="%ctx%{!ref}_%idx%">Add</a>-->
+                    </span>
+                    <span data-cs-control="%ctx%{!ref}_%idx%" data-cs-type="EditDel">
+                        <a href="#" data-cs-action="editRelatedProduct" data-cs-ref="%ctx%{!ref}_%idx%">Edit</a>
+                        <a href="#" data-cs-action="removeRelatedProduct" data-cs-ref="%ctx%{!ref}_%idx%"  class="{!IF(definition.cscfga__Required__c == true, 'hide', '')}">Del</a>
+                    </span>
+                </apex:outputPanel>
+                <apex:outputPanel layout="none" rendered="{!flavour == 'mobile'}">
+                    <span data-cs-control="%ctx%{!ref}_%idx%" data-cs-type="EditDel">
+                        <a href="#" data-cs-action="removeRelatedProduct" data-cs-ref="%ctx%{!ref}_%idx%"><span class="icon-cancel">&nbsp;</span></a>
+                    </span>
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Radio Button'}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small slds-radiobutton-div" >
+            <label class="slds-form-element__label" for="{!domId}_%idx%" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <div class="slds-radiobutton-label" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%" data-cs-template="CS.RadioButton.Tpl" data-role="none" data-mini="{!mini}" style="margin-top: -6px;"></div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Select List'}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small">
+            <label class="slds-form-element__label {!IF(definition.cscfga__Required__c == true, ' required', '')}" for="{!domId}_%idx%" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <div class="slds-form-element__control">
+                <select class="slds-select" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%"></select>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'Text Display'}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small" style="min-height:31px;margin-top:35px">
+            <div class="slds-form-element__control">
+                <span class="slds-form-element__static" id="{!domId}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%" style="width: {!width}"></span>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!type == 'User Input'}">
+        <apex:variable var="rendered" value="true" />
+        <div class="slds-form-element slds-m-top--small">
+            <label class="slds-form-element__label {!IF(definition.cscfga__Required__c == true, ' required', '')}" for="{!domId}_%idx%" data-cs-label="%ctx%{!ref}_%idx%" data-cs-required="%ctx%{!ref}_%idx%"></label>
+            <span class="glyphicon glyphicon-info-sign tooltip-icon {!IF(definition.cscfga__attribute_help_text__c == '', ' hide', '')}" title="{!definition.cscfga__attribute_help_text__c}"> </span>
+            <div class="slds-form-element__control" style="height: calc(100%)">
+                <apex:outputPanel layout="none" rendered="{!nullvalue(definition.cscfga__Text_input_lines__c, 1) < 2  }">
+                    <input onblur='validateInput("{!domId}_%idx%","%ctx%{!ref}_%idx%");' type="text" class="slds-input" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%" value="" />
+                    <div id="err-%ctx%{!ref}_%idx%" class="errorMsg"></div>
+                </apex:outputPanel>
+                <apex:outputPanel layout="none" rendered="{!nullvalue(definition.cscfga__Text_input_lines__c, 1) > 1  }">
+                    <textarea onblur='validateInput("{!domId}_%idx%","%ctx%{!ref}_%idx%");' class="slds-textarea" rows="{!definition.cscfga__text_input_lines__c}" id="{!domId}_%idx%" name="%ctx%{!ref}_%idx%" data-cs-binding="%ctx%{!ref}_%idx%" value="" style="width: 80%" />
+                    <div id="err-%ctx%{!ref}_%idx%" class="errorMsg"></div>
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel layout="none" rendered="{!rendered == false}">
+        <span>&nbsp;</span>
+    </apex:outputPanel>
+</apex:component>

@@ -1,0 +1,86 @@
+<aura:component controller="contactRolecontroller" implements="lightning:availableForFlowScreens,flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global">
+<aura:attribute name="record" type="Object"/>
+<aura:attribute name="contactRole" type="Contact" />
+<aura:attribute name="contactRoleDefault" type="OpportunityContactRole"  default="{'sobjectType' : 'OpportunityContactRole', 'Role' : '','Contact.Name' : ''}"/> 
+<aura:attribute name="recordId" type="String" />
+<aura:attribute name="options" type="List" access="global"/>
+<aura:attribute name="selectedValue" type="String" access="global"/>
+<aura:attribute name="roleValue" type="String" access="global" default="Decision Maker"/>
+<aura:attribute name="isPrimaryflagval" type="Boolean" access="global" default="false"/>
+<aura:attribute name="Showmsgroleexists" type="Boolean" access="global" default="false"/>
+<aura:attribute name="Opptyconrole" type="String" access="global"/>
+<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+<aura:attribute name="CustomerAccountId" type="String" access="global"  default="" />
+<aura:attribute name="CustomerContactId" type="String" access="global"  default="" />
+<aura:attribute name="showModal" type="boolean" default="true"/>
+ <aura:handler name="oSelectedRecordEvent" event="c:salesup_CertitudeLookupEvent" action="{!c.handleComponentEvent}"/>
+    
+ <force:recordData aura:id="forceRecordContactRole" 
+                    fields="Id,Role"
+                    recordId="{!v.recordId}" 
+      				targetFields="{!v.contactRole}"
+                    targetRecord="{!v.record}"
+                    mode="EDIT" />
+    
+    <div class="slds-m-around_xx-large">
+   <aura:if isTrue="{!v.showModal}">
+       
+   <lightning:card iconName="standard:account"  title="Configure Contact Role">
+         <div class="slds-p-horizontal--small">
+<!--<lightning:input name="Role" label="Role" value="{!v.Opptyconrole.Role}"></lightning:input> -->
+             <p>
+	<c:salesup_CertitudeLookupContainer isFetchAccount="false"
+                                        objectAPIName="contact"
+                                        label="Customer Contact"
+                                        accountId="{!v.CustomerAccountId}"
+                                        selectedRecordId="{!v.CustomerContactId}"
+                                        isLookUpMandatory="true"
+                                        IconName="standard:contact"
+                                        SOQLFilter="Contact_Status__c=\'Active\'"
+                                       helpMessage="Select Contact"
+                                          />
+                <!-- //Authority__c= \'Full Authority\')-->
+             </p>
+      <aura:if isTrue="{!not(empty(v.CustomerContactId))}">   
+          
+          <aura:if isTrue="{!v.Showmsgroleexists}"> 
+              <h3>The selected contact already has this role, please choose a different role if you would like to update </h3>
+              <br/>
+          </aura:if>
+             <p class="slds-text-heading--small">
+  			   <lightning:select label="Role" Name="Role" aura:id="RoleId" value="{!v.roleValue}"  onchange="{!c.handleOnChange}">
+        		        <aura:iteration items="{!v.options}" var="option">
+            			<option text="{!option}" value="{!option}"  selected="{!option == v.selectedValue}"/>
+        			</aura:iteration>
+    			</lightning:select>
+                    </p>
+       
+             <p><br/><br/>
+           <ui:inputCheckbox aura:id="checkbox" label="IsPrimary" value="{!v.isPrimaryflagval}" change="{!c.onCheck}"/>
+             </p>
+              
+                 <p>
+                     <div align="center">
+                 <!--  <div class="slds-modal__footer"> value="{!v.contactRole.Role}" -->
+         		<lightning:button label="Save" variant="brand" onclick="{!c.handleSave}" />
+                 </div>
+             </p>
+       
+         <aura:set attribute="else">
+                 <br/>
+                 <br/>
+                 <br/>
+                 <br/>
+                 <br/>
+               <br/>
+                 <br/>
+                 <br/>
+                 <br/>
+                 <br/>
+             </aura:set>
+          </aura:if>
+        </div>
+     </lightning:card>
+    </aura:if>
+    </div>
+    </aura:component>

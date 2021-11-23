@@ -1,0 +1,200 @@
+<aura:component controller="ShowSolutionsOnMACButtonController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" access="global" >
+    <!-- This Component is create as Part of US EDGE-59956 -> To show subscription for Cancellation/Modification -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.selectedLookUpRecord}" action="{!c.itemsChange}"/>
+    <aura:attribute name="selectedCount" type="integer" default="0"/>
+    <aura:attribute name="createdDate" type="date" />
+    <aura:attribute name="isListNotPresent" type="boolean" default="true"/>
+	<aura:attribute name="NoSearchRecord" type="boolean" default="false"/>
+    <aura:attribute name="acc" type="Account"/>
+    <aura:attribute name="wrapList" type="SolWrapper[]"/>
+	<aura:attribute name="columns" type="List" default="[]"/>
+	<aura:attribute name="data" type="List" default="[]"/>
+    <aura:attribute name="keyField" type="String" default="id"/>
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="selectedCWPCount" type="Integer" default="0"/>
+    <aura:attribute name="selectedRows" type="List" default="[]"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="sortedBy" type="String"/>
+    <aura:attribute name="sortedDirection" type="String"/>
+    <aura:attribute name="defaultSortDirection" type="String"/>
+    <aura:attribute name="filteredData" type="List" />
+    <aura:attribute name="filter" type="String" />
+	<aura:attribute name="SelectedSolID" type="String" />
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="isError" type="boolean" default="false" />
+    <aura:attribute name="totalNumberOfCwpRows" type="Integer" default="0"/>
+    <aura:attribute name="totalNumberOfActiveCwpRows" type="Integer" default="0" description="Total number of Active CWP Subscription on Account"/>
+    <aura:attribute name="numberOfCwpRowsUnderModify" type="Integer" default="0"/>
+    <aura:attribute name="numberOfActiveCwpRowsUnderModify" type="Integer" default="0"/>
+    <aura:attribute name="nonCwpData" type="List" default="[]" description="This includes IP Network and UCE" />
+    <aura:attribute name="mobilityData" type="List" default="[]"/>
+    <aura:attribute name="numberOfMobilityProducts" type="Integer" default="0"/>
+    <aura:attribute name="flagAllCWPForCancel" type="boolean" default="false" description="Flag to check if all CWP subscriptions are selected for Cancellation"/>
+    <aura:attribute name="statusofIPNetwork" type="String"/>
+    <aura:attribute name="locationofIPNetworkinbasket" type="Boolean" default="false" description="True if IP Network is present in Basket after Modify/Cancel"/>
+    <aura:attribute name="ActiveIPNetwork" type="Id"/>
+    <aura:attribute name="statusofUCE" type="String"/>
+    <aura:attribute name="locationofUCEinbasket" type="Boolean" default="false" description="True if Unified Communication [] is present in Basket after Modify/Cancel"/>
+    <aura:attribute name="ActiveUCE" type="Id"/>
+    <aura:attribute name="CwpRowsUnderModifyInBasket" type="Integer" default="0"/>
+    <aura:attribute name="accountId" type="Id" />	
+    <aura:attribute name="basketId" type="Id" />
+     <aura:attribute name="BId" type="String" />
+    <aura:attribute name="opportunityId" type="Id" />
+    <aura:attribute name="renderCancelButton" type="Boolean" default="true"/>
+    <aura:attribute name="showCancellationModal" type="boolean" default="false" />
+    <aura:attribute name="showAlertforAllCWP" type="boolean" default="false" />
+    <aura:attribute name="proceedAfterAllCWPAlert" type="boolean" default="false"/>
+    <aura:attribute name="redirectToBasket" type="boolean" default="false" />
+    <aura:attribute name="showSpinner" type="boolean" default="false"/>
+    <aura:attribute name="showModifyModal" type="boolean" default="false" />
+    <aura:attribute name="selectedLookUpRecord" type="sObject" />
+    <aura:attribute name="assuranceProfileFlag" type="boolean" default="false"/>
+    <aura:attribute name="isBillingConsultant" type="boolean" default="false"/><!--EDGE-202389-->
+    <!--EDGE-172345 start-->
+    <aura:attribute name="isSalesEnterpriseUnified" type="boolean" default="false"/>
+  	<aura:attribute name="selectedCaseId" type="String" default="" />
+    <!--EDGE-172345 End-->
+    <aura:attribute name="showRedirectSpinner" type="boolean" default="false"/>
+    <aura:attribute name="disablebtn" type="boolean" default="true" description="To Disable Change Solution Button"/>
+    <aura:attribute name="roleError1" type="boolean" default="false" description="To Throw Error When Selected Role is Incorrect"/>
+    <aura:attribute name="isError1" type="boolean" default="false" description="To Throw Error when Modify Requestor is not Selected"/>
+	<aura:attribute name="accIdset" type="boolean" default="false" description="To Disable Change Solution Button"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="solutionId" type="Id" />
+    <aura:attribute name="tNowCaseRef" type="String" default="" /> <!--EDGE-132715-->
+    <aura:attribute name="selectedSolutions" type="List" default="[]" description="to show warning for selected billling acc"/>
+    <aura:attribute name="disableAddbtn" type="boolean" default="true" description="To Disable Add Solution Button  EDGE-154023"/>
+	<aura:attribute name="actionTypeSelected" type="string" default=""/>
+    <!--Header-->
+  	<lightning:navigation aura:id="navService"/>
+    <!--lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/-->
+    <aura:if isTrue="{!v.showSpinner}">
+    	<div class="slds-spinner_container">
+        <lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+    	</div>
+	</aura:if>
+    
+  <aura:if isTrue="{!v.showRedirectSpinner}">
+    	<div class="slds-spinner_container">
+        <lightning:spinner aura:id="spinner" class= "spins" variant="brand" size="medium"/>
+    	</div>
+	</aura:if>
+
+	<aura:if isTrue="{!v.isError}">
+		<c:customToast type="error" message="{!$Label.c.Error_Loading_Component}" title="Error title" />
+	</aura:if>
+    <!--EDGE-95594 To Throw Error when Mofidy Requestor is Not selected-->
+     <aura:if isTrue="{!v.isError1}">
+            <c:customToast type="error" message="{!$Label.c.Modification_Requester}" title="Modification Requestor is mandatory" />
+     </aura:if>
+	<aura:if isTrue="{!v.showModifyModal}">
+		<c:AdditionalMacInfo basketId="{!v.basketId}" accountId="{!v.accountId}" selectedLookUpRecord="{!v.selectedLookUpRecord}" redirectToBasket="{!v.redirectToBasket}" />
+	</aura:if>
+    <!--EDGE-95594 To Throw Error when Requestor Role in Incorrect-->
+    <aura:if isTrue="{!v.roleError1}">
+            <c:customToast type="error" message="{!$Label.c.User_Not_Authorized}" title="User Not Authorized" />
+    </aura:if>
+
+	<!-- Merge MACD Button Changes : Commented out below section as part of  EDGE-129540 - Start
+	<div aura:id="container"/>
+	<aura:if isTrue="{! v.accountId != '' }">
+		<div class="slds-border_bottom slds-clearfix" style="padding: 0 .25rem; background-color:white">
+				<h4 class="slds-float_left" style="padding: 0 .25rem; font-size: x-large; color: #7d7d7d;">Existing Solutions</h4>
+				<div style="margin-top: 0.25rem;">
+      				<lightning:button class="slds-float_right" label="Return to Account" iconName="utility:chevronleft" iconPosition="left" onclick="{!c.onCancel}"/>
+				</div>
+		</div>
+	</aura:if>
+	EDGE-129540 - End -->
+<div aura:id="container"/>
+	<div class="slds-page-header">
+		<!--<nav role="navigation" aria-label="Breadcrumbs">
+		   <ol class="slds-breadcrumb slds-list_horizontal slds-wrap">
+			   <lightning:icon iconName="standard:account"  /> 
+			   <li class="slds-breadcrumb__item slds-text-title_caps"><a href="/one/one.app?source=aloha#/sObject/Account/home" target="_blank"> Accounts</a></li>
+			   <li class="slds-breadcrumb__item slds-text-title_caps"><a href="{!'/one/one.app?#/sObject/'+ v.acc.Id + '/view'}" target="_blank">{!v.acc.Name}</a></li>
+		   </ol>
+		</nav>
+		<br/>-->
+		<!--loading spinner-->
+		<div class="slds-is-relative">
+			<aura:if isTrue="{!v.Spinner}">
+				<div aura:id="spinnerId" class="slds-spinner_container">
+				   <div class="slds-spinner--brand  slds-spinner slds-spinner--large " role="alert">
+					 <span class="slds-assistive-text">Loading</span>
+					 <div class="slds-spinner__dot-a"></div>
+					 <div class="slds-spinner__dot-b"></div>
+				   </div>
+				</div>
+			</aura:if>
+			<p class="slds-page-header__title slds-truncate" title="">Solutions</p><br/>
+			<aura:if isTrue="{!and(v.actionTypeSelected !='',v.actionTypeSelected =='Insolvency Cancel')}"><!--DIGI-9239-->
+			<aura:set attribute="else">
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col">
+						<div class="slds-truncate .slds-align_absolute-center "> 
+						<!--EDGE-202389 Start-->
+						<aura:if isTrue="{!v.isBillingConsultant}">
+							{!$Label.c.MACD_Notified_By}
+							<aura:set attribute="else">
+								 Requested By*  
+							</aura:set>
+						</aura:if>
+						<!--EDGE-202389 End-->
+							<lightning:helptext content="{!$Label.c.Requested_by}" />
+						</div>
+						<c:customContactRoleLookup objectAPIName="{!v.accountId}" selectedRecord="{!v.selectedLookUpRecord}" />
+					</div>
+				</div>
+				<br/>
+				<br/>
+			</aura:set>
+			</aura:if>			
+           <!--EDGE-172345 Start-->
+            <aura:if isTrue="{!v.isSalesEnterpriseUnified}">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                       <c:CaseCustomLookup objectName="Case" fieldName="CaseNumber" label="Sales Support Case" 
+                          iconName="standard:case" placeholder="  Search Case Number" accountId="{!v.accountId}"
+                                           value="{!v.selectedCaseId}" /> 
+                    </div>
+                </div>
+            </aura:if>
+            <!--EDGE-172345 end -->
+            <br/>
+            <br/>
+            <!--<span class="slds-badge">Selected Solution:{!v.selectedRowsCount}</span><br/>
+			<lightning:input type="search" onchange="{!c.filter}" value="{!v.filter}"  placeholder="Search by Solution Name, Phone Number or Site Location" /><br/>-->
+            <div style="slds-col slds-size_1-of-7">
+                <aura:if isTrue="{!v.accIdset}">
+                 <!--EDGE-141989 Replaced DataTable with LWC showSolutionRecordsForMac Componet for Polling --> 
+                    <!--EDGE-132715 Added assuranceProfileFlag and tNowCaseRef-->
+                    <!-- EDGE-154023 added add solution logic by shubhi-->
+                    <!--Added accountName attribute by Aman Soni/Shubhi for EDGE-224786 -->
+                <c:showSolutionRecordsForMac oncompletejob="{!c.handleLwcCompleteJob}" accountId="{!v.accountId}" 
+                                             basketId="{!v.basketId}"
+                                             accountName="{!v.acc.Name}"
+                                             assuranceProfileFlag="{!v.assuranceProfileFlag}"
+                                             tNowCaseRef="{!v.tNowCaseRef}"
+                                             selectedSalesSupportCaseId="{!v.selectedCaseId}"
+                                             selectedContact="{!v.selectedLookUpRecord}"  aura:id="showSolutionLWCComponent"
+                                             actionTypeSelected = "{!v.actionTypeSelected}"
+                                             onChangeSolution="{!c.handleLwcChangeSolution}"  
+                                             onAddSolution="{!c.handleLwcAddSolution}" 
+                                             oncheckAndAddSelected="{!c.handleLwcChangeSolution}"
+                                             oncheckAndCreateNewSolution="{!c.handleLwcAddSolution}"
+                                             onjobfailed="{!c.handleLwcJobFailed}" onopenModalPopup="{!c.openModalPopup}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!v.isOpen}">
+                       <c:SubscriptionDetails  solutionId="{!v.solutionId}" isOpen="{!v.isOpen}"/>
+                    </aura:if>
+				<aura:if isTrue="{!v.NoSearchRecord}">
+					<span><b>There are no solutions that matches your search criteria.</b></span><br/>
+				</aura:if>
+			</div>
+		</div>
+   </div>
+</aura:component>

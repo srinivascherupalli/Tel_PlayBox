@@ -1,0 +1,125 @@
+<aura:component controller="NumberReservationController" implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="numberReserve" type="object"/>
+    <aura:attribute name="accountId" type="string"/>
+    <aura:attribute name="deliveryAddress" type="sobject"  />
+    <aura:attribute name="selectedTab" type="String"/>
+    <aura:attribute type="String" name="basket_id"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:registerEvent name="NumberReservevt" type="c:NumberReservationTab"/>
+    <aura:registerEvent name="searchresultevt" type="c:NumberReserveSearchEvent"/>
+    <h1><b>Search Numbers:</b></h1>  
+    <div class="slds-box slds-theme_shade c-container">
+        <div style="font-weight: bold;">Number Parameters</div>
+        <aura:IF isTrue="{!v.selectedTab == 'Mobile'}">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                    <div class="header-column">
+                        <p class="field-title" title="Quantity">Quantity</p>
+                        <p><lightning:input type="number" aura:id="searchQty"  value="{!v.numberReserve.autoReserverQuantity}"/></p>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                    <div class="header-column" style="margin-top:20px;">
+                        <lightning:button label="Auto Reserve"  value="AutoReserve" onclick="{!c.handleAutoReserve}" variant="brand"/>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+            <lightning:layout > 
+                <lightning:layoutItem  padding="around-small">
+                    <b>OR</b>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:IF>
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Quantity">Quantity</p>
+                    <p><lightning:input type="number" aura:id="searchQty"  value="{!v.numberReserve.quantity}"/></p>
+                </div>
+            </lightning:layoutItem>
+            <!--EDGE-145555-->
+            <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Search Type">Search Type</p>
+                    <p><lightning:select aura:id="SearchType" value="{!v.numberReserve.selectedSearchType}" onchange="{! c.renderPatternTypeOptions }">
+                        <aura:iteration items="{!v.numberReserve.searchTypeList}" var="sType" ><!--//EDGE-148657-->
+                            <option value="{!sType.value}" selected ="{!sType.selected}" text="{!sType.label}"></option>
+                        </aura:iteration>
+                        </lightning:select>
+                    </p>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Pattern Type">Pattern Type</p>
+                    <p>
+                        <!--EDGE-145555-->
+                        <lightning:select aura:id="PatternType" value="{!v.numberReserve.selectedPatternType}">
+                            <aura:iteration items="{!v.numberReserve.patternList}" var="ptype" ><!--//EDGE-148657-->
+                                <option value="{!ptype.value}" selected ="{!ptype.selected}"  text="{!ptype.label}"></option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </p>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                <div class="header-column">
+                    <p class="field-title" title="Pattern">Pattern</p>
+                    <p> 
+                        <lightning:input type="text" aura:id="searchPattern"  maxlength="8" 
+                                         value = "{!v.numberReserve.reqPattern}"/>
+                    </p>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <aura:IF isTrue="{!v.selectedTab == 'Fixed'}">
+            <h2><b>Geo Parameters:</b></h2>
+            <lightning:layout multipleRows="true">
+                <!--EDGE-145555-->
+                <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                    <p class="field-title" title="Quantity">Area Code</p>
+                    <lightning:select aura:id="AreaCode" value="{!v.numberReserve.selectedAreaCode}">
+                        <aura:iteration items="{!v.numberReserve.areaCodeList}" var="aCode" > <!--//EDGE-148657-->
+                            <option value="{!aCode.value}" selected ="{!aCode.selected}" text="{!aCode.label}"></option>
+                        </aura:iteration>
+                    </lightning:select>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                    <div class="header-column" style="margin-top: 1rem;    text-align: center;">
+                        <p class="field-title"></p>
+                        <p class="field-title"></p>
+                        <p class="field-title" style="color: #F8F8F8">or</p>
+                        <p class="field-title" ><b>-- OR --</b></p>                                            
+                    </div>
+                </lightning:layoutItem> 
+                <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                    <div class="header-column" style="margin-top: -1.25rem;">
+                         <p class="field-title" style="color: #F8F8F8">Address</p>
+                        <p class="field-title" title="Pattern">Address</p>
+                        <p class="field-title" >
+                            <c:customDeliveryLookup aura:id="addrComp" objectAPIName="{!v.accountId}" 
+                                                    isContact="False" isAddress="true" 
+                                                    selectedRecord="{!v.numberReserve.deliveryAddress}" />
+                            <lightning:button variant="base" label="Manually add Address" title="Add Address" 
+                                              onclick="{!c.addAddress}" iconName="utility:add" iconPosition="left"/>
+                        </p>                                            
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                    <div class="header-column">
+                         <p class="field-title" style="color: #F8F8F8">checkbox</p>
+                        <p class="field-title" >
+                            <lightning:input type="checkbox" aura:id="sameExchange" checked="{!v.numberReserve.sameExchange}" 
+                                             label="Only show numbers under same Exchange" name="sameExchange" onchange="{!c.handletest}" />
+                        </p>                                            
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:IF>
+        <div class="slds-m-around_xx-large" style="text-align: right;">
+            <lightning:button label="Clear" class="clearbutton buttonwidth" value="clear" onclick="{!c.handlebuttonClick}" />
+            <lightning:button label="Search" class="slds-button  slds-button_brand buttonwidth" 
+                              value="search" onclick="{!c.handleSearchNumbers}" />
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,61 @@
+<!--
+Changing Re-direction Logic Based on User theme
+-->
+
+<apex:page standardController="Account" showHeader="false" sidebar="false">
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <apex:slds />
+    <script>
+        var renderCancelButton = Boolean('{!JSENCODE(IF($Setup.Environment_Configurations__c.Show_MAC_Cancel_Button__c,"true", "false"))}');
+        var basketId = "{! JSENCODE($CurrentPage.parameters.basketID) }";
+        var accountId = "{! JSENCODE($CurrentPage.parameters.accountID) }";
+        var userTheme="{!$User.UITheme}"
+        
+        if (!accountId && !basketId){
+            accountId = "{! JSENCODE($CurrentPage.parameters.id) }";
+        }
+        
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+            $Lightning.createComponent(
+                "c:ShowSolutionsOnMACButton",
+                {"basketId": basketId,
+                 "accountId": accountId,
+                 "renderCancelButton": renderCancelButton },
+                "sub",
+                function(cmp) {
+                  //Changing Re-direction Logic Based on User theme  
+                    $A.eventService.addHandler({
+                        event: 'force:navigateToSObject',
+                       handler: function(event) {
+                        console.log('vfp event: ' + event.getParam("recordId"));
+                        console.log('theme'+userTheme);
+                        if(userTheme =='Theme4t' ){
+                            // Salesforce app navigation
+                            console.log('inside sf1');
+                            sforce.one.navigateToSObject(event.getParam("recordId"));
+                        }
+                        else if(userTheme =='Theme3' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside prm');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/partners/' + recordId;
+                        }
+                        else if(userTheme =='Theme4d' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside lightning');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }else{
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside classic');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }
+                        
+                      }
+                    });
+                });
+            });
+    </script>
+    <div id="sub"></div>
+</apex:page>

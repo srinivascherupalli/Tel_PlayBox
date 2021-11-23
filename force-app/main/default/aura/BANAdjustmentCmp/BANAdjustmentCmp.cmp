@@ -1,0 +1,122 @@
+<!--//EDGE -104930
+Name: BanAdjustmentCmp
+Description: Display adjustment data for given BIlling account 
+Author:Mahima -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                controller="BanAdjustmentCmpHandler">
+    
+    <aura:attribute name="billingAccountId" type="string" />    
+    <aura:attribute name="StartDate" type="Date"/>
+    <aura:attribute name="EndDate" type="Date"/>
+    <aura:attribute name ="maxdate" type="String" />
+    <aura:attribute name="columns" type ="List"/>
+    <aura:attribute name="ListAdjustment" type="BanAdjustmentCmpHandler.AdjustmentDataWrapper[]"/>
+    <aura:attribute name="sortedBy" type="String" default="dateApplied" />
+ 	<aura:attribute name="sortedDirection" type="String" default="desc" />
+    <aura:attribute name="errorMessage" type="string"/>
+    <aura:attribute name="IsError" type="Boolean"  default="False"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global"  />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <!--<div aura:id="container" />-->
+    <aura:if isTrue="{!v.loadingSpinner}">
+    <div>
+      <lightning:spinner class="spin" aura:id="spinner" variant="brand" size="large" />
+    </div>
+  </aura:if>
+    <aura:if isTrue="{!v.IsError}">
+        <ui:message title="Error" severity="error" closable="true">
+            {!v.errorMessage}
+        </ui:message>
+    </aura:if>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_2-of-2">
+            <div class="slds-grid">
+               
+                <div class="slds-col">
+                    <div class="row slds-text-align_left" style="padding:20px;">
+                        <span class=""> From </span>
+                    </div></div>
+                <div class="slds-col ">
+                    <!--added max for fix of- EDGE-103647-->
+                    <lightning:input
+                                    type="date"
+                                     name="startDateS"
+                                     value="{!v.StartDate}"                                     
+                                     max="{!v.maxdate}"
+                                     aura:id="sdate"
+                                     />
+                    
+                </div>
+                <div class="slds-col ">
+                    <div class="row slds-text-align_left" style="padding:20px;">
+                        <span class=""> To </span>
+                    </div>
+                </div>
+                <div class="slds-col ">
+                    <span>
+                    <lightning:input
+                                     type="date"
+                                     name="toDateS"
+                                     value="{!v.EndDate}"                                     
+                                     max="{!v.maxdate}"
+                                     aura:id="edate"
+                                     />
+                        </span>
+                </div>
+                <div class="slds-col "> <div class="row" style="padding:20px;">
+                    <button
+                      class="slds-button  slds-button_brand"
+                      onclick="{!c.getSearchData}"
+                      label="Search"
+                      >Search</button>
+                    </div></div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_2-of-2">
+            <div aura:id="Adjustmentdiv" class="margin10" >
+                <lightning:datatable
+          columns="{!v.columns}"
+          data="{!v.ListAdjustment}"
+          keyField="adjustmentId"          
+          hideCheckboxColumn="true" 
+                                     onsort="{!c.updateColumnSorting}"
+				sortedBy="{!v.sortedBy}"  
+				sortedDirection="{!v.sortedDirection}"
+        />
+        <!--<table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+            <thead>
+                <tr>
+                    <th scope="col"> 
+                         <div class="slds-truncate headerColor" title="Description">Description</div>
+                        </th>
+                    <th scope="col">
+                        <div class="slds-truncate headerColor" title="Date applied">Date applied</div>
+                    </th>            
+                    <th scope="col">
+                        <div class="slds-truncate headerColor" title="Total adjustment">Total adjustment</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate headerColor" title="Applied to invoices">Applied to invoices</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate headerColor" title="Applied to your account">Applied to your account</div>
+                    </th>
+                </tr>
+            </thead>   
+            <tbody>
+                <aura:iteration items= "{!v.ListAdjustment}" var="adjust">
+                    <tr >
+                        <td><b>{!adjust.description}</b></td>
+                        <td>{!adjust.dateApplied}</td>
+                        <td>${!adjust.adjustmentAmount}</td>
+                        <td>${!adjust.amountApplied}</td>
+                        <td>${!adjust.amountUnapplied}</td>
+                    </tr>
+                </aura:iteration>
+            </tbody>
+        </table>-->
+        <br/>
+    </div>
+        </div>
+    </div>
+</aura:component>

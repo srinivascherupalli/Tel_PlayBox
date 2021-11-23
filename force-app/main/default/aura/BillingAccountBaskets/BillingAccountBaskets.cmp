@@ -1,0 +1,68 @@
+<!--
+EDGE		-153317
+Description	- Check if there are any active baskets against the billing account
+Author		-Aishwarya
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                controller="BillingAccountCreate">
+    <aura:attribute name="listOfActiveBaskets" 
+                    type="List" />
+    <aura:attribute name="billingRecord" type="Object" />
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="ViewAllRec" type="Boolean"  access="public"  default="true"/>
+    <aura:attribute name="viewFewActiveBaskets" 
+                    type="List" />
+     <aura:attribute name="billingACCid" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit }"/>
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="Id,Billing_Account_Number__c,Status__c"
+                      targetFields="{!v.billingRecord}"
+                      targetError="{!v.recordLoadError}"
+                      />
+    <br/>
+    <div aura:id="relatedBasket" class="slds-box">
+        <lightning:card>
+            <div class='slds-page-header forceRelatedListCardHeader'> 
+                <!--Added as a part of feedback comment given during demo-->
+             <aura:if isTrue="{!lessthan(v.listOfActiveBaskets.length,6)}">
+                <lightning:icon iconName="custom:custom66" size="small"/> &nbsp;<b> Active Baskets ({! v.listOfActiveBaskets.length })</b>
+             </aura:if>
+              <aura:if isTrue="{!and(greaterthan(v.listOfActiveBaskets.length,5),v.ViewAllRec)}">
+               <lightning:icon iconName="custom:custom66" size="small"/> &nbsp;<b> Active Baskets (1+)</b>
+                </aura:if>
+                <aura:if isTrue="{!and(greaterthan(v.listOfActiveBaskets.length,5),(v.ViewAllRec=='false'))}">
+               <lightning:icon iconName="custom:custom66" size="small"/> &nbsp;<b> Active Baskets ({! v.listOfActiveBaskets.length })</b>
+                </aura:if>
+                </div>
+            <aura:if isTrue="{!not(empty(v.listOfActiveBaskets))}"> 
+                <div aura:id="activeBasket">
+                 <aura:if isTrue="{!v.ViewAllRec}">   
+                    <lightning:datatable
+                                         keyField="id"
+                                         data="{!v.viewFewActiveBaskets}"
+                                         columns="{!v.columns }"
+                                         hideCheckboxColumn="true"
+                                         showRowNumberColumn="true"/>
+                      <aura:set attribute="else">
+                             <lightning:datatable
+                                         keyField="id"
+                                         data="{!v.listOfActiveBaskets}"
+                                         columns="{!v.columns }"
+                                         hideCheckboxColumn="true"
+                                         showRowNumberColumn="true"/>
+                        </aura:set>
+                 </aura:if>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!not(empty(v.listOfActiveBaskets))}"> 
+                <aura:if isTrue="{!v.ViewAllRec}">
+                    <div class="slds-card__footer">
+                        <a href="javascript:void(0);" onclick="{!c.navigateToMyComponent}">View All</a>
+                    </div> 
+                </aura:if>
+            </aura:if>  
+        </lightning:card>
+    </div>
+</aura:component>

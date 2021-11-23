@@ -1,0 +1,9 @@
+.relatedListLWCStyle lightning-primitive-header-actions {
+    display: none;
+}
+.relatedListLWCStyle .slds-accordion__summary-heading {
+    background: var(--lwc-colorBackground,rgb(20, 20, 20));
+}
+.relatedListLWCStyle lightning-formatted-url a {
+    font-family: akkuratBold,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif !important;
+}

@@ -1,0 +1,4 @@
+<design:component>
+    <design:attribute name="DisplayedOn" label="Where to Display Component" description="Name the Component Where to be Dispplayed Home/CaseList" />
+    <design:attribute name="ButtonLabel" label="Display Name for the Button" description="Name that appears on the Button"/>
+</design:component>

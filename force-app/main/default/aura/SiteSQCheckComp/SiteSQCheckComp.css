@@ -1,0 +1,22 @@
+.THIS .slds-spinner_container  {
+    background: none;
+    margin-top: 50px;
+    margin-bottom: 50px; 
+}
+
+.THIS table thead th {
+    background-color: #d8d8d8;
+}
+.THIS .slds-th__action .slds-th__action-button { 
+    display: none; 
+}
+.THIS .slds-border--right table thead tr{
+    background-color:#c1dcea;
+}
+
+.THIS tr:nth-child(even)  { 
+    background: #f3f2f2; 
+}
+.THIS .slds-status--icon .slds-form-element__icon {
+    padding: 0;
+}

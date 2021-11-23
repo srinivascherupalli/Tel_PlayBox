@@ -1,0 +1,15 @@
+<aura:event type="APPLICATION" description="This event is need to capture the Details between Lighting componet" >
+    <aura:attribute name="firedComponent" type="integer"/>
+    <aura:attribute name="OverideIncumbent" type="boolean"/>
+    <aura:attribute name="IsIncumbentBack" type="boolean"/>
+     <aura:attribute name="IsOverrideINC" type="boolean"/>
+    <aura:attribute name="IsIncumbentSave" type="boolean"/>
+    <aura:attribute name="IsContinue" type="boolean"/>
+    <aura:attribute name="IsContinuePartner" type="boolean"/>
+    <aura:attribute name="SelectedAccountId" type="String"/>
+    <aura:attribute name="ReconmondedId" type="String"/>
+    <aura:attribute name="PartnerSelectedDetails" type="Object"/>  
+    <aura:attribute name="valPrimaryDistributor" type="String"/><!-- v1.2 Team Hawaii [Vivian Charlie] updates to incubembency as per P2OB-2448 -->
+    <aura:attribute name="valPrimaryDistributorName" type="String"/><!-- v1.2 Team Hawaii [Vivian Charlie] updates to incubembency as per P2OB-2448 -->
+    
+</aura:event>

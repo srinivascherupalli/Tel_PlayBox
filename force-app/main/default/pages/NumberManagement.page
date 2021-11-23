@@ -1,0 +1,832 @@
+<apex:page id="page" standardStylesheets="false" applyBodyTag="false" lightningStylesheets="true" showHeader="false" sidebar="false" controller="NumberManagementController" docType="html-5.0" action="{!validateSiteWithUSersPageAction}"><!--INC000090679656-->
+   <apex:includeScript value="{!$Resource.cscfga__jQuery_min}" />
+   <apex:includeScript value="{!$Resource.cscfga__cs_messaging}"/>
+   <apex:slds />
+   <apex:outputPanel id="JSPanel">
+      <script type="text/javascript">
+          var TIMER_STOPPER;
+         // twistSection(document.getElementById(‘{!$Component.allDivId.formId.rowId.maindivepool.divPool.numberBlock.reservedPanel.reservedDiv.reservedSection}’).getElementsByTagName(‘img’)[0])
+         // example of successCallback
+         function getAttributeCallbackSuccess(value) {// write custom logic here when message result is received
+             console.log('getAttrbuteCallback received value : ' + value); 
+             // alert('flag ' + value);
+         }
+         // example of errorCallback
+         function getAttrbuteCallbackError(errorMsg) {// write custom logic here when error message is received
+             console.log('getAttrbuteCallbackError received error : ' + errorMsg);
+             //  alert('flag ' + value);
+         }
+         var winOrigin = parent;
+         CSMSG.setConfiguratorWindow(winOrigin);
+         $(document).ready(function(){CSMSG.setAttribute('isNRCompleted_0', '{!JSENCODE(resrvedNumberGreaterThanUsers)}');});
+         window.onload = function WindowLoad(event) {
+             //alert('Page is loaded' + '{!JSENCODE(resrvedNumberGreaterThanUsers)}');
+             CSMSG.setAttribute('isNRCompleted_0', '{!JSENCODE(resrvedNumberGreaterThanUsers)}');
+             startTimeoutPoller();
+             document.getElementById("mainDiv").style.display = "none";
+             document.getElementById("{!JSENCODE($Component.page:form1.searchPattern)}").disabled = true;
+             
+             document.getElementById("transitionrepeat").style.display = "none";
+             document.getElementById("transitionmaxcolout").value = '[+]';
+             document.getElementById("activerepeat").style.display = "none";
+             document.getElementById("Activemaxcolout").value = '[+]';
+             document.getElementById("unreservecbrepeat").style.display = "none";
+             document.getElementById("reservemaxcolout").value = '[+]';
+         }
+         function wait(ms) {
+             var d = new Date();
+             var d2 = null;
+             do { d2 = new Date(); }
+             while(d2-d < ms);
+         }
+         
+         function spindleOutReserve(){
+             wait(2000);
+             document.getElementById("loadingSpinnerAppt").style.display = "none";
+             document.getElementById('rowId').classList.remove("alerting");
+             
+         }
+         
+         function stopTimer(){
+             clearInterval(TIMER_STOPPER);
+             document.getElementById("divtime").style.display = "none";
+         }
+         function startAndResetTimer(){
+             document.getElementById("loadingSpinnerAppt").style.display = "none";
+             document.getElementById('rowId').classList.remove("alerting");
+             document.getElementById("divtime").style.display = "none";
+             rerenderSearchPanel();
+             if('{!JSENCODE(erroredOut)}'=='false'){
+                 document.getElementById("divtime").style.display = "block";
+                 document.getElementById("mainDiv").style.display = "block";
+                 document.getElementById("allFileds").style.display = "none";
+                 // document.getElementById("rowshape").style.display = "none";
+                 
+                 rerenderReserveButton();
+                 var timeInMinutes = 2;
+                 var minutes = 60 * timeInMinutes;
+                 display = document.querySelector('#time');
+                 for(i=0; i<10000; i++)
+                 {
+                     window.clearInterval(i);
+                 }
+                 startTimer(minutes, display);
+             }
+         }
+         
+         function startTimer(duration, display) {
+             var minutes = 0;
+             var seconds = 0;
+             var timer = duration, minutes, seconds;
+             TIMER_STOPPER = setInterval(function () {
+                 minutes = parseInt(timer / 60, 10);
+                 seconds = parseInt(timer % 60, 10);
+                 
+                 minutes = minutes < 10 ? "0" + minutes : minutes;
+                 seconds = seconds < 10 ? "0" + seconds : seconds;
+                 
+                 display.textContent = minutes + ":" + seconds;
+                 
+                 if (--timer < 0) {
+                     for(i=0; i<10000; i++)
+                     {
+                         window.clearInterval(i);
+                     }
+                     //switchOffTimer();
+                     //document.getElementById("timeoutMessage").style.display = "block";
+                     hideSearchResult();
+                     document.getElementById("mainDiv").style.display = "none";
+                     //document.getElementById('{!JSENCODE($Component.page:form1.location)}').value='none';
+                     document.getElementById('{!JSENCODE($Component.page:form1.quantity)}').value='';
+                     document.getElementById('{!JSENCODE($Component.page:form1.searchPattern)}').value='';
+                     document.getElementById('{!JSENCODE($Component.page:form1.slectSite)}').value='None';
+                     document.getElementById("allFileds").style.display = "block";
+                     
+                 }
+             }, 1000);
+         }
+         function startTimeoutPoller(){
+             document.getElementById("timeoutMessage").style.display = "none";
+         } 
+         function loadSpinnerAppt(){
+             document.getElementById("loadingSpinnerAppt").style.display = "block";
+            
+            document.getElementById('rowId').classList.add("alerting");
+            
+             //document.getElementById("divtime").style.display = "none";
+             //clearBottomSectionVF();
+         }
+         function setValueToConfiguration(){
+             CSMSG.setAttribute('isNRCompleted_0', '{!JSENCODE(resrvedNumberGreaterThanUsers)}');
+         }
+
+         function sendDatatoPlugin (command) {   
+            var val =  document.getElementById("{!JSENCODE($Component.page:form1.reservedNumbersData)}").value;
+             console.log('reservedNumbersData ' , val);
+             
+             var payload =
+             {
+               command: command,
+               configId: '{!rootConfigId}',
+               data: val
+             };
+             
+             window.parent.postMessage(payload, '*') ;                
+         }
+         
+         function refreshUnreserveJS() {
+            sendDatatoPlugin('UNRESERVE_FNN');
+         }
+
+         function refreshReserveJS(){
+             refreshReserve();
+             document.getElementById("mainDiv").style.display = "none";
+             
+             
+             //document.getElementById('{!JSENCODE($Component.page:form1.location)}').value='none';
+             document.getElementById('{!JSENCODE($Component.page:form1.quantity)}').value='';
+             document.getElementById('{!JSENCODE($Component.page:form1.searchPattern)}').value='';
+             document.getElementById('{!JSENCODE($Component.page:form1.slectSite)}').value='None';
+             
+             document.getElementById("allFileds").style.display = "block";
+             console.log('refreshReserveJS: ', "{!wrapAllReservedNumbers}" );
+
+             sendDatatoPlugin('RESERVE_FNN');
+         }
+         
+         function SearchPanelView(){
+             document.getElementById("mainDiv").style.display = "none";
+             document.getElementById("allFileds").style.display = "block";
+             // var forms = document.getElementById("allFileds");
+             // forms.reset();
+             // alert(document.getElementById('{!$Component.page:form1.slectSite}'));
+             // document.getElementById('{!JSENCODE($Component.page:form1.location)}').value='none';
+             document.getElementById('{!JSENCODE($Component.page:form1.quantity)}').value='';
+             document.getElementById('{!JSENCODE($Component.page:form1.searchPattern)}').value='';
+             document.getElementById('{!JSENCODE($Component.page:form1.slectSite)}').value='None';
+             
+         }
+         function disableSrcPatternJS(){
+             if(document.getElementById("{!JSENCODE($Component.page:form1.slectSite)}").value==='None')
+                 document.getElementById("{!JSENCODE($Component.page:form1.searchPattern)}").disabled = true;
+             else
+                 document.getElementById("{!JSENCODE($Component.page:form1.searchPattern)}").disabled = false;
+             rerendersrcPattern();
+         }
+         
+         
+         function twistSectionReserve(){
+            if(document.getElementById("reservemaxcolout").value== '[+]'){
+                    document.getElementById("unreservecbrepeat").style.display = "block";
+                    document.getElementById("reservemaxcolout").value = '[-]';
+            }else{
+                document.getElementById("unreservecbrepeat").style.display = "none";
+                document.getElementById("reservemaxcolout").value = '[+]';
+            }
+         };    
+         
+         function twistSectionActive(){
+             if(document.getElementById("Activemaxcolout").value== '[+]'){
+                    document.getElementById("activerepeat").style.display = "block";
+                    document.getElementById("Activemaxcolout").value = '[-]';
+            }else{
+                document.getElementById("activerepeat").style.display = "none";
+                document.getElementById("Activemaxcolout").value = '[+]';
+            }
+         }
+         function twistSectionTransition(){
+            if(document.getElementById("transitionmaxcolout").value== '[+]'){
+                    document.getElementById("transitionrepeat").style.display = "block";
+                    document.getElementById("transitionmaxcolout").value = '[-]';
+            }else{
+                document.getElementById("transitionrepeat").style.display = "none";
+                document.getElementById("transitionmaxcolout").value = '[+]';
+            }
+         }
+         
+      </script>
+   </apex:outputPanel>
+   <style type="text/css">
+       #loadingSpinnerAppt {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+#loader {
+    display: block;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #3498db;
+    -webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+    animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+}
+ 
+#loader:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #e74c3c;
+    -webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+      animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+}
+ 
+#loader:after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #f9c922;
+    -webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+      animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+}
+ 
+@-webkit-keyframes spin {
+    0%   {
+        -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: rotate(0deg);  /* IE 9 */
+        transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
+    }
+    100% {
+        -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: rotate(360deg);  /* IE 9 */
+        transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
+    }
+}
+@keyframes spin {
+    0%   {
+        -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: rotate(0deg);  /* IE 9 */
+        transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
+    }
+    100% {
+        -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: rotate(360deg);  /* IE 9 */
+        transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
+    }
+}
+       
+       
+     .alerting {
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -o-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
+    }
+
+      
+       
+   .column {
+  float: left;
+  width: 33.33%;
+}
+
+.customAccordion{
+  width : 95% !important;
+  background-color: #0070d2 !important;
+  padding: .50rem 3rem .50rem 1.5rem !important;
+}
+
+.customButton{
+  background-color: #0070d2 !important;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+      .columnItem select {
+      width: unset;
+      }
+      /* Gets rid of table cell whitespace */
+      .tableMod{
+      line-height: 0;  
+      font-size: 0;
+      }
+      /* Sets the font and line height correctly for the paragraph of text */
+      .tabletdp{
+      line-height: 14px;
+      font-size: 14px;
+      width:5px !important;
+      }
+      /* The switch - the box around the slider */
+      .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 20px;
+      }
+      /* Hide default HTML checkbox */
+      .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      }
+      /* The slider */
+      .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+      }
+      .collapsedbtn{
+      top: 43.5%;
+      position: absolute;
+      width: 2%;
+      height: 2.5%;
+      left:95%;
+      background-color: GREY;
+      BORDER: NONE;
+      font-size: 100%;
+      color: WHITE !important;
+      }
+      .slider:before {
+      position: absolute;
+      content: "";
+      height: 10px;
+      width: 10px;
+      left: 8px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+      }
+      .pbSubheader {
+      background-color:   GREY !important;
+      color : WHITE;
+      }
+      input:checked + .slider {
+      background-color: #0070d2;
+      }
+      input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+      }
+      input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+      }
+      /* Rounded sliders */
+      .slider.round {
+      border-radius: 34px;
+      }
+      .slider.round:before {
+      border-radius: 50%;
+      }
+      .square {
+      width: 100%;
+      border: 25px WHITE;
+      }
+      }
+      .customspinner{
+      position: relative !important;
+      top: 50% !important;
+      left: 50% !important;
+      margin: -75px 0 0 -75px !important;
+      }
+      .headerRow{
+      background: WHITE !important;
+      text-align: center !important;
+      }
+      .minimisedPanel{
+      height : 100px !important;
+      }
+      .ScrollStyle
+      {
+      max-height: 350px !important;
+      overflow-y: scroll !important;
+      }
+      .sldsSearchBarUP{
+      position: absolute;
+      /*top: 15%;*/
+      }
+      .BlueBg{
+        background-color : #1b5297;
+      }
+      .shape{
+      /* width:50% !important;
+      border-color: blue !important;*/
+      }
+      .shape1{
+      width:100% !important;
+      //border-color: blue !important;
+      }
+      .parentRow{
+      width: 99%;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin: 0 auto;
+      }
+      .parentRow .apexp{
+      margin:1%;
+      }
+      .rowshape{
+      width:100%;float:left;
+      }
+      .sldsSearch,.numerPool{
+      width:40%;
+      float:left;
+      border:1px solid #0070d2;
+      border-radius:10px;
+      margin-right:2%;
+      }
+       .sldsSearchWhite{
+      width:40%;
+      float:left;
+      border:1px solid WHITE;
+      border-radius:10px;
+      margin-right:2%;
+      }
+       
+      .sldsreserv{
+      width:58%;
+      float:left;
+      border:1px solid #0070d2;
+      border-radius:10px;
+      }
+      .sldsreservForSearch{
+      width:40%;
+      float:left;
+      border:1px solid #0070d2;
+      border-radius:10px;
+      }
+      .hideListButton{
+      display:none;
+      }
+      .slds-scope .slds-box{
+      border:0px !important;
+      }
+      .timeoutError{
+      color:red;
+      }
+      .submitButton{  
+      height: 30px;
+      width: 100px;
+      background: #005fb2 !important;
+      border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+      color: #fff !important;
+      text-decoration: none;
+      margin: 0 15px !important;
+      border:1px solid rgb(221, 219, 218) !important;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      }
+      .submitButtonDisabled{
+      height: 30px;
+      width: 100px;
+      border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+      color: rgb(196, 196, 196) !important;
+      text-decoration: none;
+      margin: 0 15px !important;
+      cursor: not-allowed !important;
+      background: #e8e8e9 !important;
+      }
+      .disableConfirmButton{
+      display:none !important;
+      background : #e8e8e9 !important;
+      border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+      }
+      .itemrow{
+      margin-bottom:15px;
+      width:100%;float:left;
+      }
+      .columnItem{
+      width:50%;float:left;
+      }
+      .columnItem select{
+      width:auto !important;
+      }
+      .blkHeading{
+      margin-bottom: 20px !important;
+      font-weight: 700;
+      color: black !important;
+      }
+      .indicatorMessage {
+      display: block;
+      height: auto;
+      position: absolute;
+      top: calc(50% + -15px);
+      left: 60%;
+      transform: rotate(270deg);
+      background-color: transparent;
+      color: #333;
+      font-size: 18px;
+      font-weight: normal;
+      }
+      .customPBSection{
+      display: flex;
+      -webkit-box-align: center;
+      align-items: center;
+      border: 1px solid transparent;
+      padding: 0 .5rem;
+      width: 100%;
+      overflow: hidden;
+      font-size: 1rem;
+      line-height: 1.875rem;
+      background-color: rgb(243, 242, 242);
+      box-sizing: border-box;
+      }
+      .tableStyle {border-collapse: collapse; border-spacing: 0px 0px; widht: 50% !important;}
+      .colStyle1 { width: 16.5%;text-align:right; padding-top:3px; padding-bottom:5px}
+      .colStyle2 { width: 10%; padding-left:20px; padding-top:5px; padding-bottom:5px}
+      .colStyle3 { width: 10%;text-align:right; padding-top:5px; padding-bottom:5px}
+      .colStyle4 { width: 21%; padding-left:20px; padding-top:5px; padding-bottom:5px}
+      .colStyle5 { width: 10%;text-align:right; padding-top:5px; padding-bottom:5px}
+      .colStyle6 { width: 32%; padding-left:20px; padding-top:5px; padding-bottom:4px}
+      .rowstyle { border-bottom-style:solid;border-bottom-width:0px;border-bottom-color:#E8E8E8 }
+      .fontForReserver{
+      font-family: "Salesforce Sans",Arial,sans-serif !important;
+      font-weight: bold !important;
+      font-size: 0.75em;
+      color: BLACK;
+      }
+      /*RPL Changes for ngUC : 20 jun 2019*/
+      .slds-box .slds-table thead th {
+       text-align: center;
+       }
+   </style>
+   <div class="slds-scope" id="allDivId">
+      
+      <apex:form id="form1">
+         <apex:actionFunction name="EnableSearchPanel" rerender="fnnpanel"/>
+         <apex:actionFunction name="rerenderReserveButton" rerender="reservePanel"/>
+         <apex:actionFunction name="switchOffTimer" rerender="timeUpPanel"/>
+         <apex:actionFunction name="hideSearchResult" action="{!hideSearchResult}" rerender="reservePanel,ErrorPanel"/>
+         <apex:actionFunction name="fnnListRefresher" reRender="fnnpanel"/>
+         <apex:actionFunction name="refreshReserve" reRender="fnnpanel,ErrorPanel"/>
+         <apex:actionFunction name="callReserveFnn" action="{!reserveFNN}" reRender="reservedPanel,reservePanel" onComplete="refreshReserveJS()"/>
+         <apex:actionFunction name="rerenderSearchPanel"  reRender="allFileds"/>
+         <apex:actionFunction name="switchReserveNumbers"  action="{!switchReserveNumbersAction}" rerender="reservedPanel,allDivId"/>
+         <apex:actionFunction name="rerendersrcPattern"  rerender="srcPattern"/>
+
+         <div class="slds-box" >
+            <apex:outputLabel id="ordSumPanel">
+                <apex:dataTable styleclass="slds-table slds-border_bottom  slds-border_left slds-border_right slds-border_top" style="width:50%;" value="{!orderSummaryList}" var="obl">
+                        <!--RPL Changes for ngUC: changing the table layout -->
+                          <apex:column style="width:250px;text-align: center; color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top" value="{!obl.siteName}" headerValue="Product Name" rendered="{!isTCPresent}"/>
+                          <apex:column style="width:250px;text-align: center;color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top"  value="{!obl.totalUserCount}" headerValue="User" rendered="{!isTCPresent}"/>
+                          <apex:column style="width:250px;text-align: center; color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top" value="{!obl.siteName}" headerValue="Site Name" rendered="{!!isTCPresent}"/>
+                          <apex:column style="width:250px;text-align: center; color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top"  value="{!obl.totalfixedSeatCount}" headerValue="Fixed Seats" rendered="{!!isTCPresent}"/>
+                          <apex:column style="width:250px;text-align: center;color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top"  value="{!obl.totalfaxLineCount}" headerValue="Fax Seats" rendered="{!!isTCPresent}"/>
+                        <apex:column style="width:250px;text-align: center;color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top"  value="{!obl.totalHuntGrpCount}" headerValue="Hunt Group"/>
+                    	<apex:column style="width:250px;text-align: center;color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top"  value="{!obl.totalAutoAttendantCount}" headerValue="Auto Attendant" /><!--DPG-483 to be visible under CWP and TC solution-->
+                        <apex:column style="width:250px;text-align: center;color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top"  value="{!obl.totalMBNCount}" headerValue="Main Business Number" rendered="{!isTCPresent}" />
+                        <apex:column style="width:250px;text-align: center;color: BLACK" styleClass="slds-border_bottom  slds-border_left slds-border_right slds-border_top"  value="{!obl.total}" headerValue="Total"/>
+                    </apex:dataTable>
+            </apex:outputLabel>
+         </div>
+         <div class="rowshape" id="rowId">
+            <apex:outputPanel id="ErrorPanel" rendered="{!displayErrorPanel}">
+               <div class ="slds-form slds-scope slds-form_stacked" >
+                  <div class="{!cssClassForPanelMsgs}" style="width : 40%">
+                     <span class="slds-assistive-text">WARNING</span>
+                     <div class="slds-notify__content">
+                        <h5 class="slds-text-heading_small slds-align_absolute-center">{!PanelMessage}</h5>                        
+                     </div>
+                  </div>
+               </div>
+            </apex:outputPanel>
+            <apex:outputPanel id="timeUpPanel">
+               <div id="timeoutMessage">
+                  <span class = "timeoutError">Sorry, the Number search request has timed out. Please search again.</span>
+               </div>
+            </apex:outputPanel>
+            <div class="sldsSearch" id="rowshape">
+               <div class="slds-box shape" id="allFileds">
+                  <div id="allFileds1">
+                     <p class="blkHeading">Search Available Numbers</p>
+                     <div class="itemrow">
+                        <div class="columnItem">
+                           <b style="color:RED">*</b> 
+                           <apex:outputLabel value="Quantity" style="color:BLACK;" for="quantity"/>
+                           <div class ="slds-form slds-scope slds-form_stacked">
+                              <div class="slds-form-element">
+                                 <apex:input styleclass="slds-input" style="width:50%;color:BLACK !important;" label="Quantity"   id="quantity"  value="{!quantity}" />                                 
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="itemrow">
+                        <div class="columnItem">
+                           <p>
+                              <apex:outputLabel value="Pattern Type" style="color:BLACK;" for="slectSite"/>
+                           </p>
+                           <apex:selectList styleclass="slds-select" label="Pattern Type" value="{!selectedPatternType}" style="width: 50% !important;color:BLACK !important;" id="slectSite" size="1"  onchange="disableSrcPatternJS();" >
+                              <apex:selectOption itemValue="None" itemLabel="--None--" />
+                              <apex:selectOption itemValue="Begins With" itemLabel="Begins With" />
+                              <apex:selectOption itemValue="Contains" itemLabel="Contains" />
+                              <apex:selectOption itemValue="Ends With" itemLabel="Ends With" />
+                              <apex:selectOption itemValue="Equals" itemLabel="Equals" />
+                              <!-- <apex:selectOption itemValue="exchangeServiceArea" itemLabel="Exchange Service Area"/>-->
+                           </apex:selectList>
+                        </div>
+                        <div class="columnItem">
+                           <div class ="slds-form slds-scope slds-form_stacked" style="width:60%;right: 25%;position: absolute;">
+                              <div class="slds-form-element" style="width:25%;">
+                                 <p>
+                                    <apex:outputLabel value="Search Pattern" style="color:BLACK;" for="searchPattern" />
+                                 </p>
+                                 <apex:input styleclass="slds-input"  label="Search Pattern" id="searchPattern" value="{!pattern}"/>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div>
+                        <apex:commandButton styleClass="slds-button slds-button_brand customButton" value="Search" action="{!searchFNN}" rerender="JSPanel,timerPanel,fnnpanel,ErrorPanel,reservePanel,reservedPanel" onclick="fnnListRefresher(),startTimeoutPoller(),loadSpinnerAppt()" onComplete="startAndResetTimer(),rerenderSearchPanel()" disabled="{!isCancelOrder}" />
+                     </div>
+                  </div>
+               </div>
+                </div>
+            
+            <apex:outputPanel id="unreservePanel">
+               <div class="sldsreserv" id="maindivepool">
+                  <div class="slds-box" id="divPool">
+                     <apex:outputPanel id="reservedPanel">
+                        <apex:outputPanel id="ErrorPanelUnreserve" rendered="{!SuccessUnreserved}">
+                           <div class ="slds-form slds-scope slds-form_stacked" >
+                              <div class="{!cssClassForUnreservePanelMsgs}" style="width : 60%">
+                                 <span class="slds-assistive-text">WARNING</span>
+                                 <div class="slds-notify__content">
+                                    <h5 class="slds-text-heading_small slds-align_absolute-center">{!UnreservePanelMessage}</h5>
+                                 </div>
+                              </div>
+                           </div>
+                        </apex:outputPanel>
+                        <p class="blkHeading">
+                           Customer Number Pool
+                           &nbsp;&nbsp;&nbsp;&nbsp; 
+                           <label class="switch">
+                              <apex:inputcheckbox value="{!unreserveNumbers}" disabled="{!disableUnreserve}" onchange="switchReserveNumbers()"/>
+                              <span class="slider round"></span>
+                           </label>
+                           &nbsp;&nbsp;
+                           <span>Unreserve Number</span>
+                        </p>
+                       
+                            <div id="activePan">
+                                     <div class ="slds-form slds-scope slds-form_stacked" >
+                                      <div class="slds-notify slds-notify_toast slds-theme_shade customAccordion">
+                                         <span class="slds-assistive-text">WARNING</span>
+                                         <div class="slds-notify__content">
+                                        <output id="Activemaxcolout" class="slds-text-heading_small slds-align_absolute-center" onclick="twistSectionActive();" style="text-align:left;float:left;cursor: pointer">[-]</output>&nbsp;&nbsp;<h2 style="text-align:right;float:right;">Active Numbers</h2>
+                                    </div>
+                                      </div>
+                                   </div>
+                                   <div id="activerepeat">
+                                    <apex:repeat value="{!activeNumbersList}" var="fnn">
+                                
+                                     <div class="column" style="padding-left: 2%;">
+                                    <apex:outputText value="{!fnn}" styleClass="slds-text-body_regular slds-border_bottom  slds-border_left slds-border_right slds-border_top fontForReserver"/>
+                                     </div>
+                                    </apex:repeat>
+                                    </div>
+                           </div>
+                           
+                           <div id="transitionPan">
+                                     <div class ="slds-form slds-scope slds-form_stacked" >
+                                      <div class="slds-notify slds-notify_toast slds-theme_shade customAccordion">
+                                         <span class="slds-assistive-text">WARNING</span>
+                                         <div class="slds-notify__content">
+                                        <output id="transitionmaxcolout" class="slds-text-heading_small slds-align_absolute-center" onclick="twistSectionTransition();" style="text-align:left;float:left;cursor: pointer">[-]</output>&nbsp;&nbsp;<h2 style="text-align:right;float:right;">In Transition Numbers</h2>
+                                    </div>
+                                      </div>
+                                   </div>
+                                   <div id="transitionrepeat">
+                                    <apex:repeat value="{!transitionRangeNumbersList}" var="fnn">
+                                    <div class="column" style="padding-left: 2%;">
+                                     <apex:outputText value="{!fnn}" styleClass="slds-text-body_regular slds-border_bottom  slds-border_left slds-border_right slds-border_top fontForReserver"/>
+                                     </div>
+                                    </apex:repeat>
+                                    <apex:repeat value="{!transitionFnnNumbersList}" var="fnn">
+                                    <div class="column" style="padding-left: 2%;">
+                                     <apex:outputText value="{!fnn}" styleClass="slds-text-body_regular slds-border_bottom  slds-border_left slds-border_right slds-border_top fontForReserver"/>
+                                     </div>
+                                    </apex:repeat>
+                                    </div>
+                           </div>
+                           
+                           <!-- <br></br>-->
+                           <!-- <br></br><br></br>-->   
+                           
+
+                           <div id="reservedPan" style="padding-bottom:2%;"> 
+                                     <div class ="slds-form slds-scope" >
+                                      <div class="slds-notify slds-notify_toast slds-theme_shade customAccordion">
+                                         <div class="slds-notify__content">
+                                        <output id="reservemaxcolout" class="slds-text-heading_small slds-align_absolute-center" onclick="twistSectionReserve();" style="text-align:left;float:left;cursor: pointer">[-]</output>&nbsp;&nbsp;<h2 style="text-align:right;float:right;">Reserved Numbers</h2>
+                                    </div>
+                                      </div>
+                                   </div>
+                                   <div id="unreservecbrepeat" style="padding-bottom: 17%;">
+                                    <apex:repeat value="{!wrapAllReservedNumbers}" var="fnn" id="unreservecbrepeat" >
+                                
+                                     <div class="column" style="padding-left: 2%;">
+                                     <apex:inputCheckbox rendered="{!unreserve}" id="unreservecb" value="{!fnn.selected}"/>
+                                    <apex:outputText value="{!fnn.unReservedNumber}" styleClass="slds-text-body_regular slds-text-align_left fontForReserver slds-border_bottom  slds-border_left slds-border_right slds-border_top"/>
+                                     </div>
+                                    </apex:repeat>
+                                    </div>
+                               
+                           </div>
+                           <div  style="display:block; padding-left: .5rem;margin-top: 15%;" >
+                              <apex:commandButton styleClass="slds-button slds-button_brand customButton" Value="Unreserve Numbers" onclick="loadSpinnerAppt()" action="{!processSelected}" oncomplete="refreshUnreserveJS(),spindleOutReserve(),stopTimer()" rendered="{!unreserve}"  rerender="reservedPanel,ErrorPanel"/>                         
+                           </div>
+                          
+                           <apex:inputText value="{!ReservedNumbersData}" id="reservedNumbersData" style="width:0px; foreground-color:#FFFFFF00; border:0px solid #FFFFFF00"/>                           
+                          
+                       </apex:outputPanel>
+                  </div>
+               </div>
+            </apex:outputPanel>
+            <apex:outputPanel id="DownPanel">                  
+
+               <div class="sldsSearchBarUP sldsreservForSearch" id="mainDiv" >
+                  <div class="slds-box">
+
+                     <apex:outputPanel id="reservePanel">
+                        <div>
+                           <apex:commandButton styleClass="slds-button slds-button_brand customButton" value="Reserve"  onclick="loadSpinnerAppt(),callReserveFnn()" disabled="{!fnnFlag}" oncomplete="spindleOutReserve(),stopTimer()" rerender="reservedPanel"/>
+                           <apex:commandButton disabled="{!isCancelOrder}" styleClass="slds-button slds-button_brand customButton" value="Clear and Search Again"  action="{!clearAll}" rerender="reservedPanel,ErrorPanel,allDivId" onComplete="SearchPanelView(),stopTimer()"/>
+                        </div>
+                     </apex:outputPanel>
+
+                     <div style="margin-top:2%;">
+                        <apex:outputPanel id="timerPanel">
+                           <apex:outputPanel rendered="{!isNumberAvailable}">
+                              <div id="divtime" class ="square" style="cursor: default; background-color: rgb(250, 250, 249);"><b>Please select within : <span id="time">02:00</span> minutes!</b></div>
+                           </apex:outputPanel>
+                        </apex:outputPanel>
+                     </div>
+
+                      <br/>
+
+
+                          <p class="blkHeading">Search Results</p>
+                          <apex:outputPanel id="fnnpanel" title="AvailableNumbers" >
+                              <apex:repeat value="{!fnnList}" var="fnn">                              &nbsp;&nbsp;
+                                  <apex:outputText value="{!fnn}" styleClass="slds-text-body_regular slds-border_bottom  slds-border_left slds-border_right slds-border_top"/>
+                              </apex:repeat>
+                          </apex:outputPanel>
+
+                  </div>
+               </div>
+            </apex:outputPanel>
+         </div>
+      </apex:form>
+       <div class="demo-only" style="height: 6rem; display:none;" id="loadingSpinnerAppt">
+            <div role="status" class="customspinner slds-spinner slds-spinner_large slds-spinner_brand" style="position: relative;">
+               <span class="indicatorMessage">Loading...</span>
+               <div class="slds-spinner__dot-a"></div>
+               <div class="slds-spinner__dot-b"></div>
+            </div>
+      </div>
+   </div>
+
+   <script>
+      // example of successCallback
+      function getAttributeCallbackSuccess(value) {// write custom logic here when message result is received
+          console.log('getAttrbuteCallback received value : ' + value); 
+          //alert('flag ' + value);
+      }
+      // example of errorCallback
+      function getAttrbuteCallbackError(errorMsg) {// write custom logic here when error message is received
+          console.log('getAttrbuteCallbackError received error : ' + errorMsg); 
+          //alert('flag ' + value);
+      }
+      var winOrigin = parent;
+      CSMSG.setConfiguratorWindow(winOrigin);
+      var previousOnload = window.onload; 
+      window.onload = function() 
+      { if (previousOnload) { previousOnload(); } 
+       CSMSG.setAttribute('isNRCompleted_0', '{!JSENCODE(resrvedNumberGreaterThanUsers)}');
+       CSMSG.setAttribute('TotalNumbersReserved_0', '{!JSENCODE(totalReservedNumber)}');
+       // alert('{!JSENCODE(resrvedNumberGreaterThanUsers)}');
+      }
+      
+   </script>
+</apex:page>

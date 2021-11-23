@@ -1,0 +1,584 @@
+<!--********************************************************************
+    EDGE        : 119320,114435,114434
+    Component   : Get Deal Score
+    Description : Get Deal Score based on Selected Offer
+    Author      : Adityen Krishnan
+*********************************************************************--> 
+
+<aura:component access="global" controller="GetDealScoreController" 
+                implements="lightning:isUrlAddressable,force:lightningQuickAction,lightning:actionOverride,force:hasRecordId,force:hasSObjectName,force:appHostable,flexipage:availableForAllPageTypes">
+    
+    <aura:attribute name="GBBScalePlanLevel" type="Boolean" default="True"/>
+    <aura:attribute name="FrameId" type="String" default=""/>
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="showContent" type="Boolean" default="false"/>
+    <aura:attribute name="DealListItems" type="List" />
+
+    <aura:attribute name="RateCardLineItems" type="List" />
+    <aura:attribute type="String" name="DPROffer"/>
+
+    <aura:attribute name="isStatusCheck" type="Boolean" default="false"/>
+    <aura:attribute name="showDealScore" type="Boolean" default="false"/>
+    <aura:attribute name="enableSaveButton" type="Boolean" default="true"/>
+    <aura:attribute name="enableGetDealButton" type="Boolean" default="true"/>
+    <aura:attribute name="enableGetDealBtn" type="Boolean" default="false"/>
+    <aura:attribute name="showToast" type="Boolean" default="false"/>
+    <aura:attribute type="String" name="DPRId"/>
+    <aura:attribute name="GBBScale" type="Boolean" default="false"/>
+    <!-- Holds the correlation Id -->
+    <aura:attribute name="CorrelationId" type="String"/>
+    <aura:attribute name="GBBErrorComp" type="Boolean" default="False"/>
+    <aura:attribute type="String" name="ErrorMsg"/>
+    <!-- Holds the GBB Scale values for DPR Offer -->
+    <aura:attribute name="GBBList" type="Object" />
+    <!-- Holds the Final Delegation Outcome value for Delegated Pricing Request -->
+    <aura:attribute name="FinalDelegationOutcome" type="String" default="Test"/>
+    <!-- Holds the Colour for Delegation Outcome display button -->
+    <aura:attribute name="Colour" type="String" default="success"/>
+    <!-- Aura if variable -->
+    <aura:attribute name="DelegaionOutcomeButton" type="Boolean" default="false"/>
+    <aura:attribute name="DelegationOutcomeTable" type="Boolean" default="false"/>
+    <aura:attribute name="Green" type="Boolean" default="False"/>
+    <aura:attribute name="Table" type="Boolean" default="False"/>
+    <!-- Holds the rows for Mobile voice delegation popup table -->
+    <aura:attribute name="DelegationOutcomeList" type="List"/>
+    <aura:attribute name="vfHost" type="String" default="telstrab2b--csupgrade--c.visualforce.com"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="cmpEvent" type="c:PREResponseEvt"/>
+    <aura:handler event="c:PREResponseEvt" action="{!c.PREResponse}"/>
+    <aura:registerEvent name="showScaleEvent" type="c:PLanLevelGbbRender"/>
+    <!-- START EDGE-219478 EDGE-219744 Napier Team - Shivaprasad -->
+<aura:attribute name="TabSet" type="Boolean" default="true"/>
+<aura:attribute name="dprLineItems" type="Object"/>
+<aura:attribute name="DPRDelegationOutcomeTable" type="Boolean" default="false"/>
+<aura:registerEvent name="showOfferScaleEvent" type="c:OfferLevelGbbRender"/>
+<!-- End EDGE-219478 EDGE-219744 Napier Team - Shivaprasad -->
+    <!-- START Added as a part EDGE-185052 by Abhishek from Osaka Team -->
+    <aura:attribute name="isMigrationBoh" type="Boolean" default="false"/>
+    <!-- END Added as a part EDGE-185052 by Abhishek from Osaka Team -->
+    <!-- Comman show toast message for Error/Warning/Success -->
+    <aura:if isTrue="{!v.showToast}">
+        <c:GetDealShowToast />
+    </aura:if>
+    <!--DIGI-2098-->
+     <aura:if isTrue="{!v.GBBErrorComp}">
+        <c:DealScorePREResponceErrorCmp GBBErrorComp="{!v.GBBErrorComp}" ErrorMsg="{!v.ErrorMsg}"/>
+    </aura:if>
+    
+    <!-- Spinner to indicate some process is happening in the background -->
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+
+    <!-- Section that show the offer level graph after Deal score button is clicked -->
+    <article class="slds-card">
+        <div>
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-currency" title="Discount">
+                        <span class="slds-assistive-text">Configure Discount</span>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                   <!--EDGE-219478 EDGE-219744  <h1 class="slds-card__header-title">
+                            <span>{!v.DPROffer}</span>
+                    </h1>-->
+
+                    <h1 class="slds-card__header-title">
+                        <span class="slds-truncate" style="font-weight: bold;color: var(--lwc-tableColorTextHeader,rgb(81, 79, 77));">Product Family</span>
+                    </h1>
+                    
+                    <div class="slds-align_absolute-center">
+                      <!--  <aura:if isTrue="{!v.GBBScale}">
+                            <canvas aura:id="GBBScale" width="540" height="97" onmousemove="{!c.hoverFunction}"></canvas> 
+                        </aura:if> -->
+                        <div>
+                            <aura:if isTrue="{!v.DelegaionOutcomeButton}">
+                                <div class="slds-align_absolute-center slds-text-body_small slds-p-bottom_x-small slds-p-top_medium">Delegation Outcome</div>
+                                <div class="slds-align_absolute-center">
+                                    <lightning:button variant="{!v.Colour}"
+                                                      label="{!v.FinalDelegationOutcome}"
+                                                      onclick="{!c.OpenChildComponent}"/>
+                                </div>
+                                <div class="slds-align_absolute-center slds-text-body_small slds-p-top_x-small">{!$Label.c.DPDelegationMesage}</div>
+                            </aura:if>
+                        </div>    
+                    </div>
+                    
+                    <aura:if isTrue="{!v.DelegationOutcomeTable}">
+            <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <h2 class="slds-text-heading--medium">Delegations</h2>
+                    </div>
+                    <div class="slds-modal__content slds-grid slds-wrap">
+                        <aura:if isTrue="{!v.Green}">
+                            <div class="slds-align_absolute-center">    
+                                {!$Label.c.DPOfferwithinDelegation}                          
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.Table}">
+                            
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Category">Category</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Label">Label</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="MyValue">My Value</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="MyLimit">My Limit</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="RequiredDelegation">Required Delegation</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.DelegationOutcomeList}" var="dol" indexVar="index">
+                                        <tr>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Category__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Label_Name__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Actual_Display__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.P_Expected_Display__c }</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Delegation_Required__c}</div>
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                            
+                        </aura:if>
+                    </div>
+                    <div class="slds-modal__footer">
+                        <lightning:button  label="Close" onclick="{!c.CloseChildComponent}" />
+                    </div>
+                </div>
+            </div>
+            <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+        </aura:if>
+                    
+                </div>
+            </header>
+            
+		 
+            
+        </div>
+        
+        
+            <!-- EDGE-219478 EDGE-219744<aura:if isTrue="{!not(empty(v.RateCardLineItems[0]))}">
+            
+            
+            <div  class="slds-theme_shade slds-border_top slds-m-top_xx-small slds-border_bottom slds-border_left slds-border_right slds-p-bottom_x-small">
+                <div class="slds-grid slds-gutters_xx-small slds-wrap slds-p-left_small">
+                    <table class="slds-table slds-table_striped slds-table_cell-buffer slds-max-medium-table_stacked-horizontal" style="border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="slds-truncate slds-align_absolute-center">Plan</div>
+                                </th>
+                                <th>
+                                    <div class="slds-truncate slds-align_absolute-center">Rate Card</div>
+                                </th>
+                                <th>
+                                    <div class="slds-truncate slds-align_absolute-center">Rate Card Line</div>
+                                </th>
+                                <th>
+                                    <div class="slds-truncate slds-align_absolute-center">Rate Value($)</div>
+                                </th>
+                                <th>
+                                    <div class="slds-truncate slds-align_absolute-center">Negotiated Value($)</div>
+                                </th>
+                                <th>
+                                    <div class="slds-truncate slds-align_absolute-center">Discount($)</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.RateCardLineItems}" var="rcl" indexVar="index">
+                                <aura:iteration items="{!rcl}" var="items" indexVar="index">
+                                    <aura:if isTrue="{!items.NegotiatedDiscount>0}">
+                                        <tr>
+                                            <td>
+                                                
+                                                {!items.Plan}
+                                                
+                                            </td>
+                                            <td>
+                                               
+                                                {!items.ParentRatecardName}
+                                                
+                                            </td>
+                                            <td>
+                                               
+                                                {!items.RateCardLineName}
+                                                
+                                            </td>
+                                            <td>
+                                                <lightning:input aura:id="MMC_Discount1" readonly="True" style="width:30%" class="LabelColor slds-align_absolute-center" value="{!items.RateValue}"/>
+                                            </td>
+                                            <td>
+                                                <lightning:input aura:id="activ1" readonly="True"  style="width:30%" class="LabelColor slds-align_absolute-center" value="{!items.NegotiatedValue}"/>
+                                            </td>
+                                            <td>
+                                                <lightning:input aura:id="MMC_Discou" readonly="True"  style="width:30%" class="LabelColor slds-align_absolute-center" value="{!items.NegotiatedDiscount}"/>
+                                            </td>
+                                        </tr>
+                                    </aura:if>
+                                </aura:iteration>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+       <aura:set attribute="else">
+                
+                   <div  class="slds-theme_shade slds-border_top slds-m-top_xx-small slds-border_bottom slds-border_left slds-border_right slds-p-bottom_x-small">
+                    <div class="slds-grid slds-gutters_xx-small slds-wrap slds-p-left_small">
+                        <table class="slds-table slds-table_striped slds-table_cell-buffer slds-max-medium-table_stacked-horizontal" style="border-collapse:collapse;">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="slds-truncate">Plan Type</div>
+                                    </th>
+                                    <th>
+                                        <div class="slds-truncate">Plan</div>
+                                    </th>
+                                    <th>
+                                        <div class="slds-truncate">MMC</div>
+                                    </th>
+                                    <th>
+                                        <div class="slds-truncate">MMC Discount ($)</div>
+                                    </th>
+                                    <th>
+                                        <div class="slds-truncate">Minimum Vol
+                                            
+                                            <lightning:helptext title="Enter value from 1 to 10000."/>
+                                        </div>
+                                    </th>
+                                    <aura:if isTrue="{!v.showDealScore}">
+                                        <th>
+                                            <div class="slds-truncate">Deal Score</div>
+                                        </th>
+                                    </aura:if>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.DealListItems}" var="DealVar" indexVar="index">
+                                    <tr>
+                                        <td>
+                                            <lightning:input aura:id="Plan_Type" readonly="True" placeholder="" class="LabelColor" value="{!DealVar.planType}"/>
+                                        </td>
+                                        <td>
+                                            <lightning:input aura:id="Q_Plan" readonly="True" placeholder="" class="LabelColor" value="{!DealVar.plan}"/>
+                                        </td>
+                                        <td>
+                                            <lightning:input aura:id="List_Price" readonly="True" placeholder="" class="LabelColor" value="{!DealVar.listPrice}"/>
+                                        </td>
+                                        <td>
+                                            <lightning:input aura:id="MMC_Discount" readonly="True" placeholder="" class="LabelColor " value="{!DealVar.mmc}"/>
+                                        </td>
+                                    
+                                        <td>
+                                            <lightning:input aura:id="activ" style="width: 150px !important" readonly="True" placeholder="" class="LabelColor FixedWidth" value="{!DealVar.activationSIO}"/>
+                                        </td>
+                                        <aura:if isTrue="{!v.showDealScore}">
+                                            <td>
+                                                <c:showDealScore showOfferLineGraph ="true" PlanId="{!DealVar.recordId}"/>
+                                            </td>
+                                        </aura:if>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
+            </aura:set> 
+        </aura:if> -->
+             <!-- START EDGE-219478 EDGE-219744 Napier Team - Shivaprasad -->
+        <aura:if isTrue="{!v.TabSet}">
+            <lightning:tabset variant="scoped" aura:id="tabs">
+                <aura:iteration items="{!v.dprLineItems}" var="tab" indexVar="key">
+                    <lightning:tab label="{!tab.key}" id="{!tab.key}">
+						
+                        <div class="slds-align_absolute-center">
+                            <aura:if isTrue="{!v.GBBScale}">
+                                <!-- <canvas aura:id="GBBScale" width="540" height="97" onmousemove="{!c.hoverFunction}"></canvas> -->
+                                <c:showGBBScale showOfferLineGraph="true" TabId="{!tab.key}" DPRId = "{!v.DPRId}"/>
+                            </aura:if> 
+                            <div>
+                                <aura:if isTrue="{!tab.DPRFinalDelegationOutcome.dprFDOButton}">
+                                    <div class="slds-align_absolute-center slds-text-body_small slds-p-bottom_x-small slds-p-top_medium">Delegation Outcome</div>
+                                    <div class="slds-align_absolute-center">
+                                        <lightning:button variant="{!tab.DPRFinalDelegationOutcome.color}"
+                                                            label="{!tab.DPRFinalDelegationOutcome.fdo}"
+                                                            onclick="{!c.OpenDPRChildComponent}"/>
+                                    </div>
+                                    <div class="slds-align_absolute-center slds-text-body_small slds-p-top_x-small">{!$Label.c.DPDelegationMesage}</div>
+                                </aura:if>
+                            </div>
+                        </div>
+
+		<aura:if isTrue="{!v.DPRDelegationOutcomeTable}">
+            <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <h2 class="slds-text-heading--medium">Delegations</h2>
+                    </div>
+                    <div class="slds-modal__content slds-grid slds-wrap">
+                        <aura:if isTrue="{!tab.DPRFinalDelegationOutcome.color == 'success'}">
+                            <div class="slds-align_absolute-center">    
+                                {!$Label.c.DPOfferwithinDelegation}                          
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!tab.DPRFinalDelegationOutcome.color == 'destructive'}">
+                            <!--********************Popup Table start*************************-->
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Category">Category</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Label">Label</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="MyValue">My Value</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="MyLimit">My Limit</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="RequiredDelegation">Required Delegation</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!tab.DPRDelegationOutcomeTableItems}" var="dol" indexVar="index">
+                                        <tr>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Category__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Label_Name__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Actual_Display__c}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.P_Expected_Display__c }</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate">{!dol.Delegation_Required__c}</div>
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                            <!--********************Popup Table end***************************-->
+                        </aura:if>
+                    </div>
+                    <div class="slds-modal__footer">
+                        <lightning:button  label="Close" onclick="{!c.CloseDPRChildComponent}" />
+                    </div>
+                </div>
+            </div>
+            <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+        </aura:if>
+
+                            <aura:if isTrue="{!(tab.RateCardLineItems.length > 0)}">
+                                <div  class="slds-theme_shade slds-border_top slds-m-top_xx-small slds-border_bottom slds-border_left slds-border_right slds-p-bottom_x-small">
+                                    <div class="slds-grid slds-gutters_xx-small slds-wrap slds-p-left_small">
+                                        <table class="slds-table slds-table_striped slds-table_cell-buffer slds-max-medium-table_stacked-horizontal" style="border-collapse:collapse;">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <div class="slds-truncate slds-align_absolute-center">Plan</div>
+                                                    </th>
+                                                    <th>
+                                                        <div class="slds-truncate slds-align_absolute-center">Rate Card</div>
+                                                    </th>
+                                                    <th>
+                                                        <div class="slds-truncate slds-align_absolute-center">Rate Card Line</div>
+                                                    </th>
+                                                    <th>
+                                                        <div class="slds-truncate slds-align_absolute-center">Rate Value($)</div>
+                                                    </th>
+                                                    <th>
+                                                        <div class="slds-truncate slds-align_absolute-center">Negotiated Value($)</div>
+                                                    </th>
+                                                    <th>
+                                                        <div class="slds-truncate slds-align_absolute-center">Discount($)</div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!tab.RateCardLineItems}" var="items" indexVar="rclIndex">
+                                                    <aura:if isTrue="{!items.NegotiatedDiscount>0}">
+                                                        <tr>
+                                                            <td>
+                                                                <!--<lightning:input aura:id="Plan_Type1" readonly="True" placeholder="" class="LabelColor" value="{!items.Plan}"/>-->
+                                                                {!items.Plan}
+                                                            </td>
+                                                            <td>
+                                                                <!-- <lightning:input aura:id="Q_Plan1" readonly="True" placeholder="" class="LabelColor" value="{!items.ParentRatecardName}"/>-->
+                                                                {!items.ParentRatecardName}
+                                                            </td>
+                                                            <td>
+                                                                <!--<lightning:input aura:id="List_Price1" readonly="True"  class="LabelColor" value="{!items.RateCardLineName}"/>-->
+                                                                {!items.RateCardLineName}
+                                                            </td>
+                                                            <td>
+                                                                <lightning:input aura:id="MMC_Discount1" readonly="True" style="width:30%" class="LabelColor slds-align_absolute-center" value="{!items.RateValue}"/>
+                                                            </td>
+                                                            <td>
+                                                                <lightning:input aura:id="activ1" readonly="True"  style="width:30%" class="LabelColor slds-align_absolute-center" value="{!items.NegotiatedValue}"/>
+                                                            </td>
+                                                            <td>
+                                                                <lightning:input aura:id="MMC_Discou" readonly="True"  style="width:30%" class="LabelColor slds-align_absolute-center" value="{!items.NegotiatedDiscount}"/>
+                                                            </td>
+                                                        </tr>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- //EDGE-21112..Rate Card Line Item Table end -->
+                                <aura:set attribute="else">
+                                    <!-- Section contains Offer line item and line item Score graph -->
+                                    <div  class="slds-theme_shade slds-border_top slds-m-top_xx-small slds-border_bottom slds-border_left slds-border_right slds-p-bottom_x-small">
+                                        <div class="slds-grid slds-gutters_xx-small slds-wrap slds-p-left_small">
+                                            <table class="slds-table slds-table_striped slds-table_cell-buffer slds-max-medium-table_stacked-horizontal" style="border-collapse:collapse;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <div class="slds-truncate">Plan Type</div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="slds-truncate">Plan</div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="slds-truncate">MMC</div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="slds-truncate">MMC Discount ($)</div>
+                                                        </th>
+                                                        <!--th><div class="slds-truncate">Recontracting SIOs
+                            <lightning:helptext title="Enter value from 1 to 10000."/></div></th-->
+                                                        <th>
+                                                            <div class="slds-truncate">Minimum Vol
+                                                                
+                                                                <lightning:helptext title="Enter value from 1 to 10000."/>
+                                                            </div>
+                                                        </th>
+                                                        <aura:if isTrue="{!v.showDealScore}">
+                                                            <th>
+                                                                <div class="slds-truncate">Deal Score</div>
+                                                            </th>
+                                                        </aura:if>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!tab.value}" var="DealVar" indexVar="index">
+                                                    <tr>
+                                                        <td>
+                                                            <lightning:input aura:id="Plan_Type" readonly="True" placeholder="" class="LabelColor" value="{!DealVar.planType}"/>
+                                                        </td>
+                                                        <td>
+                                                            <lightning:input aura:id="Q_Plan" readonly="True" placeholder="" class="LabelColor" value="{!DealVar.plan}"/>
+                                                        </td>
+                                                        <td>
+                                                            <lightning:input aura:id="List_Price" readonly="True" placeholder="" class="LabelColor" value="{!DealVar.listPrice}"/>
+                                                        </td>
+                                                        <td>
+                                                            <lightning:input aura:id="MMC_Discount" readonly="True" placeholder="" class="LabelColor " value="{!DealVar.mmc}"/>
+                                                        </td>
+                                                        <!--td><lightning:input disabled="{!v.View}" type="number" aura:id="activ" class="LabelColor" onchange="{!c.ActivationSio}" readonly="{!v.isStatusCheck}"
+                                                    min="1" max="10000" name="input3" placeholder="type here..."
+                                                    messageWhenRangeOverflow="Enter value from 1 to 10000" 
+                                                    messageWhenRangeUnderflow="Enter value from 1 to 10000" 
+                                                    messageWhenStepMismatch="Enter value from 1 to 10000"
+                                                    value="{!DealVar.recontractSIO}"
+                                                    /></td-->
+                                                        <!--td><lightning:input  disabled="{!v.View}" type="number" aura:id="activ" style="width: 150px !important" class="LabelColor FixedWidth" onchange="{!c.ActivationSio}"  readonly="{!v.isStatusCheck}"
+                                                    min="1" max="10000" name="input3" value="{!DealVar.activationSIO}" placeholder="type here..." 
+                                                    messageWhenRangeOverflow="Enter value from 1 to 10000" 
+                                                    messageWhenRangeUnderflow="Enter value from 1 to 10000" 
+                                                    messageWhenStepMismatch="Enter value from 1 to 10000"
+                                                    /></td-->
+                                                        <td>
+                                                            <lightning:input aura:id="activ" style="width: 150px !important" readonly="True" placeholder="" class="LabelColor FixedWidth" value="{!DealVar.activationSIO}"/>
+                                                        </td>
+                                                        <aura:if isTrue="{!v.showDealScore}">
+                                                            <td>
+                                                                <!--<canvas aura:id="GBBScaleSmall" width="300" height="32"></canvas> -->
+                                                                <c:showDealScore showOfferLineGraph ="true" PlanId="{!DealVar.recordId}"/>
+                                                            </td>
+                                                        </aura:if>
+                                                    </tr>
+                                                        </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </aura:set>
+                            </aura:if>
+                        
+                    </lightning:tab>
+                </aura:iteration>
+            </lightning:tabset>
+        </aura:if>
+        <!-- EDGE-219478 EDGE-219744 Napier Team - END - Shivaprasad -->
+        
+        <footer class="slds-card__footer slds-float_right">
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <ul class="slds-button-group-list">
+                        <!--START of EDGE-185052 by Abhishek from Osaka team(Hiding Deal Score button for Migration Opportunity Type)  -->
+                        <aura:if isTrue="{!not(v.isMigrationBoh)}">
+                        <!--lightning:button  label="Get Deal Score" disabled="{!v.enableGetDealButton}" onclick="{!c.getDealScoreFromPRE}"/-->
+                            <lightning:button  label="Get Deal Score" disabled="{!v.enableGetDealBtn}" onclick="{!c.getDealScoreFromPRE}"/>
+
+                           <!-- <lightning:button  label="Save" disabled="{!v.enableSaveButton}" onclick="{!c.upsertplanAndDiscount}"/>-->
+
+                        </aura:if>
+                        <!--<lightning:button  label="Get Deal Score" disabled="{!v.enableGetDealButton}" onclick="{!c.getDealScoreFromPRE}"/> -->
+                        <!--EDGE:117703 created Save button to insert the details-->
+                        
+                        <aura:if isTrue="{!v.isMigrationBoh}">
+                        	<lightning:button  label="Save" onclick="{!c.upsertplanAndDiscount}"/>
+						</aura:if>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+        </div>
+    </article>
+    
+</aura:component>

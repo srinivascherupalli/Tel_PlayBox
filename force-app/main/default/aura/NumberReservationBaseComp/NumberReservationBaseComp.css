@@ -1,0 +1,39 @@
+.THIS {
+}
+.THIS .slds-th__action .slds-th__action-button { display: none; }
+
+.THIS .screenback{
+    background:rgb(185, 190, 199);
+}
+
+.THIS .margin10{
+    margin:10px;
+}
+
+.THIS .margin5{
+    margin:5px;
+}
+
+.THIS .truncate {
+  width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.THIS .slds-icon-utility-success svg {
+  fill: rgb(125, 138, 245);
+}
+
+.THIS .slds-icon-utility-warning svg {
+  fill: rgb(245, 48, 34);
+}
+
+.THIS .spin .slds-spinner_container{
+    height:1000px;
+}
+.THIS .customPopup{
+     
+     border-style: solid;
+	 
+}

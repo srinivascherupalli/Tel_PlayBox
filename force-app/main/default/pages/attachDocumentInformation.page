@@ -1,0 +1,64 @@
+<apex:page controller="CustomButtonAttachDocuments">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">   
+    <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+    <apex:sectionHeader title="Attach Documents" subtitle="Attach Documents" />
+    
+    <apex:form id="theForm">
+        <apex:pageMessages />
+
+        <apex:pageBlock title="Information">            
+            Use this page to view/add Attachments.
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Account Details" rendered="{!fromAccount}">
+            <b>Account Name:</b>&nbsp;<apex:outputLabel value="{!accountObj.Name}" /><br />
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Basket Details" rendered="{!!fromAccount}">          
+            <!-- <b>Basket Id:</b> <apex:outputLabel value="{!basket.Id}" /><br /> -->
+            <b>Basket Name:</b>&nbsp;<apex:outputLabel value="{!basket.Name}" /><br />
+            <b>Basket Stage:</b>&nbsp;<apex:outputLabel value="{!basket.csordtelcoa__Basket_Stage__c}" /><br />
+            <b>Basket Customer:</b>&nbsp;<apex:outputLabel value="{!basket.csbb__Account__r.Name}" /><br />
+        </apex:pageBlock>
+
+        <apex:pageBlock title="Current Documents">          
+            <apex:pageBlockTable value="{!extList}" var="a" rendered="{!!extList.empty}" id="extList">
+                <apex:column value="{!a.File_Name__c}" />
+                <apex:column value="{!a.URL__c}" />
+                <apex:column value="{!a.Type__c}" />
+                <apex:column value="{!a.Comments__c}" />
+                <apex:column title="Edit">
+                    <apex:commandLink action="{!editAtt}" value="Edit" immediate="true" >
+                        <apex:param name="rowId" value="{!a.Id}" assignTo="{!selectedAtt}" />
+                    </apex:commandLink>
+                </apex:column>              
+                <apex:column title="Delete">
+                    <apex:commandLink action="{!deleteAtt}" value="Delete" immediate="true" >
+                        <apex:param name="rowId" value="{!a.Id}" assignTo="{!selectedAtt}" />
+                    </apex:commandLink>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputText rendered="{!extList.empty}">
+                There are currently no attachments.
+            </apex:outputText>
+        </apex:pageBlock>
+
+        <apex:pageBlock title="Attach Document">            
+            <b>Name:</b>&nbsp;<apex:inputField value="{!extAdd.File_Name__c}" required="true"/><br />
+            <b>URL:</b>&nbsp;<apex:inputField value="{!extAdd.URL__c}" required="true"/><br />
+            <b>Type:</b>&nbsp;<apex:inputField value="{!extAdd.Type__c}" required="true"/><br />
+            <b>Comments:</b>&nbsp;<apex:inputField value="{!extAdd.Comments__c}" required="true"/><br />
+            <apex:commandButton action="{!save}" value="Save" reRender="theForm, extList" status="actStatusId" />
+            <apex:commandButton action="{!cancel}" value="Back" immediate="true" />
+            <br />
+            <apex:actionStatus id="actStatusId">
+                <apex:facet name="start">
+                  <img src="/img/loading.gif" />                    
+                </apex:facet>
+            </apex:actionStatus>
+        </apex:pageBlock>
+        
+    </apex:form>
+    </html>
+</apex:page>

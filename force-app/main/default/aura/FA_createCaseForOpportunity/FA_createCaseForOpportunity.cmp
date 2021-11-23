@@ -1,0 +1,63 @@
+<!--********************************************************************
+    Component   : FA_CreateCaseForOpportunity
+    Description : Use to Create a Pricing Support recordtype Case &&
+				  Links the case to the related list of Opportunity. &&
+				  This Component is invoked on the press of the Escalate button when the Delegation Outcome 
+				  in the Frame Agreement is "Customized Pricing" OR if the "Mark As Variation" Checkbox is checked.
+    Author      : Akshay Gujar
+*********************************************************************--> 
+
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName" access="global" controller="DelegatedPricingController">
+
+    <aura:attribute type="String" name="CaseOpportunityId"/>
+    <aura:attribute type="String" name="DPRId"/>
+    <aura:attribute type="Id" name="FrameId" />
+    <aura:attribute type="Id" name="OpportunityId" />
+    <aura:attribute type="Id" name="caseRecordId" />
+    <!-- EDGE-200438 Istabul(Kamlesh)-->
+    <aura:attribute type="Id" name="queueId" />
+    <!--END EDGE-200438 -->
+    <aura:attribute type="boolean" name="Status" default="false"/>
+    <aura:attribute type="Boolean" name="showSpinner" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="csconta__Frame_Agreement__c" name="AgrName" default="{'sObjectType':'csconta__Frame_Agreement__c'}"/>
+    <aura:attribute name="fields"  
+                    type="String[]" 
+                    default="['CaseNumber', 'Case_Owner__c','soc_Request_Type__c','Reason','Description']"/>
+	<aura:attribute name="CurrentUser" type="Object"/>
+	<aura:attribute name="familyLevel" type="String"/>
+	<force:recordData recordId="{!$SObjectType.CurrentUser.Id}"
+                  fields="Profile.Name"
+                  targetFields="{!v.CurrentUser}"/>
+    <!-- Spinner to indicate some process is happening in the background -->
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div> 
+    </aura:if>    
+    
+    <!-- Case Creation using lightning:recordForm -->
+    <div class="demo-only" style="height:6rem">
+        <lightning:card>
+            <div class="slds-p-left_large slds-p-right_medium" style="height:100%" >	
+                <lightning:recordForm aura:id="myRecordForm"
+                                      recordTypeId="{!v.caseRecordId}"
+                                      objectApiName="Case"
+                                      columns="1"
+                                      mode="edit"
+                                      onsuccess="{!c.handleSuccess}"
+                                      onsubmit="{!c.handleSubmit}"
+                                      oncancel="{!c.onCancel}"
+                                      onerror="{!c.handleError}"
+                                      fields="{!v.fields}">
+                </lightning:recordForm> 
+            </div>
+        </lightning:card>
+        </div>
+</aura:component>

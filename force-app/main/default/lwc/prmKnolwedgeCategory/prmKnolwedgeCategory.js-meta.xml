@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata" fqn="prmKnolwedgeCategory1">
+    
+    <apiVersion>46.0</apiVersion>
+    
+    <isExposed>true</isExposed>
+    
+    <targets>
+        
+        <target>lightning__AppPage</target>
+        
+        <target>lightning__RecordPage</target>
+        
+        <target>lightning__HomePage</target>
+        
+        <target>lightningCommunity__Page</target>
+        
+        <target>lightningCommunity__Default</target>
+        
+    </targets>
+    
+    <targetConfigs>
+        
+        <targetConfig targets="lightningCommunity__Default">
+            
+            <property name="sortArticleBy" type="String" default="LastPublishedDate" label="Sort Article By" description="Api name of field for sorting"/>
+            
+            <property name="sortArticlesByOrder" type="String" default="Desc" label="Sort Article By Order" description="Order in which article to be sorted.Value for this field should be (Desc or Asc)"/>
+            
+			<property name="displayFormat" type="String" default="Carousel" label="Display Format" description="Format of the article to be displayed.It can have only 2 values 'Carousel' and 'ViewAll'"/>
+            
+            <property name="numberOfArticlesToBeDisplayed" type="String" default="3" label="Number of Articles" description="Number of Articles to be displayed by default"/>
+            
+			<property name="maximumNumberOfArticle" type="String" label="Maximum Articles To Be Retrieved" description="Maximum articles to be retrieved when Display Format is Carousel.Value should be integer"/>
+            
+            <property name="parentCategoryName" type="String" default="" label="Category Name" description="Name of the Parent Category"/>
+            
+            <property name="showCategoryNameAtTop" type="Boolean" default="true" label="Show Category Name At Top ?" description="Set this value to true if you want to show Category Name At the Top of Component"/>
+            
+            <property name="labelofTopCategory" type="String" default="" label="What Label You Want To Show ?" description="Put the label you want to show instead of top category name"/>
+            
+            <property name="displayCategoryName" type="Boolean" default="false" label="Display Category Name Inside Tile ?" description="Set this value to true if you want to display category name below image on individual article tile"/>
+            
+            <property name="showSingleTile" type="Boolean" default="false" label="Show Single Tile" description="Set this value to true if you want to show single tile for Partner Sale Newsletters"/>
+            
+            <property name="fetchChildArticles" type="Boolean" default="false" label="Get Child Category Articles ?" description="Set this value to true if you want to fetch child category articles assocaited with parent category"/>
+            
+            <property name="isSearchAllowed" type="Boolean" default="false" label="Search Allowed" description="Search Component Needed"/>
+            
+			<property name="showSortOptions" type="Boolean" default="false" label="Show Sort Option to Users" description="Set this value to true if you want to show search functionality to Users"/>
+            
+			<property name="navigateToCategoryLanding" type="Boolean" default="false" label="Navigate to Category Landing Page" description="Set this value to true if you want to show 'View All' button which navigate to perticular page"/>
+            
+            <property name="showFilterOptions" type="Boolean" default="false" label="Show filter component" description="Set this value to true if you want to show filter component"/>
+            
+            <!--P2OB-12539 : Design Parameters for recommeneded Articles-->
+            <property name="allowRecommendation" type="Boolean" default="false" label="Allow recommendations" description="Set this value to true if you want to display tile for recommendation recommendation"/>
+            
+            <!--P2OB-12539 : Design Parameters for recommeneded Articles : Page Name where component is placed,Value in this field should match with TPC Publish Page field on Knowledge object-->
+            <property name="publishPageName" type="String" label="Publish Page Name" description="Value of page name where this component is placed,Possible values are TPC Home Page,Opportunity Details Page,Lead Details Page,Case Details Page,Create and Manage Users,Generic Channel A,Generic Channel B,Generic Channel C"/>
+            
+        </targetConfig>
+        
+    </targetConfigs>
+    
+</LightningComponentBundle>

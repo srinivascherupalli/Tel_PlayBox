@@ -1,0 +1,13 @@
+<!--Create by team Hawaii for P2OB-5311
+Date: 28 Nov 2020-->
+
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    <!-- Attribute to get Account id from Community pag -->
+    <aura:attribute name="accountId" type="String" access="global"/>
+	<!--aura:attribute name="showFeedbackCmp" type="Boolean" default="true" access="global"/-->
+    <!--Embed Child LWC-->
+    <c:prmFeedbackComponent accountId="{!v.accountId}" oninvokeflow="{!c.invokeFlow}" aura:id="feedbackCmp"/>
+    <!--Overlay Liberary to fire flow-->
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+        
+</aura:component>

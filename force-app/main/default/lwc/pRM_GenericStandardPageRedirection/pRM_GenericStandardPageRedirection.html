@@ -1,0 +1,15 @@
+<!--Created By : Team Hawaii-->
+<!--P2OB-9639 : Generic component to open standard object page on click of button -->
+<template>
+    <!--Display button -->
+    <lightning-button
+        name="buttonName"
+        label={fetchbuttonLabel}
+        class="slds-m-around_medium genericButton"
+        onclick={navigateToDefinedAction}
+    ></lightning-button>
+    <!--Show error-->
+    <template if:true={error}>
+        {error}
+    </template>
+</template>

@@ -1,0 +1,17 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                controller="salesup_CertitudeLookupController"
+                access="global" >
+<aura:html tag="style">
+        .forceDockingPanel.DOCKED .slds-docked-composer{
+                 overflow: hidden !important;
+    			overflow-y: auto !important;
+         }
+</aura:html>
+<aura:attribute name="varUITheme" type="String" default="" access="global"/>
+	
+<aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+
+<lightning:flow aura:id="flowData" />
+    
+</aura:component>

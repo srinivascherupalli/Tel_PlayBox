@@ -1,0 +1,134 @@
+<!--  
+Name : DynamicRowItem
+Description : Child Lightning Component for Create New Row Instance
+Author: Kalashree Borgaonkar
+Story: EDGE-80749
+-->
+<aura:component 
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                controller="PortInController"
+                >    
+    <!-- Aura Attribute for store single wrapper Object Instance
+          --> 
+    <aura:dependency resource="markup://force:*" type="EVENT"/>
+    <aura:attribute name="msisdnNumber" type="Object"/>
+    <aura:attribute name="Number" type="String"/>
+    <aura:attribute name="Carrier" type="String"/>
+    <aura:attribute name="AccountNumber" type="String"/>
+    <aura:attribute name="rowIndex" type="String"/>
+     <aura:attribute name="basketId" type="Id" />
+     <aura:attribute name="isnumSelected" type="Boolean" default="false"/>
+  <aura:attribute name="selectedNumber" type="Integer" default="0" />
+
+    <!--<aura:handler name="DeleteRowEvt" event="c:DeleteRowEvt" action="{!c.removeDeletedRow}"/>
+    <aura:handler name="AddRowEvt" event="c:AddNewRowEvt" action="{!c.addNewRow}"/>-->
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <!-- Register 2 Lightning Event for handle add or Delete rows on Parent Component  --> 
+    <aura:registerEvent name="DeleteRowEvt" type="c:DeleteRowEvt"/> 
+    <aura:registerEvent name="AddRowEvt" type="c:AddNewRowEvt"/> 
+    <aura:registerEvent name="SelectRows" type="c:SelectAllRows"/> 
+        <aura:registerEvent name="SelectRow" type="c:SelectAllRows"/> 
+      <!--aura:registerEvent name="sampleCompEvent" 
+                         type="c:parentComponentEvent"/-->
+	<aura:handler
+    name="SelectRows"
+    event="c:SelectAllRows"
+    action="{!c.handleSelectAllNumbers}"
+  />
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+     <div aura:id="container"/>
+    <!--Table Row -->   
+    <!---EDGE-144140 Kalashree-Added table borders as a part of -->
+    <tr class="slds-text-title slds-border_top slds-border_left slds-border_right slds-border_bottom">
+        <!---Added Checkbox as a part of EDGE-107149-->
+        <td>
+                <label class="slds-checkbox">
+                  <ui:inputCheckbox
+                    aura:id="checkPortin"
+                    value="{!v.msisdnNumber.isSelect}"
+                    text="{!v.msisdnNumber.num}"
+                    disabled="{!v.msisdnNumber.isDisabled}"
+                    change="{!c.handleOnSelect}"
+                  />
+                  <span class="slds-checkbox--faux" />
+                  <span class="slds-form-element__label"></span>
+                </label>
+              </td>
+        <td> 
+            {!v.rowIndex + 1}
+        </td>
+        
+        <td >
+            <!--<ui:inputText class="slds-input" value="{!v.msisdnNumber.Number}" />-->
+            <ui:inputPhone class="inputSize slds-input" maxlength="8" label="+614 - " value="{!v.msisdnNumber.num}"  />
+       <!--	<lightning:input type="tel"  maxlength="9" name="phone3" value="{!v.msisdnNumber.num}"  pattern="[0-9]*"/>-->
+        </td>
+        
+        <td>
+            <ui:inputtext class="slds-input" value="{!v.msisdnNumber.accountNumber}"/>
+        </td>
+        <!--Author: Ila
+            Story: EDGE-80751
+            -->
+         <td>
+            <ui:inputtext class="slds-input" value="{!v.msisdnNumber.carrier}"/>
+        </td>
+         <!--Button removed as a part of 107149-->
+        <!--td scope="col" >    
+            <lightning:button
+                              class="inputbtnSize"
+                              label="Qualify"
+                              title="Qualify"
+                              onclick="{!c.qualifyCallout}"
+                              />
+        </td-->
+        <td>
+            
+            <aura:if isTrue="{!(v.msisdnNumber.indicator == 'Y') }">
+                <!-- <lightning:helptext iconName="action:approval"  content="{!v.msisdnNumber.reason}" />-->
+                
+                <div class="slds-form-element" onmouseover="{!c.display}" onmouseout="{!c.displayOut}">
+                  
+                    <div class="slds-form-element__icon slds-align-middle">
+                        <button class="slds-button slds-button slds-button--icon" aria-describedby="help" >
+                            <lightning:icon iconName="action:approval" variant="error"  size="xx-small"/>         <span class="slds-assistive-text">Help</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="slds-popover slds-popover--tooltip slds-nubbin--left-top slds-cell-wrap tooltip slds-hide" role="tooltip" id="help" style="position:absolute;top:-4px;left:60px;" aura:id="tooltip">
+                  <div class="slds-popover__body">{!v.msisdnNumber.reason}</div>
+                </div>  
+            </aura:if>
+            <aura:if isTrue="{!(v.msisdnNumber.indicator == 'N') }">
+                <!--  <lightning:helptext iconName="utility:warning"  content="{!v.msisdnNumber.reason}" /> -->
+                
+                <div class="slds-form-element" onmouseover="{!c.display}" onmouseout="{!c.displayOut}">
+                    <div class="slds-form-element__icon slds-align-middle">
+                        <button class="slds-button slds-button slds-button--icon" aria-describedby="help" title="Help" >
+                            <lightning:icon iconName="utility:warning" variant="error"  />         <span class="slds-assistive-text">Help</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="slds-popover slds-popover--tooltip slds-nubbin--left-top slds-cell-wrap tooltip slds-hide" role="tooltip" id="help" style="position:absolute;top:-4px;left:60px;" aura:id="tooltip">
+                    <div class="slds-popover__body">{!v.msisdnNumber.reason}</div>
+                </div>  
+            </aura:if>
+            
+        </td>
+        <td scope="col">
+            <lightning:button
+                              class="inputDeletebtnSize"
+                              label="Delete Row"
+                              title="Delete Row"
+                              onclick="{!c.removeRow}"
+                              />
+        </td>
+    </tr>
+</aura:component>

@@ -1,0 +1,81 @@
+<apex:page Extensions="APTPS_AmendmentViewController" standardController="Apttus__APTS_Agreement__c" >
+
+<apex:form >
+ 
+    <apex:pageBlock >
+
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{!View1}" rendered="{!If(View!='View1','true','false')}" value="View1"/>
+            <apex:commandButton action="{!View2}" rendered="{!If(View!='View2','true','false')}" value="View2"/>
+            <apex:commandButton action="{!GoBack}"  value="Back"/>
+        </apex:pageBlockButtons>
+       
+        <apex:pageBlockSection rendered="{!If(View=='View1','true','false')}" id="PB1" columns="1">
+        
+            <apex:pageBlockTable value="{!agreements}" var="Item">
+                   
+                   <apex:column headerValue="Contract" value="{!Item.contract}" />
+                    <apex:column value="{!Item.agreement.Apttus__FF_Agreement_Number__c}" HeaderValue="Agreement Number"/>
+                   <apex:column HeaderValue="Agreement Name">
+                        <apex:outputLink value="/{!Item.agreement.id}" target="_parent" >
+                            {!Item.agreement.Name}
+                        </apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!Item.relationship}" HeaderValue="Relationship"/>
+                    <apex:column value="{!Item.agreement.Apttus__Contract_Start_Date__c} " HeaderValue="Agreement Start Date"/>
+                    <apex:column value="{!Item.agreement.Apttus__Contract_End_Date__c}" HeaderValue="Agreement End Date"/>
+                    <apex:column value="{!Item.agreement.Apttus__Total_Contract_Value__c}" HeaderValue="Total Agreement Value"/>
+                    <apex:column value="{!Item.agreement.Apttus__Auto_Renewal__c}" HeaderValue="Auto-Renew"/>
+                    <apex:column value="{!Item.agreement.Apttus__Term_Months__c}" HeaderValue="Term (Months)"/>
+                    <apex:column value="{!Item.agreement.Apttus__Internal_Renewal_Notification_Days__c}" HeaderValue="Notification Days"/>
+                  
+                                                                                                                                                        
+            </apex:pageblockTable>
+         </apex:pageblocksection>    
+    <apex:outputPanel id="PB2" rendered="{!If(View=='View2','true','false')}">
+    <Table  class="list ">
+        <thead class="rich-table-thead">
+            <tr class="headerRow ">
+                 <th > Contract </th>
+                 <th >Agreement Number</th>
+                 <th >Agreement Name</th>
+                 <th >Relationship</th>
+                 <th >Agreement Start Date</th>
+                 <th >Agreement End Date</th>
+                 <th >Total Agreement Value</th>
+                 <th >Auto-Renew</th>
+                 <th >Term (Months)</th>
+                 <th >Notification Days</th>
+             </tr>
+              <apex:repeat value="{!agreements}" var="Item">
+                    <tr style="{!If('Original' == Item.contract,'background-color:#E5EECC','background-color:#hh0000')}" onmouseover="if (window.hiOn){hiOn(this);} " 
+                        onmouseout="if (window.hiOff){hiOff(this);} " onBlur="if (window.hiOff){hiOff(this);}" 
+                        onFocus="if (window.hiOn){hiOn(this);}">
+                        <td>{!Item.contract}</td>
+                        <td>{!Item.agreement.Apttus__FF_Agreement_Number__c}</td>
+                        <td><apex:outputLink value="/{!Item.agreement.id}" target="_parent" >{!Item.agreement.Name}</apex:outputLink></td>
+                        <td>{!Item.relationship}</td>
+                        <td><apex:outputText value="{0, date, yyyy/MM/dd}">
+                                   <apex:param value="{!Item.agreement.Apttus__Contract_Start_Date__c}" />
+                             </apex:outputText>
+                        </td>
+                        <td>
+                            <apex:outputText value="{0, date, yyyy/MM/dd}">
+                                   <apex:param value="{!Item.agreement.Apttus__Contract_End_Date__c}" />
+                             </apex:outputText>
+                        </td>
+                        <td>{!Item.agreement.Apttus__Total_Contract_Value__c}</td>
+                        <td>{!Item.agreement.Apttus__Auto_Renewal__c}</td>
+                        <td>{!Item.agreement.Apttus__Term_Months__c}</td>
+                        <td>{!Item.agreement.Apttus__Internal_Renewal_Notification_Days__c}</td>
+                    </tr>
+              </apex:repeat>
+         </thead>             
+    </Table>
+    </apex:outputPanel> 
+    </apex:pageblock>
+    
+
+</apex:form>
+
+</apex:page>

@@ -1,0 +1,41 @@
+.center {
+    margin: auto;
+    height: auto !important;
+    width: 50%;
+    border: 1px ;
+    padding-top: 11px;
+}
+
+.slds-modal__container {
+    max-width: 80rem !important;
+    width: 60% !important;
+}
+
+.popupHeader {
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: large;
+}
+
+.titleClass {
+  color:#8080806b;
+  font-weight:bold;
+  font-optical-sizing: auto
+}
+
+.valueClass {
+  font-weight: bold;
+  font-optical-sizing: auto;
+  color: rgb(112 110 107);
+}
+
+.customTable{
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+    position: relative;
+}
+
+.customTableBorder{
+  border-collapse : seperate;
+  border-bottom : 1px solid rgb(221, 219, 218);
+}

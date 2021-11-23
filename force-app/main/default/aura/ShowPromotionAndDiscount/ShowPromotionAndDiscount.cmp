@@ -1,0 +1,55 @@
+<!--
+* @Author : Shubhi
+* @Date : 26 Nov 2019
+* @Desc : Discount DTO
+* @Jira : Edge-120132
+* @Jira :Laxmi - EDGE-139308 Corrected Spelling of Currently in the messge and used Custom label to display this message 
+* @Jira : EDGE-143527 - Added by Aman Soni
+* @Jira : EDGE-148661 - Added by Aman Soni || FDR || MMC discount duration showing blank in Promotion and discount link
+*@TestClass: DiscountDTOTest -->
+
+<aura:component  controller="ShowPromotionAndDiscountContoller" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="String" name="accountId" />
+    <aura:attribute type="String" name="basketId" />
+    <aura:attribute type="String" name="solutionId" />
+    <aura:attribute type="String" name="configId"/>
+    <aura:attribute type="String" name="tabName"/>
+    <aura:attribute type="String" name="solutionName"/>
+    <aura:attribute type="List" name="discountDataList"/>
+    <aura:attribute type="Boolean" name="isDiscountDataListEmpty"/>
+    <aura:attribute type="Object" name="mapJsonString"/><!--Added by Aman Soni as a part of EDGE-143527-->
+    <!--div style="border-bottom: 2px solid lightgrey">
+        <span style="font-size:large">Promotions and Discounts</span><br/><br/>
+    </div-->
+    <div>
+        <br/>
+        <aura:if isTrue="{!v.isDiscountDataListEmpty}">
+            <span>
+                 <center>
+                     <!--EDGE-139308 Used system label with the correct message -  -->
+                     <b>No promotions or Discounts.</b><br/>{!$Label.c.no_applicable_discounts_common}<br/><!--Modified by Aman Soni as a part of EDGE-148661-->
+                </center> 
+            </span>
+            <aura:set attribute="else">                
+                <p><b>All promotions and discounts will be automatically applied once this order is placed</b></p>
+                <br/>
+                <table style=" border-collapse: collapse; width: 100%;">
+                    <aura:iteration  var="discountData" items="{!v.discountDataList}" indexVar="index">
+                        <tr>
+                            <td style="padding: 8px;text-align: left; border-bottom: 1px solid #ddd;">
+                              <p><b>{!discountData.discountName} </b></p>
+                              <aura:if isTrue="{!discountData.description!=''}">
+                                  <p>Description: <b>{!discountData.description}</b></p>
+                              </aura:if>
+                              <p>Discount Type:  <b>{!discountData.DiscountType}</b></p>
+                              <p>Discount: <b>{!discountData.discAmount}</b></p>
+                              <p>Duration in months: <b>{!discountData.discDuration}</b></p>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </table>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

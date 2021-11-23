@@ -1,0 +1,7 @@
+<apex:page standardcontroller="OpportunityLineItem">
+    <script language="javascript">
+        alert('Insufficient Privileges to edit or delete Products On opportunity, please use Product Basket for editing Products.');
+        //redirect back to opportunity page
+        history.go(-1);
+    </script>
+</apex:page>

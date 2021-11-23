@@ -1,0 +1,338 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8"/>
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="leadRec" type="Lead" default="{ 'sobjectType': 'Lead'}"/>
+    <aura:attribute name="partnerCategoryList" type="List"/>
+	<aura:attribute name="sourceInfoList" type="List"/>
+    <aura:attribute name="customerTypeList" type="List"/>
+      <div class="slds-text-heading_medium slds-float_left">Review</div>		
+        <br/><br/>
+    <!-- All Fields label changed to Custom labels by Hawaii for P2OB-8478 -->
+      	  <div class="slds-text-heading_medium">{!$Label.c.EOI_Contact_Information}</div>
+           <div class="slds-form slds-scope slds-form_stacked">
+                <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_First_Name}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.FirstName}" />
+                        <br/>
+                    </div>                
+            	</div>
+			</div>
+           <div class="slds-form slds-scope slds-form_stacked">
+                <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Last_Name}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.LastName}" />
+                        <br/>
+                    </div>                
+            	</div>
+			</div>
+           <div class="slds-form slds-scope slds-form_stacked">
+                <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Job_title}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Title}" />
+                        <br/>
+                    </div>                
+            	</div>
+			</div>
+           <div class="slds-form slds-scope slds-form_stacked">
+                <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label" >
+                        {!$Label.c.EOI_Business_email}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Email}" />
+                        <br/>
+                    </div>                
+            	</div>
+			</div>
+           <div class="slds-form slds-scope slds-form_stacked">
+                <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Phone_number}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.OTP_Mobile_Phone_Number__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+			</div>
+    <br/> <br/>
+      	  <div class="slds-text-heading_medium">{!$Label.c.EOI_Company_Information}</div>		
+		      <div class="slds-form slds-scope slds-form_stacked">
+                <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_ABN}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.ABN__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                     <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Entity_Name}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.ABN_Registered_Name__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                     <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Business_Name}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Company}" />
+                        <br/>
+                    </div>                
+            	</div>
+                     <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Years_in_Operation}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Entity_Age_Years__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                    <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Company_Website}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Website}" />
+                        <br/>
+                    </div>                
+            	</div>
+                    <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Company_headquarters_address}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Business_Address_Street__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                  <aura:if isTrue="{!v.leadRec.Business_Address_Line2__c != null}">
+                    <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        Address line 2
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Business_Address_Line2__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                  </aura:if>
+                    <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        City
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Business_Address_City__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                    <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                       State
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Business_Address_State_province__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                    <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        Postal code
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Business_Address_Zip_Postal_Code__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                         <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        Country
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Business_Address_Country__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                              <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Company_Size}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Company_Size__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                              <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Annual_Revenue}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Annual_Revenue__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                              <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Industry_Veritcal}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Industry_Vertical__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                              <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                         {!$Label.c.EOI_Types_of_customers}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <lightning:layout multipleRows="true">
+                     <aura:iteration items="{!v.customerTypeList}" var="cType">
+                          <lightning:layoutItem class="slds-p-bottom_large" size="6" smallDeviceSize="12" mediumDeviceSize="6">
+                        {!cType}
+                         </lightning:layoutItem>
+                        </aura:iteration>    
+                        </lightning:layout>
+                        <br/>
+                    </div>                
+            	</div>
+                              <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                         {!$Label.c.EOI_Working_with_telstra_rep}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Working_with_Telstra_Partner_Sales_rep__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                              <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                         {!$Label.c.EOI_Enter_Rep_Name}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Existing_Telstra_Partner_Sales_rep__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                              <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Vendor_Agreement}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Has_Telstra_Agreement__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                  <br/>
+                  <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Enter_Agreement_Type}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Current_agreements_with_telstra__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                   <br/> <br/>
+ <div class="slds-text-heading_medium">{!$Label.c.EOI_Partner_Information}</div>		
+		      <div class="slds-form slds-scope slds-form_stacked">
+                   <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        Product domains your company specialises in
+                    </label>
+                    <div class="slds-form-element__control">
+                        <lightning:layout multipleRows="true">
+                     <aura:iteration items="{!v.partnerCategoryList}" var="cat">
+                          <lightning:layoutItem class="slds-p-bottom_large" size="6" smallDeviceSize="12" mediumDeviceSize="6">
+                        {!cat}
+                         </lightning:layoutItem>
+                        </aura:iteration>    
+                        </lightning:layout>
+                        <br/>
+                    </div>                
+            	</div>
+                   <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Other}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Partner_categories_Other_Comments__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                   <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                       {!$Label.c.EOI_How_did_you_hear}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <lightning:layout multipleRows="true">
+                     <aura:iteration items="{!v.sourceInfoList}" var="sList">
+                          <lightning:layoutItem class="slds-p-bottom_large" size="6" smallDeviceSize="12" mediumDeviceSize="6">
+                        {!sList}
+                         </lightning:layoutItem>
+                        </aura:iteration>    
+                        </lightning:layout>
+                        <br/>
+                    </div>                
+            	</div>
+                  <!--Added by Ayush for Story P2OB-7471-->
+                  <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        Channel Partner/Distributor Referral Name
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.TPC_Source_Distributor_Name__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+
+                   <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Other}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Telstra_Channel_Partner_program_Comments__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+                  <!--Label changed as part of EDGE-88429  -->
+                  <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label">
+                        {!$Label.c.EOI_Description_of_capabilities}
+                    </label>
+                    <div class="slds-form-element__control">
+                        <output class="slds-output" value="{!v.leadRec.Lead_Description__c}" />
+                        <br/>
+                    </div>                
+            	</div>
+
+                  </div>                
+			</div>
+    <br />
+                  
+    <!-- P2OB-6011 - Hawaii- Recaptcha -->
+    <div class="g-captcha slds-form-element slds-form-element_horizontal" >
+                    <div style="position:absolute;z-index:2;"  > <!-- class="slds-form-element__control"-->
+                      <!--<p class="slds-text-body_regular"> <iframe style="position:relative;"  src="/partners/PhoenixRecaptcha" frameborder="0"  width="120%" height="500px"/>-->
+                        <p class="slds-text-body_regular"> <iframe style="position:relative;"  src="{!$Label.c.PRM_EOI_Recaptcha_URL}" frameborder="0"  width="120%" height="500px"/>
+                  
+                   </p>
+                    </div>
+                </div>
+
+    <br /><br /><br /><br />
+</aura:component>

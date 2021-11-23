@@ -1,0 +1,64 @@
+<!--
+===============================================================================================================================
+Component Name : SCAddLegacyTenancy
+Developer Name : Maq
+Controller Class : ReplicatorGetServiceManager
+===============================================================================================================================
+Sr.No.    Developer Name       	Modified  Date          Story Description
+1.        Maq (Eureka)          13 Jan 2020(Created)    Fetch MDMTenancy, Add Legacy Tenancy (EDGE-66570)
+===============================================================================================================================
+-->
+
+<aura:component controller="ReplicatorGetServiceManager" implements="force:appHostable,lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,flexipage:availableForAllPageTypes" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="basketId" type="String" access="global" />
+    <aura:attribute name="basketName" type="String" access="global" />
+    <aura:attribute name="jsonResponse" type="String" access="global" />
+    <aura:attribute name="TenancyColumns" type="List" />
+    <aura:attribute name="MDMTenancyResponseTable" type="List" access="global" />
+    <aura:attribute name="selectedRowsMDMTenancy" type="List" />
+    <aura:attribute name="hideCheckboxColumn" type="Boolean" default="true" description="To hide checkbox of table" />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="title" type="String" default="MDM Tenancy"/>
+    <aura:attribute name="noTenancyData" type="Boolean" default="false"/>
+    <aura:attribute name="tenancyDisableFlag" type="Boolean" default="false"/>
+    
+    <!-- {!v.jsonResponse} -->
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner variant="brand" size="large" />
+    </aura:if>
+    
+    <article class="">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    
+                    <lightning:icon iconName="utility:connected_apps" size="small"/>
+                    <span class="slds-assistive-text">{! v.title }</span>
+                    
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span><b>{! v.title }</b></span>
+                        
+                    </h2>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <article class="slds-card slds-card_boundary">
+                <div class="slds-card__body slds-card__body_inner">
+                    
+                    <lightning:datatable data="{!v.MDMTenancyResponseTable}" columns="{!v.TenancyColumns}" keyField="Id"
+                                         aura:id="MDMTenancyDataTable" selectedRows="{!v.selectedRowsMDMTenancy}"
+                                         onrowselection="{!c.getSelectedTenancy}" hideCheckboxColumn="{!v.hideCheckboxColumn}" />
+                </div>
+                
+            </article>
+        </div>
+    </article>
+    <div class="slds-docked-form-footer" style="justify-content: flex-end; !important;padding-right: 1rem">
+        <!--<button type="button" class="slds-button slds-button_neutral" onclick="{! c.handleClose }">Cancel</button>  -->
+        <lightning:button disabled="{!v.tenancyDisableFlag}" variant="brand" label="Add Tenancy" title="Add Tenancy" onclick="{! c.handleAPICallCS }" />      
+    </div>
+</aura:component>

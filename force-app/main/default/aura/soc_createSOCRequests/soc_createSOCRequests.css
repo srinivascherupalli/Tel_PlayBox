@@ -1,0 +1,13 @@
+.THIS .slds-modal__container{
+   max-height: 300px!important;
+    
+}
+
+.THIS .slds-modal__header {
+    position: relative;
+    border-top-right-radius: 0.25rem;
+    border-top-left-radius: 0.25rem;
+    border-bottom: 2px solid rgb(221, 219, 218);
+    padding: 0.40rem;
+    text-align: center;
+}

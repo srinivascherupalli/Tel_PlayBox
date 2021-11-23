@@ -1,0 +1,82 @@
+<aura:component controller="FindRelatedLeadsController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+<!-- EDGE-71679 (Related Leads)
+Sprint 19.04
+Team : SFO (Sravanthi)-->
+<aura:handler name="init" value="this" action="{!c.doInit}"/>
+<aura:handler event="force:refreshView" action="{!c.doInit}" />
+<aura:attribute name="recordId" type="Id" access="public"/>  
+<aura:attribute name="data" type="List" access="public"/>
+<aura:attribute name="ViewAllRec" type="Boolean"  access="public"/>
+<aura:attribute name="headerTitle" type="Aura.Component[]">
+<h2>    
+    <aura:if isTrue="{!lessthan(v.data.length,6)}">
+        <b>Related Leads ({!(v.data.length)}) </b>
+    </aura:if>
+    <aura:if isTrue="{!and(greaterthan(v.data.length,5),v.ViewAllRec)}"> 
+        <b>Related Leads (5+)</b>         
+    </aura:if>
+    <aura:if isTrue="{!and(greaterthan(v.data.length,5),(v.ViewAllRec=='false'))}"> 
+        <b>Related Leads</b>         
+    </aura:if>
+</h2>
+</aura:attribute> 
+<lightning:card class="slds-text-heading_small slds-card_boundary" iconName="standard:lead" title="{!v.headerTitle}" variant="base"> 
+<aura:set attribute="actions">
+    <lightning:button class ="slds-text-body--regular" label="Assign to me" title= "Assign Leads in the queue to me" onclick="{!c.handleClickAssign}" />
+</aura:set>
+<p class="slds-p-horizontal_small">
+    <aura:if isTrue="{!not(empty(v.data))}">  
+        <table class="slds-scrollable slds-table slds-table_bordered slds-border_top slds-table_stripped slds-table_cell-buffer slds-table_fixed-layout slds-border_left slds-border_right" role="grid">
+            <thead>                    
+                <tr class="slds-text-heading-label  ">
+                    <th scope="col"><div class="slds-truncate slds-text-heading--label-normal " title="Name">NAME</div></th>
+                    <th scope="col"><div class="slds-truncate slds-text-heading--label-normal" title="Account Name">ACCOUNT NAME</div></th>
+                    <th scope="col"><div class="slds-truncate slds-text-heading--label-normal" title="Contact Name">CONTACT NAME</div></th>
+                    <th scope="col"><div class="slds-truncate slds-text-heading--label-normal" title="Email">EMAIL</div></th>
+                    <th scope="col"><div class="slds-truncate slds-text-heading--label-normal" title="Status">STATUS</div></th>
+                    <th scope="col"><div class="slds-truncate slds-text-heading--label-normal" title="Owner">OWNER</div></th>
+                </tr>
+            </thead>
+            <tbody>   
+                <aura:iteration items="{!v.data}" var="child" indexVar="idx">    
+                    <aura:if isTrue="{!v.ViewAllRec}">
+                        <aura:if isTrue="{!lessthan(idx,5)}">
+                        <tr>                         
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Name}" ><a target="javascript:void" onclick="{!c.handleClick}" id="{!child.Id}">{!child.Name}</a></div></td>
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Customer_Name__c}" ><a target="javascript:void" onclick="{!c.handleClick}" id="{!child.Customer_Name__c}">{!child.Customer_Name__r.Name}</a></div></td>
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Contact_Name__c}" ><a target="javascript:void" onclick="{!c.handleClick}" id="{!child.Contact_Name__c}">{!child.Contact_Name__r.Name}</a></div></td>    
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Email}" >{!child.Email}</div></td>                        
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Status}" >{!child.Status}</div></td>
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Owner.Name}" >{!child.Owner.Name}</div></td>
+                        </tr>
+                        </aura:if>
+                    </aura:if>
+                    <aura:if isTrue="{!v.ViewAllRec=='false'}">
+                        <tr>                         
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Name}" ><a target="javascript:void" onclick="{!c.handleClick}" id="{!child.Id}">{!child.Name}</a></div></td>
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Customer_Name__c}" ><a target="javascript:void" onclick="{!c.handleClick}" id="{!child.Customer_Name__c}">{!child.Customer_Name__r.Name}</a></div></td>
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Contact_Name__c}" ><a target="javascript:void" onclick="{!c.handleClick}" id="{!child.Contact_Name__c}">{!child.Contact_Name__r.Name}</a></div></td>    
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Email}" >{!child.Email}</div></td>                        
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Status}" >{!child.Status}</div></td>
+                            <td><div class="slds-truncate slds-text-body--regular" title="{!child.Owner.Name}" >{!child.Owner.Name}</div></td>
+                        </tr>
+                    </aura:if>
+                </aura:iteration>     
+            </tbody>   
+        </table>
+        <aura:if isTrue="{!greaterthan(v.data.length,5)}">
+                <aura:if isTrue="{!v.ViewAllRec}">
+                    <div class="slds-card__footer">
+                    <a href="javascript:void(0);" onclick="{!c.navigateToMyComponent}">View All</a>
+                    </div>
+                </aura:if>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!empty(v.data)}">
+        <h1>
+            <center>No Related Leads Found.</center>
+        </h1>
+    </aura:if>
+</p>
+</lightning:card>
+</aura:component>

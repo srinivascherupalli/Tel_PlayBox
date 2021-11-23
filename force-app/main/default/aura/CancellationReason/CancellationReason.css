@@ -1,0 +1,28 @@
+.THIS .slds-modal.overriden-modal {
+    z-index: 5000;
+}
+
+.THIS .slds-backdrop.overriden-backdrop {
+    z-index: 4500;
+}
+
+.THIS .slds-listbox.slds-listbox_vertical.slds-dropdown.slds-dropdown_fluid.slds-dropdown_length-with-icon-10{
+	max-height: calc((1.5rem + 1rem) * 5);
+}
+
+.THIS .slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+}
+
+.THIS .customRequired{
+    font-weight: 400; } .THIS .customRequired:before{
+    content: "*";
+    margin: 0 0.125rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; 
+} 
+
+.THIS .none{
+    display:none; 
+}

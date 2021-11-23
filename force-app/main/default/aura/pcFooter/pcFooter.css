@@ -1,0 +1,55 @@
+.THIS {
+    background: #F4F4F4;
+}
+.THIS a {
+    color: t(colorTextDefault);
+    font-size: 0.875rem;
+    font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+}
+.THIS .body-inner.slds-p-bottom_xx-large {
+    padding-bottom: 3rem;
+}
+.THIS .slds-col.slds-col-fixed-width {
+    width: 270px;
+}
+.THIS c-prm-feedback-component .provideFeedbackBtn img{
+    width: 32px;
+    height: auto;
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    padding-top: 0.5rem;
+}
+.THIS c-prm-feedback-component lightning-button button.slds-button.slds-button_neutral{
+    background-color: #0066da;
+    color: #ffffff;
+    border: 0px;
+    line-height: 1.2rem;
+}
+.THIS c-prm-feedback-component section.slds-modal .slds-modal__container .slds-modal__content .feedbackBox a article.slds-card {
+    background: transparent;
+}
+.THIS c-prm-feedback-component section.slds-modal .slds-modal__container .slds-modal__content .feedbackBox a article.slds-card .slds-card__header.slds-grid{
+    padding: 1rem 0 0 0;
+}
+.THIS c-prm-feedback-component section.slds-modal .slds-modal__container .slds-modal__content .feedbackBox a article.slds-card .slds-card__body{
+    color: #333333;
+    font-size: 0.8125rem;
+    line-height: 1.14rem;
+}
+.THIS c-prm-feedback-component section.slds-modal .slds-modal__container .slds-modal__footer{
+    display: flex;
+    justify-content: space-between;
+}
+.THIS c-prm-feedback-component section.slds-modal .slds-modal__container .slds-modal__footer button.slds-button_neutral{
+    border: 2px solid #0068e2;
+    border-radius: 0;
+    color: #333333;
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+}
+.THIS c-prm-feedback-component section.slds-modal .slds-modal__container .slds-modal__footer button.slds-button_brand{
+    border: 2px solid #0068e2;
+    background: #0068e2;
+    border-radius: 0;
+    color: #ffffff;
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+}

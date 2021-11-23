@@ -1,0 +1,69 @@
+<!-- 
+* @Author : Shubhi
+* @Date : 26 Nov 2019
+* @Desc : Promotion and discount vf page
+* @Jira : Edge-120132
+* @Jira : Edge-143527 Added by Shubhi/Aman  
+-->
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:slds />
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+    <apex:includeLightning />
+    <script>
+        var basketId = "{!JSENCODE($CurrentPage.parameters.basketId) }";
+        var accountId = "{!JSENCODE($CurrentPage.parameters.accountId) }";
+        var solutionId="{!JSENCODE($CurrentPage.parameters.solutionId) }";
+        var accessMode ="{!JSENCODE($CurrentPage.parameters.accessMode)}";
+        var customAttribute="{!JSENCODE($CurrentPage.parameters.customAttribute)}";
+        var configId="{!JSENCODE($CurrentPage.parameters.configId)}";
+        var solutionName="{!JSENCODE($CurrentPage.parameters.solutionName)}"; //EDGE-143957
+        var planId='';
+        var caller='';
+        if(solutionName == 'Enterprise Mobility'){
+            caller='Enterprise Mobility';
+        }else if(solutionName == 'Unified Communication Device'){
+            caller='Devices';
+        }else if(solutionName == 'Connected Workplace'){ //Added by Kiran for DPG-1513
+        	caller = 'CWP';    
+        }
+        /*console.log("basketId--->"+basketId);
+        console.log("accountId---->"+accountId);
+        console.log("solutionId--->"+solutionId);
+        console.log("configId---->"+configId);
+        console.log("solutionName---->"+solutionName);
+        console.log("caller---->"+caller);*/
+        //Edge-143527 start
+        let mapJsonString='';
+        let pageloadPayload={
+        command: 'showPromo' ,
+        data: configId,
+        caller:caller };    
+        window.parent.postMessage(pageloadPayload, '*');
+        //event listner start ----------
+        window.addEventListener('message', function(event) {
+            console.log('INSIDE VF EVENT LISTENER '+event.data); 
+            //console.log( event.data);
+             if (event.data != '' && event.data['command'] && event.data['command']==configId && event.data['caller'] && event.data['caller']==caller) {
+                 mapJsonString=JSON.stringify(event.data['data']);                         
+                $Lightning.use("c:LightningAppDependencyHandler", function() {
+                $Lightning.createComponent(
+                                        "c:HandlingDiscounts",
+                                        {   "basketId": basketId,
+                                            "accountId": accountId,
+                                             "solutionId":solutionId,
+                                             "accessMode":accessMode,
+                                             "customAttribute":customAttribute,
+                                             "configId":configId,
+                                            "solutionName":solutionName,
+                                            "mapJsonString":mapJsonString //Edge-143527
+                                        },
+                                        "lightning",
+                                        function(cmp){
+                                            console.log("Component created!");
+                                        });
+                }); 
+                }
+            });
+      </script>
+      <div id="lightning" ></div>
+</apex:page>

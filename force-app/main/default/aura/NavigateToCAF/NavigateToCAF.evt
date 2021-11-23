@@ -1,0 +1,14 @@
+<!-- 
+Name : NavigetToCAF Event
+Author: Aishwarya Yeware
+Story: EDGE-89299
+-->
+
+<aura:event access="global" type="APPLICATION" description="Event template" >
+    <aura:attribute name="navigate" type="Boolean" default="false"/>
+    <aura:attribute name="basketID" type="String"/>
+    <aura:attribute name="isPPV" type="Boolean"/>
+    <!--EDGE-117585 Kalashree Borgaonkar. Contact to be sent to PPV Comp--> 
+    <aura:attribute name="defaultContact" type="String"/>
+
+</aura:event>

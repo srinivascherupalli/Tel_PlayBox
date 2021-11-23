@@ -1,0 +1,5 @@
+<apex:page controller="APTPS_ExportIssuesController" cache="true" contentType="text/csv#RiskRegister.csv" language="en-US" action="{!generateCSV}">"Risk Id","SOMP Risk Date","SOMP ID","Risk Name","Trigger","Description","Likely Impact ","Owner","Likelihood - w/o Controls","Impact w/o Controls","Risk Exposure - w/o Controls","Response Type - w/o Controls","Likelihood - w/Controls","Impact w/Controls","Risk Exposure - w/ Controls","Response Type - w/ Controls","Mitigation","Flag"
+<apex:repeat value="{!issues}" var="issue">
+{!issue.riskId},{!issue.sOMPRiskDate},{!issue.sOMPID},{!issue.riskName},{!issue.issueTrigger},{!issue.description},{!issue.likelyImpact},{!issue.owner},{!issue.likelihoodWOControls},{!issue.impactWOControls},{!issue.riskExposureWOControls},{!issue.responseTypeWOControls},{!issue.likelihoodWControls},{!issue.impactWControls},{!issue.riskExposureWControls},{!issue.responseTypeWControls},{!issue.mitigation},{!issue.flag}
+</apex:repeat>
+</apex:page>

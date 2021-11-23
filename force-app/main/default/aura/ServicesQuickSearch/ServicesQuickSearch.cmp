@@ -1,0 +1,46 @@
+<aura:component controller="ServicesQuickSearchController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName,force:lightningQuickAction" access="global" >
+<aura:attribute name="recordId" type="Id" />
+<aura:attribute name="defaultSearch" type="String" />
+<aura:attribute name="servicesList" type="Object" />
+<aura:attribute name="openItem" type="String" />
+<aura:attribute name="errorMessage" type="String" />
+<aura:attribute name="designHeight" type="String" />
+
+<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <div class="slds-box small" aura:id="main">
+      <div aura:id="panelList">
+      <header>
+        <h2 class="slds-text-heading--small slds-m-bottom--small">WoCV Quick Search Services</h2>
+        <div class="slds-form-element slds-grid slds-wrap slds-grid_pull-padded">	
+          			 <div class="slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_5-of-6 slds-large-size_8-of-12 slds-form-element__control6">
+            			<ui:inputText aura:id="searchTerm" label="" class="field" placeholder="Search for..." />
+          			 </div>
+             
+					<div id="saveButt">
+                      <lightning:button variant="brand" label="Search" onclick="{!c.updateSearch}" />
+                	 </div>
+        </div>
+      </header>
+      <p/>
+      <p class="slds-hide" aura:id="warning">{!v.errorMessage}</p>
+      <div class="slds-scrollable--y scroll-container" aura:id="scrollableArea">
+          <ul class="slds-list--vertical slds-has-dividers--top-space">
+              <aura:iteration items="{!v.servicesList}" var="item" indexVar="i">
+                  <li class="slds-list__item" onclick="{!c.showDetails}" data-record="{!i}">
+                      <h3 class="slds-text-heading--small slds-m-bottom--x-small">Service: {!item.serviceNumber}</h3>
+                      <div class="slds-hide" data-details="{!i}">
+                          <ul class="slds-list--vertical">
+                              <li class="slds-list__item">Billing Account: {!item.billingAccount}</li>
+                              <li class="slds-list__item">Single Biller: {!item.singleBiller}</li>
+                              <li class="slds-list__item">Silent: {!item.silentLine}</li>
+                              <li class="slds-list__item">Plan: {!item.plan}</li>
+                              <li class="slds-list__item">CIDN: {!item.cidn}</li>
+                          </ul>                      
+                      </div>
+                  </li>
+              </aura:iteration>
+        </ul>
+      </div>
+      </div>
+    </div>
+</aura:component>

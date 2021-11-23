@@ -1,0 +1,86 @@
+<aura:component controller="SiteSQCheckController" implements="force:hasRecordId,force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="siteRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    <aura:attribute name="columnsNum" type="List" />
+    <aura:attribute name="technologyType" type="String" />
+    <aura:attribute name="isenabled" type="Boolean" default="false" />
+    <aura:attribute name="sqList" type="SiteSQCheckController.SubWrapper[]"/>
+    <div aura:id="container"/> 
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <div>
+            <lightning:spinner class="spin" aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <aura:attribute name="value" type="String" default=""/>
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="Name,AdborID__c"
+                      targetFields="{!v.siteRecord}"
+                      targetError="{!v.recordLoadError}"
+                      />     
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>   
+    <!--
+EDGE-119161
+Description: On click of SQCheck button open component
+Author:Ila 
+-->
+    
+    <aura:html tag="style">
+        .cuf-content{
+        padding:0 !important;
+        }
+        .slds-p-around--medium{
+        padding:0 !important;
+        }
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        }
+    </aura:html>   
+    <div>
+        <div class="modal-header slds-modal__header">
+            <h1 class="title slds-text-heading_medium">Service Qualification Check</h1>
+        </div>
+        
+        <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-border--left slds-border--right slds-p-top_small slds-p-bottom_small slds-p-horizontal_x-small"> 
+            <thead>
+                <tr>
+                    <th scope="col"> </th>
+                    <th scope="col" class="slds-size_1-of-3">
+                        <div class="slds-truncate">Technology Type</div>
+                    </th>            
+                    <th scope="col" class="slds-size_1-of-3">
+                        <div class="slds-truncate slds-status--field">Status 
+                            <lightning:helptext iconName="utility:info" class="slds-status--icon" title="Please check Service Qualification record and related list for detailed results" />
+                        </div>
+                    </th>
+                    <th scope="col" class="slds-size_1-of-3">
+                        <div class="slds-truncate" >Last Verification Date</div>
+                    </th>
+                </tr>
+            </thead>   
+            <tbody>
+                <aura:iteration items= "{!v.sqList}" var="sqRec">
+                    <tr class="slds-text-title">
+                        <td> <lightning:input type="radio" label="" name="options" checked ="{!sqRec.isSelected}" onchange="{!c.showCheckButton}" />  </td>
+                        <td>{!sqRec.techType}</td>
+                        <td>{!sqRec.Status}</td>
+                        <td>
+                            <ui:outputDate aura:id="EndDateField" value="{!sqRec.VerficationDt}"  format="DD-MMM-YYYY"/>
+                        </td>
+                    </tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+        <div class="modal-footer slds-modal__footer">
+            <button
+                    class="slds-button slds-button_brand"
+                    label="Check"
+                    onclick="{!c.checkSq}"
+                    disabled="{!!v.isenabled}"
+                    value="{!v.siteRecord}"
+                    >Check</button>
+        </div>       
+    </div>
+</aura:component>

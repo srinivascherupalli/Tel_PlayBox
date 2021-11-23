@@ -1,0 +1,10 @@
+<aura:component implements="lightning:availableForFlowActions,lightning:availableForFlowScreens,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction">
+    <!-- This is a reusable component for showing toast messages, created as part of US EDGE-167051 -->
+    <!-- Valid values for Type are success, error, info and warning -->
+    <ltng:require styles="{!$Resource.ReusableShowToastCSS}" />
+    <aura:attribute name="type" type="string" default="success" />
+    <aura:attribute name="message" type="string" />
+    <aura:attribute name="duration" type="Integer" default="5000" />
+    <aura:attribute name="mode" type="string" default="dismissible" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+</aura:component>

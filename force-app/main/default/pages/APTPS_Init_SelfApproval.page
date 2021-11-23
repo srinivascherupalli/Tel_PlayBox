@@ -1,0 +1,115 @@
+<apex:page Extensions="APTPS_SelfApprovalController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+ <apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+  <apex:includeScript value="{!$Resource.APTPS_Bootstrap_Min_JS}"></apex:includeScript> 
+  <apex:stylesheet value="{!$Resource.APTS_Progress_Bar_CSS}"></apex:stylesheet>
+  <apex:stylesheet value="{!$Resource.APTS_Pie_Progress_CSS}"></apex:stylesheet>
+  <style type="text/css">
+    .rcorners {
+        border: 2px solid #319431;
+    }
+    .headerRow{
+     text-align: center;  
+      }
+ </style>
+ <script>
+     jQuery(document).ready(function($){
+    
+                
+        });
+     function ShowWrapper(bName)
+        {
+            $('#myWrapper').show();
+            $('#progressBarOuter').show();
+            if(bName=='save'){
+            $('#statusSpan').html('Processing. Please wait.');
+                }
+            else{
+                $('#statusSpan').html('cancelling...');
+              }
+        }
+        
+        function hideWrapper()
+        {
+            $('#myWrapper').hide();
+            $('#progressBarOuter').hide();     
+        }
+      function checkAll(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkSelfApp")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+     function checkAllLang(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkSelfLang")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+    
+ </script>
+  <apex:sectionHeader subtitle="{!parentAgreement.Name}" ></apex:sectionHeader>
+  <apex:form >
+    
+      <div style="font-size:18px"><apex:pageMessages id="theMessages"></apex:pageMessages></div>
+    <apex:pageBlock >
+        <apex:pageBlockTable style="font-size:16px" value="{!agreementClauseWrapperList}" var="clauseWrapper" >
+             <!-- This is our selected Boolean property in our wrapper class-->
+            <apex:column style="text-align: center;vertical-align: middle; width:10%; word-wrap: break-word;">
+                <apex:facet name="header"> 
+                  <apex:outputPanel >
+                      <apex:outputLabel value="Self Approved"/><br/>         
+                      <apex:inputCheckbox onclick="checkAll(this)" label="Self Approved" />
+                  </apex:outputPanel>
+                </apex:facet>              
+                <apex:inputCheckbox value="{!clauseWrapper.selfApproved}" title="Self Approved"  id="checkSelfApp" style="text-align: center;vertical-align: middle;" />         
+            </apex:column>            
+            <apex:column style="text-align: center;vertical-align: middle; middle; width:10%">
+               <apex:facet name="header" >
+                   <apex:outputPanel >
+                    Non Standard <br/>       
+                    Legal Language <br/>                     
+                    <apex:inputCheckbox onclick="checkAllLang(this)" label="Non Standard Legal Language" />
+                  </apex:outputPanel>
+               </apex:facet>    
+              <apex:inputCheckbox value="{!clauseWrapper.nonStandardLegalLanguage}" title="Non Standard Legal Language" id="checkSelfLang" style="text-align: center;vertical-align: middle;" /> 
+            </apex:column>
+            <apex:column value="{!clauseWrapper.Name}" headerValue="Number"  style="text-align: center;vertical-align: middle;" />
+            <apex:column value="{!clauseWrapper.clause}" headerValue="Clause" />
+            <apex:column value="{!clauseWrapper.approvalStatus}" headerValue="Approval Status" />
+            <apex:column value="{!clauseWrapper.riskRating}" headerValue="Risk Rating" />
+            <apex:column value="{!clauseWrapper.approvalGuidence}" headerValue="Approval Guidance   " />
+            <apex:column headerValue="Text" >
+                <apex:outputText value="{!clauseWrapper.text}" escape="false"></apex:outputText>
+            </apex:column>
+            <apex:column headerValue="Previous Text" >
+                <apex:outputText value="{!clauseWrapper.prevTextp}" escape="false"></apex:outputText>
+            </apex:column>
+            <apex:column value="{!clauseWrapper.comments}" headerValue="Comments" />
+         </apex:pageBlockTable>  
+          <div id="outer" style="margin-top:20px;margin-bottom:20px;">
+                <div id="inner" style="margin-left:40%">
+                    
+            <apex:commandButton style="font-size:16px" value="Self Approve" action="{!saveSelfApprovedClause}"  rendered="{!if(agreementClauseWrapperList.size>0,true,false)}" rerender="theMessages"  onClick="ShowWrapper('save')" status="status" ></apex:commandButton>
+                     
+            <apex:commandButton value="Cancel" action="{!cancel}" rerender="theMessages" onClick="ShowWrapper('Cancel')" style="font-size:16px;margin-left:2%"></apex:commandButton>
+            </div>
+		 </div>
+          <div id="myWrapper" style="display:none;  position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            </div>
+            <div id= "progressBarOuter" style="display:none; position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 42%;width: 17%;background-color: white;
+             text-align:center; height: 140px; " class="rcorners">
+                
+                <apex:image id="theImage" style="margin-top:20px;margin-bottom:11px;" value="{!$Resource.APTS_WaitImage}" width="77" height="77"/>
+                    <div>
+                        <span id="statusSpan" style="margin-top:10px;font-weight:bold; font-size:13px;"></span>
+                    </div>                
+            </div>
+       </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,4 @@
+<design:component>
+	  <design:attribute name="listSize" label="List Size" description="Please add size of list" />
+
+</design:component>

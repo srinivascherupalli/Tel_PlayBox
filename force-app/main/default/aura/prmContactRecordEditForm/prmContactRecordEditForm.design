@@ -1,0 +1,7 @@
+<design:component>
+    <design:attribute name="userAccountId" label="User Account Id" description="Partner account associated with user"/>
+    <design:attribute name="contactRecordTypeName" label="Object Record Type Name" description="Developer Name of record type"/>
+    <design:attribute name="objectName" default="Contact" label="Object Api Name" description="Api name of object"/>
+    <design:attribute name="buttonLabel" default="New Partner User" label="Button Label" description="button label to be displayed on UI"/>
+    <design:attribute name="fieldSetName" default="Record_Form_Contact_Info_Section_Fields,Record_Form_Address_Info_Section_Fields" label="Comma separated API Name of Associated Object field Sets" description="API Name of field set associated with an object"/>
+</design:component>

@@ -1,0 +1,541 @@
+<!--NFB-126 : This component is developed to display the legacy services of the user returned from Replicator interface-->
+
+
+<aura:component implements="force:appHostable" controller="ReplicatorManager" access="global" >
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />   
+    <aura:attribute name="isOpen" type="boolean" access="global"/>
+    <aura:attribute name="adborid" type="String[]" access="global"/>
+    <aura:attribute name="cidn" type="String" access="global"/>
+    <aura:attribute name="moreinfo" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="selectedOffer" type="String[]" access="global"/>
+    <aura:attribute name="selectedSite" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="siteName" type="String" access="global"/>
+    <aura:attribute name="siteNameArray" type="String[]" access="global"/>
+    <aura:attribute name="oppId" type="String" access="global"/>
+    
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+
+
+  	<div class="slds-table slds-table--bordered slds-table--striped"> 
+        <ui:message closable="true">
+            {!$Label.c.caveat_message}
+ 		 </ui:message>
+    </div>
+        
+        <div class="slds slds-m-bottom_xx-large"> 
+        <table class="slds-table slds-table--bordered slds-table--striped">
+            <tbody>
+                <tr>
+                    <td colspan="5" class="thick"> <ui:inputCheckbox class="chkborder" aura:id="SelectAll" label="Select All" change="{!c.checkAllCheckboxes}" /></td>
+                </tr>
+                
+                <aura:iteration items="{!v.sites.site}" var="s" indexVar="tidx">
+                <c:CollapsiblePanel header="{!s.siteName + '-' + s.ADBOR_Id}">
+                <aura:iteration items="{!s.productList}" var="p" indexVar="idx">
+                  	<tr>
+                    	<td>
+                          	<div onchange="{!c.onCheckBoxClick}" data-value="{!p.Product_Identifier}" data-record="{!idx}">
+                            	<ui:inputCheckbox class="chkborder" aura:id="DependentCheckbox" disabled="{!p.disableCheck}"/>
+                          	</div>
+                  		</td>
+                      	<td colspan="2"  class="heading"><span class="thick">Product Type : </span>{!p.Product_Type}</td>
+                        <td>
+                             <div data-record="{!tidx+'#'+idx}" onclick="{!c.onMoreInfo}"> 
+                                <button class="slds-button slds-button--brand">More info</button>           
+                            </div>  
+                    	</td>
+                    </tr>
+                    <tr class="heading thick">
+                        <td>Consumer/Business</td>
+                        <td>In-Flight order flag</td>
+                        <td>TechnicalAssociationID</td>
+                        <td>Product Discount Details</td>
+                        
+                    </tr>
+                    <tr>
+                        <td>{!p.Business_Owner}</td>
+                        <td>{!p.In_Flight_Flag }</td>
+                        <td>{!p.Association_Link_Id}</td>
+                        <td>
+                        <aura:if isTrue="{!and(p.discount != null, p.discount.length > 1)}">    
+                            <c:CollapsiblePanel header="Discount Name">
+                                <aura:set attribute="body">
+                                    <aura:iteration items="{!p.discount}" var="pdis" indexVar="idx">
+                                        <aura:if isTrue="{!and(pdis.Discount_Name != null, pdis.Discount_Name != '')}">
+                                            <div class="thin">{!pdis.Discount_Name}</div>
+                                       </aura:if>
+                                    </aura:iteration>
+                                 </aura:set>
+                                </c:CollapsiblePanel>
+                            
+                             <aura:set attribute="else">
+                                 <div class="thick">Discount Name</div>
+                                 <div class="thinborder">{!p.discount[0].Discount_Name}</div>
+								 </aura:set>
+	                          </aura:if>
+                        </td>
+                       
+                    </tr>
+                    <aura:iteration items="{!p.service}" var="s" indexVar="idx">
+                        <tr>
+                            <td class="thick heading">Service id (Phone Number)</td>
+                            <td colspan="2" class="heading">{!s.Service_Id}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="heading thick">
+                            <td></td>
+                            <td>
+								<aura:if isTrue="{!and(s.planCharacteristic != null, s.planCharacteristic.length > 1)}">                                 
+                                    <c:CollapsiblePanel header="Plan Details">
+                                         <aura:set attribute="body">
+                                             <tr>
+                                                 <td class="noborder">Plan Name </td>
+                                                 <td class="noborder">Plan Monthly Amount</td>
+                                             </tr> 
+                                        <aura:iteration items="{!s.planCharacteristic}" var="pc" indexVar="idx">
+                                             <aura:if isTrue="{!and(pc.Plan_Name != null, pc.Plan_Name != '')}">
+                                                <tr>
+                                                    <td class="noborder"><span class="thin">{!pc.Plan_Name}</span></td>
+                                                    <td class="noborder"><span class="thin">{!pc.Plan_Monthly_Amount}</span></td>
+                                                </tr>
+                                            </aura:if>
+                                        </aura:iteration>
+                                              </aura:set>
+                                    </c:CollapsiblePanel>
+                                
+                                <aura:set attribute="else">
+                                    <div class="headingRow">Plan Details</div>
+                                    <tr>
+                                        <td class="thinborder">Plan Name </td>
+                                        <td class="thinborder">Plan Monthly Amount</td>
+                                    </tr> 
+                                    <aura:if isTrue="{!and(s.planCharacteristic[0].Plan_Name != null, s.planCharacteristic[0].Plan_Name != '')}">
+                                        <tr>
+                                            <td class="thinborder"><span class="thinborder">{!s.planCharacteristic[0].Plan_Name}</span></td>
+                                            <td class="thinborder"><span class="thinborder">{!s.planCharacteristic[0].Plan_Monthly_Amount}</span></td>
+                                        </tr>
+                                    	</aura:if>
+                                	</aura:set>
+                                </aura:if>
+                           	</td>
+                             <td>
+                               <aura:if isTrue="{!and(s.serviceRelationship.length > 2,s.serviceRelationship[0].device.Device_Name != null, s.serviceRelationship[0].device.Device_Name != '')}">                                 
+                                <c:CollapsiblePanel header="Device Details">
+                                    	<!--aura:set attribute="body"-->
+                                            	<tr>
+                                             		<td>Device Name </td>
+                                             		<td>Device Monthly Amount</td>
+                                         		</tr> 
+                                             	<aura:iteration items="{!s.serviceRelationship}" var="sr" indexVar="idx">
+                                        	 		<aura:if isTrue="{!and(sr.device.Device_Name != null, sr.device.Device_Name != '')}">
+                                                		<tr>
+                                            				<td class="noborder"><span class="thin">{!sr.device.Device_Name} </span></td>
+                                                			<td class="noborder"><span class="thin">{!sr.device.Device_Monthly_Amount}</span></td>
+                                            			</tr>
+                                                    </aura:if>
+                                    			</aura:iteration>
+                                            <!--/aura:set-->
+                                	</c:CollapsiblePanel>
+                                  <aura:set attribute="else">
+                                      <aura:if isTrue="{!and(s.serviceRelationship[0].device.Device_Name != null, s.serviceRelationship[0].device.Device_Name != '')}">
+                                      <div class="headingRow">Device Details</div>
+                                      <tr>
+                                          <td class="noborder">Device Name </td>
+                                          <td class="noborder">Device Monthly Amount</td>
+                                       </tr>
+                                      </aura:if>
+                                       <aura:iteration items="{!s.serviceRelationship}" var="sr" indexVar="idx">
+                                          <aura:if isTrue="{!and(sr.device.Device_Name != null, sr.device.Device_Name != '')}">
+                                              <tr>
+                                                  <td class="noborder"><span class="thin">{!sr.device.Device_Name}</span></td>
+                                                  <td class="noborder"><span class="thin">{!sr.device.Device_Monthly_Amount}</span></td>
+                                              </tr>
+                                          </aura:if>
+                                      </aura:iteration>
+                                 </aura:set>
+                                </aura:if>
+                           	</td>
+                        </tr>
+                   </aura:iteration>
+                    </aura:iteration>
+                    </c:CollapsiblePanel>
+                </aura:iteration>
+               
+                <tr>
+                    <td></td>
+                    <td colspan="2" class="heading">
+                        <ui:button class="slds-button slds-button--brand" label="Back" press="{!c.navigateToRollCall}"/>
+                        <ui:button class="slds-button slds-button--brand" aura:id="transitionbutton" label="Transition" press="{!c.navigateToGetOffer}" disabled="true"/>
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        
+        <aura:if isTrue="{!v.isOpen}">
+            <!--###### MODAL BOX Start From Here ######--> 
+            
+            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open slds-modal--large">
+                <div class="slds-modal__container">
+                   <div class="slds-modal__header">
+                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                        X
+                        <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="header99" class="slds-text-heading--medium">Detail view of selected Product</h2>
+                  </div>
+                    <!--###### MODAL BOX BODY Part Start From Here ######-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        
+                        <div class="slds-scrollable">
+                        <table class="slds-table slds-table--bordered slds-table--striped">
+                            <thead>
+                                <tr>
+                                    <th colspan="7" class="head heading thick">Product Type : {!v.moreinfo.Product_Type}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="thick">
+                                    <td>Consumer/Business</td>
+                                    <td>Bundle indicator</td>
+                                    <td>Purchase Order</td>
+                                    <td>In-Flight Order Flag</td>
+                                    <td>Nominated FNN</td>
+                                    <td>TechnicalAssociationID</td>
+                                    <td>Discount</td>
+                                </tr>
+                                <tr>
+                                   	<td>{!v.moreinfo.Business_Owner}</td>
+                                   	<td>{!v.moreinfo.Bundle_Indicator}</td>
+                                    <td>{!v.moreinfo.Purchase_Order}</td>
+                                    <td>{!v.moreinfo.In_Flight_Flag}</td>
+                                    <td>{!v.moreinfo.Nominated_FNN}</td>
+                                    <td>{!v.moreinfo.Association_Link_Id}</td>
+                                    <td>
+                                        <tr class="thick">
+                                                    <td>Product Discount Name</td>
+                                                    <td>Product Discount Monthly Amount</td>
+                                                    <td>Product Discount Term</td>
+                                         </tr>
+                                        <aura:if isTrue="{!and(v.moreinfo.discount != null, v.moreinfo.discount.length > 1)}">
+                                    	<c:CollapsiblePanel header="Discount Details">
+                                            <!--aura:set attribute="body"-->
+                                                
+                                                <aura:iteration items="{!v.moreinfo.discount}" var="pdis" indexVar="idx">
+                                                    <aura:if isTrue="{!and(pdis.Discount_Name != null, pdis.Discount_Name != '')}">
+                                                        <tr>
+                                                            <td>{!pdis.Discount_Name}</td>
+                                                            <td>{!pdis.Discount_Monthly_Amount}</td>
+                                                            <td>{!pdis.Discount_Term}</td>
+                                                        </tr>
+                                                   </aura:if>
+                                                </aura:iteration>
+                                             <!--/aura:set-->
+                                        </c:CollapsiblePanel>
+                                             <aura:set attribute="else">
+												<tr>
+													<td>{!v.moreinfo.discount[0].Discount_Name}</td>
+													<td>{!v.moreinfo.discount[0].Discount_Monthly_Amount}</td>
+													<td>{!v.moreinfo.discount[0].Discount_Term}</td>
+                                                </tr>								
+										  </aura:set>
+										</aura:if>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="heading thick" colspan="7">Service Details</td>
+                                </tr>
+                                    <aura:iteration items="{!v.moreinfo.service}" var="s" indexVar="idx">
+                                        <tr><td colspan="7">
+                                    	<c:CollapsiblePanel header="{!s.Service_Id}">
+                                            <aura:set attribute="body">
+                                                <table class="slds-table slds-table--bordered slds-table--striped">
+                                                <tr class="thick">
+                                                    <td>Service Id</td>
+                                                    <td>Service Type</td>
+                                                    <td>Last Replicator Update Date</td>
+                                                    <td>Technical Association Role</td>
+                                                    <td>ServiceCharacteristics</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>{!s.Service_Id}</td>
+                                                    <td>{!s.Service_Type}</td>
+                                                    <td>{!s.Last_Replicator_Update_Date}</td>
+                                                    <td>{!s.Technical_Association_Role}</td>
+                                                    <td>
+                                                        <aura:if isTrue="{!and(s.serviceCharacteristic != null, s.serviceCharacteristic.length > 1)}">
+                                                    	 <c:CollapsiblePanel header="Details">
+                                                            <aura:set attribute="body">
+                                                                <table class="slds-table slds-table--bordered slds-table--striped">
+                                                                    <tr>
+                                                                        <td class="noborder thick">Name </td>
+                                                                        <td class="noborder thick">Value</td>
+                                                                    </tr> 
+                                                                    <aura:iteration items="{!s.serviceCharacteristic}" var="sc" indexVar="idx">
+                                                                        <aura:if isTrue="{!and(and(sc.name != null, sc.name != ''),and(sc.value != null, sc.value != ''))}">
+                                                                            <tr>
+                                                                                <td class="noborder"><span class="thin">{!sc.name}</span></td>
+                                                                                <td class="noborder"><span class="thin">{!sc.value}</span></td>
+                                                                            </tr>
+                                                                        </aura:if>
+                                                                    </aura:iteration>
+                                                                </table>
+                                                                </aura:set>
+                                                        	</c:CollapsiblePanel>
+                                                             <aura:set attribute="else">
+                                                                 <table class="slds-table slds-table--bordered slds-table--striped">
+                                                                    <tr>
+                                                                        <td class="noborder thick">Name </td>
+                                                                        <td class="noborder thick">Value</td>
+                                                                    </tr>
+                                                                      <aura:if isTrue="{!and(and(s.serviceCharacteristic[0].name != null, sc.name != ''),and(s.serviceCharacteristic[0].value != null, s.serviceCharacteristic[0].value != ''))}">
+                                                                            <tr>
+                                                                                <td class="noborder"><span class="thin">{!s.serviceCharacteristic[0].name}</span></td>
+                                                                                <td class="noborder"><span class="thin">{!s.serviceCharacteristic[0].value}</span></td>
+                                                                            </tr>
+                                                                        </aura:if>
+                                                                 </table>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    	</td>
+                                                	</tr>
+                                                	<tr>
+                                                        
+                                                        <td class="heading thick" colspan="7">Plan Details</td></tr>
+                                                        <aura:iteration items="{!s.planCharacteristic}" var="spc" indexVar="idx">
+                                                            <tr><td colspan="7">
+                                                                <aura:if isTrue="{!and(s.planCharacteristic != null, s.planCharacteristic.length > 1)}">
+                                                                <c:CollapsiblePanel header="{!spc.Plan_Name}">
+                                                                    <aura:set attribute="body">
+                                                                    	<table class="slds-table slds-table--bordered slds-table--striped">
+                                                                            <tr class="thick">
+                                                                                <td>Plan Name</td>
+                                                                                <td>Plan Term</td>
+                                                                                <td>Plan Monthly Amount</td>
+                                                                                <td>Plan Start Date</td>
+                                                                                <td>Instalments Remaining</td>
+                                                                                <td>Discount Name</td>
+                                                                                <td>Service Discount Monthly Amount</td>
+                                                                                <td>Discount Start Date</td>
+                                                                                <td>Service Discount Term</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{!spc.Plan_Name}</td>
+                                                                                <td>{!spc.Plan_Term}</td>
+                                                                                <td>{!spc.Plan_Monthly_Amount}</td>
+                                                                                <td>{!spc.Plan_Start_Date}</td>
+                                                                                <td>{!spc.Instalments_Remaining}</td>
+                                                                                <td>{!spc.discount.Discount_Name}</td>
+                                                                                <td>{!spc.discount.Discount_Monthly_Amount}</td>
+                                                                                <td>{!spc.discount.Discount_Start_Date}</td>
+                                                                                <td>{!spc.discount.Discount_Term}</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </aura:set>
+                                                                </c:CollapsiblePanel>
+                                                                
+                                                                 <aura:set attribute="else">
+                                                                     <table class="slds-table slds-table--bordered slds-table--striped">
+                                                                            <tr class="thick">
+                                                                                <td>Plan Name</td>
+                                                                                <td>Plan Term</td>
+                                                                                <td>Plan Monthly Amount</td>
+                                                                                <td>Plan Start Date</td>
+                                                                                <td>Instalments Remaining</td>
+                                                                                <td>Discount Name</td>
+                                                                                <td>Service Discount Monthly Amount</td>
+                                                                                <td>Discount Start Date</td>
+                                                                                <td>Service Discount Term</td>
+                                                                            </tr>
+                                                                         		<td>{!s.planCharacteristic[0].Plan_Name}</td>
+                                                                                <td>{!s.planCharacteristic[0].Plan_Term}</td>
+                                                                                <td>{!s.planCharacteristic[0].Plan_Monthly_Amount}</td>
+                                                                                <td>{!s.planCharacteristic[0].Plan_Start_Date}</td>
+                                                                                <td>{!s.planCharacteristic[0].Instalments_Remaining}</td>
+                                                                                <td>{!s.planCharacteristic[0].discount.Discount_Name}</td>
+                                                                                <td>{!s.planCharacteristic[0].discount.Discount_Monthly_Amount}</td>
+                                                                                <td>{!s.planCharacteristic[0].discount.Discount_Start_Date}</td>
+                                                                                <td>{!s.planCharacteristic[0].discount.Discount_Term}</td>
+                                                                            <tr>
+                                                                         </tr>
+                                                                     </table>
+                                                                  </aura:set>
+                                                                </aura:if>
+                                                                </td>
+                                                            </tr>
+                                                                
+                                                        </aura:iteration>
+                                                   	<tr>
+                                                        <td class="heading thick" colspan="7">Device Details</td></tr>
+                                                        <aura:iteration items="{!s.serviceRelationship}" var="sr" indexVar="idx">
+                                                           <aura:if isTrue="{!sr.device != null}">
+                                                            <tr><td colspan="7">
+                                                                <aura:if isTrue="{!and(s.serviceRelationship.length > 2,s.serviceRelationship[0].device.Device_Name != null, s.serviceRelationship[0].device.Device_Name != '')}">                                 
+                                                                	<c:CollapsiblePanel header="{! 'Device Details' + ' ' + sr.device.Device_Name}">
+                                                                    
+                                                                    <!--aura:set attribute="body"-->
+                                                                    	<table class="slds-table slds-table--bordered slds-table--striped">
+                                                                            <tr class="thick">
+                                                                                <td>Device Name</td>
+                                                                                <td>Device Type</td>
+                                                                                <td>Device Model</td>
+                                                                                <td>Device Payment Type</td>
+                                                                                <td>Device Plan Start Date</td>
+                                                                                <td>Device Monthly Amount</td>
+                                                                                <td>Device Plan Term</td>
+                                                                                <td>Quantity</td>
+                                                                                <td>Discounts</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{!sr.device.Device_Name}</td>
+                                                                                <td>{!sr.device.Device_Type}</td>
+                                                                                <td>{!sr.device.Device_Model}</td>
+                                                                                <td>{!sr.device.Device_Payment_Type}</td>
+                                                                                <td>{!sr.device.Device_Plan_Start_Date}</td>
+                                                                                <td>{!sr.device.Device_Monthly_Amount}</td>
+                                                                                <td>{!sr.device.Device_Plan_Term}</td>
+                                                                                <td>{!sr.device.Quantity}</td>
+                                                                                <td>
+                                                                                    <aura:if isTrue="{!and(sr.device.discount != null, sr.device.discount.length > 1)}">
+                                                                                	<c:CollapsiblePanel header="Details">
+                                                                                        <aura:set attribute="body">
+                                                                                            <table>
+                                                                                                <tr class="thick">
+                                                                                                    <td>Discount Name</td>
+                                                                                                    <td>Discount Start Date</td>
+                                                                                                    <td>Device Discount Monthly Amount</td>
+                                                                                                    <td>Discount Term</td>
+                                                                                                </tr>
+                                                                                            	<aura:iteration items="{!sr.device.discount}" var="ddis" indexVar="idx">
+                                                                                                    <tr>
+                                                                                                        <td>{!ddis.Discount_Name}</td>
+                                                                                                        <td>{!ddis.Discount_Start_Date}</td>
+                                                                                                        <td>{!ddis.Discount_Monthly_Amount}</td>
+                                                                                                        <td>{!ddis.Discount_Term}</td>
+                                                                                                    </tr>
+                                                                                            	</aura:iteration>
+                                                                                            </table>
+                                                                                         </aura:set>
+                                                                                        </c:CollapsiblePanel>
+                                                                                    
+                                                                                     <aura:set attribute="else">
+                                 														 <table>
+                                                                                                <tr class="thick">
+                                                                                                    <td>Discount Name</td>
+                                                                                                    <td>Discount Start Date</td>
+                                                                                                    <td>Device Discount Monthly Amount</td>
+                                                                                                    <td>Discount Term</td>
+                                                                                                </tr>
+                                                                                              <tr>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Name}</td>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Start_Date}</td>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Monthly_Amount}</td>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Term}</td>
+                                                                                               </tr>
+                                                                                         </table>
+								 														</aura:set>
+	                          														</aura:if>
+                                                                                
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    <!--/aura:set-->
+                                                                </c:CollapsiblePanel>
+                                                                    <aura:set attribute="else">
+                                                                    	<table class="slds-table slds-table--bordered slds-table--striped">
+                                                                            <tr class="thick">
+                                                                                <td>Device Name</td>
+                                                                                <td>Device Type</td>
+                                                                                <td>Device Model</td>
+                                                                                <td>Device Payment Type</td>
+                                                                                <td>Device Plan Start Date</td>
+                                                                                <td>Device Monthly Amount</td>
+                                                                                <td>Device Plan Term</td>
+                                                                                <td>Quantity</td>
+                                                                                <td>Discounts</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>{!sr.device.Device_Name}</td>
+                                                                                <td>{!sr.device.Device_Type}</td>
+                                                                                <td>{!sr.device.Device_Model}</td>
+                                                                                <td>{!sr.device.Device_Payment_Type}</td>
+                                                                                <td>{!sr.device.Device_Plan_Start_Date}</td>
+                                                                                <td>{!sr.device.Device_Monthly_Amount}</td>
+                                                                                <td>{!sr.device.Device_Plan_Term}</td>
+                                                                                <td>{!sr.device.Quantity}</td>
+                                                                                <td>
+                                                                                    <aura:if isTrue="{!and(sr.device.discount != null, sr.device.discount.length > 1)}">
+                                                                                	<c:CollapsiblePanel header="Details">
+                                                                                        <aura:set attribute="body">
+                                                                                            <table>
+                                                                                                <tr class="thick">
+                                                                                                    <td>Discount Name</td>
+                                                                                                    <td>Discount Start Date</td>
+                                                                                                    <td>Device Discount Monthly Amount</td>
+                                                                                                    <td>Discount Term</td>
+                                                                                                </tr>
+                                                                                            	<aura:iteration items="{!sr.device.discount}" var="ddis" indexVar="idx">
+                                                                                                    <tr>
+                                                                                                        <td>{!ddis.Discount_Name}</td>
+                                                                                                        <td>{!ddis.Discount_Start_Date}</td>
+                                                                                                        <td>{!ddis.Discount_Monthly_Amount}</td>
+                                                                                                        <td>{!ddis.Discount_Term}</td>
+                                                                                                    </tr>
+                                                                                            	</aura:iteration>
+                                                                                            </table>
+                                                                                         </aura:set>
+                                                                                        </c:CollapsiblePanel>
+                                                                                    
+                                                                                     <aura:set attribute="else">
+                                 														 <table>
+                                                                                                <tr class="thick">
+                                                                                                    <td>Discount Name</td>
+                                                                                                    <td>Discount Start Date</td>
+                                                                                                    <td>Device Discount Monthly Amount</td>
+                                                                                                    <td>Discount Term</td>
+                                                                                                </tr>
+                                                                                              <tr>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Name}</td>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Start_Date}</td>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Monthly_Amount}</td>
+                                                                                                  <td>{!sr.device.discount[0].Discount_Term}</td>
+                                                                                               </tr>
+                                                                                         </table>
+								 														</aura:set>
+	                          														</aura:if>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                                </td>
+                                                            </tr>
+                                                            </aura:if>
+                                                        </aura:iteration>	
+                                                </table>
+                                             </aura:set>
+                                            </c:CollapsiblePanel>
+                                            </td>
+                                            </tr>
+                                    </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer heading">
+                               <button class="slds-button slds-button--brand" onclick="{!c.closeModel}">Close</button>
+               </footer>
+            </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+        </aura:if>
+        
+    </div>
+</aura:component>

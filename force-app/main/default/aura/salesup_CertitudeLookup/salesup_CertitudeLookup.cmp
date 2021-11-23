@@ -1,0 +1,47 @@
+<aura:component implements="lightning:availableForFlowScreens,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global"
+                controller="salesup_CertitudeLookupController">
+    
+    
+    
+	<aura:attribute name="oRecord" type="sObject" />
+    <aura:attribute name="IconName" type="string"/>
+    <aura:attribute name="dataType" type="String" default="default"/>
+    <aura:attribute name="fieldName" type="String" default=""/> <!--added part of EDGE-150892 to manage event to have field name info-->
+ 
+  <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedRecordEvent" type="c:salesup_CertitudeLookupEvent"/>
+ 
+    <li role="presentation" class="slds-listbox__item" onclick="{!c.selectRecord}">
+        <span id="listbox-option-unique-id-01" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+              <span class="slds-media__figure">
+                  <span class="slds-icon_container" title="Description of icon when needed">
+                    <lightning:icon iconName="{!v.IconName}" class="slds-icon slds-icon_small" size="small" alternativeText="icon"/>
+                    <span class="slds-assistive-text">Description of icon</span>
+                  </span>
+              </span>  
+            
+              <span class="slds-media__body">
+                  <aura:if isTrue="{!v.dataType=='default'}">
+                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.Name}</span>
+                      	<span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.Billing_Account_Number__c}</span>
+                        <!-- Added by Durga -->
+                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.cscrm__Address__r.Name}</span>
+                        <!-- Added by Durga DIGI:21813 Jaipur-->
+                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.csord__Order_Number__c}</span>
+                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.Opportunity_Number__c}</span>
+                      	<!-- Added by Mofit Team Jaipur DIGI-28761-->
+                        <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.Issue_Date__c}</span>
+                      <!-- Added by Sanjay -->
+                      <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.CaseNumber}</span>
+                          <aura:set attribute="else">
+                        <aura:if isTrue="{!v.dataType=='level1'}">
+                           <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.oRecord.salesup_Support_Type__c}</span>
+                        </aura:if>
+                      </aura:set>
+                  </aura:if>
+                  
+              </span>
+        </span>
+    </li>
+</aura:component>

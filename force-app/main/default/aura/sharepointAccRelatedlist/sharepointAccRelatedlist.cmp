@@ -1,0 +1,28 @@
+<aura:component controller="SharepointAccRelatedlistController" implements="flexipage:availableForRecordHome,force:hasRecordId">
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="accRec" type="Account" />
+    <aura:attribute name="accUserInfo" type="user" />
+    <aura:attribute name="headerTitle" type="Aura.component[]">
+        <h2>
+            <b> SharePoint Account Folder</b>
+        </h2>
+    </aura:attribute>
+    <!-- init aura:handler action[doInit] auto call on component load -->  
+    <aura:handler name="init" value="{!this}" action="{!c.getAccountRecord}"/>
+    <!--<aura:handler name="init" value="{!this}" action="{!c.getuserdetail}"/>-->
+	<!-- Adding CSS Class for border to get Standard look and feel -->
+		<lightning:card class="slds-card_boundary related_list_themed_border_top" variant="Narrow" title="{!v.headerTitle}" iconName="standard:file">
+			<aura:set attribute="actions">
+				<lightning:buttonMenu iconSize="small" menuAlignment="right" onselect="{!c.createAccEventSync}">
+					<lightning:menuItem label="Request SharePoint Sync" value="RequestSharePointSync"  onfocus="{!c.getAccountRecord}"/>
+					<!--<lightning:menuItem label="Request SharePoint Access" value="RequestSharePointAccess"  onfocus="{!c.getAccountRecord}"/>-->
+				</lightning:buttonMenu>
+			</aura:set>
+			<p class="slds-p-horizontal_small"> 
+				{!$Label.c.SharepointAccRelatedlistMessage}<br></br><br></br>
+			</p>
+			<p class="slds-p-horizontal_small">
+				<lightning:formattedUrl value="{!v.accRec.SharePoint_Account_Folder__c}" /><br></br>
+			</p>
+		</lightning:card>
+</aura:component>

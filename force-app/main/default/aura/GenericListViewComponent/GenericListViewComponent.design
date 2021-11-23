@@ -1,0 +1,6 @@
+<design:component>
+	<design:attribute name="ObjectName" label= "Object Name" required="true" description="Please Provide API Name of Object" />
+  	<design:attribute name="FilterViewName" label= "Filter View Name" description="Please Provide API Name of List View" />
+  	<design:attribute name="NumberOfRecord" label= "Number of Record" description="Number of records to be displayed on list view" />
+
+</design:component>

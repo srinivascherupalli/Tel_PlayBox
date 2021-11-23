@@ -1,0 +1,7 @@
+Tag Type,Product Family (agreement sub-category),Related Service Schedule (agreement sub-type),Product,Tag,Translates to field,Field Type,Value,Billing code,
+Schedule,Data,Data Services,Business IP,BIP_F74_IPH_DSDA_Z1Z2_Rental,Business IP -Ethernet Dual Site Diverse Access Zone 1/2 rental,Decimal,7,BSD007,
+Schedule,Data,Data Services,Business IP,BIP_F74_IPH_Missing_Tag,Business IP -Ethernet Dual Site Diverse Access Zone 1/2 rental,Decimal,7,,
+Funds,,,,No Tag,Is Growth Fund available as a Lump Sum or Accrued?,Text,Growth,APTPS_Accrual_Method__c,Fund__c
+Minimum Spend,Data and IP,Data Services,Business IP,No Tag,Minumum spend value,Decimal,,APTPS_Product_Minimum_Spend__c,Apttus__AgreementLineItem__c
+Schedule,Data,Data Services,Missing Product,BIP_F80_IPH_EONBN_Z5Z6_Rental,Business IP -Ethernet Dual Site Diverse Access Zone 1/2 rental,Decimal,7,,
+Minimum Spend,Data and IP,Data Services,Missing Product,Min_Spend_Value_Business IP,Minumum spend value,Decimal,,APTPS_Product_Minimum_Spend__c,

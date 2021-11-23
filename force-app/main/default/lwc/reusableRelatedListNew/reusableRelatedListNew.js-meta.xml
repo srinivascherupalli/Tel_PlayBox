@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>48.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default,lightning__RecordPage">
+            <property name="strTitle" type="String" label="Title" description="Enter the title"/>
+            <property name="headerIcon" type="String" label="Header Icon" description="Enter the Header Icon ex: custom:custom19"/>
+            <property name="objectName" type="String" label="Object Name" description="Enter the object name"/>
+            <property name="hyperlinkField" type="String" label="Hyperlink Field" description="Enter the field api name that should be a hyperlink"/>
+            <property name="parentObjectName" type="String" label="Parent Object Name" description="Enter the parent object name"/>
+            <property name="relationshipApiName" type="String" label="Relationship Name" description="Enter the relationship API name"/>
+            <property name="paramsList" type="String" label="Params" description="Enter comma separated parent object fields(to be replaced with params in search criteria. like ACN__c, ABN__c etc)"/>
+            <property name="filterStr" type="String" label="Filter String" description="Enter the search criteria(Ex: Name = param1 AND Type = param2 ..etc)"/>
+            <property name="fieldsList" type="String" label="Fields List" description="Enter the field API names separated by coma. like {name,phone__c,.. etc}"/>
+            <property name="fieldsLabelLst" type="String" label="Fields Labels List" description="Enter the field labels separated by coma. like {Name,Phone,.. etc}"/>
+            <property name="isViewAll" type="Boolean" label="Is View All" description="Default value False"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

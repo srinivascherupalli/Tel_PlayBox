@@ -1,0 +1,12 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="Alldata" type="Object"/>
+    <aura:attribute name="PageData" type="Object"/>
+    <aura:attribute name="StartRecord" type="Integer"/>
+    <aura:attribute name="EndRecord" type="Integer"/>
+    <aura:attribute name="CurrentPage" type="Integer"/>
+    <aura:attribute name="TotalPages" type="Integer"/>
+    <aura:attribute name="PageSize" type="Integer"/>    
+    <aura:attribute name="TotalRecords" type="Integer"/>
+    <!--EDGE-148577 : added componentName attribute-->
+    <aura:attribute type="string" name="componentName" />
+</aura:event>

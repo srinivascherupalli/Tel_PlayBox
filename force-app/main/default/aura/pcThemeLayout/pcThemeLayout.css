@@ -1,0 +1,256 @@
+/* Global styles */
+.THIS .slds-box {
+    border-radius: 0;
+}
+.THIS strong {
+    font-family: t(telstraFontBold);
+}
+
+/* Theme Layout */
+.THIS {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column
+}
+.THIS #prmMainContentArea {
+    flex: 1 1 auto;
+    width: 100%;
+}
+.THIS .header-inner {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.THIS .body-inner {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem;
+}
+@media t(mqMedium) {
+    .THIS .body-inner {
+        padding: 1rem;
+    }
+}
+
+/* Top Gradient Border */
+.THIS #prmMainHeader {
+    border-width: 2px 0 0;
+    border-style: solid;
+    border-image: linear-gradient(to right, rgb(91, 197, 242), rgb(198, 157, 201) 35%, rgb(135, 121, 183) 70%) 1;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 3px 3px 0 rgba(0,0,0,.1);
+    z-index: 6;
+    background: #fff;
+}
+
+/* Telstra Logo */
+.THIS #prmLogo {
+    background-image: t('url(' + brandLogoImage  + ')');
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    z-index: 99;
+    cursor: pointer;
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 32px;
+}
+
+/* Search, Notifications, User Profile */
+.THIS #prmSeachNotifyProfile > div {
+    border-right: 1px solid t(colorBorder);
+}
+.THIS #prmSeachNotifyProfile > div:last-child {
+    border-right: none;
+}
+.THIS .header-inner #prmSeachNotifyProfile > div.slds-col:empty {
+	border-right: 0;
+}
+.THIS #prmSeachNotifyProfile .forceCommunityGlobalSearchInput .forceSearchInputDesktop {
+    transition: ease-out 0.3s;
+    width: 130px;
+}
+.THIS #prmSeachNotifyProfile .forceSearchInputDesktop > .contentWrapper {
+    border: none;
+}
+.THIS #prmSeachNotifyProfile .selfServiceProfileMenuTrigger a {
+    color: t(colorTextDefault);
+}
+
+/* CMS Collection - Card */
+.THIS .forceCommunityCarousel .previousAction + .slds-scrollable_none ul.slide {
+    padding: 1rem 2rem;
+}
+.THIS .forceCommunityCarousel .previousAction svg,
+.THIS .forceCommunityCarousel .nextAction svg {
+    color: t(colorTextLink);
+    fill: currentColor;
+}
+.THIS .forceCommunityCarousel .carouselSlide > div > div > .slds-p-around_medium {
+    padding-left: 4rem;
+}
+.THIS .forceCommunityCarousel .slds-carousel__indicator-action {
+    height: 22px;
+    width: 2rem;
+    border-radius: 0;
+    border-width: 10px 0;
+    border-color: white;
+}
+.THIS .forceCommunityCarousel .slds-carousel__indicator-action {
+    background: #D2D2D2;
+}
+.THIS .forceCommunityCarousel .slds-carousel__indicator-action.slds-is-active {
+    background: linear-gradient(to right, rgb(198, 216, 107), rgb(35, 185, 214) 35%, rgb(0, 151, 146) 70%);
+    border-color: white;
+}
+
+/* CMS Collection - Tile */
+.THIS .forceCommunityCarousel .carouselSlide .forceCommunityFlexTileLayoutWithImage > div > .slds-p-around_medium {
+    padding: 0.5rem 0;
+}
+
+/* Create Record Button */
+.THIS .forceCommunityCreateRecordButton {
+    text-align: right;
+}
+.THIS .forceCommunityCreateRecordButton > * {
+    display: inline-block;
+    width: auto;
+}
+.THIS .slds-button_brand,
+.THIS .forceCommunityCreateRecordButton a.triggerLink,
+.THIS .forceCommunityCreateRecordButton button,
+.THIS .forceCommunityCreateRecordForm .buttonWrapper button,
+.THIS .body-inner .slds-config-header--section button.slds-raiseCase--button {
+    background: t(colorTransparency);
+    border: 2px solid t(colorBorderBrand);
+    border-radius: 0;
+    color: t(colorTextLink);
+    font-family: t(telstraFontBold);
+}
+.THIS .forceCommunityCreateRecordButton a.triggerLink,
+.THIS .forceCommunityCreateRecordButton button {
+    padding: 1rem 2rem;
+}
+.THIS .forceCommunityCreateRecordButton a.triggerLink:hover,
+.THIS .forceCommunityCreateRecordButton a.triggerLink:focus,
+.THIS .forceCommunityCreateRecordButton button:hover,
+.THIS .forceCommunityCreateRecordButton button:focus,
+.THIS .body-inner .createCaseSupportBtn:hover,
+.THIS .body-inner .slds-config-header--section button.slds-raiseCase--button:hover {
+    background-color: rgb(25, 100, 200);
+    color: #fff;
+}
+.THIS .createCaseSupportBtn {
+    min-width: 350px;
+    font-size: 1rem;
+}
+
+/* Nav and Tabs */
+.THIS .forceCommunityGlobalNavigation .slds-list__item a,
+.THIS .forceCommunityGlobalNavigation .slds-list__item button {
+    padding: 20px 0;
+    border-bottom: 2px solid transparent;
+}
+.THIS .forceCommunityGlobalNavigation .slds-list_vertical .slds-list__item a {
+    padding: 1.375rem 0.5rem;
+}
+.THIS .uiTabset--default .tabs__nav {
+    border-bottom: none;
+}
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item + .slds-list__item {
+    margin-left: 2rem;
+}
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > a.slds-is-active,
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > button.slds-is-active {
+    color: #0099F8;
+    border-color: t(colorBorderBrand);
+    background-color: transparent !important;
+}
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > a:hover,
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > button:hover {
+    color: t(colorTextLink);
+    background-color: transparent !important;
+}
+.THIS .uiTabset--default > .uiTabBar {
+    margin-bottom: 1rem;
+}
+.THIS .comm-navigation.forceCommunityGlobalNavigation,
+.THIS .comm-navigation.forceCommunityGlobalNavigation .slds-list_vertical {
+    background-color: rgb(255, 255, 255);
+}
+
+/* Live Agent */
+.THIS .forceCommunityEmbeddedServiceHelpButton > button {
+    border-radius: 0;
+}
+.THIS .forceCommunityEmbeddedServiceHelpButton .embeddedServiceIcon {
+    display: none;
+}
+.THIS .forceCommunityEmbeddedServiceHelpButton .helpButtonLabel {
+    line-height: 40px;
+    font-family: t(telstraFontBold);
+}
+@media only screen and (min-width: 1440px) {
+    .THIS .forceCommunityEmbeddedServiceHelpButton {
+        right: calc(50% - 700px);
+    }
+}
+
+/* Tile Menu */
+.THIS .forceCommunityTileMenuItem > a.navTileLink {
+    display: flex;
+    flex-direction: column-reverse;
+}
+.THIS .forceCommunityTileMenuItem .imagePreview {
+    height: 250px;
+}
+.THIS .forceCommunityTileMenuItem .tileLabel {
+    background-color: t(colorTransparency);
+    color: t(colorTextDefault);
+    font-family: t(telstraFontBold);
+}
+.THIS .forceCommunityTileMenuItem a.navTileLink:hover .tileLabel,
+.THIS .forceCommunityTileMenuItem a.navTileLink:focus .tileLabel {
+    background-color: transparent;
+}
+@media t(mqLarge) {
+    .THIS .forceCommunityTileMenu .slds-large-size_1-of-4 {
+        width: 33.3333%;
+    }
+    .THIS #prmSeachNotifyProfile .forceCommunityGlobalSearchInput .forceSearchInputDesktop.focused {
+        transition: ease-in 0.5s;
+        width: 400px;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .THIS #prmMainNavigation.slds-col {
+    	padding: 1rem 0;
+    }
+}
+@media only screen and (min-width: 425px) and (max-width: 767px) {
+    .THIS #prmSeachNotifyProfile .forceCommunityGlobalSearchInput .forceSearchInputDesktop.focused {
+        transition: ease-in 0.5s;
+        width: 200px;
+    }
+}
+
+/************ Global Search ************/
+.THIS #prmSeachNotifyProfile .forceCommunityGlobalSearchInput .forceSearchInputDesktop .inputWrapper {
+    padding-left: 0.5rem;
+}
+.THIS #prmSeachNotifyProfile .forceCommunityGlobalSearchInput .forceSearchInputDesktop.focused .inputWrapper {
+    padding-left: 0;
+}
+.THIS .slds-list_vertical.slds-is-nested li.slds-list__item {
+    border-bottom: 1px solid #ededed;
+}
+.THIS .createRecordWrapper.forceCommunityCreateRecordButton .subMenu.popupTargetContainer.uiPopupTarget.uiMenuList.visible li.subMenuItem.uiMenuItem {
+    text-align: left;
+}
+.THIS .createRecordWrapper.forceCommunityCreateRecordButton .subMenu.popupTargetContainer.uiPopupTarget.uiMenuList.visible li.subMenuItem.uiMenuItem:hover {
+	border-left: #0064d2 4px solid;
+}

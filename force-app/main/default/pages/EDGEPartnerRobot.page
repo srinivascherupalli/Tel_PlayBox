@@ -1,0 +1,4 @@
+<apex:page contentType="text/plain">
+User-agent: *
+Disallow: /   # hides everything from ALL bots
+</apex:page>

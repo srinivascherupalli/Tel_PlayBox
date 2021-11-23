@@ -1,0 +1,4 @@
+.THIS .modal-body.scrollable.slds-modal__content { overflow-y: scroll !important; }
+.THIS .attach-to-bottom{
+    bottom: 21%;
+}

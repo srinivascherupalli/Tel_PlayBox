@@ -1,0 +1,13 @@
+<!--
+* @Author   :   Maqsood Alam
+* @Date     :   26 July Oct 2019
+* @Desc     :   Component for mobility result - Lightning Event
+* -->
+<aura:event type="APPLICATION" description="mobility Result Data Bus">
+    <aura:attribute name="mobileTransitionData" type="TransitionDataDTO"  description="contain all record from replicator"/>
+    <aura:attribute name="SelectedMobileRecrod" type="List" description="Use to send selected mobile record " />
+    <aura:attribute name="ngUcTransitionData" type="TransitionDataDTO"  description="contain all record from replicator"/>
+    <aura:attribute name="SelectedNgUCRecrod" type="List" description="Use to send selected NgUc record " />
+	<aura:attribute name="callFrom" type="String" description="call From " />
+	<aura:attribute name="loadingSpinner" type="List" description="Wating status" />
+</aura:event>

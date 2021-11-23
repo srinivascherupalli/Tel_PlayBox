@@ -1,0 +1,23 @@
+.THIS .table-height{
+	height:500px;
+}
+
+
+.THIS .fixed_header tbody{
+  display:block;
+  width: 100%;
+  overflow: auto;
+  height: 200px;
+}
+
+.THIS .fixed_header thead tr {
+   display: block;
+    
+}
+
+
+.THIS .fixed_header th{
+  padding: 5px;
+  text-align: left;
+  width: 200px;
+}

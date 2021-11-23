@@ -1,0 +1,4 @@
+Tag Type,Product Family (agreement sub-category),Related Service Schedule (agreement sub-type),Product,Tag,Translates to field,Field Type,Value,Billing code
+Head Terms,Cover sheet,Head terms,,Benchmark_AllProducts,Are all Services provided to the Customer to be Benchmarked?,Text,No,
+Head Terms,Cover sheet,Head terms,,Benchmarker_CostSharing,Is the cost of the Benchmarker to be shared equally?,Text,No,
+Head Terms,Cover sheet,Head terms,,Contract_Value,Contract value,Decimal,Text,

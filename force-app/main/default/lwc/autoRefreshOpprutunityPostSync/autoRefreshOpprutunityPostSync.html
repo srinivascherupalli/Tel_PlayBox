@@ -1,0 +1,14 @@
+<!--
+   *  Description of the purpose of the component.
+   *  @name                      : autoRefreshOpportunityPostSync
+   *  @description               : This LWC is used show sync status with basket and refresh the opportunity once it is in sycn
+   *  @Jira Story Ref            : DIGI-24328
+   *  @createdBy  				 : Nitin Kumar
+-->
+<template>
+    <template if:true={message}>
+        <div class="slds-box slds-box_xx-small slds-theme_warning slds-notify">
+            <p>{message}</p>
+        </div>
+    </template>    
+</template>

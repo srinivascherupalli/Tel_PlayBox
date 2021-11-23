@@ -1,0 +1,307 @@
+<!--*****************************************************************************
+ChangeSet   No    Name            Date                    Description
+EDGE-151593 1     Purushottam     1-09-2020               Added Component in Community Page for Partners.
+*******************************************************************************-->
+<aura:component implements="force:appHostable,lightning:isUrlAddressable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,forceCommunity:availableForAllPageTypes" access="global" controller="SearchAddressController">
+        <lightning:overlayLibrary aura:id="overlayLibRefId"/>
+    <aura:attribute name="placeholderText" type="String" default="Search for address"/>
+    <aura:attribute name="searchValue" type="String" default=""/>
+    <aura:attribute name="errorMsg" type="String" access="global"/>
+    <aura:attribute name="options" type="List" default="[
+                                                        
+                            								{'label': 'Search by Address', 'value': 'UnStructuredAutocompleteHandler'},
+															
+ {'label': 'Search by Address Parameter', 'value': 'StructuredAddressHandler'}, 
+ {'label': 'Search by AdborID', 'value': 'AdborIdAddressHandler'}
+                                                        ]"/>
+    <aura:attribute name="radioGrpValue" type="String" default="UnStructuredAutocompleteHandler"/>
+    <aura:attribute name="isOpen" type="boolean" default="true"/>
+	<aura:attribute name="isUnstruct" type="boolean" default="false"/>
+    <aura:attribute name="addressMap" type="Map" default="{}"/>
+    <aura:attribute name="inputAddress1" type="String" access="global"/>
+	<aura:attribute name="listOfAddressRec" type="List" />
+    <aura:attribute name="inputAddress2" type="String" access="global"/>
+    <aura:attribute name="inputAddress3" type="String" access="global"/>
+    <aura:attribute name="inputAddress4" type="String" access="global"/>
+    <aura:attribute name="addressType" type="String" default="All" access="global"/>
+    <aura:attribute name="state" type="String" access="global"/>
+    <aura:attribute name="postalCode" type="String" access="global"/>
+    <aura:attribute name="locality" type="String" access="global"/>
+    <aura:attribute name="stateList" type="List" />
+    <aura:attribute name="postCodeList" type="List" /> 
+    <aura:attribute name="localityList" type="List" />
+    <aura:attribute name = "UnstructuredInput" type="String"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" /> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+	<!--aura:attribute name="IsSpinner" type="Boolean" default="false"/-->
+	<aura:attribute name="listOfSearchRecordsAddnew" type="List" />
+	<aura:attribute name="Message1" type="String" default="" />
+	<aura:attribute name="searchedAddressIdUnStructure" type="String" access="global"/>
+    <aura:attribute name="isPartner" type="Boolean" default="false" /> <!--Added by Purushottam : EDGE-151593-->
+	<!--aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+	<aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/-->
+    <aura:handler name="oSelectedAutoAddressEvent" event="c:addressAutoComplete" action="{!c.getAddresOnclick}" /> 
+   <!-- EDGE-71384-->
+      <aura:handler event="c:AddressResultEvent" action="{!c.searchedCompletedAction}"/>
+    <aura:handler event="c:windowSPANotifierEvent" action="{!c.handleBubbling}"/>
+    
+	 <aura:if isTrue="{!v.loadingSpinner}">
+   <div class="demo-only demo--inverse" style="height:6rem">
+  <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+    <span class="slds-assistive-text">Loading</span>
+    <div class="slds-spinner__dot-a"></div>
+    <div class="slds-spinner__dot-b"></div>
+  </div>
+</div>
+    </aura:if>
+	    <aura:attribute name="StreetList" type="List" /> 
+
+	
+    <!--Use "slds-m-around_xx-large" class to add standard X-Large padding to the component--> 
+     
+    <div class="{!v.isPartner == true ? '': 'slds-modal_medium'}" aura:id="SearchByAddressAdboreId"> <!--Disabled Model Pop up for Partners : EDGE-151593-->
+      
+        <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->   
+        <aura:if isTrue="{!v.isOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <div class="toggle" style="height: 4.1rem; display: none" aura:id="errorMsgId">
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small" title="Description of icon when needed">
+                        <lightning:icon iconName="utility:warning" alternativeText="Error!" variant="offline"/>
+                    </span>
+                    <h3>{!v.errorMsg}.</h3>
+                    <div class="slds-notify__close">
+                        <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" onclick="{!c.toggle}">
+                            <lightning:icon iconName="utility:close" size="small" alternativeText="Close!" variant="Close"/>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <section role="dialog" aria-labelledby="modal-heading-01" aria-modal="{!v.isPartner}" aria-describedby="modal-content-id-1" class="{!v.isPartner == true ? '': 'slds-modal slds-fade-in-open'}"> <!--Disabled Model Pop up for Partners : EDGE-151593-->
+                <div class="{!v.isPartner == true ? '': 'slds-modal__container'}">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="{!v.isPartner == true ? '': 'slds-modal__header'}">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="{!v.isPartner == true ? '': 'modal-heading-01'}" class="slds-text-heading_medium slds-hyphenate">Search Address</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="{!v.isPartner == true ? '': 'slds-modal__content slds-p-around_medium'}">
+                        
+                        <div class="slds-size_12-of-12">
+                                <div style="padding-bottom: 2.5%;" class="slds-grid">
+                                    <div class="slds-text-align_left slds-size_1-of-2">Select a search parameter.</div>
+                                    <div class="slds-text-align_right slds-size_1-of-2">Can't find an address?&nbsp;<a  target="_blank" href="http://lxweb0013.in.telstra.com.au:7780/pls/ws/f?p=AFF:1:1">Click here&nbsp;</a>to add it to EAST</div>
+                                </div>
+                                <div class="slds-align_absolute-left">         
+                                    <lightning:radioGroup name="radioButtonGroup"
+                                                          aura:id="searchTypeOption"
+                                                          label=""
+                                                          options="{! v.options }"
+                                                          value="{! v.radioGrpValue }"
+                                                          type="button"
+                                                          onchange="{!c.searchCriteria}"/>            
+                                </div> 
+                               <br/>
+                               
+                                </div>
+                        <!--<div aura:id="searchAddressMessage" >
+			                	<span>A minimum of one address search field marked <span style='color:red;'>#</span> must be entered.</span>
+			                </div>-->						 
+					<div aura:id="searchRes3" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+					
+							   <div aura:id="searchUnstructred" class="slds-show">
+                             <div  onkeyup="{! c.validateUnstructuredInput }">
+                                    <lightning:input
+									
+									type="search"
+									
+                                                  aura:id="searchInputId"
+                                                  class="slds-p-around--none "
+												  value="{!v.UnstructuredInput}"
+                                                  label="" 
+                                                  placeholder="Please enter your address"/> 
+							  	  </div> 
+                                <div class="slds-lookup__menu slds" aura:id="lookup-3481">
+                                    <ul class="slds-lookup__list" role="listbox">
+                                        <aura:iteration items="{!v.listOfSearchRecordsAddnew}" var="singleRec">
+                                            <c:customLookupResult oRecord="{!singleRec}" /> 
+                                        </aura:iteration>
+                                    </ul>
+                                </div>
+                        
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>	
+                            </div>
+                        
+                        </div>
+                       	<div aura:id="searchAddressOption" class="slds-is-relative slds-m-top_small slds-m-bottom_small  slds-m-left_large slds-grid displayHide">
+			                <div class="slds-size_1-of-3 slds-p-right_small">
+                                <lightning:select class="inputWidth slds-p-bottom_small" name="addressType" value="{!v.addressType}" aura:id="addressType" label="Address Type" >
+                                    <option value="All">All</option>
+                                    <option value="ServiceAddress">Service</option>
+                                    <option value="RuralAddress">Rural</option>
+                                    <option value="PostalAddress">Postal</option>
+                                    <option value="ParcelAddress">Parcel</option>
+                                </lightning:select>
+                                
+                                <div aura:id="streetnumber" class="slds-form-element ">
+			                        <label class="slds-form-element__label" for="state">Street Number</label>
+			                        <label class="red" for="state">*</label>
+				                    <div class="slds-form-element__control slds-p-bottom_small ">
+					                    <ui:inputText aura:id="inputAddress2" value="{!v.inputAddress2}"   maxlength="40"  class="inputMinHeight"/>
+				                    </div>
+			                    </div>
+                                
+                               
+                                <div aura:id="streetname" class="slds-form-element ">
+			                        <label class="slds-form-element__label" for="state">Street Name</label>
+			                        <label class="red" for="state">*</label>
+				                    <div class="slds-form-element__control slds-p-bottom_small ">
+					                    <ui:inputText aura:id="inputAddress3" value="{!v.inputAddress3}"   maxlength="40"  class="inputMinHeight"/>
+				                    </div>
+			                    </div>
+			                   
+                               <!-- <div aura:id="streettype" class="slds-form-element ">
+			                        <label class="slds-form-element__label" for="state">Street Type</label>
+			                           <div class="slds-form-element__control slds-p-bottom_small ">
+					                    <ui:inputText aura:id="inputAddress4" value="{!v.inputAddress4}"   maxlength="40"  class="inputMinHeight " />
+				                    </div>
+			                    </div>-->
+                                <div class="slds-form-element">
+	<label class="slds-form-element__label" for="state">Street Type</label>
+	<div class="slds-form-element__control slds-p-bottom_small">
+		<ui:inputSelect aura:id="streetType" value="{!v.inputAddress4}"   class="inputWidth slds-p-bottom_small">
+			<ui:inputSelectOption text="--None--" value=""  />
+			<aura:iteration items="{!v.StreetList}" var="streetType">
+				<ui:inputSelectOption text="{!streetType.label}" label="{!streetType.value}" />
+			</aura:iteration>
+		</ui:inputSelect>
+	</div>
+</div>
+			               	</div>
+			             
+			             	<div class="slds-size_1-of-3 slds-p-left_small">
+			               		<div class="slds-form-element">
+			                        <label class="slds-form-element__label" for="state">State</label>
+			                        <label class="red" for="state">*</label>
+			                        <div class="slds-form-element__control slds-p-bottom_small">
+			                            <ui:inputSelect aura:id="state" value="{!v.state}" change="{!c.onStateChange}" class="inputWidth slds-p-bottom_small">
+			                                <ui:inputSelectOption text="--None--" value = "" />
+			                                <!--ui:inputSelectOption text="AAT" label="AAT"  /-->
+			                                <ui:inputSelectOption text="ACT" label="ACT"  />
+			                                <ui:inputSelectOption text="NSW" label="NSW"  />
+			                                <ui:inputSelectOption text="NT" label="NT"  />
+			                                <ui:inputSelectOption text="QLD" label="QLD"  />
+			                                <ui:inputSelectOption text="SA" label="SA"  />
+			                                <ui:inputSelectOption text="TAS" label="TAS"  />
+			                                <ui:inputSelectOption text="VIC" label="VIC"  />
+			                                <ui:inputSelectOption text="WA" label="WA"  />
+			                            </ui:inputSelect>
+			                        </div>
+			                    </div>
+			                    <div class="slds-form-element">
+			                        <label class="slds-form-element__label" for="state">Postal Code</label>
+			                        <label class="red" for="state">*</label>
+				                    <div class="slds-form-element__control slds-p-bottom_small">
+					                    <ui:inputSelect aura:id="postalCode" value="{!v.postalCode}"  change="{!c.onPostCodeChange}" class="inputWidth slds-p-bottom_small">
+			                                <ui:inputSelectOption text="--None--" value=""  />
+			                                <aura:iteration items="{!v.postCodeList}" var="postCode">
+			                                    <ui:inputSelectOption text="{!postCode.label}" label="{!postCode.value}" />
+			                                </aura:iteration>
+			                            </ui:inputSelect>
+				                    </div>
+			                    </div>
+			                    <div class="slds-form-element">
+			                        <label class="slds-form-element__label" for="state">Locality</label>
+			                        <label class="red" for="state">*</label>
+				                    <div class="slds-form-element__control slds-p-bottom_small">
+					                    <ui:inputSelect aura:id="locality" value="{!v.locality}"  class="slds-p-bottom_small">
+			                                <ui:inputSelectOption text="--None--" value=""  />
+			                                <aura:iteration items="{!v.localityList}" var="locality">
+			                                    <ui:inputSelectOption text="{!locality.label}" label="{!locality.value}" />
+			                                </aura:iteration>
+			                            </ui:inputSelect>
+					                 </div>
+			                    </div>
+			                </div>
+			                   
+			             </div>
+			             <div aura:id="searchAdborIdOption" class="slds-size_12-of-12  displayHide">
+                                  
+                                <span onkeypress="{!c.validateAdborIDInput}"  updateOn="keyup"  class="slds-size--11-of-12">
+                                    <ui:inputText 
+                                                  aura:id="searchInputId" 
+                                                  value="{!v.searchValue}"
+                                                  label=""  
+                                                  updateOn="keyup" 
+                                                  placeholder="Please enter only numeric values for adborid" 
+                                                  keyup="{!c.validateAdborIDInput}"/>
+                                </span>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                
+                            </div>
+                   </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+			<aura:if isTrue="{!v.isUnstruct}">                   
+                    <footer class="{!v.isPartner == true ? '': 'slds-modal__footer'}">
+                        <!--EDGE-71384-->
+                       <!-- <lightning:button aura:id= "cancelbutton" 
+						variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          
+                                          onclick="{! c.doCloseOperation }"/>-->
+                        <div class="slds-clearfix">
+        				<div class="slds-align_absolute-center">
+                        <lightning:button aura:id= "searchbutton" variant="brand" 
+                                          label="Search"
+                                          title="Search"
+                                          onclick="{!c.searchAddressResultOpen }"/>
+                            </div>
+    					</div>	
+						
+                    </footer>
+					</aura:if>
+                </div>
+            </section>
+             <aura:if isTrue="{!v.isPartner == false}">
+            <div class="slds-backdrop slds-backdrop_open"></div>
+             </aura:if>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+        </aura:if>
+    </div>
+   
+   <div aura:id="SearchResultId">
+        <c:AccountAddressResultModalDynamic aura:id="SearchAddressResult" />
+    </div>
+    
+</aura:component>

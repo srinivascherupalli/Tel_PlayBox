@@ -1,0 +1,208 @@
+<!--
+    * DEVELOPER : Hari/Vamshi
+    * TEAM: Napier
+    * DESCRIPTION : This is Component for OneFundRetrospectiveRedemption Component  
+    * EDGE-117021, EDGE-116922, EDGE-124053, EDGE-116083, EDGE-124045, EDGE-124896, EDGE-135560
+
+	Change:
+	Vishal Arbune    01-02-2021      EDGE-198208 : Add ex. GST label with OneFund Balance in Product Basket and OneFund Balance at Account
+
+    Rajesh Bommadevara 17-02-2021    Updated as part of EDGE-199056 Onefund label changes
+
+    -->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowScreens,forceCommunity:availableForAllPageTypes" access="global" 
+                controller="OneFundRetrospectiveRedemption">
+<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:attribute type="Case" name="caseDetails"/>
+    <aura:attribute name ="SuccessOneFundBalance" type ="boolean"  />
+	<aura:attribute name ="curAccountId" type ="string"  />
+    <aura:attribute name ="caseNumber" type ="string"  />
+	<aura:attribute name ="checkCasestatus" type ="boolean"  />
+    <aura:attribute name ="attachmentCheck" type ="boolean"  />
+	<aura:attribute name="data" type="Object"/>
+	<aura:attribute name="attachmentdata" type="string"/>
+    <aura:attribute name="insideattachmentdata" type="string"/>
+	<aura:attribute name="qlidata" type="Object"/>
+	<aura:attribute name="columns" type="Object"/>
+	<aura:attribute name="qlicolumns" type="Object"/>
+	<aura:attribute name="dataquery" type="Object"/>
+	<aura:attribute name="columnsquery" type="List[]"/>
+	<aura:attribute name="dataForLI" type="Object" />
+	<aura:attribute name="dataInitiateRedemption" type="Object[]" />
+	<aura:attribute name="columnsForLI" type="Object"/>
+	<aura:attribute name ="checkNext" type ="boolean" default ="true" />
+	<aura:attribute name ="ErrorCheck" type ="boolean" default ="false" />
+	<aura:attribute name ="formatCheck" type ="boolean" default ="false" />
+	<aura:attribute name ="submitcheck" type ="boolean" default ="false" />
+	<aura:attribute name ="savecheck" type ="boolean" default ="true" />
+	<aura:attribute name ="showtable" type ="boolean" default ="false" />
+	<aura:attribute name ="oneFundBalance" type ="boolean" default ="false" />
+    <aura:attribute name ="submitOneFundBalance" type ="boolean" default ="false" />
+	<aura:attribute name="errors" type="Object" default="[]"/>
+	<aura:attribute name="AvailableOneFundBalance" type="Decimal" default="0.00"/>
+	<aura:attribute name="draftValues" type="Object" default="[]"/>
+	<aura:attribute name="draftValues2" type="Object" default="[]"/>
+	<aura:attribute name="editValues" type="Object" default="[]"/>
+	<aura:attribute name="disabledSave" type="Boolean" default="false"/>
+	<aura:attribute name="disabledDataTable" type="Boolean" default="true"/>
+	<aura:attribute name ="queriedLineItems" type ="boolean" default ="false" />
+	<aura:attribute name="loaded1" type="Boolean" default="false" />
+	<aura:attribute name="loaded3" type="Boolean" default="false" />
+	<aura:attribute name="loaded" type="Boolean" default="true" />
+	<!-- Start added on 25thNov 2019 -->
+	<aura:attribute name="saveLocalStorage" type="Boolean" default="false"/>
+	<aura:attribute name="autoSaveEnabled" type="Boolean" default="false"/>
+	<aura:attribute name="qlisave" type="Boolean" default="false"/>
+	<aura:attribute name="atomicChanges" type="Object" default="[]"/>
+	<aura:attribute type="Queried_Line_Item__c" name="queriedLineItemsSaved"/>
+    <br/>
+	<aura:if isTrue="{!v.qlisave}">
+            <aura:if isTrue = "{!v.submitOneFundBalance}">
+						<div class="slds-text-heading_small">
+                            <!--EDGE-198208-->
+
+							<h3  style="background: #F2F3F3; font:SFFont;font-size:16px" >Available Fund (ex. GST): 
+
+								<ui:outputCurrency value="{!v.AvailableOneFundBalance}"/>
+							</h3>
+					</div>
+            </aura:if>  
+        <br/>
+	    <div class="slds-col slds-size_2-of-2">
+            <h3  style="background: #F2F3F3; font:SFFont;font-size:16px" >Queried Line Items</h3>
+						<div  class="margin101" >
+							<lightning:datatable aura:id="RRTable1"
+                                                 keyField = "id"
+                                                 data = "{!v.data}"
+                                                 columns = "{!v.columns}"
+                                                 hideCheckboxColumn = "true"
+                                                 errors="{! v.errors }"
+                                                 draftValues="{! v.draftValues }"           						 
+                                                 onsave="{! c.saveChanges }"
+                                                 oncancel="{! c.cancel}"
+                                                 oncellchange="{! c.handleEditCell }"
+                                                 />
+						</div>
+					</div>
+    <aura:set attribute="else">
+	<aura:if isTrue="{!v.loaded1 }">
+		<aura:set attribute="else">
+			<lightning:spinner alternativeText="Loading" />
+		</aura:set>
+	</aura:if>
+	    <aura:if isTrue="{!v.loaded3 }">
+		<aura:if isTrue = "{!v.checkCasestatus}">
+			<!-- End added on 25thNov 2019 -->
+			<aura:if isTrue = "{!v.checkNext}">
+				<div>
+					<table  >
+						<thead>
+							<tr>
+								<th scope="col" width="30%"	>
+									<div class="slds-m-top_xxx-small">
+										<span>
+											<B>
+												<lightning:input label="Enter the Invoice number :"  aura:id="invoicenumber" maxlength="13" />
+											</B>
+										</span>
+									</div>
+								</th>
+								<th scope="col">
+									<div class="slds-m-top_large">
+										<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    
+											<lightning:button aura:id="searchinvoice" label="Search" variant="brand" onclick="{!c.invoicesearch}" />
+										</span>
+									</div>
+								</th>
+								<br/>
+							</tr>
+						</thead>
+					</table>
+				</div>
+				<br/>
+				<aura:if isTrue="{! v.loaded }">
+					<aura:set attribute="else">
+						<lightning:spinner alternativeText="Loading" />
+					</aura:set>
+				</aura:if>
+				<div class="{!if(v.ErrorCheck == true,'slds-show','slds-hide')}">
+					<ui:message title="Error" severity="error" closable="true">
+						<h1>The Invoice number you entered cannot be found</h1>
+					</ui:message>
+				</div>
+				<div class="{!if(v.formatCheck == true,'slds-show','slds-hide')}">
+					<ui:message title="Error" severity="error" closable="true">
+						<h1>The invoice number you entered is invalid please try a different number</h1>
+					</ui:message>
+				</div>
+				<aura:if isTrue = "{!v.showtable}">
+					<div class="slds-col slds-size_2-of-2">
+						<div  class="margin101" >
+							<lightning:datatable aura:id="RRTable1"
+                                                 keyField = "id"
+                                                 data = "{!v.data}"
+                                                 columns = "{!v.columns}"
+                                                 hideCheckboxColumn = "true"
+                                                 editable = "true"
+                                                 />
+						</div>
+					</div>
+					<br/>
+					<div class="slds-float--right">
+						<lightning:button aura:id="InitiateRedemption" label="Initiate Redemption" variant="brand" onclick="{!c.InitiateRedemption}"  />
+						<br/>
+						<br/>
+					</div>
+				</aura:if>
+			</aura:if>
+			<aura:if isTrue = "{! !(v.checkNext)}">
+				<aura:if isTrue = "{!v.oneFundBalance}">
+					<div class="slds-p-around_small">
+						<div class="slds-text-heading_small">
+                            <!--EDGE-198208-->
+
+							<h3  style="background: #F2F3F3; font:SFFont;font-size:16px" >Available Fund (ex. GST): 
+
+								<ui:outputCurrency value="{!v.AvailableOneFundBalance}"/>
+							</h3>
+						</div>
+					</div>
+				</aura:if>
+				<div class="slds-p-around_small">
+					<h3  style="background: #F2F3F3; font:SFFont;font-size:16px" >Queried Line Items</h3>
+					<div class="slds-col slds-size_2-of-2">
+						<div  class="margin101" >
+							<lightning:datatable 
+                                                 aura:id="RRTable2"
+                                                 keyField = "id"
+                                                 data = "{!v.data}"
+                                                 columns = "{!v.columns}"
+                                                 hideCheckboxColumn = "true"
+                                                 errors="{! v.errors }"
+                                                 draftValues="{! v.draftValues }"           						 
+                                                 onsave="{! c.saveChanges }"
+                                                 oncancel="{! c.cancel}"
+                                                 oncellchange="{! c.handleEditCell }"
+                                                 />
+							<!--oncellchange="{! v.editvalues}"-->
+						</div>
+					</div>
+				</div>
+				<div class="slds-float--right">
+					<lightning:button aura:id="Submit" label="Submit" disabled="{!v.disabledSave}" variant="brand" onclick="{!c.submit}"  />
+				</div>
+			</aura:if>
+			<br/>
+		</aura:if>
+            
+		<aura:if isTrue = "{! !(v.checkCasestatus)}">
+			<b>Case is Closed, please create new Case. </b>
+		</aura:if>
+	</aura:if>
+	<br/>
+	<br/>
+            </aura:set>
+  </aura:if>
+</aura:component>

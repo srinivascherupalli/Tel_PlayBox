@@ -1,0 +1,114 @@
+<aura:component 
+   controller="soc_SFD_GrandChildController" 
+   implements="force:appHostable,lightning:isUrlAddressable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+   access="global" >
+   
+   
+   <aura:attribute name="gridData" type="Object" />
+    <aura:attribute name="isShowChild" type="Boolean" default="false"/>
+     <aura:attribute name="recordId" type="String"  access="global"/>
+    <aura:attribute name="title" type="String" />
+    <aura:attribute name="listSize" type="Integer" />
+    <aura:attribute name="visibility" type="Boolean" default="true"/>
+	<aura:attribute name="pageReference" type="Object"/>
+     
+
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   
+    <div class="slds-page-header slds-table_bordered">
+  <div class="slds-page-header__row">
+    <div class="slds-page-header__col-title">
+      <div class="slds-media">
+        <div class="slds-media__figure">
+              <lightning:icon size="small" iconName="standard:case" alternativeText="Child Cases" />
+        </div>
+        <div class="slds-media__body">
+          <div class="slds-page-header__name">
+            <div class="slds-page-header__name-title">
+              <h1>
+                <span class="slds-page-header__title slds-truncate" title="{!v.title}">{!v.title}</span>
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  
+   
+     <aura:if isTrue="{!v.isShowChild}">
+    <table class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols">
+      <thead>
+         <tr class="slds-line-height_reset">
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12=" scope="col">
+               <div class="slds-truncate" title="CASE NUMBER">CASE NUMBER</div>
+            </th>
+             <th class="slds-cell-buffer_left slds-col slds-size_2-of-12=" scope="col">
+               <div class="slds-truncate" title="CASE OWNER">CASE OWNER</div>
+            </th>
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+               <div class="slds-truncate" title="STAGE">STAGE</div>
+            </th>
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+               <div class="slds-truncate" title="STATUS">STATUS</div>
+            </th>
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+                <div class="slds-truncate" title="PRODUCT">PRODUCT</div>
+            </th>
+             <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+                <div class="slds-truncate" title="PRODUCT">ORDER NO</div>
+            </th>
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+                <div class="slds-truncate" title="Date/Time Closed">Date/Time Closed</div>
+            </th>
+            
+         </tr>    
+      </thead>
+        <tbody>
+        <aura:iteration items="{!v.gridData}" var="obj">
+           <tr class="slds-line-height_reset">
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12=" scope="col">
+               <div class="slds-truncate" title="{!obj.CaseNumber}">
+                   <lightning:formattedUrl label ="{!obj.CaseNumber}" value="{!'/'+obj.Id}" target="_self"/> 
+                  
+                </div>
+            </th>
+             <th class="slds-cell-buffer_left slds-col slds-size_2-of-12=" scope="col">
+               <div class="slds-truncate" title="{!obj.Owner.Name}">{!obj.Owner.Name}</div>
+            </th>
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+               <div class="slds-truncate" title="{!obj.Stage__c}">{!obj.Stage__c} </div>
+            </th>
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+               <div class="slds-truncate" title="{!obj.Status}">{!obj.Status}</div>
+            </th>
+             
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+               <div class="slds-truncate">
+                   <c:soc_ProductRow productData="{!obj.Case_Line_Items__r}"/></div>
+            </th>
+               <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+               <div class="slds-truncate" >
+                   <c:soc_productRowOrder productData="{!obj.Case_Line_Items__r}"/></div>
+            </th>
+            <th class="slds-cell-buffer_left slds-col slds-size_2-of-12" scope="col">
+                <div class="slds-truncate" title="{!obj.ClosedDate}"><ui:outputDateTime value="{!obj.ClosedDate}"/></div>
+            </th>
+           
+
+          </tr>
+        </aura:iteration>
+      </tbody>
+   </table>
+    
+    <aura:if isTrue="{!v.visibility}">
+        
+        <div id="viewAll" class="slds-box slds-box_x-small slds-align_absolute-center">
+            
+           			 <lightning:navigation aura:id="navService"/>
+                    <a id="" onclick="{!c.handleClick}" >
+                     View All </a>
+                  </div>
+    </aura:if>
+         </aura:if>
+</aura:component>

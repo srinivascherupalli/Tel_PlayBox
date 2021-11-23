@@ -1,0 +1,11 @@
+<template>
+Select a template for your proposal.
+                <lightning-datatable
+                        key-field="Template_Name__c"
+                        selected-rows={preSelectedRows}
+                        data={availableTemplates}
+                        columns={columns}
+                        onrowselection={rowselection}
+                        max-row-selection=1>
+                </lightning-datatable>
+</template>

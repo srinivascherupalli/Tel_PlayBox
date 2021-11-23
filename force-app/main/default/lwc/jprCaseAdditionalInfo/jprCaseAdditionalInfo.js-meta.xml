@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>48.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="title" label="Title" type="String" default="Telstra Connect Additional Details"/>
+            <property name="fieldAPIName" label="Field API Name" type="String" default="Case.cusdl_Detail__c" description="Mention full API name like ObjectAPIName.FieldApiName"/>
+            <property name="objectName" label="Object API Name" type="String" default="Case"/>
+            <objects>
+                <object>Account</object>
+                <object>Case</object>
+            </objects>
+                        
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

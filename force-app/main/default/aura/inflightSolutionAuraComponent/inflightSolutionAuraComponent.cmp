@@ -1,0 +1,159 @@
+<aura:component controller="InflightSolutionController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId" access="global" >
+    <aura:dependency resource="markup://force:*" type="EVENT"/>  
+<aura:attribute name="amendTypeSelected" type="string" default=""/>
+    <aura:attribute name="MACD_ActionTypes" type="string[]" default="[]"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject"/>
+    <aura:attribute name="opportuntiId" type="string" default=""/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="orderNumber" type="string" default=""/>
+    <aura:attribute name="recordSelected" type="boolean" default="false"/>
+    <aura:attribute name="telstraCaseNumber" type="string" default=""/>
+    <aura:attribute name="showTelstraCaseNumber" type="boolean" default="false"/>
+    <aura:attribute name="enableAmend" type="boolean" default="false"/>
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedsObjectRecordEvent" action="{!c.handleComponentEvent}"/>
+    <aura:attribute name="showError" type="boolean" default="false"/>
+    <aura:attribute name="showComponent" type="boolean" default="false"/>
+    <aura:attribute name="requestorEmpty" type="boolean" default="false"/>
+    <aura:attribute name="caseNumberBlank" type="boolean" default="true"/>
+    <aura:attribute name="showErrorForStatus" type="boolean" default="false"/>
+    <aura:attribute name="showAmendRestrictionError" type="boolean" default="false"/>
+    <aura:handler name="requestorRemoved" event="c:mandateRequestor" action="{!c.handleRequestorRemoved}"/>
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedsObjectRecordEvent" action="{!c.handleRequestorSelected}"/>
+    <aura:attribute name="amendRejected" type="boolean" default="false"/>
+    <!--style to incraee width-->
+    <aura:html tag="style">
+        .slds-modal__container{
+        max-width: 80rem !important;
+        width:80% !important;
+        }
+    </aura:html>
+    <aura:if isTrue="{!v.showError}">
+        <div style="position:absolute;top:1rem;left:1rem;right:1rem">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_default slds-box slds-box_small" style="border-color:red;" role="error">
+                <div class="slds-align_absolute-center">
+                    <h2 class="slds-text-heading_large" style="color:red;">Order cannot be amended as the order has already reached Point of No Return stage</h2>
+                    <lightning:icon icon-name="utility:error" alternative-text="error" variant="Error" size="small" ></lightning:icon>
+                    <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" />
+                </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 0.25rem;">
+            <lightning:button class="slds-float_right" label="Return to Order" iconName="utility:chevronleft" iconPosition="left" onclick="{!c.onCancel}"/>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showAmendRestrictionError}">
+        <div style="position:absolute;top:1rem;left:1rem;right:1rem">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_default slds-box slds-box_small" style="border-color:red;" role="error">
+                <div class="slds-align_absolute-center">
+                    <h2 class="slds-text-heading_large" style="color:red;">Amend operation cannot be performed as Amend order has already been raised on this Order</h2>
+                    <lightning:icon icon-name="utility:error" alternative-text="error" variant="Error" size="small" ></lightning:icon>
+                    <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" />
+                </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 0.25rem;">
+            <lightning:button class="slds-float_right" label="Return to Order" iconName="utility:chevronleft" iconPosition="left" onclick="{!c.onCancel}"/>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showErrorForStatus}">
+        <div style="position:absolute;top:1rem;left:1rem;right:1rem">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_default slds-box slds-box_small" style="border-color:red;" role="error">
+                <div class="slds-align_absolute-center">
+                    <h2 class="slds-text-heading_large" style="color:red;">Order cannot be amended due to invalid order status</h2>
+                    <lightning:icon icon-name="utility:error" alternative-text="error" variant="Error" size="small" ></lightning:icon>
+                    <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" />
+                </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 0.25rem;">
+            <lightning:button class="slds-float_right" label="Return to Order" iconName="utility:chevronleft" iconPosition="left" onclick="{!c.onCancel}"/>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showComponent}">
+        <h4 class="slds-box slds-align_absolute-center" style="font-size: x-large; color: #7d7d7d;">Amend Order - {!v.orderNumber}</h4>
+        <div style="margin-top: 0.25rem;">
+            <lightning:button class="slds-float_right" label="Return to Order" iconName="utility:chevronleft" iconPosition="left" onclick="{!c.onCancel}"/>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <!--<div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span>Account</span>
+                                    <span class="slds-page-header__title slds-truncate" title="Account"><a href="{!v.AccountURL}" target="_blank">{!v.acc.Name}</a></span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <!-- grid starts here-->
+       
+          
+        
+        <div class="slds-col"  style="width: 40%;margin-left:900px;margin-bottom:10px">
+            <aura:if isTrue="{!v.showTelstraCaseNumber}">
+                <div class="slds-truncate .slds-align_absolute-center "> Telstra case Number<span style="color: red;">*</span>  <lightning:helptext content="Please enter telstra case."/></div>
+                <lightning:input type="text" label="" value="{!v.telstraCaseNumber}" onchange="{!c.checkCaseNumber}" readonly="{!v.amendRejected}"/>
+            </aura:if>
+        </div>
+           <div style="margin-left: 30px;">
+            <div class="selectListwidth" style="width:45% !important">
+                <aura:if isTrue="{!v.recordSelected}">
+            
+                   
+                        <div style="width:45% !important" class="slds-truncate .slds-align_absolute-center "> Requestor <span style="color: red;">*</span>  <lightning:helptext content="Select the contact who requested and to approve this order. Only contacts with a ‘Legal Lessee’ or ‘Full Authority’ role on this Account are available for selection."/>
+                        </div>
+                        <c:customContactRoleLookup objectAPIName="{!v.opportuntiId}" selectedRecord="{!v.selectedLookUpRecord}" calledFromOrderPage="true"/>
+                       
+                   
+                    <aura:set attribute="else">
+                       
+                            <div style="width:45% !important" class="slds-truncate .slds-align_absolute-center "> Requestor <span style="color: red;">*</span>  <lightning:helptext content="Select the contact who requested and to approve this order. Only contacts with a ‘Legal Lessee’ or ‘Full Authority’ role on this Account are available for selection."/>
+                            </div>
+                            <c:customContactRoleLookup objectAPIName="{!v.opportuntiId}" selectedRecord="{!v.selectedLookUpRecord}" calledFromOrderPage="true"/>
+                           
+                        
+                        <!-- content renders if false -->
+                      </aura:set>
+              </aura:if>
+        </div>
+           </div>
+
+   
+             
+     
+        <!-- grid ends here-->
+        <br/>
+        
+       <div style="padding-left: 30px;">
+        <div class="slds-truncate .slds-align_absolute-center "> Amendment Type <span style="color: red;">*</span>  <lightning:helptext content="Please select an amend type to perform the transaction."/>
+        </div>
+                            
+                                <div class="selectListwidth" style="width:45%">
+                                    <lightning:select aura:id="selectActionType" name="actionType" label="Action Type" variant="label-hidden" value="{!v.amendTypeSelected}" onchange="{!c.handleAmendType}" disabled="{!v.amendRejected}">
+                                         <aura:iteration items="{!v.MACD_ActionTypes}" var="option">
+                                             <option  value="{!option}">{!option}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>
+       </div>
+     <br/>
+     <br/>
+    <c:inflightSolutionLWCComponent recordId="{!v.recordId}" amendRejected="{!v.amendRejected}" caseRequestorRecord="{!v.selectedLookUpRecord.Id}" requestorRemoved="{!v.requestorEmpty}" tesltraCaseNumber="{!v.telstraCaseNumber}" isAssuranceServiceAgentProdile="{!v.showTelstraCaseNumber}" amendType="{!v.amendTypeSelected}"/>
+</aura:if>
+
+</aura:component>

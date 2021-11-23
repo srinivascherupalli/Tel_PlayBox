@@ -1,0 +1,10 @@
+<!--
+//EDGE -66472/84934/66471
+Description: Event to confirm appointment
+Author:Ila/Mahima/Kalashree
+-->
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="slotKey" type="String"/>   
+    <aura:attribute name="startDateSlot" type="String"/> 
+    <aura:attribute name="slotTime" type="String"/> 
+</aura:event>

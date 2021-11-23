@@ -1,0 +1,13 @@
+<!-- **************************************************************************
+EDGE        -108332
+component   -RepaymentSummary
+Description -RepaymentSummary Component is used to show the summary details of RepaymentCharges in the 
+			 InvoiceLineItem page
+Author      -Jawahar M
+Team        -Osaka
+********************************************************************************* -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader">
+    <aura:attribute name="recordId" type="string" />
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <c:RepaymentSummaryCmp invoiceLineItemId="{!v.recordId}"/>
+</aura:component>

@@ -1,0 +1,43 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:handler name="ApplicationBooleanEvent" event="c:ApplicationBooleanEvent" action="{!c.handleComponentEvent}"/>	
+    <aura:handler name="ApplicationRecordEvent" event="c:ApplicationRecordEvent" action="{!c.handleRecordEvent}"/>
+    <aura:registerEvent name="closeModalEvent" type="c:closeModalEvent"/> 
+    <aura:attribute name="componentnumber" type="integer" default="1"/>
+    <aura:attribute name="applicationDetail" type="Object" />
+    <aura:attribute name="appDetails" type="Object"/>
+    <aura:attribute name="recId" type="Id"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <force:recordData aura:Id="ApplicantDetails"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.applicationDetail}"
+                      targetFields="{!v.appDetails}"
+                      targetError="{!v.recordError}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+    
+    <aura:if isTrue="{!(empty(v.recordId))}">
+        <p> <h2>Application created successfully! Click button to navigate to application and Edit </h2></p>
+        
+        <lightning:button label="Go To Application" variant="brand" onclick="{!c.gotoURL}" />
+    </aura:if>
+    <aura:if isTrue="{!not(empty(v.recordId))}">
+    <div class="{!v.componentnumber==1? 'slds-show': 'slds-hide'}">
+    	<c:ThirdpartyApplicationFirstPage recordId="{!v.recordId}" appDetailsSimple="{!v.applicationDetail}"></c:ThirdpartyApplicationFirstPage>    
+    </div>
+    <div class="{!v.componentnumber==2? 'slds-show': 'slds-hide'}">
+        <c:ThirdPartyApplicationFormStockExPage recordId="{!v.recordId}" appDetailsSimple="{!v.applicationDetail}"></c:ThirdPartyApplicationFormStockExPage>
+    </div>
+    <div class="{!v.componentnumber==3? 'slds-show': 'slds-hide'}">
+        <c:ThirdPartyApplicationSecPage recordId="{!v.recordId}" appDetailsSimpleSec="{!v.applicationDetail}"></c:ThirdPartyApplicationSecPage>
+    </div>
+    <div class="{!v.componentnumber==4? 'slds-show': 'slds-hide'}">
+        <c:ThirdpartyApplicationFourthPage recordId="{!v.recordId}" appDetailsSimple="{!v.applicationDetail}"></c:ThirdpartyApplicationFourthPage>
+    </div>
+    <div class="{!v.componentnumber==5? 'slds-show': 'slds-hide'}">
+        <c:ThirdpartyApplicationGovtOrgDetails recordId="{!v.recordId}" appDetailsSimple="{!v.applicationDetail}"></c:ThirdpartyApplicationGovtOrgDetails>
+    </div>
+    <div class="{!v.componentnumber==6? 'slds-show': 'slds-hide'}">
+        <c:ThirdpartyApplicationThirdPage recordId="{!v.recordId}" appDetailsSimple="{!v.applicationDetail}"></c:ThirdpartyApplicationThirdPage>
+    </div>
+    </aura:if>
+</aura:component>

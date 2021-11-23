@@ -1,0 +1,5 @@
+<apex:page controller="APTPS_ExportSchedulesController" cache="true" contentType="text/csv#Schedules.csv" language="en-US" action="{!generateCSV}">"Agreement Number","Record Type","Status Category","Status","Agreement Category","Agreement Subcategory"
+<apex:repeat value="{!schedules}" var="agr">
+{!agr.agreementNumber},{!agr.scheduleRecordType},{!agr.statusCategory},{!agr.agreementstatus},{!agr.agreementCategory},{!agr.agreementSubCategory}
+</apex:repeat>
+</apex:page>

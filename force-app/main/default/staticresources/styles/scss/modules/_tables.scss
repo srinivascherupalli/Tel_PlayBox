@@ -1,0 +1,21 @@
+table {
+  &.uiVirtualDataGrid {
+    thead {
+      th {
+        padding: 12px;
+        border-bottom-width: 2px;
+        font-size: $txt-14;
+      }
+    }
+    tbody {
+      td {
+        padding: 12px;
+        border-bottom-width: 2px;
+
+        a.outputLookupLink {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

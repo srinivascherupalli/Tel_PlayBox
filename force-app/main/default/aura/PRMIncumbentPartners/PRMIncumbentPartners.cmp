@@ -1,0 +1,114 @@
+<aura:component controller="PRMSubmitToPartnerRules" implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="OpportunityId" type="String" />
+    <aura:attribute name="PartnerResults" type="PartnerResults[]" /> <!-- P2OB-6781 incumbeny/recommendation optimization, replacing PRMSubmittoPartnerRules.PartnerResults[]-->
+    <aura:attribute name="PartnerOfRecords" type="PartnerResults[]" /> <!-- P2OB-6781 incumbeny/recommendation optimization, replacing PRMSubmittoPartnerRules.PartnerResults[]-->
+   <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> -->
+    <!--<aura:attribute name="columnHeader" type="Object" default="[
+      { label: 'NAME', fieldName: 'account.Name', type: 'text'},
+      { label: 'Accreditation', fieldName: 'Overall_Accreditation__c', type: 'text'},
+      { label: 'State Coverage', fieldName: 'State_Coverage__c', type: 'text'},
+      { label: 'NAME', fieldName: 'OptySuccessRate', type: 'text'}]"/>-->
+      <!--<aura:attribute name="PartnerResults" type="PartnerResults[]" access="global" />-->
+        <aura:attribute name="SelectedPartner" type="String" />
+       <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+		<aura:attribute name="spinner" type="boolean" default="false" />
+    	   <aura:if isTrue="{!v.spinner}">
+            <!-- <lightning:spinner variant="brand"  size="large" /> -->
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+  <!-- 	<h2> Incumbent Partners</h2>
+    <p>To explore details information on out partners, vist <a>Partner Finder</a></p>-->
+    <aura:if isTrue="{!or(not(empty(v.PartnerResults)),not(empty(v.PartnerOfRecords)))}">  <!--Updated as per EDGE-151598 adding Partner of record table -->     
+              <c:PRMDataTable DataTableName="INCPartner" data="{!v.PartnerResults}" porData="{!v.PartnerOfRecords}" />
+    </aura:if>
+	
+    <!--  <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+					<!-header checkbox for select all->
+                        <th class="slds-text-align_right">
+							SELECT
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Name">Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Accreditation">Accreditation</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="State Coverage">State Coverage</div>
+                        </th>
+						
+						  <th scope="col">
+                            <div class="slds-truncate" title="Opportunity Success Rate">Opportunity Success Rate</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.PartnerResults}" var="obj">
+                        <tr>
+                            <th scope="row" class="slds-text-align_right" style="width:3.25rem;">
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control"> 
+										<lightning:input aura:id="assignmentOptions" label="{!obj.Account.Id}" name="radioButtonGroup" type="radio"  />
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="row">
+                                <div class="slds-truncate" title="{!obj.Account.Name}">
+                                    {!obj.Account.Name}
+                                </div>
+                            </th> 
+                            <th scope="row">
+                                <div class="slds-truncate" title="{!obj.Accreditation}">
+										{!obj.Account.Overall_Accreditation__c}
+                                </div>
+                            </th>
+                            <th scope="row">
+                                <div class="slds-truncate" title="{!obj.Account.State_Coverage__c}">
+                                    {!obj.Account.State_Coverage__c}
+                                </div>
+                            </th>
+							
+							  <th scope="row">
+                                <div class="slds-truncate" title="{!obj.OptySuccessRate}">
+                                    {!obj.OptySuccessRate} %
+                                </div>
+                            </th>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table> -->
+    
+    
+     <aura:attribute name="disabled" type="Boolean" default="true" />
+    <aura:attribute name="saved" type="Boolean" default="false" />
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+<!--     <aura:if isTrue="{!!v.saved}">
+        <lightning:recordEditForm
+            onload="{!c.handleLoad}"
+            onsubmit="{!c.handleSubmit}"
+            onsuccess="{!c.handleSuccess}"
+            recordId="{!v.OpportunityId}"
+            objectApiName="Opportunity">
+            <lightning:messages />
+            <lightning:inputField fieldName="PartnerAccountId" disabled="{!v.disabled}"/>            
+            <div class="slds-m-top_medium">
+                <lightning:button variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>
+        <aura:set attribute="else">
+            <p>Saved!</p>
+        </aura:set>
+    </aura:if>
+ -->
+</aura:component>

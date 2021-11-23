@@ -1,0 +1,8 @@
+<template>
+  <div>
+    <c-notification-preference-Search record-id={recordId} object-name={objectName} oncallsearchvaluechange={hanldeSearchValueChange}></c-notification-preference-Search>
+    <template if:true={checkRecorddate}>
+      <c-notification-Preferenceresult recordata={recordata} oncallrefreshvaluechange={handleRefreshEvent}></c-notification-Preferenceresult>
+    </template>
+  </div>
+  </template>

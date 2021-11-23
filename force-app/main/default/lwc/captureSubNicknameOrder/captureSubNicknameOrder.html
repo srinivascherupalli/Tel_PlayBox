@@ -1,0 +1,61 @@
+<!--
+---------------------------------------------------------------------
+Name        : CaptureSubNicknameOrder HTML
+Description : Template for CaptureSubNicknameOrder js 
+Author      : Aman Soni
+Story       : EDGE-199911(Sprint 21.04)
+----------------------------------------------------------------------
+-->
+<template>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large" style="padding:5px;">
+    <div class="slds-modal__container" style="padding:5px;">
+        
+        <header class="slds-modal__header">
+            <h4 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="color: #7d7d7d; text-align: center; font-size:small; font-weight:bold">
+                <span style="font-size: 160%;">
+                    Mobile Service Nicknames
+                </span>
+            </h4>
+        </header>
+
+        <template if:true={isLoaded}>
+            <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+        </template>
+
+        <c-lwc-custom-toast 
+        title={toasttitle} 
+        message={toastmsg}
+        variant={toastvariant} 
+        auto-close="true">
+        </c-lwc-custom-toast>
+        
+        <div class="slds-scrollable" style="display: block;overflow-x:scroll">
+            <template if:true={showDataTable}>
+                <c-inline-edit-data-table 
+                table-name={tableName} 
+                table-data={recorddata}
+                ondatatablesaveevent={updatedata}>
+                </c-inline-edit-data-table> 
+            </template>
+        </div>
+        
+
+        <footer class="slds-modal__footer">
+            <lightning-button 
+            label="Back To Order" 
+            title="Back To Order" 
+            onclick={backToOrder} 
+            class="slds-m-left_x-small">
+            </lightning-button>
+
+            <lightning-button 
+            variant="brand"
+            label="Save" 
+            title="Save" 
+            onclick={saveRecords}
+            class="slds-m-left_x-small slds-float_right">
+            </lightning-button>
+        </footer>
+    </div>
+    </section>
+</template>

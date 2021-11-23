@@ -1,0 +1,174 @@
+/***************************************************************************************************************************************************************
+Name : OneFundInvoiceResponseDTO
+Description : Parse response for Invoice Callout
+Author: Hari
+Story: EDGE-124053
+*****************************************************************************************************************************************************************/
+public with sharing class OneFundInvoiceResponseDTO {
+    public String errorKey;
+    public String errorMessage;
+    
+    public class InvoiceDetails {
+        public String accountNumber;
+        public String invoiceNumber;
+        public String invoiceIssueDate;
+        public String invoicePeriod;
+        public String ariaInvoiceNumber;
+    }
+    
+    public class ListOfProducts {
+        public String physicalLocationName;
+        public Double siteExcludingGstCost;
+        public Double siteIncludingGstCost;
+        public ListOfChargesAndCredits listOfChargesAndCredits; //Added as part of EDGE:165647
+    }
+    
+    public class AccountLevelChargesAndCredits {
+        public Double adjustmentsExcludingGstCost;
+        public Double adjustmentsIncludingGstCost;
+        public Double grossTotalBill;
+        public Double amountOfGstIncludedInGrossTotalBill;
+        public Double totalNewChargesInThisBill;
+        public Double gstFreeItemsIncludedInNewCharges;
+        public Double gstIncludedInNewCharges;
+        public Double adjustmentsTotal;
+        public Double gstIncludedInAdjustments;
+    }
+    
+    public CustomerAddress customerAddress;
+    public InvoiceDetails invoiceDetails;
+    public PaymentSummary paymentSummary;
+    public ServiceSummary serviceSummary;
+    public AdjustmentSummary adjustmentSummary;
+    
+    public class Adjustments {
+        public String adjustmentDescription;
+        public String adjustmentDate;
+        public Double adjustmentsCost;
+        public Double gstIncludedInAdjustments;
+        public Boolean isQueryable;
+        public Boolean isDisputable;
+        public Integer chargeIdentifier;
+        public String chargeType;
+        //EDGE-120657 start
+        public List<InvoiceLineAttributes> invoiceLineAttributes;
+        //EDGE-120657 End
+
+    }
+    
+    public class DrillDownInputAttribute {
+        public String usageTypeCode;
+        public String statementNumber;
+        public Integer chargeId;
+        public Integer taxInclusive;
+        public Integer taxRate;
+
+        public List<Long> planInstanceDetailsList;
+    }
+    
+    public class ListOfChargesAndCredits {
+        public List<PlanCharges> planCharges;
+        public List<UsageSummaryCharges> usageSummaryCharges;
+        public List<OnceOffChargesAndCredits> onceOffChargesAndCredits;
+    }
+    
+    public class AdjustmentSummary {
+        public Double totalAdjustmentsCost;
+        public Double totalGSTIncludedInAdjustments;
+        public List<Adjustments> adjustments;
+    }
+    
+    public class ListOfOffers {
+        public String offerName;
+        public Double offerTotalExcludingGstCost;
+        public Double offerTotalIncludingGstCost;
+        public Integer invoiceDef;
+        public List<ListOfProducts> listOfProducts;
+        public ListOfChargesAndCredits listOfChargesAndCredits;
+    }
+    
+    public class PaymentSummary {
+        public Double balanceCarriedForward;
+        public Double totalDue;
+        public Double paymentsAndAdjustments;
+        public String dueDate;
+        public Double newCharges;
+    }
+    
+    public class OnceOffChargesAndCredits {
+        public String serviceType;
+        public Integer quantity;
+        public Double excludingGstCost;
+        public Double includingGstCost;
+        public String sigmaSpecId;
+        public Boolean isAggregated;
+        public Boolean isTaxable;
+        public Boolean isQueryable;
+        public Boolean isDisputable;
+        public Integer chargeIdentifier;
+        public String chargeType;
+        public List<InvoiceLineAttributes> invoiceLineAttributes;
+    }
+    
+    public class InvoiceLineAttributes {
+        public Integer invoiceLineNumber;
+        public Integer invoiceTransactionId;
+        public Double chargeExcludingGST;
+        public Double chargeIncludingGST;
+
+    }
+    
+    public class ServiceSummary {
+        public List<ListOfOffers> listOfOffers;
+        public AccountLevelChargesAndCredits accountLevelChargesAndCredits;
+    }
+    
+    public class PlanCharges {
+        public String serviceType;
+        public Integer quantity;
+        public Double excludingGstCost;
+        public Double includingGstCost;
+        public String sigmaSpecId;
+        public String startDate;
+        public String endDate;
+        public Boolean isAggregated;
+        public Boolean isTaxable;
+        public Boolean isQueryable;
+        public Boolean isDisputable;
+        public Integer chargeIdentifier;
+        public String chargeType;
+        public List<InvoiceLineAttributes> invoiceLineAttributes;
+        public DrillDownInputAttribute drillDownInputAttribute;
+        public String drillDownEndpoint;
+    }
+    
+    public class CustomerAddress {
+        public String companyName;
+        public String addressLine1;
+        public String addressCity;
+        public String stateAndPostalCode;
+    }
+    //Start of EDGE:115138 
+    public class UsageSummaryCharges {
+        public Double excludingGstCost;
+        public Double includingGstCost;
+        public Boolean isAggregated;
+        public Boolean isTaxable;
+        public DrillDownInputAttribute drillDownInputAttribute;
+        public Boolean isQueryable;
+        public Boolean isDisputable;
+        public Integer chargeIdentifier;
+        public String chargeType;
+        public List<InvoiceLineAttributes> invoiceLineAttributes;
+        //EDGE-120657 start  
+        public String drillDownEndpoint;
+        //EDGE-120657 End
+        //End of EDGE:115138
+    }
+    
+    public static OneFundInvoiceResponseDTO parse(String json) {
+        system.debug('json========>'+json);
+
+        return (OneFundInvoiceResponseDTO) System.JSON.deserialize(json, OneFundInvoiceResponseDTO.class);
+    }
+}

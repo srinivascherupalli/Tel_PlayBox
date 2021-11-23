@@ -1,0 +1,68 @@
+<template>
+    <template if:true={loadspinner}>
+        
+            <lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+        
+    </template>
+<div>
+    <c-lwc-custom-toast title = {toasttitle} 
+                        message = {toastmsg}
+                        variant = {toastvariant} 
+                        auto-close="true" ></c-lwc-custom-toast> 
+<div class="slds-grid " style="padding:30px;font-weight:bold;">
+        <h1>Add Broadsoft Tenancy</h1>
+    </div  >
+    <div class="slds-grid " style="padding-left:30px">
+        <lightning-radio-group name="tenancyOptions"
+        label=""
+        options={options}
+        value={value}
+        onchange={handleOptionChange}
+        type="radio"></lightning-radio-group>
+    </div>
+    <div class="slds-grid " style="padding-left:30px">
+        <div class="slds-docked-form-footer">
+            <div class="slds-col_bump-right">
+            </div>
+            <lightning-button variant="brand" label="Add Tenancy" title="Add Tenancy" onclick={handleClick} class="slds-m-left_x-small" style="padding-right: 20px;"></lightning-button>
+        </div>
+    </div>
+</br>
+    <template if:true={showLegacyTable}>
+        <div style="padding:20px;">
+        <div class="slds-table--header-fixed_container slds-table_bordered slds-table_cell-buffer" style="height:22rem;">
+            <div class="slds-scrollable_y" style="height:100%;">
+                    <table class="slds-table slds-table_bordered slds-table--header-fixed">
+                        <thead>
+                            <tr >
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-fixed" title="Opportunity Name">Legacy Tenancy ID</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-fixed" title="Account Name">CIDN</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-fixed" title="Close Date">BroadSoft Product Family</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <template for:each={legacyDetailsList} for:item="legacyDetail">
+                <tr key={legacyDetail.legacyId}>
+                  <td ><input type="radio" name="legacyId" onchange={handleOptionChange} value={legacyDetail.legacyId} checked={legacyDetail.isSelected}>  &nbsp;&nbsp; {legacyDetail.legacyId}</td>
+                  <td>{legacyDetail.cidn}</td>
+                  <td>{legacyDetail.productFamily}</td>
+              </tr>
+         
+          </template>
+        
+                        </tbody>
+                    </table>
+        
+        
+            </div>
+        </div>
+        </div>
+</template>
+</div>
+</template>

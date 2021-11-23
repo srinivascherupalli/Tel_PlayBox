@@ -1,0 +1,344 @@
+<!-- **********************************************************************************************************
+Sprint        	- SFO Sprint: 20.16 - P2OB-10453, 21.02 - P2OB-12086.
+Component   	- contactAuthority
+Descriptionc	- Displays all the permissions which drives Authority of Contact. 
+Author      	- Amar Chakka
+
+
+@Last Modified      : 
+No.       Developer Name        Date            Story Description 
+1       Chhaveel Thakur         09/03/2021      21.05 - P2OB-13440 & P2OB-13696 - Reorder the Permissions and Add few more fields
+2       Chhaveel Thakur         09/03/2021      21.06 - P2OB-14144 & P2OB-14131 - Reorder the Permissions and Add few more fields
+3       Chhaveel Thakur         09/03/2021      21.11 - P2OB-4057  - Added error modal popup 
+4       Sri                     04/10/2021      21.14 - P2OB-4062  - Added Invoice_notifications__c field under billing 
+
+************************************************************************************************************ -->
+
+<template>
+    <!-- START:Created as a part of story DIGI-4057-->
+    <!-- It will show Error Message on component -->
+    <div if:true={showErrorMsg}>
+        <div class="slds-modal slds-fade-in-open slds-backdrop">
+            <div class="slds-modal__container">
+                <!---HEADER Section-->
+                <div class="slds-modal__header slds-notify slds-notify_alert slds-alert_warning">
+                    <h2>Error Occured</h2>
+                </div>
+                <!---Body Section-->
+                <div class="slds-modal__content slds-p-around_medium">
+                    <P> {errorMsgVal}</P>
+                </div>
+
+                <!--Footer Section-->
+                <div class="slds-modal__footer">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_12-of-12 slds-align_absolute-center">
+                            <lightning-button label="Close" variant="brand" onclick={navigateToContactHome}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End here Error Message -->
+    <!-- END:Created as a part of story DIGI-4057-->
+
+
+    <!-- It will show and hide loading spinner -->
+    <div if:true={isLoaded} class="slds-align--absolute-center">
+        <lightning-spinner alternative-text="Saving" variant="brand" size="medium">
+        </lightning-spinner>
+    </div>
+
+    <!-- End here loading spinner -->
+    <lightning-record-edit-form id="firstform" record-id={recordId} object-api-name="Contact"
+        onsubmit={handleModalSubmit} onerror={handleError}>
+
+        <!--START:Created as a part of story P2OB-13440 & P2OB-13696 -->
+        <!--Modal Popup Starts-->
+        <template if:true={openModalNow}>
+            <div class="slds-modal slds-fade-in-open slds-backdrop">
+                <div class="slds-modal__container">
+                    <!---HEADER Section-->
+                    <div class="slds-modal__header">
+                        <h3 class="slds-section__title slds-theme_shade slds-align_absolute-center">
+                            <span class="slds-truncate slds-p-horizontal_small strong-text"
+                                title="Section Title">Adaptation to selected permissions is required</span>
+                        </h3>
+                    </div>
+                    <!---Body Section-->
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <div if:true={openUpgradeModal} class="slds-modal__content slds-p-around_medium">
+                            <P>{label.UpgradeText_HT}</br></p></br>
+                        </div>
+
+                        <div if:true={openDowngradeModal} class="slds-modal__content slds-p-around_medium">
+                            <P>{label.downgradeText_HT}</br> </P></br>
+                        </div>
+                        <ul class="slds-list_dotted">
+                            <li if:false={toogleFieldValueCR}>Services Requests/Changes</li>
+                            <li if:false={toogleFieldValueCI}>Incidents</li>
+                            <li if:false={toogleFieldValueOT}>Orders</li>
+                            <li if:false={toogleFieldValueMNS}>Monitoring internet and networks servers</li>
+                            <li if:false={toogleFieldValueMMDU}>Mobility services</li>
+                            <li if:false={toogleFieldValueRq}>View other services</li>
+                            <li if:false={toogleFieldValueTCS}>View and order product and service Telstra Connect store
+                            </li>
+                            <li if:false={toogleFieldValueB}>View and download invoices</li>
+                        </ul></br>
+                    </div>
+                    <!--Footer Section-->
+                    <div class="slds-modal__footer">
+                        <div class="slds-grid">
+                            <div class="slds-col slds-size_3-of-12 slds-align_absolute-center">
+                                <lightning-button label="Cancel" variant="brand" onclick={navigateToContactHome}>
+                                </lightning-button>
+                            </div>
+                            <div class="slds-col slds-size_6-of-12"></div>
+                            <div class=" slds-col slds-size_3-of-12 slds-align_absolute-center">
+                                <lightning-button id="submitbutton" variant="brand" type="submit" name="Save"
+                                    label="Accept Changes"></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <!--Modal Popup ends-->
+        <!--END:Created as a part of story P2OB-13440 & P2OB-13696-->
+
+    </lightning-record-edit-form>
+
+    <lightning-record-edit-form id="Secondform" record-id={recordId} object-api-name="Contact" onsuccess={handleSuccess}
+        onload={handleOnLoad} onsubmit={handleSubmit} onerror={handleError}>
+        <lightning-messages>
+        </lightning-messages>
+
+        <!--START:Created as a part of story P2OB-13440 & P2OB-13696 -->
+        <!--Upper Sectoin Starts-->
+
+        <div class="slds-section slds-is-open slds-p-top_medium">
+            <div aria-hidden="false" class="slds-section__content slds-m-left_small">
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_3-of-12">
+                        <span class="slds-form-element__label slds-m-bottom_none strong-text">Digital Eligibilty</span>
+                        <lightning-helptext content={label.createRequestsHT}></lightning-helptext>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <span class="slds-form-element__label slds-m-bottom_none">{digitalEligibilityOnL}</span>
+                    </div>
+                    <div class="slds-col slds-size_3-of-12">
+                        <span
+                            class="slds-form-element__label slds-m-bottom_none strong-text">{telstraConnectOptOutL}</span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-input type="toggle" name="inputUM1" onchange={handleToggleChangeTelstraConnectOptOut}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={telstraConnectOptOutOnL}>
+                        </lightning-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Upper Sectoin Ends-->
+        <!--END:Created as a part of story P2OB-13440 & P2OB-13696-->
+
+        <!--User Management Starts-->
+        <div class="slds-section slds-is-open slds-p-top_medium">
+            <h3 class="slds-section__title slds-theme_shade">
+                <span class="slds-truncate slds-p-horizontal_small strong-text" title="Section Title">Users
+                    Management</span>
+            </h3>
+
+            <div aria-hidden="false" class="slds-section__content slds-m-left_small">
+                <div class="slds-col slds-size_10-of-12">
+                    <span class="salesforce-text">{label.userManagementHT}</span></br>
+                </div>
+                <label class="slds-checkbox_toggle slds-grid">
+
+                    <div class="slds-col slds-size_10-of-12">
+                        <span class="slds-form-element__label slds-m-bottom_none strong-text">{userManagementLM}</span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-input type="toggle" name="inputUM1" onchange={handleToggleChangeUserManagement}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={toogleFieldValueUM}>
+                        </lightning-input>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <!--User Management ends-->
+
+        <!--Create and Track Starts-->
+        <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade">
+                <span class="slds-truncate slds-p-horizontal_small strong-text" title="Section Title">Create and
+                    Track</span>
+            </h3>
+
+            <div aria-hidden="false" class="slds-section__content slds-m-left_small">
+                <div class="slds-col slds-size_10-of-12">
+                    <span class="salesforce-text">{label.createIncidentsHT}</span></br>
+                </div>
+                <label class="slds-checkbox_toggle slds-grid">
+                    <div class="slds-col slds-size_10-of-12">
+                        <span class="slds-form-element__label slds-m-bottom_none strong-text">{createIncidentLM}</span>
+                        <lightning-helptext content={label.orderTrackingHT}></lightning-helptext>
+                    </div>
+
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-input type="toggle" name="input1" onchange={handleToggleChangeCreateRequest}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={toogleFieldValueCR}>
+                        </lightning-input>
+                    </div>
+                </label>
+                <label class="slds-checkbox_toggle slds-grid slds-wrap">
+                    <div class="slds-col slds-size_10-of-12 slds-p-top_medium">
+                        <span class="slds-form-element__label slds-m-bottom_none strong-text">{createRequestLM}</span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12 slds-p-top_medium">
+                        <lightning-input type="toggle" data-id="toggleFieldCR" name="input3"
+                            onchange={handleToggleChange} message-toggle-active="Yes" message-toggle-inactive="No"
+                            checked={toogleFieldValueCI}> </lightning-input>
+                    </div>
+                </label>
+                <label class="slds-checkbox_toggle slds-grid slds-wrap">
+                    <div class="slds-col slds-size_10-of-12 slds-p-top_medium">
+                        <span class="slds-form-element__label slds-m-bottom_none strong-text">{orderTrackingLM}</span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12 slds-p-top_medium">
+                        <lightning-input type="toggle" name="input5" onchange={handleToggleChangeOrderTracking}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={toogleFieldValueOT}>
+                        </lightning-input>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <!--Create and Track Ends-->
+
+        <!--Your Products and Service Starts-->
+        <div class="slds-section slds-is-open slds-p-top_medium">
+            <h3 class="slds-section__title slds-theme_shade">
+                <span class="slds-truncate slds-p-horizontal_small strong-text" title="Section Title">Your Products and
+                    Services</span>
+            </h3>
+
+            <div aria-hidden="false" class="slds-section__content slds-m-left_small">
+                <div class="slds-col slds-size_10-of-12">
+                    <span class="salesforce-text">{label.monitorNetworkServicesHT}</span></br>
+                </div>
+                <label class="slds-checkbox_toggle slds-grid">
+                    <div class="slds-col slds-size_10-of-12">
+                        <span
+                            class="slds-form-element__label slds-m-bottom_none strong-text">{monitorNetworkServicesLM}</span></br>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-input type="toggle" name="input9" onchange={handleToggleChangeMntNetwrkSrvs}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={toogleFieldValueMNS}>
+                        </lightning-input>
+                    </div>
+                </label>
+                <label class="slds-checkbox_toggle slds-grid slds-wrap">
+                    <div class="slds-col slds-size_10-of-12 slds-p-top_medium">
+                        <span
+                            class="slds-form-element__label slds-m-bottom_none strong-text">{monitorMobileDataUsageLM}</span></br>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12 slds-p-top_medium">
+                        <lightning-input type="toggle" name="input11" onchange={handleToggleChangeMntMobileDataUsage}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={toogleFieldValueMMDU}>
+                        </lightning-input>
+                    </div>
+                </label>
+                <label class="slds-checkbox_toggle slds-grid slds-wrap">
+                    <div class="slds-col slds-size_10-of-12">
+                        <span
+                            class="slds-form-element__label slds-m-bottom_none strong-text">{requestsTrackingLM}</span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-input type="toggle" data-id="toggleFieldRT" class="inputCRCl" data-element="inputCR"
+                            name="input7" onchange={handleToggleChangeRequestsTracking} message-toggle-active="Yes"
+                            message-toggle-inactive="No" checked={toogleFieldValueRq}> </lightning-input>
+                    </div>
+                </label>
+
+            </div>
+        </div>
+        <!--Your Products and Service Ends-->
+
+        <!--Purchasing Starts-->
+        <div class="slds-section slds-is-open slds-p-top_medium">
+            <h3 class="slds-section__title slds-theme_shade">
+                <span class="slds-truncate slds-p-horizontal_small strong-text" title="Section Title">Purchasing</span>
+            </h3>
+
+            <div aria-hidden="false" class="slds-section__content slds-m-left_small">
+                <div class="slds-col slds-size_10-of-12">
+                    <span class="salesforce-text">{label.telstraConnectStoreHT}</span></br>
+                </div>
+                <label class="slds-checkbox_toggle slds-grid">
+                    <div class="slds-col slds-size_10-of-12">
+                        <span class="slds-form-element__label slds-m-bottom_none strong-text">{telstraConnectStoreLM}</span>
+                        <lightning-helptext content={label.requestsTrackingHT}></lightning-helptext>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-input type="toggle" name="input13" onchange={handleToggleChangeTelstraConnectStore}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={toogleFieldValueTCS}>
+                        </lightning-input>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <!--Purchasing Ends-->
+
+        <!--Billing Starts-->
+        <div class="slds-section slds-is-open slds-p-top_medium">
+            <h3 class="slds-section__title slds-theme_shade">
+                <span class="slds-truncate slds-p-horizontal_small strong-text" title="Section Title">Billing</span>
+            </h3>
+
+            <div aria-hidden="false" class="slds-section__content slds-m-left_small">
+                <div class="slds-col slds-size_10-of-12">
+                    <span class="salesforce-text">{label.billingHT}</span></br>
+                </div>
+                <label class="slds-checkbox_toggle slds-grid">
+                    <div class="slds-col slds-size_10-of-12">
+                        <span class="slds-form-element__label slds-m-bottom_none strong-text">{billingLM}</span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-input type="toggle" name="input15" onchange={handleToggleChangeBilling}
+                            message-toggle-active="Yes" message-toggle-inactive="No" checked={toogleFieldValueB}>
+                        </lightning-input>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <!--Billing Ends-->
+
+        <!--Invoice notifications Starts-->
+        <div class="slds-hide slds-section slds-is-open slds-p-top_medium">
+            <h3 class="slds-section__title slds-theme_shade">
+                <span class="slds-truncate slds-p-horizontal_small strong-text" title="Section Title">Notification
+                    Preferences</span>
+            </h3>
+            <div class=" slds-p-left_small slds-p-right_xx-large">
+                <template if:true={Invoice_notificationsValues.data}>
+                    <lightning-dual-listbox name="invoicenotifications" label="Invoice notifications" disable-reordering
+                        source-label="Available" selected-label="Chosen" options={options} value={defaultoptions}
+                        onchange={handleinvoicenotificationsChange}>
+                    </lightning-dual-listbox>
+                </template>
+            </div>
+        </div>
+        <!--Invoice notifications Ends-->
+
+    
+        <template if:true={showFooter}>
+            <div class="slds-align--absolute-center">
+                <lightning-button class="slds-m-top_small slds-m-bottom_small slds-p-right_x-small" variant="Neutral"
+                    name="CancelSelection" label="Cancel" onclick={navigateToContactHome}></lightning-button>
+                <lightning-button class="slds-m-top_small slds-m-bottom_small slds-p-right_x-small" variant="brand"
+                    type="submit" name="Save" label="Save"></lightning-button>
+            </div>
+        </template>
+    </lightning-record-edit-form>
+</template>

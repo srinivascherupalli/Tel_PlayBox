@@ -1,0 +1,11 @@
+<design:component>
+    <design:attribute name="pause" label = "Pause label" description="Enter Label for Pause button" />
+    <design:attribute name="back" label = "Back label" description="Enter Label for Back button" />
+    <design:attribute name="next" label = "Next label" description="Enter Label for Next button" />
+    <design:attribute name="finish" label = "Finish label" description="Enter Label for Finish button" />
+
+    <design:supportedFormFactors>
+            <design:supportedFormFactor type="Large"/>
+            <design:supportedFormFactor type="Small"/>
+    </design:supportedFormFactors>
+</design:component>

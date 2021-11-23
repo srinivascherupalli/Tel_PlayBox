@@ -1,0 +1,38 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" controller="ActivateAgreementRecordStatus">
+   <aura:attribute name="recordId" type="String" default="{!v.recordId}" />
+     <aura:attribute name="errorMsg" type="String" access="global"/>
+     <aura:attribute name="restrictConga" type="String"/>
+     <aura:attribute name="status" type="String"  />
+    <aura:attribute name="spinner" type="Boolean" default = "false"  />
+    <aura:attribute name="Transitioncheck" type="String"  />
+   
+<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   
+    <!--loading spinner start-->
+     <div class="slds-card__header slds-is-relative">
+    <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading...</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    </div>
+    <!-- Loading spinner end-->   
+    
+ <aura:if isTrue="{!and(and(v.restrictConga == 'Yes',v.status == 'Customer Review'),v.Transitioncheck =='Yes')}">
+   <ui:message title="Action" severity="confirm" closable="False">
+
+                 <p> Please click on submit button to sync Contract Status with agreement once DSA is signed by both parties.</p>  
+
+       <div class="slds-align_absolute-center">
+         <lightning:button variant="brand-outline" label="Submit" title="Brand action" onclick="{! c.handleClick }" />
+        </div>
+   </ui:message>
+ 
+    </aura:if>
+    
+    
+</aura:component>

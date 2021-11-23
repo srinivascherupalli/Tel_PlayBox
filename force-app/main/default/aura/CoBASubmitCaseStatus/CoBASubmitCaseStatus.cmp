@@ -1,0 +1,71 @@
+<!-- Created Date : 30/04/2021 -->
+<!-- CreatedBy : Kamlesh Kumar -->
+<!-- Breif : EDGE : 212440 The component gets loaded upon click of submit button on CoBA Case layout.
+The componet contains two different types of UI a) Display toast message b)Display message on quick modal
+The UI is configurable using CoBA Utility Settings(ShowCoBAToastMessage) -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="CoBAProcessHelper">
+
+        <aura:attribute name="hideSpinner" type="boolean" default="false"/>
+        <aura:attribute name="recordIdList" type="List"/>
+        <aura:attribute name="showMessageOnModal" type="boolean" default="false"/>
+        <aura:attribute name="hideModal" type="boolean" default="false"/>
+        <aura:attribute name="toastMessage" type="String"/>
+        <aura:attribute name="toastType" type="String" default="Error"/>
+        <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+        <aura:handler name="init" value="{!this}" action="{!c.doinIt}"/>
+        
+         
+        <aura:if isTrue="{!v.hideModal}">
+            <aura:html tag="style">    .slds-backdrop {    background: rgba(43, 40, 38, 0) !important;      }    .slds-fade-in-open {    display:none !important;   }</aura:html>
+        </aura:if>
+    
+        
+            <!--<div class="slds-modal__content " style="width:100%;">-->
+            <aura:html tag="style">
+                .slds-p-around--medium {
+                	padding: 0rem !important;
+                }   
+                .slds-modal__content{
+                    overflow-y:hidden !important;
+                	height:unset !important;
+                	max-height:unset !important;
+                }
+                .cuf-content {
+                	padding: 0 0rem !important;
+                }
+                .cuf-publisherCancelButton{
+                	font-size: 0;
+                }
+                .cuf-publisherCancelButton:After{
+                	content: 'Close' !important;
+                	font-size:14px;
+                	display : block;
+                }
+                .uiButton .label{
+                	display:none !important;
+                }
+            </aura:html>
+            
+            <!--End Modal Header--> 
+    		<aura:if isTrue="{!v.showMessageOnModal}">
+                <div class="slds-modal__content slds-p-around--x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative">
+                    <p style="font-weight:bold;text-align:center;height: 230px;">{!v.toastMessage}</p>
+                </div>
+    		</aura:if>
+           <!-- </div>-->
+ 
+      <aura:if isTrue="{!v.showSpinner}">
+            <div class="slds-modal__container " style="width:100%;">
+                <div class="slds-p-around--medium slds-is-relative">
+                    <div class="slds-spinner_container">
+                        <div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+                            <span class="slds-assistive-text">Loading...</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </div>
+       		</div>
+        </aura:if> 
+
+    </aura:component>

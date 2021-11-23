@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" description="by this event we are pass the selected sObject(lookup list record) in the parent component">
+    <aura:attribute name="recordByEvent" type="sObject"/>
+    <aura:attribute name="dataType" type="string"/>
+    <aura:attribute name="fieldName" type="string"/> <!--added part of EDGE-150892 to manage event to have field name info-->
+</aura:event>

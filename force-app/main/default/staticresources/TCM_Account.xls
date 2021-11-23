@@ -1,0 +1,2 @@
+Name,CIDN__c,Customer_Status__c,Pref_Comm_Method__c,Phone,Migrated_Customer__c,ID,Customer_ID__c
+test,1234567,Active,Phone,400111222,TRUE,1234561,1342354675

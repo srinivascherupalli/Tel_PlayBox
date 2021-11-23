@@ -1,0 +1,37 @@
+<apex:page standardController="cscfga__Product_Basket__c" showHeader="false" sidebar="false" extensions="CustomButtonEnrichBasket">
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <!--apex:slds /-->
+    <apex:includeLightning /> 
+    <script>
+        var basketId = "{! JSENCODE($CurrentPage.parameters.basketID) }";
+        var accountId = "{! JSENCODE($CurrentPage.parameters.accountId) }";
+    	var opportunityId = "{! JSENCODE($CurrentPage.parameters.opportunityId) }";
+var selectedLookUpRecord = "{! JSENCODE($CurrentPage.parameters.selectedLookUpRecord) }";
+        
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+            $Lightning.createComponent(
+                "c:CSCancellationReason",
+                {"basketId": basketId,
+                 "accountId": accountId,
+                "opportunityId":opportunityId,
+                "selectedLookUpRecord":selectedLookUpRecord},
+                "sub",
+                function(cmp) {                    
+                    $A.eventService.addHandler({
+                        event: 'force:navigateToSObject',
+                        handler: function(event) {
+                            //EDGE-151654 navigationfix start added by shubhi
+                            try{
+                                window.top.location.href=event.Zb.recordId;
+                            }
+                            catch(e){
+                                window.top.location.href=event.$b.recordId;
+                            }
+                            //EDGE-151654 navigationfix end
+                        }
+                    });
+                });
+            });
+    </script>
+    <div style="margin:auto;width:450px; border:20px" id="sub"></div>
+</apex:page>

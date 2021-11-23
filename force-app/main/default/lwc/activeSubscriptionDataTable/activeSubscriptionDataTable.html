@@ -1,0 +1,41 @@
+<!-- *******************************************************************
+EDGE        -150172
+component   -dynamicLWCDataTable
+Description -Datatable with pagination 
+Author      -Dheeraj Bhatt
+************************************************************************* -->
+<template>
+    <div class="slds-border_top slds-border_left slds-border_right slds-border_bottom table">
+    <lightning-datatable
+        key-field="id"
+        data={records}
+        columns={columns}
+        max-row-selection={addRowRadio}
+        >
+       </lightning-datatable><br/>
+       <template if:true={paginationByButton}>
+        <div class="slds-clearfix">
+         <div class="slds-float_left slds-p-left_medium">
+             {currentPage} of total {totalPages} pages
+         </div>
+            <div class="slds-float_right slds-p-bottom_medium">
+            
+                <lightning-button variant="Brand" label="First"     title="First"    onclick={first} disabled={disableFirstButton}/> </lightning-button>&nbsp;&nbsp;
+                <lightning-button variant="Brand" label="Previous"  title="Previous" onclick={previous} disabled={disablePreviousButton}/> </lightning-button>&nbsp;&nbsp;
+                <lightning-button variant="Brand" label="Next"      title="Next"     onclick={next} disabled={disableNextButton}/> </lightning-button>&nbsp;&nbsp;
+                <lightning-button variant="Brand" label="Last"      title="Last"     onclick={last} disabled={disableLastButton}/> </lightning-button>&nbsp;&nbsp;
+                </div> 
+        </div>
+     </template>
+     <template if:false={paginationByButton}>
+      <div class="slds-clearfix">
+        <div class="slds-float_right slds-p-right_large slds-p-bottom_medium">
+         {totalRecords} results &emsp;&emsp; {startingRecord} - {endingRecord} of {totalRecords}  &emsp;&emsp;
+         <lightning-icon   icon-name="utility:chevronleft"     onclick={previous} disabled={disablePreviousButton} size="x-small"></lightning-icon>
+         {currentPage}
+         <lightning-icon   icon-name="utility:chevronright"    onclick={next} disabled={disablePreviousButton} size="x-small"></lightning-icon>
+       </div> 
+     </div>   
+     </template>
+   </div>
+</template>

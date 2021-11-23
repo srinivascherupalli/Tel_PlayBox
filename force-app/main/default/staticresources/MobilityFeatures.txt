@@ -1,0 +1,132 @@
+/*****************************************
+1 . 06-04-2020 .    Rohit T .       EDGE-143548 ||HV || Large CWP || CALLRESTRICTION and INTROAM is not handle by MS
+2.	24-Jun-2020		  Laxmi Rahate	  EDGE-154371 Hide Call Restriction when Plan Type is Data
+3 . 26-06-2020      Sandeep Yelane  EDGE-155249 Spring 20 Upgrade
+******************************************/
+window.onInitOETab["Mobility features"] = function(){
+	console.log("Mobility Features onInitOETab");
+  };
+  window.onInitOESchema["Mobility features"] = async function(guid){
+	// EDGE-155249 Spring 20 changes added async to function definition 
+	  /*
+	  let updateMap = {};
+		  updateMap[guid] = [
+			  { name: "CommercialPDName", value: Utils.getConfigName() }
+		  ];
+	  Utils.updateOEConfigurations(updateMap);
+	  */
+  
+	  console.log("Mobility Features onInitOESchema", this, guid);
+	  
+	   /*
+		  CS.EventHandler.subscribe(CS.EventHandler.Event.CONFIGURATOR_READY, function(payload) { 
+			  SPM.initNonCommercialConfiguration(); 
+		  }); 
+  
+		  var IntRo = CS.getAttributeValue('International_Roaming_0'); 
+		  var CallCon = CS.getAttributeValue('Call_Control_0'); 
+  
+		  SPM.setParentValue('INTROAM_0',IntRo); 
+		  SPM.setParentValue('Call_Control_0',CallCon);"
+	 */
+		  //EDGE-154371 CHanges Start
+  
+		  var planType = "";
+		  planType = Utils.getConfigAttributeValue('PlanTypeString' );
+		  var updateMapNew = {}
+	  if (planType === "Data" ) {
+		  if (!updateMapNew[guid])
+			updateMapNew[guid] = [];
+		updateMapNew[guid].push({name: "Call Restriction", showInUi: false});
+		//CS.SM.updateOEConfigurationAttribute('Mobile Subscription', window.activeGuid,updateMapNew, true);		
+		let product = await CS.SM.getActiveSolution();
+		let component = await product.getComponentByName('Mobile Subscription'); 
+		let keys = Object.keys(updateMapNew);
+		for(var h=0; h< updateMapNew.length;h++){
+		  await  component.updateOrderEnrichmentConfigurationAttribute(window.activeGuid,keys[h],updateMapNew[keys[h]],true);
+		}
+	  }
+  
+		  //EDGE-154371 CHanges END
+  
+  // Changes END 
+	var IntRo = Utils.getAttributeValue('International Roaming',window.activeSchemaConfigGuid );
+	  // Change for EDGE-143548 Done By Rohit
+	var CallCon = Utils.getAttributeValue('Call Restriction', window.activeSchemaConfigGuid );
+	//var ConfigId = Utils.getAttributeValue('Configuration Id', window.activeSchemaConfigGuid );
+  
+	console.log('MF: ', IntRo, CallCon);
+  
+	var attributeUpdateMap = [];
+	attributeUpdateMap[window.activeGuid] = [
+		// Change for EDGE-143548 Done By Rohit
+	  {name: "Call Restriction", value: CallCon, displayValue:CallCon},
+	  {name: "INTROAM", value: IntRo, displayValue:IntRo}
+	];     
+	  // EDGE-155249 Spring 20 Upgrade Starts here 
+	  //CS.SM.updateConfigurationAttribute(Utils.getConfigName(), attributeUpdateMap).then( component => console.log('updateConfigurationAttribute: ', component));
+	  let parentConfig = Utils.getConfigName()
+	  let solution = await CS.SM.getActiveSolution();
+	  let component = await solution.getComponentByName(parentConfig);
+	  let keys = Object.keys(attributeUpdateMap);
+	  for (let i = 0; i < keys.length; i++) {
+		await component.updateConfigurationAttribute(keys[i], attributeUpdateMap[keys[i]], true); 
+	  }
+	  // EDGE-155249 Spring 20 Upgrade Ends here 
+	/*
+	console.log(Utils.getConfigName()); //Mobility
+	console.log(Utils.getSchemaName()); //Mobility Features
+	console.log(Utils.getActiveConfigGuid());
+	*/
+  
+	  window.rulesUpdateMap[guid] = [];
+	  var Rules = [];
+	  return Rules;
+  };
+  
+  window.updateOE_MobilityFeaturess  = async function(solution, schemaName, guid){
+	console.log("updateOE_MobilityFeaturess >> Mobility Features ", this, guid);
+	let comp = await solution.getComponentByName(schemaName);
+	if(comp){
+	  let config = comp.getConfiguration(window.activeGuid);
+		  if(config){
+		let planTypeAttrib = CommonUtills.getAttribute(config, 'PlanTypeString');
+		if(planTypeAttrib && planTypeAttrib.value == "Data"){
+		  let updateMapNew = {}
+		  if (!updateMapNew[guid]) updateMapNew[guid] = [];
+		  updateMapNew[guid].push({name: "Call Restriction", showInUi: false});
+		  //CS.SM.updateOEConfigurationAttribute('Mobile Subscription', window.activeGuid,updateMapNew, true);
+  
+		  let component = await product.getComponentByName('Mobile Subscription'); 
+		  let keys = Object.keys(updateMapNew);
+		  let complock = component.commercialLock;
+		  if (complock) component.lock("Commercial", false);
+		  for(let h=0; h< keys.length;h++){
+			await  component.updateOrderEnrichmentConfigurationAttribute(window.activeGuid,keys[h],updateMapNew[keys[h]],true);
+		  }
+		  if (complock) component.lock("Commercial", true);
+		}
+  
+		let IntRoAttrib =  CommonUtills.getAttribute(config, 'International Roaming');
+		let CallConAttrib =  CommonUtills.getAttribute(config, 'Call Restriction');
+  
+		var attributeUpdateMap = [];
+		attributeUpdateMap[window.activeGuid] = [
+		  {name: "Call Restriction", value: CallConAttrib.value, displayValue: CallConAttrib.value},
+		  {name: "INTROAM", value: IntRoAttrib.value, displayValue :  IntRoAttrib.value}
+		]; 
+  
+		let keys = Object.keys(attributeUpdateMap);
+		let complock = comp.commercialLock;
+			if (complock) comp.lock("Commercial", false);
+		for (let i = 0; i < keys.length; i++) {
+		  await comp.updateConfigurationAttribute(keys[i], attributeUpdateMap[keys[i]], true); 
+		}
+		if (complock) comp.lock("Commercial", true);
+	  }
+	}
+	window.noPredicate["Mobility features"](guid);
+  }
+  
+  window.noPredicate["Mobility features"] = function(guid){};
+  

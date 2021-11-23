@@ -1,0 +1,46 @@
+<aura:component implements="flexipage:availableForAllPageTypes">
+
+    <aura:attribute name="type" type="String" default="Warning"/>
+    <aura:attribute name="title" type="String" default="痛い"/>
+    <aura:attribute name="message" type ="String" default="それは壊れた" />
+     <aura:attribute name="isOKActive" type ="Boolean" default="false" />
+    <aura:registerEvent name="sampleComponentEvent" 
+                         type="c:parentComponentEvent"/>
+    <aura:handler name="init" action="{!c.onInit}" value="{!this}" />
+
+    <div class="slds">
+        <div aura:id="toastDiv" class="slds-notify_container">
+            <div style="padding: .75rem .75rem .75rem 1.5rem !important;" aura:id="typeDiv" class="slds-notify slds-notify--toast slds-theme--success" role="alert">
+
+                <div style="width: 100%" class="slds-grid slds-gutters">
+                    <div style="width: 10%;" class="slds-col">
+                        <aura:if isTrue="{!v.type == 'warning'}">
+                            <lightning:icon iconName="utility:warning" size="small" alternativeText="Warning" />
+                        </aura:if>
+                        <aura:if isTrue="{!v.type == 'error'}">
+                            <lightning:icon iconName="action:close" size="xx-small" alternativeText="close" />
+                        </aura:if>
+                        <aura:if isTrue="{!v.type == 'success'}">
+                            <lightning:icon iconName="action:approval" size="xx-small" alternativeText="Approved" />
+                        </aura:if>
+                        <aura:if isTrue="{!v.type == 'info'}">
+                            <lightning:icon iconName="action:info" size="xx-small" alternativeText="info" />
+                        </aura:if>
+                        
+                    </div>
+                    <div style="width: 85%;"  class="slds-col slds-align_absolute-center">
+                        <div>
+                            <b>{!v.title}</b><!--EDGE-205598 Changed to Formatted Text to handle Clickable link in toast message-->
+                            <p style=" white-space : pre-line !important"><lightning:formattedRichText value="{!v.message}"/></p>
+                        </div>  
+                    </div>
+                    <div style="width: 5%;" class="slds-col">
+                        <lightning:buttonIcon size="large" iconName="utility:close"  variant="bare-inverse" onclick="{! c.closeToast }" alternativeText="Close" />
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

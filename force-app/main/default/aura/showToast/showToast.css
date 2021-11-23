@@ -1,0 +1,42 @@
+.THIS {
+}
+.THIS .mt-card__content {
+    display: flex;
+}
+.THIS.mt-toast--error {
+    border-color: #d0021b;
+}
+
+.THIS.mt-card--elevation-5 {
+    box-shadow: 0 12px 21px 0 rgba(0,0,0,.14);
+    z-index: 15;
+}
+.THIS.mt-card {
+    box-shadow: 0 3px 6px 1px rgba(0,0,0,.1);
+    display: block;
+    position: relative;
+    z-index: 11;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    border: 0;
+    padding: 1rem;
+    text-align: left;
+    text-decoration: none;
+    color: #414141;
+}
+.THIS .Iconcolor svg {
+    fill : #d0021b !important;
+}
+
+
+.THIS .mt-toast__close {
+    position: absolute;
+    margin-top: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    top: 0.875rem;
+    right: 1.5rem;
+    border-top: 0;
+}

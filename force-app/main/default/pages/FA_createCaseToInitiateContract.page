@@ -1,0 +1,44 @@
+<apex:page sidebar="false" showHeader="false" >
+    <apex:includeLightning />
+    <apex:slds />
+    <style>
+        #lightningApp {
+            background-color: transparent;
+        }
+    </style>
+    <div id="lightningApp"></div>
+    <script>
+    let queryString=window.location.search;
+    let urlParams = new URLSearchParams (queryString);
+    
+    let FrameId = urlParams.get('FrameId');
+      let OpportunityId = urlParams.get('OpportunityId');
+    console.log('FrameId <><>'+FrameId);
+        $Lightning.use("c:FA_createCaseToInitiateContractApp", function () {
+        $Lightning.createComponent("c:FA_createCaseToInitiateContract",
+        {
+           FrameId:FrameId,
+               OpportunityId:OpportunityId
+        },
+        "lightningApp",
+        function (cmp) {
+            console.log('Basket overiew Page loaded');
+        });
+    });
+    let payLoadToFAMjs;
+    window.addEventListener("message", function(event) {
+        
+        // Handle message
+        console.log(event);
+        let pageloadPayload={
+        command: event.data.type,
+        data: event.data.displayMsg,
+        caller: 'FA_createCaseToInitiateContract' };  
+          if(pageloadPayload.data != null || pageloadPayload.data != undefined){          
+        	window.parent.postMessage(pageloadPayload, '*') ;
+          }
+    }, false); 
+              
+   
+    </script>
+</apex:page>

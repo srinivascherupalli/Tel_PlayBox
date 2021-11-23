@@ -1,0 +1,11 @@
+/*.THIS .slds-dueling-list__column_responsive .slds-dueling-list__options {
+    width: auto;
+    height: 40%;
+    max-width: 15rem;
+}*/
+.THIS .scrollerSize {
+    height: 100px;
+}
+.THIS .dark{ 
+    color: #ff0000; 
+}

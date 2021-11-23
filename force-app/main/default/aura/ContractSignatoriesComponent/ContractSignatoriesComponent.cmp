@@ -1,0 +1,277 @@
+<!--
+* @Author   :   Maqsood Alam
+* @Date     :   10 Oct 2018
+* @Desc     :   Component for sObject Lookup Lightning Component
+1.			Gunjan Aswani			16/12/2020				EDGE-190520 FAM Contract Initiation 
+2.          Payal Popat             10/02/2020              EDGE-198027 Modified checkAsyncJob method to check based on JobId
+* -->
+
+<aura:component controller="sObjectLookupController" implements="force:appHostable,lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="cscfga__Product_Basket__c" type="sObject" access="global" /> 
+    <aura:attribute name="isDigBsaPSVarApplicableForRA" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="RelatedAccountId" type="String" access="global" />
+    <aura:attribute name="AgreementDecision" type="sObject" access="global" />
+	<aura:attribute name="AgreementDecisionDealJurney" type="sObject" access="global" />
+    <aura:attribute name="basketId" type="String" access="global" />
+    <aura:attribute name="basketName" type="String" access="global" />
+    <aura:attribute name="AccountName" type="String" access="global" />
+    <aura:attribute name="AccountOwnerId" type="String" access="global" />
+    <aura:attribute name="contractIdSelected" type="String" default="" access="global" />
+    <aura:attribute name="AccountId" type="String" access="global" />
+    <aura:attribute name="OppId" type="String" access="global" />
+    <aura:attribute name="AccountOwnerName" type="String" access="global" />
+    <aura:attribute name="AccountOwnerEmail" type="String" access="global" />
+    <aura:attribute name="ContactName" type="String" access="global" />
+    <aura:attribute name="errorMsg" type="String" access="global"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="toastClass" type="String" default="slds-theme_error" />
+    <aura:attribute name="toastIcon" type="String" default="error" />
+    <aura:attribute name="isDisable" type="Boolean" access="public" default="false"/>
+    <aura:attribute name="OrgDetails" type="String" default="" />
+    <aura:attribute name="cancelOrderVar" type="String" default="" />
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="siteSQCompleted" type="boolean" default="true" />
+    <aura:attribute name="siteSQCompletedSuccess" type="boolean" default="false" />
+    <aura:attribute name="siteSQCompletedError" type="boolean" default="false" />
+    <aura:attribute name="processedRecord" type="Integer" default="1" />
+    <aura:attribute name="adboreIdCount" type="Integer" access="global" />
+    <aura:attribute name="SQDisableFlag" type="boolean" default="true" />
+    <aura:attribute name="SyncJobStatus" type="String" default="" />
+    <aura:attribute name="syncJobId" type="String" default="" /><!--EDGE-198027-->
+    <!--EDGE-190520 FAM Contract Initiation -->
+	<aura:attribute name="famID" type="String" />
+    <lightning:quickActionAPI aura:id="quickActionAPI"/>   
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+        <!--Declare Handlers-->
+    <aura:handler name="lookupSelect" event="c:sObjectLookupSelectEvent" action="{!c.handleLookupSelectEvent}"
+                  description="Event handler to get the selected record Id and Name from LookupItem component"/>
+    
+    <aura:html tag="style">
+        
+        .loader,
+        .loader:after {
+        border-radius: 50%;
+        width: 5em;
+        height: 5em;
+        display: inline-block;
+        }
+        .loader {
+        margin: 1px auto;
+        font-size: 7px;
+        position: relative;
+        text-indent: -9999em;
+        border-top: .7em solid rgba(255, 255, 255, 0.2);
+        border-right: .7em solid rgba(255, 255, 255, 0.2);
+        border-bottom: .7em solid rgba(255, 255, 255, 0.2);
+        border-left: .7em solid #ffffff;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation: load8 1.1s infinite linear;
+        animation: load8 1.1s infinite linear;
+        }
+        @-webkit-keyframes load8 {
+        0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        }
+        100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+        }
+        }
+        @keyframes load8 {
+        0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        }
+        100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+        }
+        }
+        
+        .alert {
+        padding: 1px;
+        background-color: #f44336;
+        color: white;
+        opacity: 1;
+        width: 25rem;
+        transition: opacity 0.6s;
+        margin-top: 12px;
+        margin-left: 25px;
+        border-radius: 6px;
+        }
+        
+        .alert.success {background-color: #4CAF50; box-shadow: 5px 5px 5px 5px rgba(68,68,68,0.5)}
+        .alert.info {background-color: #2196F3;box-shadow: 5px 5px 5px 5px rgba(68,68,68,0.5)}
+        .alert.warningError {background-color: #C85C57; box-shadow: 5px 5px 5px 5px rgba(68,68,68,0.5)
+        }
+        
+        .tickMark svg {
+            fill : white !important;    
+        }
+        .tickMark {
+            background-color:#4CAF50 !important;
+            border-radius: 25rem; !important;
+            border: .3em solid #4CAF50; !important;
+        }
+        .tickMarkError svg {
+            fill : white !important;    
+        }
+        .tickMarkError {
+            background-color:#C85C57 !important;
+            border-radius: 5rem !important;
+        }
+    </aura:html> 
+    
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner aura:id="spinner" variant="brand" size="large" alternativeText="{!v.SyncJobStatus}"/>           
+    </aura:if>  
+    
+    <!-- error handling	-->
+    <div class="toggle" style="" aura:id="errorMsgId">
+        <div class="{!'slds-notify slds-notify_alert slds-theme_alert-texture ' + v.toastClass}" role="alert">
+            <span class="slds-assistive-text">error</span>
+            <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small" title="Description of icon when needed">
+                <lightning:icon iconName="{!'utility:' + v.toastIcon}" size="small" />
+            </span> 
+            <h2>{!v.errorMsg}.</h2>
+            <div class="slds-notify__close">
+                <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" onclick="{!c.toggle}"  data-closeBtm ="ErrorClose">
+                    <lightning:icon iconName="utility:close" size="small" />
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- error handling	-->
+    <!--EDGE-76151 : Site SQ web callout : START-->
+    <aura:if isTrue="{!v.adboreIdCount > 0}">
+    <aura:if isTrue="{!v.siteSQCompleted}"> 
+    <div class="alert info" style="margin-bottom: 23px ! important;"> 
+        &nbsp;&nbsp;<div class="loader">Loading...</div> &nbsp;&nbsp;<div style="display: inline-block;position: absolute; margin-top: 9px;"> Service Qualification processes running (<aura:if isTrue="{!v.adboreIdCount > 0}">{!v.processedRecord}<aura:set attribute="else">0</aura:set></aura:if>/{!v.adboreIdCount}) <aura:if isTrue="{!v.adboreIdCount > 50}"><br/><br/> <b><sub style="color: red;margin-top: 11px !important;">(More than 50 sites is not recommended)</sub></b> </aura:if></div>
+    </div>
+   </aura:if>
+    <aura:if isTrue="{!v.siteSQCompletedSuccess}"> 
+        <div class="alert success">
+            <lightning:icon class="tickMark" iconName="utility:check" size="small" /><Strong>Success</Strong><br/><div style="padding-left:2rem">Site service qualification complete</div> 
+        </div>
+    <br/>
+    </aura:if>
+    <aura:if isTrue="{!v.siteSQCompletedError}"> 
+    <div class="alert warningError">
+        <lightning:icon style="display: inline-block;position: absolute; margin-top: 9px; margin-left: 1px;" class="tickMarkError" iconName="utility:error" size="medium" />
+        <strong style="padding-left:2.5rem">Qualification Failed</strong><div style="padding-left:2.6rem">Network condtions at a site have changed.<br/>NBN access is not available.</div>
+    </div>
+        <br/>
+    </aura:if>  
+        </aura:if>
+    <!-- EDGE-76151 : Site SQ web callout : END-->
+    
+    <div class="slds-text-align_left">
+        <div class="slds-size_2-of-2">
+            <div class="slds-m-around_x-small">
+               	<!-- EDGE-190520 FAM Contract Initiation -->
+                <aura:if isTrue="{!empty(v.famID)}">
+                <div class="slds-m-around_small slds-grid slds-gutters">
+                    <div class="slds-col" style="width: 250rem;word-wrap: break-word;">
+                        Account Name
+                        <p class="slds-p-top_xx-small">
+                            <lightning:icon iconName="standard:account" size="small" />
+                            <div class="slds-p-left_x-small" style="display:inline;">{!v.AccountName}</div>
+                        </p>
+                    </div>
+                  <!--  <div class="slds-col" style="">
+                        -
+                    </div> -->
+                    <div class="slds-col" style="width: 250rem;word-wrap: break-word;">
+                       Contract Number
+                        <p class="slds-p-top_xx-small">
+                            <lightning:icon iconName="custom:custom18" size="small" />
+                            <div class="slds-p-left_x-small" style="display:inline">{!v.basketName}</div>
+                        </p>
+                    </div>
+                </div>
+                </aura:if>
+                <br/>
+                <br/>
+                
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-size_1-of-2">
+                        <div class="slds-grid full forcePageBlockSectionRow" data-aura-class="forcePageBlockSectionRow">
+                            <div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength">
+                                <div class="slds-form-element__control" disabled ="true">
+                                    <!-- EDGE-76151 : SiteQA -->
+                                    <aura:if isTrue="{!and(v.SQDisableFlag, v.adboreIdCount > 0)}">
+                                        <lightning:input aura:id="searchinput" label="Customer Contract Signatory"
+                                                         name="Customer Contract Signatory" value=""
+                                                         isLoading="false" placeholder="Search" disabled="true"/>
+                                        <aura:set attribute="else">
+                                            <aura:if isTrue="{!and(not(empty(v.RelatedAccountId)),v.isDigBsaPSVarApplicableForRA==true)}">
+                                                <c:sObjectLookup fieldLabel="Customer Contract Signatory" objectAPIName="AccountContactRelation"
+                                                                 fieldAPIName="Contact_Name" subHeadingFieldsAPI="Roles" selectedFieldOnClick="Contact_Name"
+                                                                 selectedRecordIdField="ContactId" lookupIcon="standard:contact" selectedRecordName="{!v.ContactName}" selectedRecordId="{!v.contractIdSelected}"
+                                                                 helptext="Select the ‘Contract Signatory’ Functional Contact Role for this Contract. Only Contacts with a ‘Legal Lessee’ or ‘Full Authority’ role on this Account are available for selection" 
+                                                                 placeholder="Search" fieldId="CustomerContactSignatory"
+                                                                 rawSOQLcriteria="( Roles= \'Full Authority\' OR Roles = \'Legal Lessee\') AND AccountId = \'dyamicVariable\' "
+                                                                 dyamicVariable="{!v.RelatedAccountId}" resultNotFound="Legal Lessee or Full Authority contacts not found"/> 
+                                                <aura:set attribute="else">
+                                                    <c:sObjectLookup fieldLabel="Customer Contract Signatory" objectAPIName="AccountContactRelation"
+                                                                     fieldAPIName="Contact_Name" subHeadingFieldsAPI="Roles" selectedFieldOnClick="Contact_Name"
+                                                                     selectedRecordIdField="ContactId" lookupIcon="standard:contact" selectedRecordName="{!v.ContactName}" selectedRecordId="{!v.contractIdSelected}"
+                                                                     helptext="Select the ‘Contract Signatory’ Functional Contact Role for this Contract. Only Contacts with a ‘Legal Lessee’ or ‘Full Authority’ role on this Account are available for selection" 
+                                                                     placeholder="Search" fieldId="CustomerContactSignatory"
+                                                                     rawSOQLcriteria="( Roles= \'Full Authority\' OR Roles = \'Legal Lessee\') AND AccountId = \'dyamicVariable\' "
+                                                                     dyamicVariable="{!v.AccountId}" resultNotFound="Legal Lessee or Full Authority contacts not found"/> 
+                                                </aura:set>
+                                            </aura:if> 
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="slds-size_1-of-2">
+                        <!--Current User Id : {!v.userId}-->
+                        <div class="slds-grid full forcePageBlockSectionRow" data-aura-class="forcePageBlockSectionRow">
+                            <div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength" style="{!'display:'+v.cancelOrderVar+''}">
+                                <!-- EDGE-76151 : SiteQA -->
+                                <aura:if isTrue="{!and(v.SQDisableFlag, v.adboreIdCount > 0)}"> 
+                                    <lightning:input aura:id="searchinput" label="Telstra Counter Signatory"
+                                                     name="Telstra Counter Signatory" value=""
+                                                     isLoading="false" placeholder="Search" disabled="true"/>
+                                    <aura:set attribute="else">
+                                        
+                                        <c:sObjectLookup fieldLabel="Telstra Counter Signatory" objectAPIName="User" fieldAPIName="Name"
+                                                         subHeadingFieldsAPI="Email" selectedRecordName="{!v.AccountOwnerName}" selectedRecordIdField="Id"
+                                                         selectedRecordId="{!v.AccountOwnerId}" lookupIcon="standard:user" selectedFieldOnClick="Name" isDisable="{!v.isDisable}"
+                                                         helptext="Account Owner by default. Can be re-assigned now, or re-assigned later in the e-signature Contract by the recipient selected below"
+                                                         placeholder="Search customer" fieldId="TelstraCountersignatory" resultNotFound="No matching record found"/>
+                                        
+                                    </aura:set>
+                                </aura:if>
+                                    </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="float:left;position: absolute; bottom: 15%; left: 2.5%; ">
+        <aura:if isTrue="{!v.isDisable}">
+           <!-- Can’t see the contact you are looking for? Please contact Account owner to make required updates at their end.  -->
+             Can’t see the contact you are looking for? Email the Telstra <a href="{!'mailto:'+v.AccountOwnerEmail+'?subject=Partner request - customer contacts'}"><u>Account owner</u></a> to add contacts or edit roles. 
+            <aura:set attribute="else">
+             <b>Can’t see the contact you are looking for?</b> From the <a href="{!'/lightning/r/' + v.AccountId + '/view'}" target="_blank"><u>Account</u></a> screen, you can edit existing Contact Roles, or add a new Role.
+            </aura:set>
+        </aura:if>
+    </div>
+    <div  style="float:right;position: absolute; bottom: .01%; left: 93%; ">
+        <lightning:button disabled="{!v.SQDisableFlag}" variant="brand" label="Save" title="Save" onclick="{! c.handleSaveClick }" />
+    </div>
+</aura:component>

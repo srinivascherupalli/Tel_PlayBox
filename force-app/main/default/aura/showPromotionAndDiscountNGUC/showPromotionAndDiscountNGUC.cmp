@@ -1,0 +1,53 @@
+<!--
+* @Author : Shubhi
+* @Date : 26 Nov 2019
+* @Desc : Discount DTO
+* @Jira : Edge-120132
+1.  Edge-133882 updated by shubhi
+2. Edge-143527 Added by Shubhi 
+*@TestClass: DiscountDTOTest -->
+
+<aura:component  controller="ShowPromoAndDiscountContollerNGUC" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="String" name="accountId" />
+    <aura:attribute type="String" name="basketId" />
+    <aura:attribute type="String" name="solutionId" />
+    <aura:attribute type="String" name="configId"/>
+    <aura:attribute type="String" name="tabName"/>
+    <aura:attribute type="String" name="solutionName"/>
+    <aura:attribute type="List" name="discountDataList"/>
+    <aura:attribute type="Boolean" name="isDiscountDataListEmpty"/>
+    <aura:attribute type="Object" name="mapJsonString"/> <!--Edge-143527-->
+    <!--div style="border-bottom: 2px solid lightgrey">
+        <span style="font-size:large">Promotions and Discounts</span><br/><br/>
+    </div-->
+    <div>
+        <br/>
+        <aura:if isTrue="{!v.isDiscountDataListEmpty}">
+            <span>
+                 <center>
+                     <b>No promotions or Discounts.</b><br/>{!$Label.c.no_applicable_discounts_common}<br/>
+                </center> 
+            </span>
+            <aura:set attribute="else">                
+                <p><b>All promotions and discounts will be automatically applied once this order is placed</b></p>
+                <br/>
+                <table style=" border-collapse: collapse; width: 100%;">
+                    <aura:iteration  var="discountData" items="{!v.discountDataList}" indexVar="index">
+                        <tr>
+                            <td style="padding :5px;text-align: left; border-bottom: 1px solid #ddd;color:#16325C;">
+                                  <p><b>{!discountData.discountName} </b></p>
+                                  <aura:if isTrue="{!discountData.description!=''}">
+                                      <p>{!discountData.description}</p>
+                                  </aura:if>
+                                   <p>Eligibility period:<b>{!discountData.startDate} to {!discountData.endDate} </b></p> <!--Edge-1338821-->
+                                  <p>Discount: <b>{!discountData.discAmount}</b></p>
+                                  <p>Duration in months: <b>{!discountData.discDuration}</b></p>
+                            	</td>
+                        </tr>
+                    </aura:iteration>
+                </table>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

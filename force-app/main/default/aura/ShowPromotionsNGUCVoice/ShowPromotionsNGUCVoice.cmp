@@ -1,0 +1,62 @@
+<!-- 
+* @Author : Shubhi
+* @Date : 12 March 2020
+* @Desc : RateMatrixForNGUCController for display rate and discount data   
+* @Jira : Edge-133882 New component
+* updated table structure same as NGUC voice to maintain uniformity edge Edge-135837
+* added tooltip EDGE-143957 
+* changed date field name EDGE-143957 
+-->
+
+<aura:component controller="RateMatrixForNGUCController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:attribute type="List" name="discountDataList"/>
+    <aura:attribute type="Boolean" name="isDiscountDataListEmpty"/>
+    <aura:attribute type="string" name="changeType"/> 
+    <div style="padding :5px">
+       <b>
+        <span style="font-size:medium">{!$Label.c.Promotionheader}</span>
+        </b> 
+    </div>
+    <div style="padding :5px">
+        <aura:if isTrue="{!v.isDiscountDataListEmpty}">
+            <span>
+                <b>No promotions or Discounts.</b><br/>{!$Label.c.no_applicable_discounts_common}<br/> 
+            </span>
+            <aura:set attribute="else">                
+                <div style="padding :5px"><span>{!$Label.c.PromotionMessage}</span></div>
+                <table style=" border-collapse: collapse; width: 100%;color:#16352C;">
+                    <aura:iteration  var="discountData" items="{!v.discountDataList}" indexVar="index">
+                        <tr>
+                            <aura:if isTrue="{!v.changeType!='Modify'}"><!-- EDGE-140157 added condition to display table based on change type -->
+                                <td style="padding :5px;text-align: left; border-bottom: 1px solid #ddd;color:#16325C;">
+                                  <p><b>{!discountData.discountName} </b></p>
+                                  <aura:if isTrue="{!discountData.description!=''}">
+                                      <p>{!discountData.description}</p>
+                                  </aura:if>
+                                   <p>Eligibility period: <b>{!discountData.startDate} to {!discountData.endDate} </b></p> <!--Edge-135837-->
+                                  <p>Discount: <b>{!discountData.discAmount}</b></p>
+                                  <p>Duration in months: <b>{!discountData.discDuration}</b></p>
+                            	</td>
+                                <aura:set attribute="else"> 
+                                    <td style="padding :5px;text-align: left; border-bottom: 1px solid #ddd;color:#16325C;">
+                                  	<p><b>{!discountData.discountName} </b></p>
+                                    <aura:if isTrue="{!discountData.description!=''}">
+                                            <p>{!discountData.description}</p>
+                                    </aura:if>
+                                    <p>Status: <b>Active</b></p>
+                                       <!--added tooltip EDGE-143957 start-->
+                                    <p>First bill start date <lightning:helptext content="{!$Label.c.applied_date_help_text}"/>: <b>{!discountData.initialActivationDate}</b></p> 
+										<!--added tooltip EDGE-143957 end-->
+                                    <p>Discount: <b>{!discountData.discAmount}</b></p>
+                                    <p>Duration of discount(in months): <b>{!discountData.discDuration}</b></p>
+                                    <p>Remaining discount(in months): <b>{!discountData.remainingTerm}</b></p>
+                                    </td>
+                                </aura:set>
+                            </aura:if>
+                        </tr>
+                    </aura:iteration>
+                </table>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

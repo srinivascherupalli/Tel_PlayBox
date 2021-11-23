@@ -1,0 +1,58 @@
+<!--
+EDGE		-144140
+Description	-collapsible section for Mobile Portin
+Author		-Kalashree
+-->
+<aura:component
+  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+  access="global"
+>
+  <aura:attribute type="String" name="header" />
+  <aura:attribute name="body" type="Aura.Component[]" />
+  <aura:attribute name="displayName" type="String" />
+  <aura:attribute name="collpaseText" type="String" default="" />
+  <div class="slds-is-open ">
+    <h3
+      class="slds-section__title"
+    >
+      <button
+        aria-expanded="true"
+        class="slds-button slds-section__title-action slds-border_top"
+        onclick="{!c.ToggleCollapse}"
+        style="border-radius:0px;"
+      >
+        <lightning:icon
+          class="{!v.collpaseText == 'Show' ? 'slds-hide' : 'slds-show'}"
+          aura:id="articleOne"
+          iconName="utility:chevrondown"
+          size="x-small"
+          alternativeText="Indicates add"
+        />
+        <lightning:icon
+          class="{!v.collpaseText == 'Show' ? 'slds-show' : 'slds-hide'}"
+          aura:id="articleOne"
+          iconName="utility:chevronup"
+          size="x-small"
+          alternativeText="Indicates dash"
+        />
+        <table class=" tablecollapse slds-table slds-table_cell-buffer ">
+          <tbody>
+            <tr class="slds-hint-parent slds-theme_shade">
+              <td style="width:60%" data-label="Site Name">
+                <div title="{!v.displayName}" style="margin:0px;padding:0px;"
+                  ><p>{!v.displayName} </p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </button>
+    </h3>
+    <div
+      class="{!v.collpaseText == 'Show' ? 'slds-show slds-p-around--xxx-small' : 'slds-hide slds-p-around--medium'}"
+      aura:id="articleOne"
+    >
+      {!v.body}
+    </div>
+  </div>
+</aura:component>

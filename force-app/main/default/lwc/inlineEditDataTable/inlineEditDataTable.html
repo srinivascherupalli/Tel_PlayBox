@@ -1,0 +1,255 @@
+<!--
+@description       : 
+@author            : Dheeraj / Abinash
+@group             : 
+@last modified on  : 11-26-2020
+@last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+Modifications Log 
+Ver   Date         Author                               Modification
+1.0   09-28-2020   Dheeraj / Abinash   Initial Version
+-->
+<template>
+    <c-lwc-custom-toast title = {toasttitle} 
+    message = {toastmsg}
+    variant = {toastvariant} 
+    auto-close="true" ></c-lwc-custom-toast>
+    <template if:true={isLoading}>
+    <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed "></lightning-spinner>
+    </template>
+    <div class="slds-grid " style="padding-left:30px;">
+    <div class="slds-col slds-no-flex slds-grid slds-align-bottom slds-shrink" > 
+        <template if:true={tableInformation.Select_All__c}>
+                <lightning-input  label="Select All" checked={isSelectAll} fieldlevelhelp="If this is check, it will select all records across the data table." type="checkbox"   onchange={selectAllrecords}>
+                    </lightning-input>
+        </template>
+    </div>
+    
+    <template if:true={tableInformation.Show_Checkbox__c}>
+        <div class="slds-col slds-align-bottom" style="font-weight: bold;">
+            <p class="slds-text-body--small">{selectedRow.length} of {totalrows} selected</p>
+        </div>
+    </template>
+    <template if:true={tableInformation.Show_Header__c}>
+        <div class="slds-col slds-align-bottom">
+            <p class="slds-text-body--small" style="font-size: small;font-family: sans-serif;font-weight: bold;">
+                {tableInformation.Display_Label__c}
+            </p>
+    
+        </div>
+    </template>
+    <template if:false={tableInformation.Defer_Filtering__c}>
+        
+    <div class="slds-col slds-no-flex slds-grid slds-align-bottom slds-shrink"> 
+            <div class="slds-form-element__control" style="padding-right: .5rem;">
+                <lightning-input type="text"
+                                    placeholder="Search this list..."                              
+                                    onkeypress={handleSearch}></lightning-input>               
+        </div>
+        
+    </div>
+    </template>
+    
+    <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+        <template if:true={tableInformation.IsCSV_Enabled__c}>
+            <lightning-button icon-name="utility:download" 
+                                label="Download CSV" 
+                                title="Download CSV File"
+                                onclick={generateCsvFile} variant="brand"></lightning-button>
+    </template>
+    </div>&nbsp;&nbsp;
+    <!--Start of EDGE-207158 by Abhishek(Osaka) Introducing Upload button to Bulk Update Nicknames-->
+    <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+        <template if:true={tableInformation.IsCSV_Upload__c}>
+            <lightning-input icon-name="utility:upload" 
+                            type="file" 
+                            title="Upload CSV File"
+                            onchange={uploadFile} 
+                            accept = ".csv"
+                            multiple = "false"
+                            >
+                        </lightning-input> 
+        </template>
+    </div>&nbsp;&nbsp;
+    <!--End of EDGE-207158 by Abhishek(Osaka) Introducing Upload button to Bulk Update Nicknames-->
+    
+    <template if:false={tableInformation.Defer_Page_Size_option__c}>
+        <div class="slds-col slds-no-flex slds-grid slds-align-bottom" style="width: 5rem;padding-left: .2rem;padding-right: .2rem;">
+            <lightning-combobox name="Size" 
+                value={tableInformation.selectOptionValue}            
+                options={dataTableInfo.selectOptionsPagination} onchange={resetPageNumber}>
+            </lightning-combobox>
+        </div>
+    </template>
+    </div>
+    <br/>
+    <!--EDGE-196002 Kalashree Removed row hover and added class for disabled look-->
+    <table aria-multiselectable="true" class="cTable slds-table slds-table_cell-buffer slds-no-row-hover slds-no-cell-focus slds-table_bordered slds-table_edit slds-table_fixed-layout slds-table_resizable-cols slds-border_top slds-border_left slds-border_right slds-border_bottom table" role="grid">
+    <thead>
+        <tr class="slds-line-height_reset">
+            <template if:true={tableInformation.Show_Checkbox__c}>
+                <th class="slds-text-align_right" scope="col" style="width:3.25rem">
+                    <lightning-input data-id={rowindex} variant="label-hidden" disabled={isdatanotpresent}	 
+                    type="checkbox"  name={rowindex}  checked={isSelectPageAll} onchange={selectAllCheckbox}>
+                        </lightning-input>
+                </th>
+            </template>
+            <template for:each={tableColumns} for:item="col" >
+                <template if:false={col.ishidden}>
+                    <th key={col.label} scope="col"  style="padding-left: 0.5rem;"  data-headername={col.fieldName} class="slds-is-resizable " >{col.label}
+                        <a class={col.sortable} data-headername={col.fieldName} href="javascript:void(0);" role="button" tabindex="0" onclick={sortTable}>
+                            <template if:true={col.sortable}>
+                                <lightning-icon data-id={col.fieldName} icon-name={sorticonname} 
+                                size="xx-small"  alternative-text="Preview" title="Preview"></lightning-icon>
+                            </template>
+                        </a>
+                    </th>  
+                </template>          
+            </template>
+        </tr>
+    </thead>
+    <tbody>       
+        <template for:each={tableData} for:item="row" for:index="rowindex">      
+            <tr key={rowindex.id} aria-selected="false" class={row.isgrey}>
+                <!--START: Modified for EDGE-215103-->
+                <template if:false={row.isTermStatusExpired}>
+                    <template if:true={tableInformation.Show_Checkbox__c}>
+                        <td  class="slds-text-align_right" role="gridcell"> 
+                            <lightning-input   type="checkbox"  name={row.id}   checked={row.isSelected}  onchange={selectCheckbox}>
+                            </lightning-input> 
+                        </td>
+                    </template>
+                </template>
+                <template if:true={row.isTermStatusExpired}>
+                    <td  class="slds-text-align_right" role="gridcell"> 
+                        
+                    </td>
+                </template>
+                <!--END for EDGE-215103-->
+                <template for:each={row.fields} for:item="field" for:index="fieldindex">
+                    <template if:false={field.ishidden}>
+                        <td key ={field.id} class={field.tdClassName}  role="gridcell" >
+                            <span class="slds-grid slds-grid_align-spread">
+                                <template if:true={field.viewMode}>
+                                    <template if:true={field.fieldTextType}>
+                                        <!--START: Modified for EDGE-215103-->
+                                        <template if:true={field.isTermStatusExpiring}>
+                                            <template if:true={field.istransitionMROScreen}><!--EDGE-213740-->
+                                                <lightning-icon icon-name="utility:warning" alternative-text="Warning!" title="Warning" size="x-small" variant="warning"></lightning-icon><lightning-formatted-text value={field.value} style="padding-right:46%;"></lightning-formatted-text>    
+                                            </template>
+                                            <template if:false={field.istransitionMROScreen}><!--EDGE-213740-->
+                                                <lightning-icon icon-name="utility:warning" alternative-text="Warning!" title="Warning" size="x-small" variant="warning"></lightning-icon><lightning-formatted-text value={field.value} style="padding-right:25px;"></lightning-formatted-text>
+                                            </template>
+                                        </template>
+                                        <template if:false={field.isTermStatusExpiring}>
+                                            <lightning-formatted-text value={field.value}></lightning-formatted-text>          
+                                        </template>
+                                        <!--END for EDGE-215103-->
+                                    </template>
+                                    <template if:true={field.fieldDateType}>
+                                        <lightning-formatted-date-time class="slds-truncate" value={field.value}  year="numeric" month="numeric" day="numeric" time-zone="UTC"> </lightning-formatted-date-time>                                       
+                                    </template>
+                                    <template if:true={field.fieldNumberType}>
+                                        <lightning-formatted-Number class="slds-truncate" value={field.value} format-style={field.formatter} currency-code={field.currencyCode}  minimum-fraction-digits={field.minimumFractionDigits} maximum-fraction-digits={field.maximumFractionDigits}> </lightning-formatted-Number>
+                                    </template>
+                                    <template if:true={field.fieldLinkType}>
+                                        <a class="slds-truncate" data-value={field.value}  title={field.title} target={field.target}>{field.label}</a>
+                                    </template>
+                                    <template if:true={field.fieldIconType}>
+                                        <template if:true={field.value.showOnHover}>
+                                        <lightning-helptext  icon-variant="error"	 content={field.value.errorMsg} icon-name={field.value.iconName}></lightning-helptext>
+                                        </template>
+                                        <template if:false={field.value.showOnHover}>
+                                                <!--EDGE-172362 Kalashree Borgaonkar. Move DML onBlur-->
+                                        <lightning-icon  icon-name={field.value.iconName}  alternative-text="check" title={field.value.errorMsg} size="xx-small"></lightning-icon>
+                                        </template>
+                                    </template>
+                                    <template if:true={field.fieldcheckboxType}>
+                                        <lightning-input   type="checkbox"   checked={field.value} disabled >
+                                        </lightning-input> 
+                                    </template>
+                                    <template if:false={field.isViewSpecialType}>
+                                        <span class="slds-truncate" title={field.value}>{field.value}</span>
+                                    </template>
+                                    <template if:true={field.fieldLookupType}>
+                                        <c-inline-parent-lookup name={rowindex} data-id={fieldindex} object-apiname={field.objectName} selected-record-id={field.value} 
+                                        onrecordselectiononparent={updatedatawithlookupvalue}  is-readonly={field.viewMode}></c-inline-parent-lookup>
+                                    </template>
+    
+                                    <template if:true={field.editable}>
+                                        <lightning-button-icon icon-name="utility:edit"  variant="bare" name={rowindex} data-id={fieldindex}   onclick={editField} alternative-text={field.value} class="slds-cell-edit__button slds-m-left_x-small" icon-class="slds-button__icon_hint slds-button__icon_edit"> </lightning-button-icon>
+                                    </template>
+                                </template>
+                                <template if:false={field.viewMode}>
+                                    <template if:true={field.isEditSpecialType}>
+                                        <template if:true={field.isPickListType}>
+                                            <lightning-combobox
+                                                name={rowindex}
+                                                data-id={fieldindex}
+                                                label={Hidden}
+                                                value={field.value}
+                                                options={field.selectOptions}
+                                                onchange={onInputChange}
+                                                variant="label-hidden"
+                                                class="ctInput"
+                                                blur={onBlur} 
+                                                >
+                                                </lightning-combobox>
+                                        </template>
+                                        <template if:true={field.isEditLookupType}>
+    
+                                            <c-inline-parent-lookup filterstring={filterstring} name={rowindex} data-id={fieldindex} object-apiname={field.objectName} selected-record-id={field.value} 
+    
+                                                onrecordselectiononparent={updatedatawithlookupvalue}  is-readonly={field.viewMode}></c-inline-parent-lookup>
+                                </template>
+                                    <template if:true={field.isEditCheckBoxType}>
+                                        <lightning-input   type="checkbox"  name={rowindex} data-id={fieldindex}   checked={field.value}  onchange={onCheckBoxValueChange} ></lightning-input>
+                                    </template>
+                                </template>
+                                    <template if:false={field.isEditSpecialType}>
+                                <!--EDGE-172362 Kalashree Borgaonkar. Move DML onBlur-->
+                                <lightning-input   name={rowindex} data-id={fieldindex} type={field.type} value={field.value} variant="label-hidden" class="ctInput" oncommit={nowcommit}> 
+                                </lightning-input>
+                                    </template>
+                                    
+                                </template>
+                            </span>
+                        </td>
+                    </template>
+                </template>
+            </tr>
+        </template>
+        <template if:true={isdatanotpresent}>
+            <div style="font-weight: bold;"> 
+                <p>No Data found for this view.</p>
+            </div>
+        </template>
+    </tbody> 
+    </table>
+    <br/>
+    <!--  <template if:true={isEditModeOn}>
+    <div class="ctFooter slds-modal__footer">
+        <div class="slds-text-color_error slds-p-bottom_small">{error}</div>
+        <div class="slds-grid slds-grid_align-center">
+            <lightning-button label="Cancel" onclick={closeEditMode} ></lightning-button>
+            <lightning-button label="Save" variant="brand" onclick={saveRecords} > </lightning-button>                
+        </div>
+    </div>
+    </template> -->
+    <br/>
+    <template if:false={isdatanotpresent}>
+        <template if:false={tableInformation.Defer_Pagination__c}>
+            <div class="slds-clearfix">
+                <div class="slds-float_left slds-p-left_medium" style="font-weight: bold;">
+                    {paginationWrapper.currentPage} OF TOTAL {paginationWrapper.totalPages} PAGES
+                </div>
+                <div class="slds-float_right slds-p-bottom_medium">
+                
+                    <lightning-button variant="Brand" label="First"     title="First"    onclick={first} disabled={paginationWrapper.disableFirstButton}/> </lightning-button>&nbsp;&nbsp;
+                    <lightning-button variant="Brand" label="Previous"  title="Previous" onclick={previous} disabled={paginationWrapper.disablePreviousButton}/> </lightning-button>&nbsp;&nbsp;
+                    <lightning-button variant="Brand" label="Next"      title="Next"     onclick={next} disabled={paginationWrapper.disableNextButton}/> </lightning-button>&nbsp;&nbsp;
+                    <lightning-button variant="Brand" label="Last"      title="Last"     onclick={last} disabled={paginationWrapper.disableLastButton}/> </lightning-button>&nbsp;&nbsp;
+                    </div> 
+            </div>
+        </template> 
+    </template>
+    </template>

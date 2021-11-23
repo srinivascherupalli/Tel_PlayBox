@@ -1,0 +1,32 @@
+<!-- 
+Created By          :   Team Hawaii : Ritika Jaiswal
+Created Date        :   2-April-2020
+Desc                :   This is used to capture decline reason when lead is declined by Partner.Child component embedded in Paremt-Component 'CardListView'
+Jira                :   P2OB-5611
+Date            Version             Modified By             Desc
+1. 2-April-2020         1              Ritika Jaiswal          P2OB:5611 - Component to capture decline reason when lead is declined by Partner                
+2. 10-April-2020        2              Ritika Jaiswal          P2OB:5611 - Added changes related to conditional display of textarea
+3. 28-April-2020        3              Ritika Jaiswal          P2OB:5708 - Decline TextArea updated 
+-->
+<template>
+  <template if:true={isdecline}>
+  <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+      <div class="slds-modal__container" >
+        <header class="slds-modal__header slds-modal__header_empty"></header>
+        <div class="slds-modal__content slds-p-around_medium slds-scrollable_none" id="modal-content-id-1">
+         <lightning-combobox required name="reason" label="Please provide a reason"  value={value} placeholder="--Select one--" options={options} onchange={handleChange} ></lightning-combobox>       
+         <template if:true={requiredArea}>
+          <lightning-textarea required={requiredArea} label="Please specify reason of max-length 255 chars" disabled={disableArea} onchange={handleTextArea} maxlength="255"></lightning-textarea> 
+         </template>      
+        </div>
+        <footer class="slds-modal__footer">
+          <lightning-button variant="neutral" label="Cancel" title="Cancel" onclick={cancelModal}
+              class="slds-m-left_x-small"></lightning-button>
+              <lightning-button variant="neutral" disabled={disableSave} label="Decline" title="Decline" onclick={declineModal}
+              class="slds-m-left_x-small"></lightning-button>
+        </footer>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
+</template>

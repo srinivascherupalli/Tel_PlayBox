@@ -1,0 +1,55 @@
+.spinnerPanel{
+    margin: auto;
+    content :'Loading...';
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    font-weight: bold;  
+}
+
+hr{
+    margin: 1rem 0 2rem 0;
+}
+
+.banner{
+    font-family: akkuratLight;
+    font-size: 20px;
+    font-weight: 700;
+    color : #757575;
+    /*font-family: akkuratBold;*/
+}
+
+.subText{
+    font-family: akkuratLight;
+    font-weight: 300;
+    font-size: 18px;
+    }
+
+.errorBanner{
+    background-color: #fcf0f2;
+    font-family: akkuratBold;
+    font-weight: 700;
+    font-size: 20px;
+    height: 120px;
+    color:#414141;
+    /*color:#A09A99;*/
+    /*
+    color: #D0021B;
+    background: linear-gradient(#D0021B, 10%, #fcf0f2);
+    width: 375px;
+    */
+}
+
+div.errorBanner:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    color: #ea1818;
+    float: left;
+    border: 3px solid red;
+}
+
+div.sleds-p-around_x-medium{
+    padding : 1rem 2rem;
+}

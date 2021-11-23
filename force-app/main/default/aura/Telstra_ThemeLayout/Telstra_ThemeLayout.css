@@ -1,0 +1,148 @@
+/* Global styles */
+.THIS .slds-box {
+    border-radius: 0;
+}
+.THIS strong, 
+.THIS b {
+    font-family: t(telstraFontBold);
+}
+.THIS .slds-input, 
+.THIS .uiInput {
+    font-size: 0.875rem !important;
+}
+.THIS .body-inner .content .flowruntimeRichTextWrapper .uiOutputRichText p, 
+.THIS .body-inner .content .flowruntimeRichTextWrapper .uiOutputRichText p span, 
+.THIS .body-inner .content .flowruntimeRichTextWrapper .uiOutputRichText p > a {
+    font-size: 1rem !important;
+}
+
+/* Theme Layout */
+.THIS {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column
+}
+.THIS #prmMainContentArea {
+    flex: 1 1 auto;
+    width: 100%;
+}
+.THIS .header-inner {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.THIS .body-inner {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem;
+}
+
+/* Top Gradient Border */
+.THIS #prmMainHeader {
+    border-width: 2px 0 0;
+    border-style: solid;
+    border-image: linear-gradient(to right, rgb(91, 197, 242), rgb(198, 157, 201) 35%, rgb(135, 121, 183) 70%) 1;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 3px 3px 0 rgba(0,0,0,.1);
+    z-index: 6;
+    background: #fff;
+}
+
+/* Telstra Logo */
+.THIS #prmLogo,
+.THIS .cdSupportTelstraLogo {
+    background-image: t('url(' + brandLogoImage  + ')');
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    z-index: 99;
+    cursor: pointer;
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 32px;
+}
+
+.THIS .slds-button_brand,
+.THIS .slds-button_neutral,
+.THIS .forceCommunityCreateRecordButton a.triggerLink,
+.THIS .forceCommunityCreateRecordButton button,
+.THIS .forceCommunityCreateRecordForm .buttonWrapper button,
+.THIS .body-inner .slds-config-header--section button.slds-raiseCase--button,
+.THIS .body-inner .cdSupport-btn--align .slds-button {
+    background: t(colorTransparency);
+    border: 2px solid t(colorBorderBrand);
+    border-radius: 0;
+    color: t(colorTextLink);
+    font-family: t(telstraFontBold);
+}
+.THIS .forceCommunityCreateRecordButton a.triggerLink,
+.THIS .forceCommunityCreateRecordButton button {
+    padding: 1rem 2rem;
+    width: 100%;
+}
+.THIS .slds-button_brand:hover,
+.THIS .slds-button_neutral:hover,
+.THIS .forceCommunityCreateRecordButton a.triggerLink:hover,
+.THIS .forceCommunityCreateRecordButton a.triggerLink:focus,
+.THIS .forceCommunityCreateRecordButton button:hover,
+.THIS .forceCommunityCreateRecordButton button:focus,
+.THIS .body-inner .createCaseSupportBtn:hover,
+.THIS .body-inner .slds-config-header--section button.slds-raiseCase--button:hover,
+.THIS .body-inner .cdSupport-btn--align .slds-button:hover {
+    background-color: rgb(25, 100, 200);
+    color: #fff;
+}
+.THIS .body-inner .cdSupport-btn--align .slds-button {
+   text-align: left;
+   margin: 0;
+}
+
+/* Nav and Tabs */
+.THIS .forceCommunityGlobalNavigation .slds-list__item a,
+.THIS .forceCommunityGlobalNavigation .slds-list__item button {
+    padding: 20px 0;
+    border-bottom: 2px solid transparent;
+}
+.THIS .forceCommunityGlobalNavigation .slds-list_vertical .slds-list__item a {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+/*.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item + .slds-list__item {
+    margin-left: 2rem;
+}*/
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > a.slds-is-active,
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > button.slds-is-active {
+    color: #0099F8;
+    border-color: t(colorBorderBrand);
+    background-color: transparent !important;
+}
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > a:hover,
+.THIS .forceCommunityGlobalNavigation .slds-list_horizontal > .slds-list__item > .comm-navigation__item > button:hover {
+    color: t(colorTextLink);
+    background-color: transparent !important;
+}
+.THIS .uiTabset--default > .uiTabBar {
+    margin-bottom: 1rem;
+}
+.THIS .comm-navigation.forceCommunityGlobalNavigation,
+.THIS .comm-navigation.forceCommunityGlobalNavigation .slds-list_vertical {
+    background-color: rgb(255, 255, 255);
+}
+
+@media t(mqLarge) {
+    .THIS .forceCommunityTileMenu .slds-large-size_1-of-4 {
+        width: 33.3333%;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .THIS #prmMainNavigation.slds-col {
+    	padding: 1rem 0;
+    }
+}
+
+.THIS .slds-list_vertical.slds-is-nested li.slds-list__item {
+    border-bottom: 1px solid #ededed;
+}

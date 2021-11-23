@@ -1,0 +1,33 @@
+<apex:page standardController="cscfga__Product_Basket__c" extensions="NewBasketRedirectController_Button">
+    <h2 id="h2">Please wait, creating basket...</h2>
+    <script>
+    	var previousOnload = window.onload;
+    	var basketMap ='{"cscfga__Opportunity__c": "{!JSENCODE($CurrentPage.parameters.opptyId)}"}';
+    	var retURL = '{!JSENCODE($CurrentPage.parameters.retURL)}';
+    
+        window.onload = function() { 
+            if (previousOnload) {
+                previousOnload();
+            }
+            
+            Visualforce.remoting.Manager.invokeAction(
+      			'{!$RemoteAction.NewBasketRedirectController_Button.createBasketRecord}',
+                basketMap,
+                handleCreateBasketRecordResponse,
+                {escape: false}
+            );
+        }
+        
+        function handleCreateBasketRecordResponse (result, event) {
+            if (event.type === 'exception') {
+                alert('Basket record could not be created.');
+            }
+            else {
+                var basketId = result;
+                console.log(basketId);
+                var urlEncoded = encodeURIComponent("/apex/csbb__basketbuilderapp?Id=" + basketId);
+				window.top.location.href = retURL + "/s/sfdcpage/" + urlEncoded;
+            }
+        }
+    </script>
+</apex:page>

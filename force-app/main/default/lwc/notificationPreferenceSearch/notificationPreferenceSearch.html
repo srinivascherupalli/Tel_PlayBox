@@ -1,0 +1,112 @@
+<template>
+   <div style="border:thin">
+   <table style="width: 100%;background-color: white;" border="0">
+      <tbody>
+         <tr>
+            <td style="width: 33%;padding-left: 2%;padding-top: 2%;" >
+
+               <c-lwc-lookup lookup-label="Account Name" make-readonly = {isAccReadOnly} object-api-name="account" icon-name="standard:account"  selected-record-id={accountRecordId} selected-value={accountName}
+
+                  onrecordselection={onAccountSelection} name="lookupAcc" records-list = {resList}></c-lwc-lookup>
+
+
+                  <template if:true={validate}>
+                        <p style="color:red">This field is mandatory requirement</p>
+               </template>
+            </td>
+            <td style="width: 32.8623%;padding-top: 2%;">
+            </td>
+            <td style="width: 32.8623%;padding-right: 2%;padding-top: 2%;">
+
+               <c-lwc-lookup data-name records-list = {resList} lookup-label="Order Name" make-readonly = {isOrderReadOnly} object-api-name="csord__Order__c" icon-name="standard:account" selected-record-id={orderRecordId} selected-value={orderNumber}
+
+               onrecordselection={onOrderSelection} filter-string={orderfilterStr}></c-lwc-lookup>
+               <template if:true={validate}>
+                  <p style="color:red">This field is mandatory requirement</p>
+         </template>
+            </td>
+         </tr>
+         <tr>
+            <td style="width: 33%;padding-left: 2%;padding-top: 2%;">
+
+
+               <c-lwc-lookup  records-list = {resList} lookup-label="Contact Name"  object-api-name="contact" icon-name="standard:contact"  selected-record-id={contactId} selected-value={contactName}
+
+                  onrecordselection={onContactSelection} filter-string={contactfilterStr}></c-lwc-lookup>
+                  
+            </td>
+            <td style="width: 31.8623%;text-align: center;padding-top: 2%;">
+               <label for="FieldSelect" class="slds-form-element__label slds-no-flex">
+               Notification Type
+               </label></br>
+
+
+               <select class="slds-select" data-type name = "NotificationType" value= {pickListVal} style="width: 50%;" onchange={changeHandler}>
+
+
+                  <option value="All">All</option>
+                  <option value="IR Welcome">IR Welcome</option>
+                  <option value="Usage">IR Usage</option>
+               </select>
+            </td>
+            <td style="width: 33.1377%;padding-right: 2%;padding-top: 2%;">
+            <div class="slds-form-element__control" >
+               <div class="slds-combobox_container">
+                  <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                        
+
+                        
+                     <lightning-input data-accid id="serNum" onblur= {mouseout} onkeyup={handleKeyChange} onkeydown= {handleKeyChange} onfocus= {handleFocus}  type="text" name="serviceNumber"    label="Service Number" onchange={handleKeyChange} value= {serviceNumber}> </lightning-input>
+                    
+                     
+
+
+                        <template if:true={recordsList}>
+                           <div id="listbox-id-2-venu" data-key="dropdownresult" class="slds-show slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox">
+                              <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                 <template if:true={message}>
+                                    <center>{message}</center>
+                                 </template>
+                                 <template for:each={recordsList} for:item="record">
+                                    <li id={record.Id} key={record.Id} onclick={onRecordSelection} role="presentation" class="slds-listbox__item">
+                                       <div data-key={record.Id} data-name={record.service_MSISDN__c} class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option"> 
+                                    <span class="slds-media__body">  
+                                 <span data-key={record.Id} data-name={record.service_MSISDN__c} class="slds-listbox__option-text slds-listbox__option-text_entity">{record.service_MSISDN__c} </span> </span>
+                                       </div>
+                                    </li>
+                                 </template>
+                              </ul>
+                           </div>
+                        </template>
+
+
+
+
+                  </div>
+               </div>
+            </div>                
+            <template if:true={validate}>
+                  <p style="color:red">This field is mandatory requirement</p>
+         </template>
+            </td>
+         </tr>
+      </tbody>
+   </table>
+      <table style="background-color: white;">
+         <tr>
+            <td style="padding-top: 1%;padding-bottom: 1%;padding-left: 2%;padding-right: 2%;">
+               <div class="slds-border_top slds-border_bottom" style="padding-top: 1%;padding-bottom: 3%;">
+                  <div style="float: right;">
+
+
+                     <lightning-button label="Clear Search" onclick={handleClear} class="slds-m-left_x-small"></lightning-button>
+                     <lightning-button variant="brand" label="Search" onclick={handleSearch} class="slds-m-left_x-small"></lightning-button>    
+
+
+                  </div>
+               </div>
+            </td>
+         </tr>
+      </table>
+   </div>
+</template>

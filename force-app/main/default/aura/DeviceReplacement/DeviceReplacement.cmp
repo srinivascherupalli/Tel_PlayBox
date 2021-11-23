@@ -1,0 +1,237 @@
+<!-- **************************************************************
+    EDGE        -80869
+    Class       -DeviceReplacement
+    Description -Componet for customer device replacement 
+    Author      -Dheeraj Bhatt
+ ******************************************************************** -->
+<aura:component controller="DeviceReplacementController" implements="flexipage:availableForAllPageTypes" access="global" >
+    <aura:attribute name="deviceId" type="string"/>
+    <aura:attribute name="accountId" type="string"/>
+    <aura:attribute name="subsciptionList" type="List"/>
+     <aura:attribute name="subscriptions" type="csord__Subscription__c"/>
+    <aura:attribute name="dataColumns" type="List"/>
+    <aura:attribute name="assetId" type="String"/>
+    <aura:attribute name="tNowCaseRef" type="String"/><!--EDGE-132715-->
+    <!--Start of EDGE-100986 -->
+    <aura:attribute name="assetRequireField" type="Boolean" default="false"/>
+    <!--End of EDGE-100986 -->
+    <aura:attribute name="showForm" type="Boolean" default="false"/>
+    <aura:attribute name="openmodel" type="Boolean" default="false"/>
+    <aura:attribute name="isAddress" type="boolean" default="false"/>
+	<aura:attribute name="isContact" type="boolean" default="false"/>
+     <!--Start of EDGE-175532 -->
+    <aura:attribute name="deviceSKURequiredField" type="Boolean" default="false"/>
+    <!--End of EDGE-175532 -->
+    <aura:attribute name="shellProductDetails"  type="sobject" default="{'replacedDeviceID':'',
+                                                                         'replacementDeviceSKU':'',
+                                                                        'replacementDeviceManufacturer':'',
+                                                                        'replacementDeviceModel':'',
+                                                                        'deviceCareCaseID':'',
+                                                                        'replacementDeviceColor':'',
+                                                                        'telstraNowCaseID':'',
+                                                                        'recoveryMethod':'satchel',selected: true,
+                                                                        'returnReason':'',}"/>
+    <aura:attribute name="deliveryContact"  type="sobject" />
+    <aura:attribute name="deliveryAddress" type="sobject"  />
+    <aura:attribute name="errorMessage" type="string"/>
+    <aura:attribute name="successMessage" type="string"/>
+    <aura:attribute name="showMessage" type="boolean" default="false"/>
+    <aura:attribute name="showSuccessMessage" type="boolean" default="false"/>
+    <aura:attribute name="showSpinner" type="boolean" default="false"/>
+    <aura:attribute name="recoveryMethodList" type="List"/>
+    <aura:attribute name="returnReasonList" type="List"/>
+    <aura:attribute name="recoveryMethodSobject" type="string" default="Reverse_Logistic_Recovery_Method__mdt"/>
+    <aura:attribute name="returnReasonSobject" type="string" default="Reverse_Logistic_Return_Reason__mdt"/>
+    <aura:attribute name="order" type="csord__Order__c"/>
+    <aura:attribute name="showReplaceButton" type="boolean" default="false"/>
+    <aura:attribute name="assetStatus" type="string"/>
+    <aura:attribute name="isTnowCaseRefValid" type="boolean" default="false"/><!--EDGE-150503-->
+    <aura:attribute name="assuranceProfileFlag" type="boolean" default="false"/><!--EDGE-150503-->
+    <aura:attribute name="currentDeviceSKU" type="string"/>
+    <aura:attribute name="currentDeviceSKUDisabled" type="boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner alternativeText="Loading" size="small" variant="brand" />
+        </aura:if>
+    <aura:if isTrue="{!and(v.showMessage,not(v.showForm))}">
+        <ui:message title="" severity="error" closable="true">
+            <b>{!v.errorMessage} </b>
+        </ui:message>
+    </aura:if>
+    <aura:if isTrue="{!v.showSuccessMessage}">
+        <ui:message title="" severity="confirm" closable="true">
+             <b><a onclick="{!c.gotoOrder}" >{!v.order.csord__Order_Number__c}</a>&nbsp; {!v.successMessage}</b>
+       </ui:message>
+    </aura:if>
+    
+    <div class="slds-grid slds-wrap ">
+        <div class="slds-col slds-size_1-of-4" style="margin-left:2rem;">
+            <lightning:input type="search" name="deviceId" label="" placeholder="Search with Device Id..." value="{!v.deviceId}"/></div>
+        <div class="slds-col  slds-size_1-of-6" style="padding:4px;">
+            <lightning:button variant="brand" label="search" title="Brand action" onclick="{!c.search}" />
+        </div>
+    </div> 
+ <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped mystles" style="border-top: 2px  rgb(217, 219, 221);border-bottom:2px solid rgb(217, 219, 221);"> 
+            <thead>
+                <tr class="slds-text-title_caps">
+                    <th scope="col">
+					<div class="slds-truncate" title="Subscription Name">Subscription Name</div> 
+					</th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Service Number">Subscription Number</div>
+                    </th>            
+                    <th scope="col">
+                        <div class="slds-truncate" title="Status">Status</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Created Date">Created Date</div>
+                    </th>
+					<th scope="col">
+                        <div class="slds-truncate" title="Add Replacement Device">Add Replacement Device</div>
+                    </th>
+                    
+                </tr>
+            </thead>   
+            <tbody>
+                <aura:iteration items= "{!v.subsciptionList}" var="subsciption" indexVar="index">
+				<tr class="slds-text-title" style="font-size: 1rem;">
+				<td class="slds-grow slds-cell-wrap"><a id="{!subsciption.Id}" onclick="{!c.gotoSubscription}" >{!subsciption.Name}</a></td>
+				<td class="slds-grow slds-cell-wrap">{!subsciption.csordtelcoa__Subscription_Number__c}</td>
+				<td class="slds-grow slds-cell-wrap">{!subsciption.csord__Status__c}</td>
+				<td class="slds-grow slds-cell-wrap">{!subsciption.CreatedDate}</td>
+				<td>
+                    <aura:if isTrue="{!v.showReplaceButton}">
+                     <lightning:button value="{!subsciption}" variant="Brand" label="Replace Device" disabled="{!or( and(v.assuranceProfileFlag==true,v.isTnowCaseRefValid==false),v.assuranceProfileFlag==false)}" title="Replace Device" onclick="{!c.handleRowAction }"/>
+                    </aura:if>
+                     <aura:if isTrue="{!v.assetStatus=='Active'}">
+                         {!$Label.c.Device_already_been_replaced}
+                    </aura:if>
+                    <aura:if isTrue="{!v.assetStatus=='InActive'}">
+                      {!$Label.c.Replacement_Order_In_Progress}
+                    </aura:if>
+                    </td>
+				</tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+    
+    <aura:if isTrue="{!v.showForm}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.cancel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Replaced Device Details</h2>
+                    <aura:if isTrue="{!v.showMessage}">
+                        <ui:message title="" severity="error" closable="true">
+                            <b>{!v.errorMessage}</b>
+                        </ui:message>
+                    </aura:if>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p><b>
+                        <div class="slds-grid slds-wrap" >
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                <lightning:input aura:id="fieldId" name="replacedDeviceID" label="Current Device ID" required="true" value="{!v.shellProductDetails.replacedDeviceID}" pattern=".*\S+.*" messageWhenPatternMismatch="Field is blank."/>
+                            </div>
+
+						<!--Start of EDGE-175532 : Added condition to toggle  required field -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                               <lightning:input aura:id="fieldId" name="currentDeviceSKU" label="Current Device SKU" required="{!v.deviceSKURequiredField}" value="{!v.currentDeviceSKU}"  disabled ="{!v.currentDeviceSKUDisabled}" pattern="^(0|[1-9][0-9]*)$" messageWhenPatternMismatch="Only numbers can be entered" min="0"/>
+                                
+                               </div>
+                            <!-- End of EDGE-175532 : Added condition to toggle  required field -->
+                            
+                                <!--Start of EDGE-100986 : Added condition to toggle  required field -->
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small" aura:id="Option-1">
+                                <lightning:input aura:id="fieldId" name="replacementDeviceManufacturer" label="Replacement Device Manufacturer" required="{!!v.assetRequireField}" value="{!v.shellProductDetails.replacementDeviceManufacturer}" pattern=".*\S+.*" messageWhenPatternMismatch="Field is blank."/>
+                            </div>
+                                <!--Start of EDGE-100986  -->
+								<!-- 'EDGE-191961'removed pattern from div tag to allow the alpha numeric values -->
+								<div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                <lightning:input aura:id="fieldId" name="replacementDeviceSKU" label="Replacement Device SKU" required="{!!v.assetRequireField}" value="{!v.shellProductDetails.replacementDeviceSKU}"/>
+                               </div>
+							   
+							   <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                <lightning:input aura:id="fieldId" name="deviceCareCaseID" label="Device Care Case ID" required="true" value="{!v.shellProductDetails.deviceCareCaseID}"/>
+                            </div>
+							   
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                <lightning:input aura:id="fieldId" name="replacementDeviceModel" label="Replacement Device Model" required="true" value="{!v.shellProductDetails.replacementDeviceModel}" pattern=".*\S+.*" messageWhenPatternMismatch="Field is blank."/>
+                            </div>
+							
+							<div class="slds-col slds-size_1-of-2 slds-p-right_small"><!--EDGE-150503 Disabled the field-->
+                                <lightning:input aura:id="fieldId" name="telstraNowCaseID" label="Telstra Now Case ID" disabled="true" value="{!v.tNowCaseRef}"/>
+                            </div>
+                            
+                            <!--EDGE-121377 component start -->
+                            <aura:if isTrue="{!!v.assetRequireField}">
+                            
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                <div class="slds-show">
+                                <lightning:input aura:id="fieldId" name="replacementDeviceColor" label="Replacement Device Colour" required="false" value="{!v.shellProductDetails.replacementDeviceColor}"/>
+                                </div>
+                            </div>
+                            </aura:if> 
+                            <!--EDGE-121377 component End -->
+							
+							<div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                <lightning:select aura:id="fieldId"
+                                                  required="true"
+                                                  name="returnReason"
+                                                  label="Return Reason"
+                                                  value="{!v.shellProductDetails.returnReason}">
+                                    <option text=""></option>
+                                    <aura:iteration items="{!v.returnReasonList}" var="opt">
+                                        <option text="{!opt.option}" value="{!opt.value}" selected="{!opt.selected}"/>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                <lightning:select aura:id="fieldId"
+                                                  required="true"
+                                                  name="recoveryMethod"
+                                                  label="Recovery Method"
+                                                  value="{!v.shellProductDetails.recoveryMethod}">
+                                    <aura:iteration items="{!v.recoveryMethodList}" var="opt">
+                                        <option text="{!opt.option}" value="{!opt.value}" selected="{!opt.selected}"/>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </div>
+							
+							<div class="slds-col slds-size_1-of-2 slds-p-right_small"></div>
+                            
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                                  <label class="slds-form-element__label" for="unique-id-of-input">Delivery Address</label>
+                                    <c:customDeliveryLookup objectAPIName="{!v.accountId}" isContact="False" isAddress="true" selectedRecord="{!v.deliveryAddress}" />
+                                 <lightning:button variant="base" label="Add Address" title="Add Address" onclick="{! c.addAddress }" iconName="utility:add" iconPosition="left"/>
+                          </div>
+                            <div class="slds-col slds-size_1-of-2 slds-p-right_small"> 
+                                <label class="slds-form-element__label" for="unique-id-of-input">Delivery Contact</label>
+                                <c:customDeliveryLookup objectAPIName="{!v.accountId}" isContact="true" isAddress="false" selectedRecord="{!v.deliveryContact}" />
+                                 <lightning:button variant="base" label="Add Contact" title="Add Address" onclick="{! c.addContact }" iconName="utility:add" iconPosition="left"/>
+                            </div>
+                          
+                        </div>
+                        </b>
+                    </p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral"
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.cancel }"/>
+                    <lightning:button variant="brand"
+                                      label="Submit Order"
+                                      title="submitorder"
+                                      onclick="{!c.submit}"/>
+                </footer>
+            </div>
+        </section>
+         <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+  </aura:component>

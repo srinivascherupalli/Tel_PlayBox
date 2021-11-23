@@ -1,0 +1,68 @@
+<template>
+    <div class="homeSlideshow">
+        <template if:true={isRecordAvailable}>
+            <template if:true={isKnowledgeArticle}>
+                <h2 class="title2">Trending Articles</h2>
+            </template>
+            <div class="slideshow-container">
+                <template for:each={record} for:item="offer">
+                    <div key={offer.Id} class="mySlides fade">
+                        <div class="slide-container">
+                            <template if:false={isKnowledgeArticle}>
+                                <h2 class="title2">{offer.title}</h2>
+                            </template>
+
+                            <div class="slide-contentWrap">
+                                <div class="offerImg">
+                                    <img src={offer.imageURL}/>
+                                </div>
+                                <div class="offerContent">
+                                    <template if:true={isKnowledgeArticle}>
+                                        <div class="offerCat">{offer.categoryName}</div>
+                                    </template>
+                                    <div class="offerTitle">
+                                        {offer.subTitle}
+                                    </div>
+                                    <div class="offerBody">{offer.description}</div>
+                                    <template if:false={isKnowledgeArticle}>
+                                        <div class="offerBtn">
+                                            <a data-id={offer.Id} onclick={handleOfferClick}>View Offer</a>
+                                        </div>
+                                    </template>
+                                    <template if:true={isKnowledgeArticle}>
+                                        <div class="offerBtn">
+                                            <a data-id={offer.Id} onclick={handleOfferClick}>Read More</a>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <a class="prev" onclick={prevSlides}>
+                    <span class="iconTelstra icon-left-chevron" data-aura-rendered-by="351:0"></span>
+                </a>
+                <a class="next" onclick={nextSlides}>
+                    <span class="iconTelstra icon-right-chevron" data-aura-rendered-by="351:0"></span>
+                </a>
+
+            </div>
+            <br>
+
+            <div style="text-align:center">
+                <template for:each={record} for:item="offer">
+                    <span key={offer.Id} class="dot" data-id={countSlides} onclick={currentSlide}></span>
+                </template>
+            </div>
+        </template>
+        <template if:false={isRecordAvailable}>
+            <template if:true={isKnowledgeArticle}>
+                <p>No Trending Article Found</p>
+            </template>
+            <template if:false={isKnowledgeArticle}>
+                <p>No Offer Found</p>
+            </template>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,100 @@
+<!-- 
+* @Author : Rohit
+* @Date : 24-Dec-2019
+* @Jira : Edge-120144
+1. EDGE-133963 shubhi added custom label for 99999
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="activity" type="object" description="to store single activity (task/event) record data"/> 
+	<aura:attribute name="responsePayDTOType" type="boolean" default="false"/><!--Added by Aman Soni as a part of EDGE-123593-->
+    <li>
+        <div class="isExpendable slds-timeline__item_expandable slds-timeline__item_task" aura:id="expId"> 
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <button class="slds-button slds-button_icon"
+                            onclick="{!c.toggleAcitivity}"
+                            title="test"
+                            aria-controls="task-item-base">
+                        <lightning:icon iconName="utility:switch" 
+                                        size="x-small"
+                                        class="slds-button__icon slds-timeline__details-action-icon black"/>
+                    </button>
+                    
+                    <div class="slds-icon_container" title="task">
+                        <lightning:icon class="grey" iconName="standard:task" size="small" />
+                    </div>
+                </div>
+                
+                <div class="slds-media__body">
+                    <div class="slds-grid slds-grid_align-spread slds-timeline__trigger ">
+                        <div class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
+                            <h3 class="slds-truncate" title="{!v.activity.id}">
+                               <!--Added by Aman Soni as a part of EDGE-123593 || Start-->
+                              <strong>  
+                              <aura:if isTrue="{!v.responsePayDTOType}">
+                                     Month {!v.activity.fromPeriod} -
+                                    <aura:set attribute="else"> 
+                                        Month {!v.activity.fromPeriod__c} -
+                                     </aura:set>
+                             </aura:if> 
+                             <aura:if isTrue="{!v.responsePayDTOType}">
+                                  <aura:if isTrue="{!v.activity.toPeriod == 99999}">Life of Subscription
+                                    <aura:set attribute="else">{!v.activity.toPeriod}
+                                    </aura:set>
+                             	  </aura:if>
+								  <aura:set attribute="else">
+								  <aura:if isTrue="{!v.activity.toPeriod__c == 99999}">Life of Subscription
+                                    <aura:set attribute="else">{!v.activity.toPeriod__c}
+                                    </aura:set>
+                              	  </aura:if>
+                                    </aura:set>
+                              </aura:if>
+                              </strong>
+                            </h3>                               
+                        </div>                                  
+                    <div class="slds-float_right">
+                         <aura:if isTrue="{!v.responsePayDTOType}">
+                             <span class="slds-text-body_medium slds-truncate">NET ${!v.activity.unitPrice}</span>
+                             <aura:set attribute="else">
+                                  <span class="slds-text-body_medium slds-truncate">NET ${!v.activity.unitPrice__c}</span>
+                             </aura:set>
+                         </aura:if>
+                    </div>
+                    </div>
+                   <!--Added by Aman Soni as a part of EDGE-123593 || End-->
+                    <div>
+                        <ul class="slds-list_horizontal slds-wrap">
+                            <li class="slds-grid slds-grid_horizontal">
+                                <aura:iteration items="{!v.activity.applicableDiscounts}" var="task"> 
+                                    <!-- //added for EDGE-136003-->
+                                    <span class="slds-text-body_medium slds-truncate slds-p-right_small">{!task.description}</span>                                   
+                                </aura:iteration>
+                            </li>                            
+                        </ul> 
+                    </div>  
+                    
+                    <!--p class="slds-m-horizontal_xx-small">
+                        <lightning:formattedDateTime value="{!v.activity.unitPrice__c}"/> 
+                    </p-->
+                    
+                    <!-- expandable section start-->
+                    <article class="slds-box slds-timeline__item_details slds-theme_shade slds-m-top_x-small slds-m-horizontal_xx-small"
+                             id="task-item-base"
+                             aria-hidden="true">
+                        <div>
+                            <ul class="slds-list_horizontal slds-wrap">
+                                <li class="slds-grid slds-grid_horizontal">
+                                    <aura:iteration items="{!v.activity.applicableDiscounts}" var="task"> 
+                                         <!-- //added for EDGE-136003-->
+                                        <span class="slds-text-body_medium slds-truncate slds-p-right_xx-large">{!task.description}
+                                        <br/>{!task.discountAmount}</span>
+                                    </aura:iteration>
+                                </li>                            
+                            </ul>
+                        </div>
+                    </article>                    
+                </div>
+            </div>
+        </div>
+    </li>	
+</aura:component>

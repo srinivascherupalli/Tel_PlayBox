@@ -1,0 +1,2825 @@
+<apex:page doctype="html-5.0" standardcontroller="cscfga__Product_Basket__c" extensions="cscfga.UISupport"
+           showHeader="false" sidebar="false" title="Edit Product Configuration" action="{!checkRuntimeVersion}">
+    <cscfga:FixUIStyles />
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <head>
+        <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.cscfga__select2,'select2.min.css')}" />
+        <apex:stylesheet value="{!$Resource.cscfga__Configuration_css}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.cscfga__Indicator,'css/indicator.css')}"></apex:stylesheet>
+        <style type="text/css">
+            body {
+                margin: 0;
+            }
+
+            .requiredOn {
+                border-left: 1px solid #FF4F00;
+                padding-left: 3px;
+            }
+
+            .slds .slds-medium-size--1-of-2 {
+                width: 49%;
+                display: inline-block;
+            }
+
+            .slds .slds-checkbox [type='checkbox']:checked > .slds-checkbox--faux::after,
+            .slds .slds-checkbox [type='checkbox']:checked ~ .slds-checkbox--faux::after {
+                -ms-transform: translate(-50%, -50%) rotate(-45deg);
+            }
+
+            .slds .slds-button.hidden {
+                display: none;
+            }
+            .slds-select {
+                background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI3LjYgMjEiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI3LjYgMjEiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KICA8Zz4NCiAgICA8ZGVmcz4NCiAgICAgIDxwYXRoIGlkPSJTVkdJRF8xXyIgZD0iTTUuNiA1aDE2LjRjMC40IDAgMC44IDAuNiAwLjQgMWwtOCA5LjhjLTAuMyAwLjMtMC45IDAuMy0xLjIgMGwtOC05LjhDNC44IDUuNiA1LjEgNSA1LjYgNXoiLz4NCiAgICA8L2RlZnM+DQogICAgPGNsaXBQYXRoIGlkPSJTVkdJRF8yXyI+DQogICAgICA8dXNlIHhsaW5rOmhyZWY9IiNTVkdJRF8xXyIgb3ZlcmZsb3c9InZpc2libGUiLz4NCiAgICA8L2NsaXBQYXRoPg0KICAgIDxyZWN0IHg9IjAiIHk9IjAiIGNsaXAtcGF0aD0idXJsKCNTVkdJRF8yXykiIGZpbGw9IiM1NTY5OEQiIHdpZHRoPSIyNy42IiBoZWlnaHQ9IjIxIi8+DQogIDwvZz4NCjwvc3ZnPg0K);
+                background-position: 97.5% 50%;
+                background-repeat: no-repeat;
+                background-size: .875rem .875rem, 100% 100%;
+                padding: 4px 8px;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+            /*.slds-form-element__control {
+                height: 34px;
+            }*/
+             /* select2 styling to match lightning select */
+            .select2-container .select2-choice,
+            .select2-container .select2-choices {
+                background-color: white;
+                color: #16325c;
+                border: 1px solid #d8dde6;
+                border-radius: 4px;
+                width: 100%;
+                -webkit-transition: border 0.1s linear, background-color 0.1s linear;
+                transition: border 0.1s linear, background-color 0.1s linear;
+                height: 34px;
+                background-image: none;
+                line-height: 30px;
+            }
+            .select2-container.select2-dropdown-open .select2-choice,
+            .select2-container.select2-dropdown-open .select2-choices {
+                border-radius: 4px 4px 0 0;
+            }
+            .select2-container.select2-dropdown-open.select2-drop-above .select2-choice,
+            .select2-container.select2-dropdown-open.select2-drop-above .select2-choices {
+                border-radius: 0 0 4px 4px;
+                background-image: none;
+                border-top: none;
+            }
+            .select2-dropdown-open.select2-drop-above .select2-choice,
+            .select2-dropdown-open.select2-drop-above .select2-choices {
+            /*    background-image: none; */
+            }
+            .select2-container .select2-choice .select2-arrow,
+            .select2-container .select2-choices .select2-arrow {
+                background-color: white;
+                background-image: none;
+                border: none;
+            }
+            .select2-container .select2-choice .select2-arrow b,
+            .select2-container .select2-choices .select2-arrow b {
+                background-position: 0px 2px;
+            }
+            .select2-container .select2-choice .select2-search-choice-close,
+            .select2-container .select2-choices .select2-search-choice-close {
+                margin-top: 4px;
+            }
+            .select2-container.select2-container-active .select2-choice,
+            .select2-container.select2-container-active .select2-choices {
+                border-color: #5897fb;
+            }
+            .select2-drop.select2-drop-above.select2-drop-active {
+                border-bottom: 1px solid #ebebeb;
+            }
+            .select2-drop.select2-drop-above.select2-drop-active.select2-bigdrop {
+                min-height: 305px;
+            }
+            /*.slds-form-element__control {
+                height: 34px;
+            }
+            .select2-container{
+                height: 34px;
+            } */
+
+            .slds-radiobutton-div{
+                line-height: 34px;
+            }
+            .slds-radiobutton-label label{
+                padding: 5px;
+                vertical-align: middle !important;
+            }
+
+            .rpHeader {
+                padding-bottom: 5px;
+                padding-top: 10px;
+                border-bottom: 1px solid rgb(224, 227, 229);
+
+            }
+            .rpBody {
+                padding: 5px;
+
+            }
+            .h2Center{
+                width: 40%;
+            }
+            .headerRowNew{
+
+            }
+
+            .list .headerRowNew th{
+                white-space: nowrap;
+
+            }
+            .dataCell{
+                padding: 5px !important;
+            }
+
+            .relatedProductContainer {
+                margin-top: 45px;
+                padding-top: 5px;
+                border-top: 1px solid rgb(8, 116, 211);
+            }
+            .h2Border {
+                padding-bottom: 5px !important;
+                border-bottom: 1px solid rgb(8, 116, 211);
+            }
+
+            .required {
+                /* color: #FF4F00 !important; */
+                border-left: 1px solid #FF4F00;
+                padding-left: 3px;
+            }
+            .message1 {
+                background-color: #fff !important;
+                border-bottom: 1px solid #ECECEC !important;
+                color: #FF4F00 !important;
+                padding: 5px !important;
+            }
+            .message{
+                border-style: none;
+                border-width: 0px;
+            }
+            .massageText{
+                color: #FF4F00;
+                font-weight: 300;
+                font-size: 15px;
+                line-height: 1;
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+            }
+            .PTPbuttons{
+                font-size: 18px;
+                display: inline-block;
+                text-decoration: none;
+                color: #9C9C9C;
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                font-weight: 300;
+                border: 1px solid #9C9C9C;
+                padding: 5px;
+                border-radius: 5px;
+            }
+
+            .PTPbuttons:hover{
+                text-decoration: none;
+                border: 1px solid #FF4F00;
+                color: #9C9C9C;
+            }
+            .selectedPTP{
+                border: 1px solid #FF4F00;
+                color: #FF4F00;
+            }
+
+            #RefineSearch {
+                float: left;
+                margin-top: 5px;
+                /*margin-right: 10px; */
+                position: fixed;
+                overflow: hidden;
+                /* position: absolute; */
+                z-index: 300000;
+                display:none;
+            }
+
+            #RefineSearch h1{
+                margin:3px;
+            }
+            #RefineSearch div.slideDiv{
+                width:500px;
+                min-height: 400px;
+                background-color: #7d7d7d;
+                color: #fff;
+                float:left;
+                position: relative;
+                z-index: 100000;
+            }
+
+            #RefineSearch .left-pos{
+              margin-left: -500px;
+              transition-property: margin-left;
+              transition-duration: 2s;
+              transition-timing: ease;
+              transition-delay: 0;
+            }
+
+            #RefineSearch .right-pos
+            {
+                margin-left: 0px;
+                transition-property: margin-left;
+                transition-duration: 2s;
+                transition-timing: ease;
+                transition-delay: 0;
+            }
+            #RefineSearch .slideButton{
+              position:relative;
+            }
+
+
+
+            #RoundSelectList a.selected,
+            #RoundSelectList a.selected div
+            {
+                background: transparent;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+
+            .fastQuoteTable {
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                font-weight: 200;
+            }
+            .fastQuoteTable tr {
+                border-bottom: 1px solid #fff;
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                font-weight: 200;
+            }
+            .fastQuoteTable tr td{
+                padding: 5px;
+                color: #fff;
+                text-align: center;
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                font-weight: 200;
+            }
+
+            .fastQuoteTable tr.basic:hover{
+                background-color: rgb(8, 116, 211);
+                cursor: pointer;
+            }
+
+            .fastQuoteTable tr td.main{
+                font-size: 15px;
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                font-weight: 250;
+            }
+
+            .checkBoxFastQuote{
+                margin: 5px !important;
+                text-align: center !important;
+            }
+            .fastQuoteButton{
+                font-size: 16px;
+                display: inline-block;
+                text-decoration: none !important;
+                color: #fff !important;
+                background-color: rgb(8, 116, 211) !important;;
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                font-weight: 200;
+                border: 1px solid rgb(8, 116, 211);
+                padding: 3px;
+                border-radius: 3px;
+            }
+            .fastQuoteButton:hover{
+
+                background-color: #9C9C9C !important;
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                color: #fff !important;
+                text-decoration: none !important;
+                border: 1px solid #9C9C9C !important;
+                cursor: pointer;
+
+            }
+            .loadingWheel {
+                position: absolute;
+                width: 100%;
+                padding: 100% 0px;
+                background-color: rgba(200,200,200, 0.4);
+                z-index: 999999;
+                display: none;
+            }
+            .loadingWheel img{
+                    height: 50px;
+                    position: fixed;
+                    left: 45%;
+                    top: 45%;
+            }
+            #CustomButtons{
+                display:none;
+                margin:0 auto;
+                width:25%;
+            }
+
+        </style>
+    </head>
+    <body>
+    <div id="loadingWheel" class="loadingWheel">
+
+        <img src="{!URLFOR($Resource.csbb__basketbuilder, 'images/loading.gif')}" />
+    </div>
+    <div id="CSValidationMessageBox" class="message message1">
+        <table border="0" cellpadding="0" cellspacing="0" class="messageTable" style="padding:0px;margin:0px;">
+            <tr valign="top">
+                <td>
+                    <h2 class="massageText" style="font-size: 18px;line-height: 1.25;">Warning:</h2>
+                </td>
+
+            </tr>
+            <tr>
+                <td class="messageCell">
+                    <div class="">
+                        <span id="CSValidationMessage" class="massageText" style=""></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="CSInfoMessageBox" class="message message1">
+        <table border="0" cellpadding="0" cellspacing="0" class="messageTable" style="padding:0px;margin:0px;">
+            <tr valign="top">
+                <td>
+                    <h2 class="massageText" style="font-size: 18px;line-height: 1.25; color:rgb(8, 116, 211);">Info:</h2>
+                </td>
+
+            </tr>
+            <tr>
+                <td class="messageCell">
+                    <div class="">
+                        <span id="CSInfoMessage" class="massageText" style="color:rgb(8, 116, 211);"></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="configurationContainer" class="slds" />
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__jshashtable)}" />
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__jQuery_min)}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cs_utils)}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cs_inline)}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__jquery_numberformatter)}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__Underscore)}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__select2,'select2.min.js')}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__datejs,'date-en-GB.min.js')}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__datejs,'date-' & userLocale & '.min.js')}" />
+    <!--script type="text/javascript" src="{!URLFOR($Resource.cscfga__cs_min)}"></script-->
+    <!--script type="text/javascript" src="{!URLFOR($Resource.cscfga__cs_js)}"></script-->
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__cs_js)}/require.js"/>
+    <script type="text/javascript">
+            require.config({  baseUrl: '{!JSENCODE(URLFOR($Resource.cscfga__cs_js))}'    });
+        </script>
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__cs_online)}"></script>
+
+    <script type="text/javascript">
+
+            /*
+             * Script for creating and rendering Select2 lookup fields
+            */
+
+            var ClientCustom = {};
+            ClientCustom.sllInit = function(elemId) {
+
+                function getTotalColumnsWidth(columnSizeCSV) {
+                    if (columnSizeCSV === null || columnSizeCSV.length === 0) {
+                        return -1;
+                    }
+                    var totalColumnsWidth = columnSizeCSV.split(',').reduce(function(a, b) {
+                        return ((CS.Util.isInteger(+a)) ? +a : 0 ) + ((CS.Util.isInteger(+b)) ? +b : 0 );
+                    });
+                    return totalColumnsWidth;
+                }
+
+                function getLookupQueryReferencedAttributes(lookupConfigId, definitionId, reference) {
+                    // check if custom lookup implementation
+                    var lookupConfig = CS.Service.getProductIndex(definitionId).all[lookupConfigId];
+                    if (lookupConfig[prefix + 'lookup_customisations_impl__c']) {
+                        var ref = reference;
+                        var referencedAttributes = CS.Service.config[ref].customLookupReferencedAttributes[lookupConfigId];
+                        return JSON.parse(referencedAttributes);
+                    }
+                    var lookupQueries = CS.Service.getProductIndex(definitionId).lookupQueriesByName;
+                    for (id in lookupQueries) {
+                        var lookupQuery = lookupQueries[id];
+                        if (lookupQuery[prefix + 'Lookup_Config__c'] === lookupConfigId) {
+                            var referencedAttributes = lookupQuery[prefix + 'Referenced_Attributes__c'];
+                            if (referencedAttributes == '' || referencedAttributes == undefined) {
+                                return [];
+                            }
+                            return JSON.parse(referencedAttributes);
+                        }
+                    }
+                    return [];
+                }
+
+                function functionDecorator(f) {
+                    return function() {
+                        return f.apply(this, arguments);
+                    }
+                }
+
+                function formatSelection(lookupRecord, attrRef, currentSelectListLookupConfigId) {
+                    var id = lookupRecord.text.id;
+                    var name = lookupRecord.text.name;
+
+                    // check init selection, cache is not existing, we need just a value for display
+                    if (CS.selectListLookupDataCache === undefined) {
+                        if (name !== undefined) {
+                            return name;
+                        }
+                        return id;
+                    }
+
+                    var selectListLookupData = CS.selectListLookupDataCache[currentSelectListLookupConfigId];
+                    var attrWrapper = CS.getAttributeWrapper(attrRef);
+                    var listColumnsWidth = attrWrapper.definition[prefix + 'Column_Size_CSV__c'];
+                    listColumnsWidth = (listColumnsWidth) ? listColumnsWidth.split(',') : [];
+
+                    var displayValueField = listColumnsWidth.pop();
+                    var displayValue;
+                    if (displayValueField && !CS.Util.isInteger(displayValueField)) {
+                        displayValueField = displayValueField.toLowerCase();
+                        displayValue = (lookupRecord.text[displayValueField]) ? lookupRecord.text[displayValueField] : undefined;
+                    }
+
+                    if (selectListLookupData !== undefined) {
+                        if (displayValue !== undefined) {
+                            return displayValue;
+                        }
+                        if (name !== undefined) {
+                            return name;
+                        }
+                        return id;
+                    }
+
+                    if (displayValue !== undefined) {
+                        return displayValue;
+                    }
+                    if(name !== undefined) {
+                        return name;
+                    }
+                    return id;
+                }
+
+                function wrapConfiguratorAction(action, name, binding) {
+                    return _.debounce(function(e) {
+                        CS.Log.debug(name);
+                        var el = jQuery(e.currentTarget),
+                            group = el.attr('data-cs-group'),
+                            ref = el.attr('data-cs-ref'),
+                            json = el.attr('data-cs-params'),
+                            params = json ? JSON.parse(json) || {} : {},
+                            ret;
+
+                        params.el = el;
+                        params.group = group;
+                        params.ref = ref;
+                        //params.ref = binding.wrapper.reference;
+
+                        el.attr('disabled', 'disabled');
+                        try {
+                            ret = action(params, binding, e);
+                        } catch (err) {
+                            CS.Log.error(err.message, err);
+                        } finally {
+                            el.removeAttr('disabled')
+                            .css('opacity', '');
+                        }
+
+                        return ret ? ret : false;
+
+                    }, 500, true);
+                }
+
+                function getSelect2DisplayFieldName(attrRef) {
+                    var DEFAULT_SSL_DISPLAY_FIELD_NAME = 'Name';
+                    var attrWrapper = CS.getAttributeWrapper(attrRef);
+                    var listColumnsWidth = attrWrapper.definition[prefix + 'Column_Size_CSV__c'];
+                    listColumnsWidth = (listColumnsWidth) ? listColumnsWidth.split(',') : [];
+
+                    if (listColumnsWidth.length === 0) {
+                        return DEFAULT_SSL_DISPLAY_FIELD_NAME;
+                    }
+
+                    var displayFieldName = listColumnsWidth.pop();
+                    if (CS.Util.isInteger(+displayFieldName)) {
+                        return DEFAULT_SSL_DISPLAY_FIELD_NAME;
+                    }
+                    return displayFieldName;
+                }
+
+                function getSelectListLookup(attrRef, lookupConfigId, productDefinitionId, attributeValueParams, query) {
+
+                    var dynamicFilterParams = '';
+                    if (attributeValueParams) {
+                        nameIdPairs = attributeValueParams.split(',');
+                        for (i = 0 ; i < nameIdPairs.length ; i++) {
+                            var oneNameIdPair = nameIdPairs[i].split('|');
+                            if (dynamicFilterParams != '') {
+                                dynamicFilterParams += '|';
+                            }
+                            dynamicFilterParams += oneNameIdPair[0] + '=' + getAttributeValueByAttributeName(oneNameIdPair[0]);
+                        }
+                    }
+
+                    var lookupparams = {
+                        "lookupConfigId" : lookupConfigId,
+                        "searchTerm" : query.term,
+                        "pageNo" : query.page - 1,
+                        "productDefinitionId" : productDefinitionId,
+                        "attributeValueParams" : urlEncode(dynamicFilterParams)
+                    };
+
+                    CS.Service.getSelectListLookup(lookupparams, function(result, event) {
+
+                        if (event.status) {
+                            var selectListLookupJSON = result;
+                            var listColumnsMap = selectListLookupJSON.listColumns;
+                            var listColumnsNames = selectListLookupJSON.columnNames;
+                            var sortedListColumns = {};
+                            var sortedListColumnNames = {};
+
+                            for (var i = 0; i < listColumnsMap.length; i++) {
+                                for (key in listColumnsMap[i]) {
+                                    sortedListColumns[key] = listColumnsMap[i][key];
+                                    sortedListColumnNames[key] = listColumnsNames[i][key];
+                                }
+                            }
+
+                            if (CS.selectListLookupDataCache === undefined) {
+                                CS.selectListLookupDataCache = {};
+                            }
+
+                            CS.selectListLookupDataCache[lookupConfigId] = {
+                                listColumns : sortedListColumns,
+                                recordData : selectListLookupJSON.records,
+                                columnTypes : selectListLookupJSON.columnTypes,
+                                columnNames : sortedListColumnNames,
+                                orderOfRecords : selectListLookupJSON.orderOfRecords,
+                                warnings : selectListLookupJSON.warnings
+                            };
+
+                            currentSelectListLookupConfigId = lookupConfigId;
+                            selectListLookupQuery(query);
+                        }
+                    });
+                }
+
+                function selectListLookupQuery(query) {
+                    var SELECT_LIST_LOOKUP_PAGE_SIZE = 25;
+                    var data = {results: []};
+                    var selectListLookupData = CS.selectListLookupDataCache[currentSelectListLookupConfigId];
+                    var recordData = selectListLookupData.recordData;
+                    var orderOfRecords = selectListLookupData.orderOfRecords;
+                    var orderedData = [];
+
+                    for (key in orderOfRecords) {
+                        orderedData.push(recordData[orderOfRecords[key]]);
+                    }
+
+                    for (var i = 0, len = orderedData.length; i < len; i++) {
+                        data.results.push({id: orderedData[i].id, text: orderedData[i]});
+                    }
+
+                    if (Object.keys(orderedData).length > SELECT_LIST_LOOKUP_PAGE_SIZE) {
+                        // page has 25 records, 26th record (if it exists) is indicator that there are more records
+                        // pop 26th record (if it exists) to avoid duplicates
+                        data.results.pop();
+                        data.more = true;
+                    } else {
+                        data.more = false;
+                    }
+
+                    query.callback(data);
+
+                    if (selectListLookupData && selectListLookupData.warnings && selectListLookupData.warnings instanceof Array) {
+                        var attributeName = query.element && query.element[0] && query.element[0].name;
+                        for (var i = 0; i < selectListLookupData.warnings.length; i++) {
+                            CS.logWarning(
+                                attributeName,
+                                ':',
+                                selectListLookupData.warnings[i]
+                            );
+                        }
+                    }
+                }
+
+                function getColumnWidthsArray(columnSizeCSV) {
+                    var columnWidths = [];
+                    console.log('--------- columnSizeCSV columnSizeCSV ' +  columnSizeCSV);
+                    if (columnSizeCSV == null || columnSizeCSV.length === 0) {
+                        return -1;
+                    }
+                    columnSizeCSV.split(',').map(function(a) {
+                        if (CS.Util.isInteger(+a)) {
+                            columnWidths.push(+a);
+                        }
+                    });
+                    return columnWidths;
+                }
+
+                function getColumnStyleWidths(attrRef, listColumns) {
+                  console.log('--------- getColumnStyleWidths listColumns ' +  listColumns);
+                    var attrWrapper = CS.getAttributeWrapper(attrRef);
+                    var columnSizeCSV = attrWrapper.definition[prefix + 'Column_Size_CSV__c'];
+                     console.log('--------- getColumnStyleWidths columnSizeCSV ' +  columnSizeCSV);
+                    var columnWidths = getColumnWidthsArray(columnSizeCSV);
+                    var columnStyleWidths = [];
+                    var listColumnsLength = Object.keys(listColumns).length;
+
+                    // no column information, evenly distributed column widths will be generated
+                    var averageWidth = (100 / listColumnsLength);
+                    if (columnWidths !== -1) {
+                        averageWidth = (100 / (listColumnsLength - columnWidths.length));
+                    }
+
+                    if (columnWidths === -1) {
+                        for (var i = 0; i < listColumnsLength; i++) {
+                            columnStyleWidths.push('style="width: ' + averageWidth + '%;"');
+                        }
+                    } else {
+                        // Generate column widths based on CSV list information available
+                        // Note that missing widths will be ignored and proportional
+                        for (var i = 0; i < listColumnsLength; i++) {
+                            var columnWidth = (columnWidths[i]) ? columnWidths[i] + 'em;"' : averageWidth + '%;"';
+                            columnStyleWidths.push('style="width:' + columnWidth);
+                        }
+                    }
+
+                    return columnStyleWidths;
+                }
+
+                function formatResult(lookupRecord, attrRef, lookupConfigId) {
+                    if (lookupRecord.id === undefined) {
+                        return;
+                    }
+                    var selectListLookupData = CS.selectListLookupDataCache[lookupConfigId];
+                    var recordData = selectListLookupData.recordData;
+                    var listColumns = selectListLookupData.listColumns;
+                    var columnTypes = selectListLookupData.columnTypes;
+                    var attrWrapper = CS.getAttributeWrapper(attrRef);
+                    var columnStyleWidths = getColumnStyleWidths(attrRef, listColumns);
+                    var columnCnt = 0;
+                    var htmlMarkup = [
+                        '<div class="rTable" style="width: 100%;">',
+                        ' <div class="rTableRow">'
+                    ];
+
+                    for (key in listColumns) {
+                        var fieldName = listColumns[key];
+                        var item = lookupRecord.text[fieldName];
+                        var attrDataType = { type: columnTypes[fieldName] };
+                        item = CS.DataConverter.normalizeValue(item, attrDataType);
+                        item = CS.DataConverter.localizeValue(item, attrDataType);
+                        htmlMarkup.push('<div class="rTableCell" title="', item, '" ', columnStyleWidths[columnCnt++], '>', item, '</div>');
+                    }
+                    htmlMarkup.push(
+                        ' </div>',
+                        '</div>'
+                    );
+
+                    return htmlMarkup.join('');
+                }
+
+                function formatHeader(attrRef, lookupConfigId) {
+                    var selectListLookupData = CS.selectListLookupDataCache[lookupConfigId];
+                    var listColumns = selectListLookupData.listColumns;
+                    var columnNames = selectListLookupData.columnNames;
+                    var columnStyleWidths = getColumnStyleWidths(attrRef, listColumns);
+                    var columnCnt = 0;
+                    var macintoshNoScrollbarCSS = (navigator.appVersion.indexOf("Mac") !=-1 ) ? ' OSX' : '';
+                    var htmlMarkup = [
+                        '<ul class="select2-results tableHeader ', macintoshNoScrollbarCSS ,'">',
+                        ' <li>',
+                        '  <div class="select2-result-label">',
+                        '   <div class="rTable" style="width: 100%;">',
+                        '    <div class="rTableRow">'
+                    ];
+
+                    for (key in columnNames) {
+                        var fieldName = columnNames[key];
+                        fieldName = fieldName.replace('Add On Price Item ', '');
+                        htmlMarkup.push('<div class="rTableCell" title="', fieldName, '" ', columnStyleWidths[columnCnt++], '>', fieldName, '</div>');
+                    }
+
+                    htmlMarkup.push(
+                        '    </div>',
+                        '   </div>',
+                        '  </div>',
+                        ' </li>',
+                        '</ul>'
+                    );
+
+                    return htmlMarkup.join('');
+                }
+                    // Attributi
+                function getAttributeValueByAttributeName(attributeName) {
+                    var attrValue = '';
+                    var attrPrice = '';
+                    var currentConfig = CS.Service.config;
+                    for (var ref in currentConfig) {
+                        var o = currentConfig[ref];
+
+                        if (o.attr && o.attr['Name'] === attributeName) {
+                            attrValue = o.attr[prefix + 'Value__c'];
+                            attrPrice = o.attr[prefix + 'Price__c'];
+                            break;
+                        }
+                    }
+
+                    return attrValue;
+                }
+
+                var name = undefined;
+                var action = CS.UI.Actions.find(name);
+                var func = action ? wrapConfiguratorAction(action.action, name, binding) : undefined;
+                var a = {};
+                var prefix = CS.Util.configuratorPrefix;
+                var INPUT_DELAY_BEFORE_AJAX = 250;
+                var SELECT_LIST_LOOKUP_DEFAULT_MINIMUM_INPUT_LENGTH = 3;
+                var SELECT_LIST_LOOKUP_NOSCROLL_MAX_RECORD_TRESHOLD = 9;
+                var SELECT_LIST_LOOKUP_BIGDROP_SIZE_MIN_WIDTH_TRESHOLD = 30;
+                var SELECT_LIST_LOOKUP_BIGDROP_SIZE_MIN_COLUMN_TRESHOLD = 3;
+                var minInputLength  = 0;
+                var x  = document.getElementById(elemId);
+                var el = jQuery(x).parent().find('[data-cs-select-list-lookup="true"]');
+                var attrRef = el.attr('data-cs-binding');
+                var attrWrapper = CS.getAttributeWrapper(attrRef);
+                var ad = attrWrapper.definition;
+                var productDefinitionId = attrWrapper.definition[prefix + 'Product_Definition__c'];
+                var minInputLength = (ad[prefix + 'Minimum_Input_Length__c'] === null) ?
+                    SELECT_LIST_LOOKUP_DEFAULT_MINIMUM_INPUT_LENGTH : (ad[prefix + 'Minimum_Input_Length__c']);
+                var lookupConfigId = ad[prefix + 'Lookup_Config__c'];
+                var columnSizeCSV = ad[prefix + 'Column_Size_CSV__c'];
+                var getSelectListLookupDebounced = _.debounce(getSelectListLookup, INPUT_DELAY_BEFORE_AJAX);
+                var displayFieldName = getSelect2DisplayFieldName(attrRef);
+                var attributeValueParams = getLookupQueryReferencedAttributes(lookupConfigId, ad.cscfga__Product_Definition__c, attrWrapper.reference.split(':')[0]).join(',');
+                var a = attrWrapper.attr;
+                var displayValue = a[prefix + 'Column_Size_CSV__c'];
+
+                // prepare CSS fingerprint
+                var extendedDropTableWidth = '';
+                var listColumns = CS.Util.getListColumnsForLookupConfigId(lookupConfigId);
+                if (listColumns.length > SELECT_LIST_LOOKUP_BIGDROP_SIZE_MIN_COLUMN_TRESHOLD) {
+                    extendedDropTableWidth = 'select2-bigdrop ';
+                }
+
+                // get select2 dropdown size in em units, if over 30 extend the table to wide variant
+                if (extendedDropTableWidth === '') {
+                    var tableSizeInEms = getTotalColumnsWidth(null);
+                    if (tableSizeInEms > SELECT_LIST_LOOKUP_BIGDROP_SIZE_MIN_WIDTH_TRESHOLD) {
+                        extendedDropTableWidth = 'select2-bigdrop ';
+                    }
+                }
+
+                // Always use bigdrop
+                extendedDropTableWidth = 'select2-bigdrop ';
+
+                var dropdownCssClassExtended = extendedDropTableWidth + CS.Util.getCssFingerprint(attrRef);
+                el.val(a[prefix + 'Display_Value__c']);
+
+                el.select2({
+                    width : '100%',
+                    allowClear : true,
+                    minimumInputLength: minInputLength,
+                    escapeMarkup: function (m) { return m; },
+                    dropdownCssClass: dropdownCssClassExtended,
+                    formatSelection: function(lookupRecord) { return functionDecorator(formatSelection)(lookupRecord, attrRef, lookupConfigId); },
+                    formatResult: function(lookupRecord) { return functionDecorator(formatResult)(lookupRecord, attrRef, lookupConfigId); },
+                    initSelection : function (element, callback) { callback({id:a[prefix + 'Value__c'], text:{ name: a[prefix + 'Display_Value__c']}}) },
+                    placeholder: (minInputLength === 0) ?
+                        CS.Labels.selectlistlookup_Please_select_value : CS.Labels.selectlistlookup_Please_enter_search,
+                    query: function(query) { getSelectListLookupDebounced(attrRef, lookupConfigId, productDefinitionId, attributeValueParams, query) }
+                })
+                .on('select2-opening', function(e) {
+                    // remove dataLoaded class to reduce height
+                    var nodes = jQuery('.select2-drop.' + CS.Util.getCssFingerprint(attrRef));
+                    if (nodes.length === 1) {
+                        nodes.removeClass('dataLoaded');
+                    }
+                })
+                .on('select2-removed', function(e) {
+                    CS.setAttributeValue(attrRef, '');
+                })
+                .on('select2-loaded', function(e) {
+                    var nodes = jQuery('.select2-drop.' + CS.Util.getCssFingerprint(attrRef) + ' .select2-results');
+                    if (nodes.length === 1) {
+                        var html = formatHeader(attrRef, lookupConfigId);
+                        nodes.before(html);
+                    }
+                    if (CS.selectListLookupDataCache[lookupConfigId]) {
+                        var nodes = jQuery('.select2-drop.' + CS.Util.getCssFingerprint(attrRef));
+                        if (Object.keys(CS.selectListLookupDataCache[lookupConfigId].recordData).length > SELECT_LIST_LOOKUP_NOSCROLL_MAX_RECORD_TRESHOLD
+                            && nodes.length === 1) {
+                                // append dataLoaded class to constrain height
+                                nodes.addClass('dataLoaded');
+                        }
+                    }
+                })
+                .on('change', function(e) {
+                    if (e.added) {
+                        var displayValue = e.added.text[displayFieldName];
+                        if (displayValue === undefined) {
+                            displayValue = e.added.text['id'];
+                        }
+                        a[prefix + 'Display_Value__c'] = displayValue;
+                        a[prefix + 'Value__c'] = e.val;
+
+                        var lookupRecord = e.added.text;
+                        var id = e.val;
+                        CS.lookupRecords[id] = lookupRecord;
+                    }
+                });
+
+                if (func && !j.data('CS.init')) {
+                    el.on('click.CS', func).css({cursor: 'pointer'}).data('CS.init', true);
+                }
+            }
+        </script>
+
+
+    <script type="text/javascript">
+            var params = {};
+            var variteAttList =[];
+            var priceAttList = [];
+            var selectedFastQuoteValuesObj = {};
+            var fastQuotePrices = [];
+            var clearAttList = [];
+            var attLookupConfigMap = {};
+            var oldValuesMap = {};
+            var fastQuoteResultAtt = {};
+            var tempAttValues = {};
+            var UserContext = UserContext || {};
+                UserContext["dateFormat"] = "dd/MM/yyyy";
+                UserContext["language"] = "en_US";
+                UserContext["locale"] = "en_HK";
+
+
+            // Sanj added
+            // Array with lookup product IDs
+            var relatedProductsIds = new Array( );
+            var lookups = false;
+
+            // Renders lookups controls (Select2 drop down list)
+            var renderLookups = function() {
+              console.log('--------> renderLookups is running');
+
+                for (var i = 0; i < relatedProductsIds.length; i++) {
+                    ClientCustom.sllInit(relatedProductsIds[i]);
+                }
+            }
+
+            var renderTimer = function () {
+
+                var rel  = document.getElementById('relatedListTableID');
+
+                if (rel && lookups && jQuery('#relatedListTableID div[class*="select2-container"]').length == 0 && relatedProductsIds) {
+
+                    renderLookups();
+
+                    /*if (!(CS.rulesTimer == undefined && CS.lookupQueriesAreQueued() == false)) {
+
+                        console.log('Debug: Clearing rtm');
+                        clearInterval(rtm);
+                    }*/
+                }
+            }
+
+            var rtm = setInterval(renderTimer, 200);
+
+            if (jQuery.browser.msie) {
+                jQuery(document).ready(function() {
+                    jQuery('body').append('<div id="popupOverlay"><div id="lookupContainer"></div></div>');
+                });
+            }
+
+            jQuery(document).ready(function() {
+                window.setTimeout(clearSafariRequireBug, 50);
+            });
+
+
+
+
+            /*
+             * Safari 9.x issue: jam require() will fail on first call
+             * unaffected browsers should log 'Require initialiseation not needed...' and continue as normal
+             * affected browsers should log 'Require initialised...' and continue as normal
+             */
+            function clearSafariRequireBug() {
+                try {
+                    /*require(['src/cs-full'], function() {*/
+                    require(['./src/cs-full'], function() {
+                        CS.App.Components.Repository.addComponent('configurator', 'MultipleRelatedProduct', jQuery('#CS\\.MultipleRelatedProduct__tpl')[0]);
+                        CS.App.Components.Repository.addComponent('configurator', 'MultiSelectLookup', jQuery('#CS\\.MultiSelectLookup__tpl')[0]);
+                        console.log('Require initialisation not needed (Safari 9.x fix)');
+                    });
+                } catch (e) {
+                    console.log('Require initialised (Safari 9.x fix)');
+                }
+            }
+
+        /*
+            Adding Related Products
+            ------------------------------------------------------------------------------------------------------
+        */
+
+
+        function populateScreens(productId, config) {
+            var productIndex = CS.Service.getProductIndex(productId),
+                screensByProduct = productIndex.screensByProduct[productId],
+                configScreens = [],
+                idx = 0,
+                attrRefsByDef = {},
+                newAttrDefs = productIndex.attributeDefsByProduct[productId],
+                defId,
+                attrContext = {ref: '', index: 0};
+
+            for (defId in newAttrDefs) {
+                ref = CS.Util.generateReference(newAttrDefs[defId].Name, attrContext);
+                attrRefsByDef[defId] = ref;
+            }
+
+            for (idx in screensByProduct) {
+                var screen = screensByProduct[idx],
+                    attrs = productIndex.attributeDefsByScreen[screen.Id],
+                    attrRefs = [];
+
+                for (var attrId in attrs) {
+                    attrRefs.push(attrRefsByDef[attrId]);
+                }
+
+                configScreens[idx] = {
+                    id: screen.Id,
+                    reference: screen._reference,
+                    attrs: attrRefs
+                };
+            }
+
+            config.screens = configScreens;
+        }
+
+        function validateScreens(data, spec, highlight) {
+            var index = CS.Service.getProductIndex(),
+                result = {
+                    isValid: true,
+                    fieldErrors: {},
+                    screens: {}
+                },
+                configRef = typeof spec === 'object' ? spec.reference : spec,
+                screenIndex = typeof spec === 'object' ? spec.index : undefined,
+                wrapper = data[configRef],
+                screens = wrapper ? wrapper.screens : undefined;
+
+            if (highlight === undefined) {
+                highlight = true;
+            }
+
+            if (!screens) {
+                CS.Log.error('No screens found for validation');
+                return result;
+            }
+
+            if (screenIndex || screenIndex === 0) {
+                result = doScreenValidation(data, screens[screenIndex], highlight, configRef);
+                if (highlight) {
+                    wrapper.screens[screenIndex].validation = result;
+                }
+            } else {
+                jQuery.each(screens, function (i, screen) {
+                    var r = doScreenValidation(data, screen, highlight, configRef);
+                    if (highlight) {
+                        wrapper.screens[i].validation = r;
+                    }
+                    jQuery.extend(result.screens, r.screens);
+                    if (!r.isValid) {
+                        result.isValid = false;
+                        if (highlight) {
+                            jQuery.extend(result.fieldErrors, r.fieldErrors);
+                        }
+                    }
+                });
+            }
+
+            return result;
+        }
+
+        function doScreenValidation(data, screen, highlight, configRef) {
+            var result = {
+                    isValid: true,
+                    fieldErrors: {},
+                    screens: {}
+                };
+
+            if (highlight === undefined) {
+                highlight = true;
+            }
+
+            result.screens[screen.id] = true;
+            if (typeof configRef === 'undefined') {
+                configRef = CS.Service.getCurrentConfigRef();
+            }
+
+            var prefix = CS.Util.configuratorPrefix;
+            jQuery.each(screen.attrs, function (i, ref) {
+                var attrRef = (configRef === '' ? ref : configRef+':'+ref),
+                    it = data[attrRef],
+                    valueField = prefix + 'Value__c',
+                    fieldError = {validationError: false, validationMessage: undefined};
+
+                if (it && it.attr) {
+                    var isRequiredActiveVisible = (it.attr[prefix + 'Is_Required__c'] && it.attr[prefix + 'is_active__c'] && ! it.attr[prefix + 'Hidden__c']);
+                    if (isRequiredActiveVisible && isValueBlank(it)) {
+                        fieldError.validationError = true;
+                        fieldError.validationMessage = 'This value is required';
+                    } else if (it.definition[prefix + 'Type__c'] === 'Related Product' &&
+                            (it.relatedProducts instanceof Array) &&
+                            it.relatedProducts.length > 0
+                        ) {
+                        for (var c = 0; c < it.relatedProducts.length; c++) {
+                            var relatedConfig = it.relatedProducts[c].config;
+                            if (relatedConfig[prefix + 'Configuration_Status__c'] !== 'Valid') {
+                                fieldError.validationError = true;
+                                fieldError.validationMessage = 'Related product attribute contains incomplete configurations';
+                                break;
+                            }
+                        }
+                    }
+
+                    result.fieldErrors[attrRef] = fieldError;
+                    if (fieldError.validationError) {
+                        result.screens[screen.id] = false;
+                        result.isValid = false;
+                    }
+                    if (highlight) {
+                        CS.binding.update(attrRef, result.fieldErrors[attrRef]);
+                    }
+                }
+            });
+
+            return result;
+
+            function isValueBlank(item) {
+                var valueField = prefix + 'Value__c';
+                var retValue = (item.attr[valueField] === null || item.attr[valueField] === '');
+
+                if (item.definition) {
+                    if (item.definition[prefix + 'Type__c'] in {'Select List':'','Radio Button':''}) {
+                        retValue = retValue || (item.attr[valueField] === CS.NULL_OPTION_VALUE);
+                    } else if (item.definition[prefix + 'Type__c'] === 'Related Product') {
+                        // Ignore the Value field contents, check only related products array's size
+                        retValue = (item.relatedProducts.length < 1);
+                    }
+                }
+
+                return retValue;
+            }
+        }
+
+        function loadRulesForConfig(reference, productDef) {
+            if (!CS.Rules.hasRules(reference)) {
+                var referenceField = CS.Util.configuratorPrefix + 'reference__c';
+                if (!productDef.hasOwnProperty(referenceField)) {
+                    CS.Log.error('Could not find the field reference__c in the current product definition', productDef);
+                    return;
+                }
+                if (productDef[referenceField] === null) {
+                    CS.Log.error('Current product definition\'s reference is null ', productDef);
+                    return;
+                }
+
+                var tpl = jQuery('#' + CS.Util.generateId(productDef[CS.Util.configuratorPrefix + 'reference__c']) + '__rules'),
+                    rules,
+                    idx = 0; // this will be for 'leaf' Attributes which presently will always be index 0 (this will change if attribute arrays are introduced using the leaf node index)
+
+                if (tpl.size() === 0) {
+                    CS.Log.warn('Could not find rules template with reference: ' + productDef[referenceField]);
+                } else {
+                    var ref = reference ? reference + ':' : '';
+                    rules = tpl.get(0).innerHTML.replace(/%idx%/g, idx).replace(/%ctx%/g, ref);
+                    CS.Rules.addRules(reference, rules);
+                }
+            }
+        }
+
+        function updateAttributeNew(input) {
+          console.log('------------------UpdateABC');
+
+            var invalue;
+
+            if (input.type === 'select-one') {
+                invalue = jQuery(input).find('option:selected').text();
+            }
+            else if (input.className && input.className.indexOf('select2') != -1) {
+                invalue = input.value;
+            } else {
+                invalue = input.value;
+            }
+            console.log('------> input.id ' + input.id);
+            console.log('------> invalue ' + invalue);
+            CS.setAttributeField(input.id, 'displayvalue', invalue);
+            CS.setAttributeValue(input.id, invalue, false);
+            console.log('------> getValue ' + CS.getAttributeValue(input.id));
+            CS.Service.validateCurrentConfig(true);
+            CS.Rules.evaluateAllRules('after update');
+        }
+
+        function updateAttribute(input) {
+          console.log('------------------UpdateABC');
+
+            var invalue;
+
+            if (input.type === 'select-one') {
+                invalue = jQuery(input).find('option:selected').text();
+            }
+            else if (input.className && input.className.indexOf('select2') != -1) {
+                invalue = input.value;
+            } else {
+                invalue = input.value;
+            }
+            console.log('------> input.id ' + input.id);
+            console.log('------> invalue ' + invalue);
+            CS.setAttributeValue(input.id, invalue, false);
+            console.log('------> getValue ' + CS.getAttributeValue(input.id));
+            CS.Service.validateCurrentConfig(true);
+            CS.Rules.evaluateAllRules('after update');
+        }
+
+
+        function buildAttribute(def, context, selectOptions, attributeFields) {
+            context = context || {};
+            var prefix = CS.Util.configuratorPrefix;
+            var wrapper = {
+                "attr": {
+                    "attributes": {
+                        "type": prefix + "Attribute__c"
+                    }
+                },
+                "attributeFields": {},
+                "definitionId": def.Id,
+                "displayInfo": context.displayInfo || def[prefix + 'Type__c'],
+                "reference": CS.Util.generateReference(def.Name, context),
+                "relatedProducts": [],
+                "selectOptions": selectOptions
+            };
+            var typeInfo = {
+                'type': def[prefix + 'Data_Type__c'],
+                'scale': def[prefix + 'Scale__c']
+            };
+
+            wrapper.attr[prefix + "Attribute_Definition__c"] = def.Id;
+            wrapper.attr[prefix + 'Cascade_value__c'] = def[prefix + 'Cascade_value__c'];
+            wrapper.attr[prefix + 'Display_Value__c'] = (
+                def[prefix + 'Type__c'] === 'Calculation'
+                    ? null
+                    : CS.DataConverter.localizeValue(def[prefix + 'Default_Value__c'], typeInfo)
+            );
+            wrapper.attr[prefix + 'Hidden__c'] = def[prefix + 'Hidden__c'];
+            wrapper.attr[prefix + 'is_active__c'] = true;
+            wrapper.attr[prefix + 'Is_Line_Item__c'] = def[prefix + 'Is_Line_Item__c'];
+            wrapper.attr[prefix + 'Is_Required__c'] = def[prefix + 'Required__c'];
+            wrapper.attr[prefix + 'Line_Item_Sequence__c'] = def[prefix + 'Line_Item_Sequence__c'];
+            wrapper.attr[prefix + 'Line_Item_Description__c'] = def[prefix + 'Line_Item_Description__c'];
+            wrapper.attr.Name = def.Name;
+            wrapper.attr[prefix + 'Price__c'] = def[prefix + 'Base_Price__c'] || 0;
+
+            wrapper.attr[prefix + 'Value__c'] = (
+                def[prefix + 'Type__c'] === 'Calculation'
+                    ? ''
+                    : CS.DataConverter.normalizeValue(def[prefix + 'Default_Value__c'], typeInfo)
+            );
+
+            wrapper.attr[prefix + 'Recurring__c'] = def[prefix + 'Recurring__c'];
+
+            if (def[prefix + 'Type__c'] === 'Select List' && def[prefix + 'Default_Value__c'] && selectOptions) {
+                for (var i = 0; i < selectOptions.length; i++) {
+                    if (selectOptions[i] == def[prefix + 'Default_Value__c']) {
+                        wrapper.attr[prefix + 'Display_Value__c'] = selectOptions[i].Name;
+                        break;
+                    }
+                }
+            }
+
+            _.each(attributeFields, function(a) {
+                CS.Service.setAttributeField(wrapper, a.Name, a[prefix + 'Default_Value__c']);
+            });
+
+
+            return wrapper;
+        }
+
+        function getContext(ref, attrName, idx, parent) {
+            return {ref: ref, attrName: attrName, index: (idx || 0), parent: parent};
+        }
+
+        function buildConfig(def, reference, context) {
+            var wrapper = {
+                "reference": reference,
+                "config": {
+                    "attributes": {
+                        "type": "Product_Configuration__c"
+                    }
+                }
+            };
+            var prefix = CS.Util.configuratorPrefix;
+            wrapper.config[prefix + 'Attribute_Name__c'] = context.attrName;
+            wrapper.config[prefix + 'Billing_Frequency__c'] = CS.getFrequencyValueForName(def[prefix + 'Default_Billing_Frequency__c']);
+            wrapper.config[prefix + 'Contract_Term__c'] = def[prefix + 'Default_Contract_Term__c'];
+            wrapper.config[prefix + 'Contract_Term_Period__c'] = CS.getPeriodValueForName(def[prefix + 'Default_Contract_Term_Period__c']);
+            wrapper.config[prefix + 'Description__c'] = def[prefix + 'Description__c'];
+            wrapper.config[prefix + 'Index__c'] = context.index;
+            wrapper.config[prefix + 'Last_Screen_Index__c'] = 0;
+            wrapper.config.Name = CS.Util.getFirstDefinedValue([def.Name, def[prefix + 'Description__c']]);
+            wrapper.config[prefix + 'Product_Definition__c'] = def.Id;
+            wrapper.config[prefix + 'Recurrence_Frequency__c'] = CS.getFrequencyValueForName(def[prefix + 'Default_Frequency__c']);
+            wrapper.config[prefix + 'Configuration_Status__c'] = 'Incomplete';
+            wrapper.config[prefix + 'Validation_Message__c'] = '';
+            wrapper.config[prefix + 'Product_Family__c'] = (def.Name.length > 40) ? def.Name.substr(0, 40) : def.Name;
+
+            return wrapper;
+        }
+
+        function createConfiguration(configData, anchorRef, newProductId, parent) {
+            var ROOT_REFERENCE = '';
+            var productIndex = CS.Service.getProductIndex(newProductId);
+
+            if (!productIndex) {
+                throw 'Product index for ' + newProductId + ' not found';
+            }
+
+            var productDef = productIndex.productsById[newProductId],
+                wrapper = configData[anchorRef],
+                newAttrDefs = productIndex.attributeDefsByProduct[newProductId],
+                screensByProduct = productIndex.screensByProduct[newProductId],
+                configScreens = [],
+                idx = 0,
+                name,
+                newConfig = {},
+                context,
+                attr,
+                defId,
+                ref;
+
+            if (anchorRef !== ROOT_REFERENCE && !wrapper) {
+                return error('Could not locate reference ', anchorRef, configData);
+            }
+
+            if (!productDef) {
+                return error('Could not find product definition for id', newProductId);
+            }
+
+            if (!newAttrDefs) {
+                return error('Could not find attribute definitions for product id', newProductId);
+            }
+
+            if (anchorRef === ROOT_REFERENCE) {
+                // root config
+                ref = anchorRef;
+            } else {
+                // attaching a related product configuration to an attribute on the parent
+                idx = wrapper.relatedProducts.length;
+                name = wrapper.attr.Name;
+                ref = CS.Util.stripReference(anchorRef) + idx;
+            }
+            context = getContext(ref, name, idx, parent);
+
+            newConfigWrapper = buildConfig(productDef, ref, context);
+
+            CS.Log.info('Creating configuration for reference ' + ref);
+
+            if (anchorRef !== ROOT_REFERENCE) {
+                // Link related product to parent and mark as unsaved
+                newConfigWrapper.parent = parent;
+                newConfigWrapper.unsaved = true;
+                var relatedProducts = wrapper.relatedProducts.slice(0);
+                relatedProducts[idx] = newConfigWrapper;
+                CS.binding.update(anchorRef, {
+                    relatedProducts: relatedProducts
+                });
+            }
+
+            var attrContext = {
+                ref: context.ref,
+                index: 0
+            };
+
+            for (defId in newAttrDefs) {
+                attr = buildAttribute(newAttrDefs[defId], attrContext, productIndex.find('selectOptionsByAttribute', defId), productIndex.find('attributeFieldDefsByAttributeDef', defId));
+                attr.definition = productIndex.all[attr.definitionId];
+                configData[attr.reference] = attr;
+            }
+
+            populateScreens(newProductId, newConfigWrapper);
+
+            if (configData[ref]) {
+                // Overlay config on parent attribute node in configuration for related product #0
+                jQuery.extend(configData[anchorRef], newConfigWrapper);
+            } else {
+                configData[ref] = newConfigWrapper;
+            }
+
+            loadRulesForConfig(ref, productDef);
+            // }
+
+            return newConfigWrapper;
+        }
+
+        function relatedProductsRendered() {
+            if (typeof CS.Service.config[''].bound !== 'undefined' && !CS.Service.config[''].bound) {
+                CS.Log.debug('Rebinding');
+                CS.binding = CS.DataBinder.bind(CS.Service.config, CS.Service.getProductIndex(), jQuery('#configurationContainer'));
+                CS.binding.on('afterUpdate', function(ref, properties, event) {
+                    CS.Log.debug('After Update', ref, properties, event);
+                    if (!CS.rulesTimer) {
+                        CS.rulesTimer = window.setTimeout(function() {
+                            CS.Rules.evaluateAllRules('after update: ' + ref);
+                            CS.rulesTimer = undefined;
+                        }, 400);
+                    }
+                });
+                CS.Service.config[''].bound = true;
+            }
+        }
+
+        function addRelatedProductInline(anchorRef, definitionId) {
+
+            var params = {
+                ref: anchorRef,
+                id: definitionId
+            };
+
+            var availableProductOptions,
+                availableProducts = [],
+                index = CS.Service.getProductIndex();
+
+            CS.Log.debug('Add related product...', params.ref);
+
+            var availableProductOptions = CS.RPUtils.getSelectProductOptionsForAttrId(definitionId);
+            var successFired = false;
+            var synchroniser = CS.Util.callbackSynchroniser({
+                success: function() {
+                    if(!successFired){
+                        successFired = true;
+                        console.log('prepareSelectProduct success call - availableProducts: ' + availableProducts)
+                        prepareSelectProduct(params, availableProducts);
+                    }
+                }
+            });
+
+            var productId = (availableProductOptions['ProductCategories'].length === 0 && availableProductOptions['ProductDefinitions'].length === 1) ? availableProductOptions["ProductDefinitions"][0]['Id'] : params.Id;
+            var productIndex = CS.Service.getProductIndex(productId);
+            if (!productIndex) {
+                synchroniser.register('Load Product Model ' + productId, function() {
+                    CS.Service.loadProduct(productId, function() {
+                        productIndex = CS.Service.getProductIndex(productId);
+                        availableProducts.push(productIndex.all[productId]);
+
+                        synchroniser.register('Load Product Templates ' + productId, function() {
+                            CS.delegate.loadProductTemplateHtml(productId, function() {
+                                jQuery.extend(CS.screens, CS.DataBinder.prepareScreenTemplates(productIndex));
+                                synchroniser.complete('Load Product Templates ' + productId);
+                                console.log('prepareSelectProduct call - availableProducts: ' + availableProducts);
+                                if(!successFired){
+                                    successFired = true;
+                                    prepareSelectProduct(params, availableProducts);
+                                }
+                            });
+                        });
+
+                        synchroniser.complete('Load Product Model ' + productId);
+                        prepareSelectProduct(params, availableProducts);
+                    });
+                });
+            } else {
+                availableProducts.push(productIndex.all[productId]);
+            }
+
+            synchroniser.start('Loading products');
+
+            function prepareSelectProduct(params, availableProducts) {
+                CS.Log.debug('availableProducts:', availableProducts);
+
+                if (availableProducts.length === 1) {
+                    params.Id = availableProducts[0].Id;
+                    doAddRelatedProductInline(params.ref, params.Id);
+                } else {
+                    doAddRelatedProductInline(params.ref, params.Id);
+                }
+            }
+        }
+
+
+        function doAddRelatedProductInline(anchorRef, productId, callback, containerSelector) {
+            var products,
+                productDef,
+                parent = CS.Service.config[CS.Service.getCurrentConfigRef()],
+                anchorWrapper = CS.Service.config[anchorRef],
+                attrDef = CS.Service.getAttributeDefinitionForReference(anchorRef);
+
+            if (!attrDef) {
+                return;
+            }
+
+            var prefix = CS.Util.configuratorPrefix;
+
+            if (attrDef[prefix + 'Type__c'] != 'Related Product') {
+                CS.Log.error('Cannot add related product on Attribute of type ', attrDef[prefix + 'Type__c']);
+                return;
+            }
+
+            var min = attrDef[prefix + 'Min__c'];
+            var max = attrDef[prefix + 'Max__c'];
+            if (max == anchorWrapper.relatedProducts.length) {
+                CS.displayInfo('New item cannot be added - the maximum number of ' + anchorWrapper.definition.Name + ' records is ' + max);
+                return;
+            }
+
+            if (!productId) {
+                products = CS.Service.getAvailableProducts(anchorRef);
+                productId = products[0][prefix + 'Product_Definition__c'];
+            }
+
+            /*
+            if (CS.UI) {
+                CS.UI.suspendUpdates();
+            }
+            */
+
+            var initialAttrs = [];
+            jQuery.each(CS.Service.config, function(key, value) {
+                initialAttrs.push(key);
+            });
+
+            var configWrapper = createConfiguration(CS.Service.config, anchorRef, productId, parent);
+
+            // set proper config name for related product BUG-01451
+            var numRelatedProducts = anchorWrapper.relatedProducts.length;
+            var maxIndex = 0;
+            var rpAttrName = attrDef['Name'];
+            for (var i = 0; i < numRelatedProducts; i++) {
+                var rpPcName = anchorWrapper.relatedProducts[i].config['Name'];
+                if (rpPcName.indexOf(rpAttrName) === 0) {
+                    rpPcName = rpPcName.substring(rpAttrName.length - 1);
+                }
+                var tokens = rpPcName.split(' ');
+                var lastToken = tokens[tokens.length - 1];
+                if (jQuery.isNumeric(lastToken)) {
+                    var sufixIndex = parseInt(lastToken);
+                    if (maxIndex < sufixIndex) {
+                        maxIndex = sufixIndex;
+                    }
+                }
+            }
+            maxIndex++;
+
+
+            configWrapper.config.Name = attrDef['Name'] + ' ' + maxIndex;
+            anchorWrapper.attr[prefix + 'Display_Value__c'] = configWrapper.config.Name;
+            configWrapper.config[CS.Util.configuratorPrefix + 'Configuration_Status__c'] = 'Valid';
+            CS.Service.config[''].bound = false;
+
+            /*
+            if (CS.UI) {
+                CS.UI.resumeUpdates();
+            }
+            */
+        }
+        function loadProduct(id) {
+            var deferred = CS.Q.defer();
+
+            CS.Service.loadProduct(id, function() {
+                deferred.resolve();
+            });
+
+            return deferred.promise;
+        }
+
+        function addRelatedProduct(anchorRef) {
+          var id = getAssociatedProductDefId(anchorRef);
+          console.log('------adding related product anchorRef: ' + anchorRef);
+          console.log('------adding related product id: ' + id);
+            var deferred = CS.Q.defer();
+
+            if (!CS.Service.getProductIndex(id)) {
+                return loadProduct(id)
+                        .then(function() {
+                            return addRelatedProduct(anchorRef);
+                        });
+            }
+            doAddRelatedProductInline(anchorRef, id, function() {}, {} );
+            callRules();
+            relatedProductsRendered();
+
+        }
+
+            /*
+                Add related products - end
+                ---------------------------------------------------------------------------------------------------------------------
+            */
+
+            /*
+                Fast Quote Logic
+                ---------------------------------------------------------------------------------------------------------------------
+            */
+
+            function showLoading(){
+                jQuery('#loadingWheel').show();
+            }
+            function hideLoading(){
+                jQuery('#loadingWheel').hide();
+            }
+            var fastQuoteWaitData = {
+                elapsedTime: 0,
+                tick: 100,
+                timeout: 20000
+            };
+
+            function togglePosition(elemName){
+                var elem = document.getElementById(elemName);
+                if (elem.classList.contains("left-pos")){
+                    elem.classList.remove("left-pos");
+                    elem.classList.add("right-pos");
+                    if(jQuery.isEmptyObject(selectedFastQuoteValuesObj)){
+                        displayFastQuoteAttribute(elemName);
+                        console.log('**** togglePosition ',selectedFastQuoteValuesObj );
+                    }
+                }else{
+                    elem.classList.remove("right-pos");
+                    elem.classList.add("left-pos");
+                    //clearFastQuoteAttribute(elemName);
+                }
+            }
+            function displayFastQuoteAttribute(elementName){
+                sortFastQuoteAttributes();
+                console.log('**** PdisplayFastQuoteAttribute ',elementName);
+                console.log('**** getHtmlForFastQuoteAttributes ',getHtmlForFastQuoteAttributes());
+                document.getElementById(elementName).innerHTML = getHtmlForFastQuoteAttributes();
+
+                for(var i=0; i < variteAttList.length; i++){
+                    fetchAttributeSelectOptionsHtml(variteAttList[i]);
+                }
+
+                if(CS.getAttributeValue(fastQuoteResultAtt.reference) != ''){
+                    fastQuotePrices = JSON.parse(CS.getAttributeValue(fastQuoteResultAtt.reference));
+                    displayFastQuoteResults('fastQuoteResult');
+                }
+            }
+            function clearFastQuoteAttribute(elementName){
+                if(!jQuery.isEmptyObject(fastQuoteResultAtt)){
+                    CS.setAttributeValue(fastQuoteResultAtt.reference, '');
+                }
+                fastQuoteResultAtt = {};
+                document.getElementById(elementName).innerHTML = '';
+                variteAttList =[];
+                priceAttList = [];
+                selectedFastQuoteValuesObj = {};
+                fastQuotePrices = [];
+                attLookupConfigMap = {};
+                clearAttList = [];
+                oldValuesMap = {};
+
+            }
+
+            function sortFastQuoteAttributes(){
+                for(key in CS.Service.config){
+                    if(key != ''){
+                        var att = CS.Service.config[key];
+                        if (att.definition.Variate_Fast_Quote__c ==true){
+                            variteAttList.push(att);
+
+                            selectedFastQuoteValuesObj[att.reference] = [];
+                        } else if(att.definition.cscfga__Is_Line_Item__c == true){
+                            priceAttList.push(att.reference);
+                        } else if(att.definition.Clear_Fast_Quote__c == true){
+                            clearAttList.push(att.reference);
+                            addOnChangeListenerForAttribute(att.reference);
+                        } else if(att.definition.Fast_Quote_Result__c == true){
+                            fastQuoteResultAtt = att;
+                        }
+                    }
+                }
+            }
+
+            function getFQselectedValues(attRef){
+                return selectedFastQuoteValuesObj[attRef];
+            }
+
+            function getFQCalculatedValues(){
+                var result = {};
+                if(fastQuotePrices.length == 0){
+                    displayFastQuoteAttribute('slideDiv');
+                }
+
+                for(var i=0; i < variteAttList.length; i++){
+                    var att = variteAttList[i];
+                    result[att.reference] = [];
+
+                    for(var j=0; j <fastQuotePrices.length; j++){
+                        var item = fastQuotePrices[j];
+
+                        if(att.displayInfo == 'Lookup'){
+                             var temp = item[att.reference].split('|');
+                            if(jQuery.inArray(temp[1],result[att.reference]) == -1){
+
+                                result[att.reference].push(temp[1]);
+                                console.log('Test !!! ', result[att.reference], temp[1]);
+                            }
+                        } else {
+                            if(jQuery.inArray(item[att.reference],result[att.reference])== -1){
+                                result[att.reference].push(item[att.reference]);
+                                console.log('Test !!! 2 ', result[att.reference], item[att.reference]);
+                            }
+                        }
+
+                    }
+
+                    result[att.reference] = result[att.reference].join(',');
+                }
+                return result;
+            }
+
+            function getHtmlForFastQuoteAttributes(){
+                var html = [];
+                html.push('<h2 style="padding: 5px; border-bottom: 1px solid #fff; margin-top: 3px;" class="slds-text-heading--small slds-m-top--large">Fast Quote</h2>');
+                for(var i=0; i < variteAttList.length; i++){
+                    var att = variteAttList[i];
+                    html.push(' <div id="'+att.reference+'" style="margin:10px; font-family: "Salesforce Sans", Arial, sans-serif !important; "><div style="font-family: "Salesforce Sans", Arial, sans-serif !important; font-weight: 250;">'+att.attr.Name+'</div></div>');
+                }
+                html.push('<div style="width:100%; margin:15px;"><a class="fastQuoteButton" href="#" onclick="doFastQuoteCalculation(selectedFastQuoteValuesObj); return false;">Calculate</a> </div>');
+                html.push('<div id="fastQuoteResult" style="overflow-y:auto; max-height:240px;"/>');
+                return html.join('');
+            }
+
+            function fetchAttributeSelectOptionsHtml(att){
+                var html = [];
+
+                if(att.displayInfo == 'Select List'){
+                    for(var i=0; i<att.selectOptions.length; i++){
+                        var option = att.selectOptions[i];
+                        html.push('<input type="checkbox" style="font-family: "Salesforce Sans", Arial, sans-serif !important; font-weight: 250;" class="checkBoxFastQuote" onclick="addFastQuoteValue(this,\''+att.reference+'\',\''+option.cscfga__Value__c+'\');" name="'+att.reference+'" value="'+option.cscfga__Value__c+'">'+option.Name +' </input>');
+                    }
+                    html.push('<br />');
+                    document.getElementById(att.reference).innerHTML += html.join('');
+
+                } else if (att.displayInfo == 'Lookup'){
+
+                    getLookupRecordSetCustom(att.reference, function (result, lookupConfigId){
+                        var html2 = [];
+                        var att1 = getAttributeByLookupId(lookupConfigId);
+                        console.log('** att **', att1, lookupConfigId, variteAttList);
+                        console.log('*** Lookup Result ***', result);
+                        for(key in result){
+                            if(key != ''){
+                                var data = result[key];
+                                html2.push('<input type="checkbox" style="font-family: "Salesforce Sans", Arial, sans-serif !important; font-weight: 250;" class="checkBoxFastQuote" onclick="addFastQuoteValue(this,\''+att1.reference+'\', \''+data.id+'\' ,\''+data.Name+'\');" name="'+att1.reference+'" value="'+data.id+'">'+data.Name +'</input>');
+                                console.log('** data 2**',data);
+                            }
+                        }
+                        html.push('<br />');
+                        document.getElementById(att1.reference).innerHTML += html2.join('');
+
+                    });
+                }
+
+            }
+
+            function getAttributeByLookupId(lookupConfigId){
+                console.log('**** getAttributeByLookupId ',variteAttList);
+                for(var i=0; i < variteAttList.length; i++){
+                    var att = variteAttList[i];
+                    console.log('**** Attribute Lookup',att.definition.cscfga__Lookup_Config__c, lookupConfigId);
+                    if(att.definition.cscfga__Lookup_Config__c == lookupConfigId){
+                        return att;
+                    }
+                }
+
+                return null;
+            }
+
+            function addOnChangeListenerForAttribute(attReference){
+                oldValuesMap[attReference] =  CS.getAttributeValue(attReference);
+                console.log('--- addOnChangeListenerForAttribute First Time---', attReference);
+                CS.binding.getBindings(attReference)[0].dataBinder.on('afterupdate', function(att,properties) {
+                    console.log('--- addOnChangeListenerForAttribute ---', att, properties, oldValuesMap[att]);
+                    if(oldValuesMap.hasOwnProperty(att)){
+                        console.log('--- addOnChangeListenerForAttribute ---', att, properties, oldValuesMap[att]);
+                        if (properties.value != oldValuesMap[att]) {
+
+                            clearFastQuoteAttribute('slideDiv');
+                            displayFastQuoteAttribute('slideDiv');
+                            oldValuesMap[att] = properties.value;
+                        }
+                    }
+                });
+            }
+
+            function addFastQuoteValue(element, attReference, value, valueName){
+
+                element = jQuery(element);
+                if(valueName){
+                    value = value +'|'+valueName;
+                }
+                console.log('*** Add Fast value: ', value);
+                if(element.prop('checked') == true){
+                    selectedFastQuoteValuesObj[attReference].push(value);
+                } else {
+                    selectedFastQuoteValuesObj[attReference].remove(value);
+                }
+            }
+
+
+            function cartesianProduct(input, current) {
+                if (!input || !input.length) { return []; }
+
+                var head = input[0];
+                var tail = input.slice(1);
+                var output = [];
+
+                for (var key in head) {
+                    for (var i = 0; i < head[key].length; i++) {
+                        var newCurrent = copyObj(current);
+                        newCurrent[key] = head[key][i];
+                        if (tail.length) {
+                             var productOfTail = cartesianProduct(tail, newCurrent);
+                             output = output.concat(productOfTail);
+                        } else output.push(newCurrent);
+                    }
+                }
+
+                return output;
+            }
+
+            function copyObj(obj) {
+                var res = {};
+                for (var p in obj) res[p] = obj[p];
+                return res;
+            }
+
+            function updateVariateAttributes(index){
+                var fastQuoteItem = fastQuotePrices[index];
+                console.log('---- updateVariateAttributes fastQuoteItem-- ', fastQuoteItem);
+                for(var i =0; i < variteAttList.length; i++){
+                    var item = variteAttList[i];
+                    updateAttribute(item, fastQuoteItem[item.reference]);
+                }
+            }
+
+            function updateAttribute(att, value){
+
+                if(att.displayInfo == 'Select List'){
+                    CS.setAttributeValue(att.reference, value);
+                } else if(att.displayInfo == 'Lookup'){
+
+                    var temp = CS.getAttributeValue(fastQuoteResultAtt.reference);
+                    var temp2 = value.split('|');
+                    console.log('---- updateAttribute Lookup-- ', temp2, fastQuoteResultAtt.reference, att.reference);
+                    CS.setAttributeValue(fastQuoteResultAtt.reference, temp2[0], true);
+                    CS.Util.SelectListLookup.init(att.reference, fastQuoteResultAtt.reference);
+
+                    CS.setAttributeValue(fastQuoteResultAtt.reference, temp, true);
+                }
+            }
+
+            function displayFastQuoteResults(elementName){
+
+                var html = [];
+                html.push('<table class="fastQuoteTable"> <tr class="main">');
+                for(key in fastQuotePrices[0]){
+                    if(key != ''){
+                        var wrapper = CS.getAttributeWrapper(key);
+                        html.push('<td>' + wrapper.attr.Name + '</td>');
+                    }
+                }
+                html.push('</tr>');
+                for(var i=0; i < fastQuotePrices.length; i++){
+                    html.push('<tr class="basic" onclick="updateVariateAttributes('+i+');">');
+                    var item = fastQuotePrices[i];
+                    for(key in item){
+                        if(key != ''){
+                            var wrapper = CS.getAttributeWrapper(key);
+                            var value = item[key];
+                            if(wrapper.displayInfo == 'Lookup'){
+                                var nameList = value.split('|');
+                                value = nameList[1];
+                            }
+                            html.push('<td>' + value + '</td>');
+                        }
+                    }
+                    html.push('</tr>');
+                }
+
+                document.getElementById(elementName).innerHTML = html.join('');
+            }
+
+            function doFastQuoteCalculation(values){
+                var tempCartesianList = [];
+                for(key in values){
+                    if(key != '') {
+                        var att = {};
+                        att[key] =values[key];
+                        tempCartesianList.push(att);
+
+                        tempAttValues[key] = CS.getAttributeValue(key);
+                    }
+                }
+                fastQuotePrices = [];
+                if(tempCartesianList.length > 0){
+                    showLoading();
+                }
+                startChain(tempCartesianList).then(function(){
+                    hideLoading();
+                    displayFastQuoteResults('fastQuoteResult');
+                    CS.setAttributeValue(fastQuoteResultAtt.reference, JSON.stringify(fastQuotePrices), true);
+
+                    for(key in tempAttValues){
+                        if(key != ''){
+                            updateAttribute(CS.getAttributeWrapper(key), tempAttValues[key]);
+                        }
+                    }
+
+                    tempAttValues = {};
+                });
+
+            }
+
+            function startChain(selectedValues) {
+                var d = CS.Util.getDeferred();
+                var promise = CS.Util.getPromise(d);
+
+
+                console.log('**** startChain selectedValues ** ', selectedValues);
+                var cartesianProductList = cartesianProduct(selectedValues);
+
+                console.log('**** cartesianProductList ** ', cartesianProductList);
+
+                cartesianProductList.forEach(function(item) {
+                    // promise = promise.then(function() {
+                    //  return handleArrayItem(item);
+                    // });
+                    promise = promise.then((function(i) {
+                        return function() {
+                            return handleArrayItem(i);
+                        };
+                    })(item));
+                });
+
+                d.resolve();
+                return promise;
+            }
+
+            function handleArrayItem(item) {
+                var d = CS.Util.getDeferred();
+                var doAsynchronously = true;
+
+                //var attWrapper = CS.getAttributeWrapper(attName);
+                //if(attWrapper.displayInfo == 'Select List' ){
+                console.log('**** handleArrayItem ** ', item);
+                for(key in item){
+                    if(key != ''){
+                        var wrapper = CS.getAttributeWrapper(key);
+                        var value = item[key];
+                        if(wrapper.displayInfo == 'Lookup'){
+                            var nameList = value.split('|');
+                            value = nameList[0];
+                        }
+
+                        CS.setAttributeValue(key, value);
+                    }
+                }
+
+                /*} else if(attWrapper.displayInfo == 'Lookup' ){
+
+                    CS.setAttributeValue('Temp_0', attValue);
+                    CS.Util.SelectListLookup.init(attName, 'Temp_0');
+                }*/
+                //CS.rules.evaluateAllRules();
+
+                if (doAsynchronously) {
+                    executeAsyncMethod(item, function callback() {
+                        console.log('**** executeAsyncMethod ** ', item);
+                        for(var i=0; i<priceAttList.length; i++){
+                            var attName = priceAttList[i];
+                            item[attName] = CS.getAttributeValue(attName);
+                        }
+
+                        fastQuotePrices.push(item);
+                        d.resolve();
+                    });
+                } else {
+                    // Resolve immediately
+                    d.resolve();
+                }
+
+                return CS.Util.getPromise(d);
+            }
+
+            function executeAsyncMethod(item, callback) {
+                if (typeof CS.rulesTimer !== 'undefined' || CS.lookupQueriesAreQueued()) {
+                    console.log('***rules runnning***', item);
+                    setTimeout(function() {
+                        executeAsyncMethod(item, callback);
+                    }, 100);
+                    return;
+                } else {
+                    // execute payload
+                    console.log('***rules executed***', item);
+                    callback();
+                }
+            }
+
+            /* Returns record set for lookup attrtibute. If attribute is not found undefined is returned.
+             *
+             * @param attrRef           - attribute reference
+             * @param queryTerm         - Optional. additional filter for lookup query
+             */
+            function getLookupRecordSetCustom(attrRef, callback, queryTerm) {
+
+                var prefix = CS.Util.configuratorPrefix;
+                var attrWrapper = CS.getAttributeWrapper(attrRef);
+                var ad = attrWrapper.definition;
+                var productDefinitionId = attrWrapper.definition[prefix + 'Product_Definition__c'];
+
+                var lookupConfigId = ad[prefix + 'Lookup_Config__c'];
+
+                /**
+                 * getLookupQueryReferencedAttributes() collects and returns information about referenced attributes
+                 * in lookup query conditions for both: standard lookup queries and custom lookup implementations
+                 */
+                function getLookupQueryReferencedAttributes(lookupConfigId) {
+
+                    // first check if any custom lookup implementation exist
+                    var lookupConfig = CS.Service.getProductIndex(CS.Service.getCurrentProductId()).all[lookupConfigId];
+
+                    if (lookupConfig[prefix + 'lookup_customisations_impl__c']) {
+                        var ref = CS.Service.getCurrentConfigRef();
+                        var referencedAttributes = CS.Service.config[ref].customLookupReferencedAttributes[lookupConfigId];
+                        return JSON.parse(referencedAttributes);
+                    }
+
+                    var lookupQueries = CS.Service.getProductIndex(CS.Service.getCurrentProductId()).lookupQueriesByName;
+
+                    for (id in lookupQueries) {
+                        var lookupQuery = lookupQueries[id];
+                        if (lookupQuery[prefix + 'Lookup_Config__c'] === lookupConfigId) {
+                            var referencedAttributes = lookupQuery[prefix + 'Referenced_Attributes__c'];
+                            return JSON.parse(referencedAttributes);
+                        }
+                    }
+                    return [];
+                }
+
+                /**
+                 * Returns attribute value. If attribute is not found undefined is returned.
+                 *
+                 * @param attributeName     - attribute name
+                 * @return attrValue        - attribute value
+                 */
+                function getAttributeValueByAttributeName(attributeName) {
+                    var attrValue = '';
+                    var currentConfig = CS.Service.config;
+                    for (var ref in currentConfig) {
+                        var o = currentConfig[ref];
+                        if (o.attr && o.attr['Name'] === attributeName) {
+                            return o.attr[prefix + 'Value__c'];
+                        }
+                    }
+                    return attrValue;
+                }
+
+                var attributeValueParams = getLookupQueryReferencedAttributes(lookupConfigId).join(',');
+
+                var a = attrWrapper.attr;
+
+                var dynamicFilterParams = '';
+                if (attributeValueParams) {
+                    nameIdPairs = attributeValueParams.split(',');
+                    for (i = 0 ; i < nameIdPairs.length ; i++) {
+                        var oneNameIdPair = nameIdPairs[i].split('|');
+                        if (dynamicFilterParams != '') {
+                            dynamicFilterParams += '|';
+                        }
+                        dynamicFilterParams += oneNameIdPair[0] + '=' + getAttributeValueByAttributeName(oneNameIdPair[0]);
+                    }
+                }
+
+                // queryTerm is additional search string that is used to filter record set when query is executed on database
+                var queryTerm = queryTerm || "";
+
+                // queryPage is offset in record set form where data is returned
+                var queryPage = 0;
+
+                var params = {
+                    "lookupConfigId" : lookupConfigId,
+                    "searchTerm" : queryTerm,
+                    "pageNo" : queryPage,
+                    "productDefinitionId" : productDefinitionId,
+                    "attributeValueParams" : urlEncode(dynamicFilterParams)
+                };
+
+                CS.Service.getSelectListLookup(params, function(result, event) {
+
+                    if (event.status) {
+                        var selectListLookupJSON = result;
+                        var listColumnsMap = selectListLookupJSON.listColumns;
+                        var listColumnsNames = selectListLookupJSON.columnNames;
+                        var sortedListColumns = {};
+                        var sortedListColumnNames = {};
+
+                        for (var i = 0; i < listColumnsMap.length; i++) {
+                            for (key in listColumnsMap[i]) {
+                                sortedListColumns[key] = listColumnsMap[i][key];
+                                sortedListColumnNames[key] = listColumnsNames[i][key];
+                            }
+                        }
+
+                        if (CS.selectListLookupDataCache === undefined) {
+                            CS.selectListLookupDataCache = {};
+                        }
+
+                        CS.selectListLookupDataCache[lookupConfigId] = {
+                            listColumns : sortedListColumns,
+                            recordData : selectListLookupJSON.records,
+                            columnTypes : selectListLookupJSON.columnTypes,
+                            columnNames : sortedListColumnNames,
+                            orderOfRecords : selectListLookupJSON.orderOfRecords,
+                            warnings : selectListLookupJSON.warnings
+                        };
+
+                        currentSelectListLookupConfigId = lookupConfigId;
+
+                        // here we draw the table, for now just console dump
+                        callback(CS.selectListLookupDataCache[lookupConfigId].recordData, lookupConfigId);
+                        console.log("Here we draw table with: ", CS.selectListLookupDataCache[lookupConfigId].recordData);
+                    }
+                });
+            }
+
+            function hasFastQuote(){
+                for(key in CS.Service.config){
+                    if(key != ''){
+                        var att = CS.Service.config[key];
+                        console.log("________ hasFastQuote______ ", att.definition);
+                        if(att.definition.Fast_Quote_Result__c == true){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            /*
+                Fast Quote Logic - End
+                ---------------------------------------------------------------------------------------------------------------------
+            */
+
+
+            /*
+                Add On Widget Logic
+                ----------------------------------------------------------------------------------------------------------------------
+            */
+                var CSCustom = {};
+
+            /*
+                Add On Widget Logic - END
+                ----------------------------------------------------------------------------------------------------------------------
+            */
+
+        /* ------------------------------------------------------------------------------------------------------- */
+            /*
+             * Returns true if we are in Classic Salesforce view,
+             * or false if we are in either Lightning or Salesforce1 mobile
+             */
+            function isClassicSalesforce() {
+                return (typeof sforce == 'undefined') || !sforce || !sforce.one;
+            }
+
+            var params = {
+                basketId: '{!JSENCODE(basketId)}',
+                configId: '{!JSENCODE(configId)}',
+                definitionId: '{!JSENCODE(definitionId)}',
+                linkedId: '{!JSENCODE(linkedId)}',
+                retURL: '{!JSENCODE(retURL)}',
+                packageSlotId: '{!JSENCODE(packageSlotId)}',
+                isDtp: '{!JSENCODE(isDtp)}',
+                screenflow: '{!JSENCODE(screenFlowName)}',
+                communitiesPrefix: '{!JSENCODE(communitiesPrefix)}'
+            };
+
+require(['./src/cs-full'],
+    function() {
+        CS.App.Components.Repository.addComponent('configurator', 'MultipleRelatedProduct', jQuery('#CS\\.MultipleRelatedProduct__tpl')[0]);
+        CS.App.Components.Repository.addComponent('configurator', 'MultiSelectLookup', jQuery('#CS\\.MultiSelectLookup__tpl')[0]);
+
+                var delegate = {
+                    getLinkedObjectId: function() { return '{!JSENCODE(linkedId)}';},
+
+                    //getScreenFlowName: function() { return '{!JSENCODE(screenFlowName)}'; },
+                    getScreenFlowNameParameter: function() {
+                        return '{!JSENCODE(screenFlowName)}';
+                    },
+
+                    loadConfiguration: function(id, definitionId, callback) {
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.UISupport.getProductConfiguration}',
+                            id,
+                            function(result, event) {
+                                try {
+                                    var configData = JSON.parse(result);
+                                    callback(definitionId, configData, '{!$RemoteAction.UISupport.loadLookupRecord}');
+                                } catch (e) {
+                                    CS.Log.error('Could not load product configuration id ' + id + ': ' + e.message);
+                                }
+                            },
+                            {escape: false}
+                        );
+                    },
+
+                    loadProductTemplateHtml: function(id, screenFlowName, callback) {
+                    if (typeof screenFlowName === 'function') {
+                        callback = screenFlowName;
+                        screenFlowName = '';
+                    }
+                    var json = Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.UISupport.getProductTemplate}',
+                        id, screenFlowName, template,
+                        function(result, event) {
+                            if (event.status) {
+                                callback(JSON.parse(result).html);
+                            } else {
+                                callback(new Error(event.message));
+                            }
+                        },
+                        {escape: false}
+                    );
+                },
+
+                loadDefinition: function(id, callback) {
+                    var json = Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.UISupport.getProductModel}',
+                        id,
+                        function(result, event) {
+                            if (event.status) {
+                                callback(JSON.parse(result));
+                            } else {
+                                customErrorHandler(event.message);
+                            }
+                        },
+                        {escape: false}
+                    );
+                },
+                loadScreenflowPredicates: function(productDefinitionId, callback) {
+                 var json = Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.UISupport.getScreenflowPredicateFunctions}',
+                  productDefinitionId,
+                  function(result, event) {
+                   if (event.status) {
+                    callback(JSON.parse(result));
+                   } else {
+                    customErrorHandler(event.message);
+                   }
+                  },
+                  {escape: false}
+                 );
+                },
+                getScreenFlowNameParameter: function() { return '{!JSENCODE(screenFlowName)}'; },
+
+                    loadLinkedObjectProperties: function(linkedObjectId, productDefinitionId, callback) {
+                        var json = Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.UISupport.getLinkedObjectProperties}',
+                            linkedObjectId, productDefinitionId,
+                            function(result, event) {
+                                callback(JSON.parse(result));
+                            },
+                            {escape: false}
+                        );
+                    },
+
+                    lookupQuery: {!$RemoteAction.UISupport.lookupQuery},
+
+                    loadRelatedProductSelectionData: function(params, callback) {
+                        var json = Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.UISupport.getRelatedProductSelectionData}',
+                            params,
+                            function(result, event) {
+                                callback(result);
+                            },
+                            {escape: false}
+                        );
+                    },
+
+                    loadLookupRecord: function(params, callback) {
+                        var json = Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.UISupport.loadLookupRecord}',
+                            params,
+                            function(result, event) {
+                                callback(result);
+                            },
+                            {escape: false}
+                        );
+                    },
+
+                    loadCustomLookupReferencedAttributes: function(productDefinitionId, callback) {
+                        var json = Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.UISupport.loadCustomLookupReferencedAttributes}',
+                            productDefinitionId,
+                            function(result, event) {
+                                callback(JSON.parse(result));
+                            },
+                            {escape: false}
+                        );
+                    },
+
+                    getSelectListLookup: function(params, callback) {
+                        var json = Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.UISupport.getSelectListLookup}',
+                            JSON.stringify(params), '', '', '',
+                            function(result, event) {
+                                callback(result, event);
+                            },
+                            {escape: false}
+                        );
+                    },
+
+                    storeConfiguration: function(payload, callback) {
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.UISupport.storeConfigs}',
+                            payload,
+                            function(result, event) {
+                                if (event.status) {
+                                    result._success = true;
+                                } else {
+                                    if (!result) {
+                                        result = {};
+                                    }
+                                    result._success = false;
+                                    result._message = event.message;
+                                }
+                                callback(result, function redirect() {
+                                    window.location.href = CS.params.retURL;
+                                });
+                            }
+                        );
+                    }
+                },
+                template = 'CustomOnlineTemplate';
+
+                CS.Settings = {
+                    "configAllowsLiveReload" : true,
+                    "isProfilingEnabled" : false,
+                    "isWarnEnabled" : true,
+                    "isInfoEnabled" : true,
+                    "isDebugEnabled" : false,
+                    "isEntryLoggingEnabled" : false,
+                    "isSoqlLoggingEnabled" : false,
+                    "isScreenLoggingEnabled" : false,
+                    "isBrowserLoggingEnabled" : true,
+                    "cascadeDeleteDisabled" : false,
+                    "isLoadingOverlayEnabled" : true,
+                    "isDocumentLoggingEnabled" : false,
+                    "displayTCVColumn" : true,
+                    "displayRecurringInvoiceColumn" : false,
+                    "copyOppOwnerToConfigs" : true,
+                    "showRateLineItemsInSeparateColumn" : false,
+                    "showListPriceAndDiscountAmount" : true,
+                    "isMultiLingualSupportEnabled" : false,
+                    "enableDynamicLookupQueries" : true,
+                    "indicatorTimeout" : 1000
+                };
+
+                CS.Labels = {
+                    "selectlistlookup_Please_select_value" : "{!$Label.cscfga__selectlistlookup_Please_select_value}",
+                    "selectlistlookup_Please_enter_search" : "{!$Label.cscfga__selectlistlookup_Please_enter_search}"
+                };
+
+                // override Select list lookup because init method is not working
+                CS.Util.SelectListLookup.init = function(attrRef, attrRefWithLookupRecordId, callback, lookupRecordId) {
+                    if (!attrRef) {
+                        throw 'Could not get attribute reference for ' + attrRef;
+                    }
+                    // if (!attrRefWithLookupRecordId) {
+                        // throw 'Could not get attribute reference (attrRefWithLookupRecordId) for  ' + attrRefWithLookupRecordId;
+                    // }
+
+                    // var lookupRecordId = CS.getAttributeValue(attrRefWithLookupRecordId, 'String');
+                    if (!lookupRecordId) {
+                        throw 'Could not get Lookup Record Id for reference ' + attrRefWithLookupRecordId;
+                    }
+
+                    if (!CS.Util.isId(lookupRecordId)) {
+                        if (lookupRecordId !== undefined) {
+                            throw new Error('Invalid Id in lookupRecordId param ' + lookupRecordId);
+                        }
+
+                        if (!attrRefWithLookupRecordId) {
+                            throw new Error('Could not get attribute reference (attrRefWithLookupRecordId) for  ' + attrRefWithLookupRecordId);
+                        }
+
+                        lookupRecordId = CS.getAttributeValue(attrRefWithLookupRecordId, 'String');
+                        if (!lookupRecordId) {
+                            throw new Error('Could not get Lookup Record Id for reference ' + attrRefWithLookupRecordId);
+                        }
+                    }
+
+                    var attrWrapper = CS.getAttributeWrapper(attrRef);
+                    var prefix = CS.Util.configuratorPrefix;
+
+                    var attributeDefinitionId = attrWrapper.definitionId;
+                    var lookupConfigId = attrWrapper.definition[prefix + 'Lookup_Config__c'];
+                    var productIndex = CS.Service.getProductIndex().all;
+                    var attributeObjectMappingId = productIndex[lookupConfigId][prefix + 'Search_Columns__c'];
+
+                    var lookupAttribute = {
+                        'attributeId': '',
+                        'attributeValue': lookupRecordId,
+                        'attributeDefinitionId': attributeDefinitionId,
+                        'attributeLookupConfigId': lookupConfigId,
+                        'attributeObjectMappingId': attributeObjectMappingId
+                    };
+
+                    function getSelect2DisplayFieldName(attrRef) {
+                        var DEFAULT_SSL_DISPLAY_FIELD_NAME = 'Name';
+                        var attrWrapper = CS.getAttributeWrapper(attrRef);
+                        var listColumnsWidth = attrWrapper.definition[prefix + 'Column_Size_CSV__c'];
+                        listColumnsWidth = (listColumnsWidth) ? listColumnsWidth.split(',') : [];
+
+                        if (listColumnsWidth.length === 0) {
+                            return DEFAULT_SSL_DISPLAY_FIELD_NAME;
+                        }
+
+                        var displayFieldName = listColumnsWidth.pop();
+                        if (CS.Util.isInteger(+displayFieldName)) {
+                            return DEFAULT_SSL_DISPLAY_FIELD_NAME;
+                        }
+                        return displayFieldName;
+                    }
+
+                    CS.Service.loadLookupRecord(
+                        JSON.stringify(lookupAttribute),
+                        function(result, event) {
+                            try {
+                                var attKey = lookupAttribute.attributeValue;
+                                var record = result[attKey] || {};
+                                var lookupData = jQuery.extend({}, record);
+
+                                lookupData.columnMap = record.columnMap;
+
+                                CS.lookupRecords[attKey] = lookupData;
+
+                                if (CS.selectListLookupDataCache === undefined) {
+                                    CS.selectListLookupDataCache = {};
+                                }
+
+                                CS.selectListLookupDataCache[lookupRecordId] = record;
+
+                                var selectedRecord = {id: lookupData.id, text: lookupData};
+                                jQuery('.' + CS.Util.getCssFingerprint(attrRef)).select2("data", selectedRecord).trigger("change");
+                                CS.setAttributeValue(attrRef, lookupData.id);
+
+                                var displayFieldName = getSelect2DisplayFieldName(attrRef);
+                                var displayValue = selectedRecord.text[displayFieldName];
+                                if (displayValue === undefined) {
+                                    displayValue = selectedRecord['id'];
+                                }
+                                attrWrapper.attr[prefix + 'Display_Value__c'] = displayValue;
+
+                                if (callback && typeof callback == 'function') {
+                                    callback();
+                                }
+                            } catch (e) {
+                                CS.Log.error('Could not load lookup data for: ', attKey, e.message, e);
+                            }
+                        }
+                    )
+                };
+
+                params.linkedId = CS.Util.stripIdFromUrl(params.linkedId);
+
+                //AF temp
+                CS.params = params;
+
+                // set user language for number/date formatter
+                if (typeof CS !== 'undefined' && CS['DataConverter'] instanceof Object) {
+                    CS.DataConverter.userLanguage = '{!userLanguage}';
+                }
+
+                var suppressOnLoadRulesRun = params.configId && CS.Settings.suppressOnLoadRulesRun === true;
+                var prevSuspendedState = CS.rules.rulesSuspended(suppressOnLoadRulesRun);
+                launchConfigurator(CS, delegate, params, function() {
+                    CS.rules.rulesSuspended(prevSuspendedState);
+                });
+
+            });
+
+        var finishWaitData = {
+            elapsedTime: 0,
+            tick: 100,
+            timeout: 5000
+        };
+        function finish() {
+            var _this = this;
+            var _arguments = arguments;
+            if (typeof CS.rulesTimer !== 'undefined') {
+                finishWaitData.elapsedTime += finishWaitData.tick;
+                if (finishWaitData.elapsedTime > finishWaitData.timeout) {
+                    CS.Log.warn('finish() method timed out while waiting for rules to execute, continuing anyway...');
+                } else {
+                    CS.Log.debug('[' + finishWaitData.elapsedTime + '] Waiting for rules to finish... ');
+                    setTimeout(function() { finish.apply(_this, _arguments); }, finishWaitData.tick);
+                    return;
+                }
+            }
+
+            finishWaitData.elapsedTime = 0;
+            var validationResult = CS.Service.validateCurrentConfig(true);
+            var configurationStatus = CS.getConfigurationProperty('', 'status');
+
+            if (configurationStatus === '{!CONFIGURATION_STATUS_INVALID}' || !(validationResult.isValid)) {
+                updateFinishButtonUI(this);
+
+                // There are validation errors within the configuration. The configuration can still be saved but the basket cannot be synchronised with an Opportunity until the errors have been corrected.
+                CS.markConfigurationInvalid('{!$Label.cscfga__configuration_There_are_validation_errors}');
+            } else {
+                saveConfiguration(this);
+            }
+        }
+		
+        function validateInput(id,name) {
+        
+            console.log('-----Validate Error: ' + CS.Service.config[name].validationError);
+            console.log('-----Validate msg: ' + CS.Service.config[name].validationMessage);
+            
+            if(CS.Service.config[name].validationError){
+               document.getElementById("err-"+name).innerHTML=CS.Service.config[name].validationMessage;
+            }else{
+               document.getElementById("err-"+name).innerHTML="";
+            }
+
+        }
+        function saveConfiguration(buttonElement) {
+            var basketSpec = {
+                Id: params.basketId,
+                linkedId: params.linkedId,
+                packageSlotId: params.packageSlotId
+            };
+            if (typeof buttonElement === 'undefined') {
+                buttonElement = this;
+            }
+
+            CS.Log.info('Persisting configuration...');
+            CS.Service.persistConfiguration(basketSpec, (function(p){
+                return function(result, redirectCallback) {
+                    if (result._success) {
+                        CS.Log.info('Configuration persisted');
+                        window.location.assign(buildAfterFinishUrl(p, result));
+                    } else {
+                        CS.markConfigurationInvalid(result._message);
+                        updateFinishButtonUI(buttonElement, true);
+                    }
+                }
+            })(params)
+            );
+        }
+
+        function displayButtons() {
+            var pp = CS.Util.configuratorPrefix;
+            var buttonsHTML = '';
+            var currentScreenIdx = CS.Service.getCurrentScreenIndex();
+            var ref = CS.Service.getCurrentConfigRef();
+            console.log('>>>>>>>>>>> ref' + ref);
+
+            var rootRef = ref;
+            if (typeof ref === 'string' && ref.indexOf('_') > 0) {
+                var refParts = ref.split(/_/);
+                if (refParts.length > 0 && !isNaN(refParts[refParts.length - 1])) {
+                    refParts[refParts.length - 1] = 0;
+                    rootRef = refParts.join('_');
+                }
+            }
+            console.log('>>>>>>>>>>> rootRef' + rootRef);
+            var numScreens = CS.Service.config[ref].screens.length;
+            console.log('>>>>>>>>>>> numScreens' + numScreens);
+            var productId = CS.Service.getCurrentProductId();
+            console.log('>>>>>>>>>>> productId' + productId);
+            var productIndex = CS.Service.getProductIndex();
+             console.log('>>>>>>>>>>> productIndex' + productIndex);
+
+            var productDefinition = productIndex.productsById[productId];
+
+            if (currentScreenIdx > 0) {
+                buttonsHTML += '<button class="slds-button slds-button--neutral" data-cs-group="Previous" onclick="clickAction(this, displayScreen, ' + (currentScreenIdx - 1) + ')">Previous</button>';
+            }
+
+            if (currentScreenIdx < numScreens - 1) {
+                buttonsHTML += '<button class="slds-button slds-button--neutral" data-cs-group="Next" onclick="clickAction(this, displayScreen, ' + (currentScreenIdx + 1) + ')">Next</button>';
+            }
+
+            if (ref === '') {
+                buttonsHTML += '<button class="slds-button slds-button--neutral" data-cs-group="Cancel" onclick="clickAction(this, cancel, buildCancelUrl(params))">Cancel</button>';
+                buttonsHTML += '<button class="slds-button slds-button--neutral" data-cs-group="Finish" onclick="clickAction(this, finish)">Save</button>';
+                if (productDefinition[pp + 'Allow_progress_from_incomplete_screens__c']) {
+                    buttonsHTML += '<button class="hidden slds-button slds-button--neutral" data-cs-group="ForceFinish" onclick="clickAction(this, saveConfiguration)">Save without Validation</button>';
+                    buttonsHTML += '<button class="hidden slds-button slds-button--neutral" data-cs-group="ForceFinish" onclick="clickAction(this, finish)">Validate and Save</button>';
+                }
+            } else {
+                buttonsHTML += '<button class="slds-button slds-button--neutral" data-cs-group="Cancel" onclick="clickAction(this, cancelRelated)">Cancel</button>';
+                buttonsHTML += '<button class="slds-button slds-button--neutral" data-cs-group="Finish" onclick="clickAction(this, cont)">Continue</button>';
+                if (productDefinition[pp + 'Allow_progress_from_incomplete_screens__c']) {
+                    buttonsHTML += '<button class="hidden slds-button slds-button--neutral" data-cs-group="ForceFinish" onclick="clickAction(this, saveRelated)">Save without Validation</button>';
+                    buttonsHTML += '<button class="hidden slds-button slds-button--neutral" data-cs-group="ForceFinish" onclick="clickAction(this, cont)">Validate and Save</button>';
+                }
+            }
+
+
+            jQuery('.CS_configButtons').html(buttonsHTML);
+        }
+
+        </script>
+    <script type="text/html" id="CS.MultipleRelatedProduct__tpl">
+        <%  var prefix = CS.Util.configuratorPrefix;
+        var disabled = ((definition[prefix + 'Max__c'] && relatedProducts.length >= (definition[prefix + 'Max__c'] - 1)) ? 'disabled="disabled"' : ''),
+        prod,
+        attRef,
+        rowClass;
+        var attr = anchor.attr;
+        var isReadOnly = attr[prefix + 'Is_Read_Only__c'];
+        var isActive = attr[prefix + 'is_active__c'];
+        var isRequired = attr[prefix + 'Is_Required__c'];
+        %>
+        <% if (relatedProducts.length > 0 || CS.getAttributeValue('Basket_Status_0') != CS.getAttributeValue('ServiceDetailStatus_0')) { %>
+        <div class="apexp relatedProductContainer" >
+            <div class="individualPalette">
+                <div class="Custom24Block">
+
+                    <div class="">
+                        <% if (relatedProducts.length > 0 || CS.getAttributeValue('Basket_Status_0') != CS.getAttributeValue('ServiceDetailStatus_0')) { %>
+                        <div class="pbHeader rpHeader">
+                            <table border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="h2Center">
+                                        <h2 class="slds-text-heading--small slds-m-top--large">
+                                            <% if (isRequired) { %><span class="required"></span><% } %>
+                                            <% if (isReadOnly) { %><span class="readOnly"></span><% } %>
+                                            <span><%= (definition[prefix + 'Label__c']) ? definition[prefix + 'Label__c'] : "New" + definition.Name %></span>
+                                        </h2>
+                                    </td>
+                                    <td class="pbButton ">
+                                        <%
+                                        var inline = false;
+                                        if (CS.getAttributeValue('Basket_Status_0') == CS.getAttributeValue('ServiceDetailStatus_0')) {
+
+                                        console.log('--------->Inline product editing');
+                                        %>
+                                        <button class= "slds-button slds-button--neutral" disabled="disabled"  data-cs-control="<%= anchor.reference %>" data-cs-ref="<%= anchor.reference %>" data-cs-action="addRelatedProduct" data-cs-type="add" data-role="none">Add <%= (definition[prefix + 'Label__c']) ? definition[prefix + 'Label__c'] : "New" + definition.Name %></button>
+                                        <%
+                                        }
+                                        else if (CS.getAttributeValue('ProductType_0') == 'Inline') {
+                                        inline = true;
+                                        %>
+                                        <button class= "slds-button slds-button--neutral" <%= disabled %>  data-cs-control="<%= anchor.reference %>" data-cs-ref="<%= anchor.reference %>" onclick="addRelatedProduct2('<%= anchor.reference %>')" data-cs-type="add" data-role="none">Add <%= (definition[prefix + 'Label__c']) ? definition[prefix + 'Label__c'] : "New" + definition.Name %></button>
+                                        <%
+                                        } else {%>
+                                        <button class= "slds-button slds-button--neutral" <%= disabled %>  data-cs-control="<%= anchor.reference %>" data-cs-ref="<%= anchor.reference %>" data-cs-action="addRelatedProduct" data-cs-type="add" data-role="none">Add <%= (definition[prefix + 'Label__c']) ? definition[prefix + 'Label__c'] : "New" + definition.Name %></button>
+                                        <%}%>
+
+                                    </td>
+
+
+
+                                </tr>
+                            </table>
+                        </div>
+                        <%}%>
+                        <div class="rpBody">
+                            <% if (relatedProducts.length > 0) { %>
+                            <table id="relatedListTableID" class="list" data-cs-binding="<%= anchor.reference %>" data-cs-control="<%= anchor.reference %>" data-cs-type="list">
+                                <thead class="rich-table-thead">
+                                <tr class="headerRowNew" style="padding: 5px">
+                                    <th class="headerRowNew" style="width: 10em;">Action</th>
+                                    <%  for (var i = 0; i < cols.length; i++) {
+                                    var colName = cols[i];
+                                    if(inline == true && colName.endsWith('|E')) {
+                                    continue;
+                                    } else if (inline == false && colName.endsWith('|C')) {
+                                    continue;
+                                    }
+                                    console.log('--------------> colName ' + colName);
+                                    var spec = colSpecs[colName]; %>
+                                    <th class="headerRow" style="padding: 5px">
+                                        <% colName = colName.split('|')[0].replace(' ', '_') + '_0';
+                                        if (colName != undefined) {
+                                        prod = relatedProducts[0];
+                                        attRef = prod.reference + ':' + colName;
+                                        } %>
+                                        <%= CS.Service.config[attRef]['definition'].cscfga__Label__c %>
+                                    </th>
+                                    <%  } %>
+                                </tr>
+                                </thead>
+                                <%  for (var i = 0; i < relatedProducts.length; i++) {
+                                prod = relatedProducts[i];
+                                var isER = prod.reference + ':Enrich_Required_0';
+                                console.log('-----isER ' + isER);
+                                rowClass = 'dataRow ' + (i/2 == Math.floor(i/2) ? 'even ' : 'odd ') + (i == 0 ? 'first ' : '') + (i >= relatedProducts.length - 1 ? 'last' : '');
+                                %>
+                                <tr class="<%= rowClass %>" data-cs-ref="<%= prod.reference %>">
+                                    <td class="dataCell">
+                                        <% if (isActive && ! isReadOnly) { %>
+                                        <% if (!isRequired && inline) { %><span data-cs-action="removeRelatedProduct" data-cs-ref="<%= prod.reference %>" style="text-decoration: underline;color: blue;">Del</span><% } %>
+                                        <% if (inline == false && CS.getAttributeValue(isER) == 'Y') { %><span id="edit_<%= prod.reference %>" data-cs-action="editRelatedProduct" data-cs-ref="<%= prod.reference %>" style="text-decoration: underline;color: blue;">Edit</span><% } %>
+                                        <% } %>
+                                    </td>
+
+
+                                    <%      for (var j = 0; j < cols.length; j++) {
+                                    var colName = cols[j];
+                                    var cer = false;
+                                    if(inline == true && colName.endsWith('|E')) {
+                                    continue;
+                                    } else if (inline == false && colName.endsWith('|C')) {
+                                    continue;
+                                    } else if(colName.endsWith('|CER')){
+                                    cer = true;
+                                    }
+                                    colName = colName.split('|')[0].replace(' ', '_') + '_0';
+                                    console.log('------------ cer ' +  cer);
+                                    if (colName != undefined) {
+                                    attRef = prod.reference + ':' + colName;
+                                    }
+                                    if (attRef != undefined) {
+                                    var displayInfo = CS.Service.config[attRef]['displayInfo'];
+                                    var definition = CS.Service.config[attRef].definition;
+                                    var disabledEle = CS.Service.config[attRef]['attr']['cscfga__is_active__c'] ? '' : 'disabled';
+                                    console.log('Debug: User input type disabledEle : ' + disabledEle);
+                                    console.log('Debug: User input type attRef : ' + attRef);
+                                    if(inline == false && cer == true) {%>
+                                    <td style="padding: 5px"><%= CS.getAttributeDisplayValue(attRef) %></td>
+                                    <%}
+                                    else if ('User Input' === displayInfo) {
+                                    %>
+                                    <td style="padding: 5px"><input <%=disabledEle%> class="form-control" data-cs-binding="<%=attRef%>" id="<%=attRef%>" name="<%=attRef%>" type="text" value="<%= CS.Service.config[attRef]['attr']['cscfga__Display_Value__c'] %>" onchange="updateAttributeNew(this)"></input></td>
+                                    <%          } else if ('Lookup' === displayInfo && definition[prefix + 'Select_List_Lookup__c']){ lookups = true; %>
+                                    <td style="padding: 5px">
+                        <span class="lookupInput">
+                            <input type="text"
+                                   id="<%=attRef%>"
+                                   name="<%=attRef%>"
+                                   data-cs-binding="<%=attRef%>"
+                                   data-cs-select-list-lookup="true"
+                                   data-role="none"
+                                   data-mini="true"
+                                   value=""
+                                   size="20"
+                                   onchange="updateAttributeNew(this)" />
+                        </span>
+                                    </td>
+                                    <%
+                                    if (relatedProductsIds.indexOf(attRef) == -1) {
+                                    relatedProductsIds.push(attRef);
+                                    }
+
+                                    }   else if ('Select List' === displayInfo) {
+                                    %>
+                                    <td style="padding: 5px">
+                                        <select class="form-control" data-cs-binding="<%=attRef%>" id="<%=attRef%>" name="<%=attRef%>" onchange="updateAttributeNew(this)">
+                                            <%
+                                            var options = CS.Service.config[attRef]['selectOptions'];
+                                            for (var k = 0; k < options.length; k++) {
+                                            var selected = (options[k]['Name'] === CS.Service.config[attRef]['attr']['cscfga__Display_Value__c']);
+                                            if (selected) {
+                                            %>
+                                            <option value="<%= options[k]['cscfga__Value__c'] %>" selected="selected"><%= options[k]['Name'] %></option>
+                                            <%
+                                            } else {
+                                            %>
+                                            <option value="<%= options[k]['cscfga__Value__c'] %>"><%= options[k]['Name'] %></option>
+                                            <%                          }
+                                            }
+                                            %>
+                                        </select>
+                                    </td>
+
+                                    <% }  else { %>
+                                    <td style="padding: 5px"><%= CS.getAttributeDisplayValue(attRef) %></td>
+
+                                    <%          }
+                                    }
+                                    } %>
+                                </tr>
+                                <%  } %>
+                            </table>
+                            <% } else if (CS.getAttributeValue('Basket_Status_0') != CS.getAttributeValue('ServiceDetailStatus_0')){ %>
+                            <table class="list" data-cs-control="<%= anchor.reference %>" data-cs-type="list">
+                                <tr class="dataRow even first last">
+                                    <td class="dataCell">
+                                        No items to display. Use Add button to add new <%= (definition[prefix + 'Label__c']) ? definition[prefix + 'Label__c'] : "New" + definition.Name%>
+                                    </td>
+                                </tr>
+                            </table>
+                            <% } %>
+                        </div>
+                        <div class="pbFooter secondaryPalette">
+                            <div class="bg"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% }%>
+    </script>
+
+    <script type="text/html" id="CS.MultiSelectLookup__tpl">
+        <%  var attr = attrWrapper.attr;
+        var prefix = CS.Util.configuratorPrefix;
+        var isActive = attr[prefix + 'is_active__c'];
+        var disabled = attrWrapper.attr[prefix + 'Is_Read_Only__c'] ? 'disabled="disabled"' : '';
+        %>
+        <div class="apexp relatedProductContainer">
+            <div class="individualPalette">
+                <div class="Custom24Block">
+                    <div class="">
+                        <div class="pbHeader rpHeader">
+                            <table border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="h2Center">
+                                        <h2 class="slds-text-heading--small slds-m-top--large">
+                                            <span><%= (attrDefinition[prefix + 'Label__c']) ? attrDefinition[prefix + 'Label__c'] : "Add" + attrDefinition.Name %></span>
+
+                                        </h2>
+                                    </td>
+                                    <td class="pbButton ">
+                                        <% if (isActive) { %>
+                                        <button data-cs-action="AddLookup" data-cs-params='{"ref":"<%= attrWrapper.reference %>"}' data-cs-control="<%= attrWrapper.reference %>" data-cs-ref="<%= attrWrapper.reference %>" data-cs-type="Add" data-role="none" class="slds-button slds-button--neutral" <%= disabled %> ><%= (attrDefinition[prefix + 'Label__c']) ? attrDefinition[prefix + 'Label__c'] : "Add" + attrDefinition.Name %></button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="rpBody">
+                            <% if (records.length > 0) { %>
+                            <table class="list" data-cs-binding="<%= attrWrapper.reference %>" data-cs-control="<%= attrWrapper.reference %>" data-cs-type="list">
+                                <thead class="rich-table-thead">
+                                <tr class="headerRowNew">
+                                    <th class="headerRowNew" style="width: 10em;">Action</th>
+                                    <%  for (columnName in columns) { %>
+                                    <th class="headerRowNew">
+                                        <%= columnName %>
+                                    </th>
+                                    <%  } %>
+                                </tr>
+                                </thead>
+                                <%  for (var i = 0; i < records.length; i++) {
+                                var record = records[i];
+                                var rowClass = 'dataRow ' + (i/2 == Math.floor(i/2) ? 'even ' : 'odd ') + (i == 0 ? 'first ' : '') + (i >= records.length - 1 ? 'last' : '');
+                                %>
+                                <tr class="<%= rowClass %>">
+                                    <td class="dataCell">
+                                        <% if (isActive) { %>
+                                        <span data-cs-action="clearMultiSelectLookup" data-cs-params='{"ref":"<%= attrWrapper.reference %>", "recordId":"<%= record.id %>"}' data-cs-ref="<%= attrWrapper.reference %>">Del</span>
+                                        <% } %>
+                                    </td>
+                                    <%      for (columnName in columns) {
+                                    var filedName = columns[columnName].toLowerCase();
+                                    var fieldValue = record[filedName];
+                                    %>
+                                    <td class="dataCell"><%= fieldValue %></td>
+                                    <%      } %>
+                                </tr>
+                                <%  } %>
+                            </table>
+                            <% } else { %>
+                            <table class="list" data-cs-control="<%= attrWrapper.reference %>" data-cs-type="list">
+                                <tr class="dataRow even first last">
+                                    <td class="dataCell">
+                                        No items to display
+                                    </td>
+                                </tr>
+                            </table>
+                            <% } %>
+                        </div>
+                        <div class="pbFooter secondaryPalette">
+                            <div class="bg"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"></apex:stylesheet>
+
+    </body>
+    </html>
+    <apex:form style="width: 0; height: 0; position: absolute; left: -1000px;">
+        <!--
+            This inputField initializes the SFDC DatePicker JS widget.
+            The form is hidden due to recent changes in SFDC VF rendering engine
+            which started displaying this inputField (it was previously hidden due
+            to referencing the read-only SObject field)
+        -->
+        <!--<apex:inputField value="{!cscfga__Product_Basket__c.DatePicker__c}"/>-->
+        <apex:inputField value="{!dateRange.cscfga__Start__c}"/>
+    </apex:form>
+</apex:page>

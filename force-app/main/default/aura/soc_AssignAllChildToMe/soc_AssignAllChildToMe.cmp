@@ -1,0 +1,40 @@
+<aura:component controller="soc_AssignAllChildToMe" 
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >
+    <aura:attribute name="recordId" type="String" access="global" />
+    <aura:attribute name="errorMessage" type="String" access="global" />
+    <aura:attribute name="showSpinner" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="recordTypeDevName" type="String" access="global" default="true"/>
+    <aura:attribute name="profileName" type="String" access="global" default="System Administrator"/>
+    <aura:attribute name="offshoreRestricted" type="Boolean" access="global" default="true"/>
+    <aura:attribute name="DSCUser" type="String" access="global" default="false"/>
+    <aura:attribute name="showAssignAllToMe" type="String" access="global" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+
+ 	<aura:if isTrue="{!v.showSpinner}" >
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="large" />
+        </div> 
+    </aura:if>
+    <aura:if isTrue="{!and(or(equals(v.profileName,'SFD Agent') ,equals(v.profileName,'System Administrator')),equals(v.DSCUser,'true'))}">
+            <aura:if isTrue="{!equals(v.recordTypeDevName,'Order_request')}">
+                <div class="slds-box slds-theme_default slds-size_3-of-3">
+                    <lightning:layout horizontalAlign="spread" multipleRows="true" >
+                        <lightning:layoutItem size="6" smallDeviceSize="6" mediumDeviceSize="6" largeDeviceSize="6" padding="none">
+                                <lightning:button class="mybuttonCust" 
+                                                  variant="neutral" 
+                                                  label="Assign All Child Cases to me" 
+                                                  title="Assign All Child Cases to me" 
+                                                  onclick="{!c.assignToParentOwner }" 
+                                                  iconName="utility:send" 
+                                                  iconPosition="left"
+                                                  disabled="{!equals(v.showAssignAllToMe,'true')}"
+                                                  name="{!v.offshoreRestricted ? 'SOC_Queue' : 'soc_SFD_Concierge_Offshore'}"/>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </aura:if>
+    </aura:if>
+	
+</aura:component>

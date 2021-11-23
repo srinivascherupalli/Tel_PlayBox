@@ -1,0 +1,60 @@
+<apex:component access="global" controller="AgreementApprovalController">
+  <apex:attribute name="ApprovalRequestSO" description="Attribute on the component."
+                  type="Apttus_Approval__Approval_Request__c" required="required" assignTo="{!approvalRequest}"/>
+    
+   <apex:outputPanel >
+   
+  <table border="0" >
+                <tr>
+                    <td>Account Name:</td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__Account__r.name}</td>                  
+                </tr>
+                <tr>
+                    <td>Agreement Name: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.name}</td>                  
+                </tr>
+                <tr>
+                    <td>Description: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__Description__c}</td>                  
+                </tr>
+                <tr>
+                    <td>Owner Full Name: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.Owner.Name}</td>                  
+                </tr>
+                 <tr>
+                    <td>Agreement Number: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__FF_Agreement_Number__c}</td>                  
+                </tr>
+                <tr>
+                    <td>Status Category: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__Status_Category__c }</td>                  
+                </tr>
+                <tr>
+                    <td>Status: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__Status__c}</td>                  
+                </tr>
+                 <tr>
+                    <td>Agreement Start Date(MM/dd/yyyy): </td>
+                    <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                            <apex:param value="{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__Contract_Start_Date__c}"/>
+                        </apex:outputText>
+                    </td>                  
+                </tr>
+                <tr>
+                    <td>Original End Date(MM/dd/yyyy): </td>
+                    <td><apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                          <apex:param value="{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__Contract_End_Date__c}"/>
+                        </apex:outputText>
+                    </td>                  
+                </tr>
+                <tr>
+                    <td>Total Agreement Value: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.Apttus__Total_Contract_Value__c}</td>                  
+                </tr>
+                <tr>
+                    <td>Comments for Billing: </td>
+                    <td>{!approvalRequest.Apttus_Approval__Related_Agreement__r.APTPS_Comments_for_Billing__c}</td>                  
+                </tr> 
+            </table>
+ </apex:outputPanel>
+</apex:component>

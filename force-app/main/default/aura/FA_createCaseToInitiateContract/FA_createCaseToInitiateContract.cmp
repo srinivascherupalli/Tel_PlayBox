@@ -1,0 +1,66 @@
+<aura:component
+                implements="flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName"
+                access="global"
+                controller="DelegatedPricingController"
+                >
+  
+    <aura:attribute type="String" name="OpportunityId" />
+    <aura:attribute type="Id" name="DPRId" />
+    <aura:attribute type="Id" name="ContractJunctionID" />
+    <aura:attribute type="Delegated_Pricing_Request__c" name="DprName" default="{'sObjectType':'Delegated_Pricing_Request__c'}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute type="Id" name="FrameId" />
+    <aura:attribute type="String" name="OpportunityStage" />
+    <aura:attribute type="String" name="caseContractSupportRecordType" />
+    <aura:attribute type="Boolean" name="showSpinner"/>
+    <aura:attribute name="isAgreementCheckCompleted" type="Boolean" access="global" default="false"/>  <!--DIGI-24743-->
+	<aura:attribute name="AgreementDecision" type="sObject" access="global" />      <!--DIGI-24743-->
+    <aura:attribute
+                    type="csconta__Frame_Agreement__c"
+                    name="AgrName"
+                    default="{'sObjectType':'csconta__Frame_Agreement__c'}"
+                    />
+    <aura:attribute
+                    name="fields"
+                    type="String[]"
+                    default="['CaseNumber','Case_Owner__c','Description']"
+                    />
+  <!--<aura:attribute
+                    name="vfHost"
+                    type="String"
+                    default="telstrab2b-csupgrade-c.visualforce.com"
+                    />-->
+    <aura:attribute name="CurrentUser" type="Object"/>
+	<force:recordData recordId="{!$SObjectType.CurrentUser.Id}"
+                  fields="Profile.Name"
+                  targetFields="{!v.CurrentUser}"/>
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div> 
+    </aura:if>
+    
+    <lightning:card>
+        <div class="slds-p-left_large slds-p-right_medium" style="height:100%">
+            <lightning:recordForm
+                                  aura:id="myRecordForm"
+                                  recordTypeId="{!v.caseContractSupportRecordType}"
+                                  objectApiName="Case"
+                                  columns="2"
+                                  mode="edit"
+                                  onsuccess="{!c.initiateContractHandleSuccess}"
+                                  onsubmit="{!c.initiateContractHandleSubmit}"
+                                  oncancel="{!c.initiateContractonCancel}"
+                                  onerror="{!c.initiateContracthandleError}"
+                                  fields="{!v.fields}"
+                                  >
+            </lightning:recordForm>
+        </div>
+    </lightning:card>
+</aura:component>

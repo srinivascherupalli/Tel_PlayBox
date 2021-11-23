@@ -1,0 +1,69 @@
+<template>
+    <div if:true={isModalOpen}>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close"
+                        alternative-text="close"
+                        variant="inverse"
+                        size="small" ></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{titleForCharges}</h2>
+               
+                <!--data table-->
+            
+            </header>
+            <!-- Modal/Popup Box LWC body starts here -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <table aria-multiselectable="true" class="slds-table slds-table_fixed-layout slds-p-bottom_medium" role="grid">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                                <th class="" scope="col" style="width:3.25rem">Invoice Number</th>
+                                <th class="" scope="col" style="width:3.25rem">Offer Name</th>
+                                <th class="" scope="col" style="width:3.25rem">Charge Description</th>
+                        </tr>
+  
+                    </thead>
+                    <tbody>       
+                        <tr>
+                            <td class="slds-cell-wrap" role="gridcell">{invoiceNumber}</td>
+                            <td class="slds-cell-wrap" role="gridcell">{offerName}</td>
+                            <td class="slds-cell-wrap" role="gridcell">{chargeDescription}</td>
+                        </tr>
+                    </tbody> 
+                </table>
+                <template if:true={loadSpinner}>
+                <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+                </template>
+                <template if:true={isOnceOffCharge}>
+                    <c-Once-Off-Charge-Drill-Down-Comp1 data-id="chargeTable" charge-id={chargeId} statement-number={invoiceNumber} account-number={billingAccNum} old-selected-rows ={previousSelectedRows} old-selected-data ={previousSelectedRowData}></c-Once-Off-Charge-Drill-Down-Comp1>
+                </template>
+                <template if:true={isRecurringCharge}>
+                    <c-Recurring-Charge-Drill-Down-Comp data-id="chargeTable" charge-id={chargeId} statement-number={invoiceNumber} account-number={billingAccNum} old-selected-rows ={previousSelectedRows} old-selected-data ={previousSelectedRowData}></c-Recurring-Charge-Drill-Down-Comp>
+                </template>
+                <template if:true={isFeaturePack}>
+                    <c-Feature-Pack-Drill-Down-Cmp data-id="chargeTable" charge-id={chargeId} statement-number={invoiceNumber} account-number={billingAccNum} old-selected-rows ={previousSelectedRows} old-selected-data ={previousSelectedRowData}></c-Feature-Pack-Drill-Down-Cmp>
+                </template>
+                <template if:true={isRepaymentCharge}>
+                    <c-Repayment-Charge-Drill-Down-Comp data-id="chargeTable" charge-id={chargeId} statement-number={invoiceNumber} account-number={billingAccNum} old-selected-rows ={previousSelectedRows} old-selected-data ={previousSelectedRowData}></c-Repayment-Charge-Drill-Down-Comp>
+                </template>
+            
+            </div>
+            <!-- Modal/Popup Box LWC footer starts here -->
+            <footer class="slds-modal__footer">
+
+            <div class="slds-clearfix">
+                <div class="slds-float--left"><p>Includes GST-free items</p></div>
+                <div class="slds-float--right">
+                   
+                        <button class="slds-button slds-button_neutral" onclick={navToInvoiceCmp} title="Return to invoice">Save and Return to invoice</button>
+                
+                </div>
+            </div>
+            </footer>
+        </div>
+    </section>
+    </div>
+</template>

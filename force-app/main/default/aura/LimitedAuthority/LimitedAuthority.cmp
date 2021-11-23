@@ -1,0 +1,175 @@
+<!-- 
+****************************************************************************
+@Name       :   LimitedAuthority
+@Author     :   Sri & Sravanthi(Team SFO)
+@CreateDate :   01/04/2020
+@Description:   Sprint 20.04 ; P2OB-4922, 
+                This componet is for the Contact lightning page named 'Contact Record Page' and 
+                with the filter 'Authority(Authority__c)' value as 'Limited Authority'
+***************************************************************************** -->
+<!-- ****************************************************************************
+@Name       :   LimitedAuthority
+@Author     :   Sri & Sravanthi(Team SFO)
+@CreateDate :   13/06/2020
+@Description:   Sprint 20.08; P2OB-6398, 
+                Modified as part 6398,As a Sales User, I want to no longer see the "Authorised CIDNS" in the Limited Authority Management custom component
+***************************************************************************** -->
+
+<aura:component controller="LimitedAuthorityController"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction"
+    access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="CIDNList" type="List" default="[]" description="CIDN Picklist Values" />
+    <aura:attribute name="selectedOptions" type="List" />
+    <aura:attribute name="contactRecord" type="Object" />
+    <aura:attribute name="recordLoadError" type="String" />
+    <aura:attribute name="selectall" type="Boolean" default="false" />
+    <aura:attribute name="IsSpinner" type="Boolean" default="false" />
+    <aura:attribute name="showAuthorisedCIDNs" type="Boolean" default="false" />
+    <aura:attribute name="showAuthorisedBillingAccounts" type="Boolean" default="true" />
+    <aura:attribute name="isEdit" type="boolean" default="false" />
+    <aura:attribute name="headerTitle" type="Aura.Component[]">
+        <h2><b>Limited Authority Management</b></h2>
+    </aura:attribute>
+    <aura:attribute name="recordId" type="String" />
+    <aura:html tag="style">.toastMessage.forceActionsText{
+        white-space : pre-line !important;
+        }
+    </aura:html>
+
+    <force:recordData aura:id="recordLoader" recordId="{!v.recordId}"
+      fields="Name,Order_Services__c,Raise_Billing_Disputes__c,Authorised_Billing_Accounts__c,Special_Requirements__c"
+        targetFields="{!v.contactRecord}" recordUpdated="{!c.onLoad}" />
+    <lightning:card title="{!v.headerTitle}" iconName="custom:custom18">
+        <aura:if isTrue="{!v.IsSpinner}">
+            <lightning:spinner size="medium" />
+        </aura:if>
+        <!-- Lightning card attribute 'actions' used to display the 'Edit' button in the header. -->
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!not(v.isEdit)}">
+                <lightning:button class="slds-m-top_small" variant="Neutral" label="Edit" onclick="{!c.onEdit}" />
+            </aura:if>
+        </aura:set>
+        <div class="slds-var-p-around_medium">
+            <aura:if isTrue="{!v.isEdit}">
+                <lightning:recordEditForm aura:id="LAForm" recordId="{!v.recordId}" objectApiName="Contact"
+                    density="comfy" onerror="{!c.handleOnError}" onsubmit="{!c.handleOnSubmit}"
+                    onsuccess="{!c.handleOnSuccess}">
+                    <lightning:inputField aura:id="ReportServiceIncidents" fieldName="Report_Service_Incidents__c" />
+                    <lightning:inputField aura:id="RaiseBillingDisputes" fieldName="Raise_Billing_Disputes__c"
+                        onchange="{!c.handleOnChange}" />
+                    <aura:if isTrue="{!v.showAuthorisedBillingAccounts}">
+                        <lightning:inputField aura:id="AuthorisedBillingAccounts"
+                            fieldName="Authorised_Billing_Accounts__c" />
+                    </aura:if>
+                      <lightning:inputField aura:id="OrderServices" fieldName="Order_Services__c"
+                        onchange="{!c.handleOnChange}" />
+ <!--Modified as part P2OB-6398,Sprint 20.08,As a Sales User, I want to no longer see the "Authorised CIDNS" in the Limited Authority Management custom component-->
+                    <!--<aura:if isTrue="{!v.showAuthorisedCIDNs}">
+                        <div class="slds-form-element slds-form-element_stacked">
+                               <label class="slds-form-element__label" for="combobox-unique-id-3">Authorised CIDNs</label>
+                            <lightning:helptext
+                                content="Only CIDN and Child CIDN's are displayed. If a CIDN from the Account hierarchy is not displayed here, you need to move the Contact further up the hierarchy." />
+                            <div class="slds-form-element__control">
+                                 <ui:scrollerWrapper class="scrollerSize slds-size_small"> 
+                                    <div class="slds-combobox_container slds-size_small">
+                                            <div aura:id="dropdown" onclick="{!c.openDropdown}"
+                                            onmouseleave="{!c.closeDropDown}"
+                                            class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-close"
+                                            aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                                role="none">
+                                                <input type="text"
+                                                    class="slds-input slds-combobox__input slds-combobox__input-value"
+                                                    placeholder="Add atleast one CIDN" readonly="true"
+                                                    onclick="{!c.openDropdown}" value="{!v.selectedOptions}" />
+                                                <span
+                                                    class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right"
+                                                    title="Down icon">
+                                                    <lightning:icon iconName="utility:down" size="xx-small"
+                                                        class="slds-icon-text-default" />
+                                                    <span class="slds-assistive-text">Down icon</span>
+                                                </span>
+                                            </div>
+                                            <div id="listbox-unique-id" role="listbox">
+                                                <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid"
+                                                    role="presentation">
+                                                    <li onclick="{!c.selectALLOption}" id="{selectalloption}"
+                                                        role="presentation" class="slds-listbox__item">
+
+                                                        <div id="listbox-option-unique-id-selectall"
+                                                            class="{!v.selectall==true?'slds-media slds-listbox__option
+                                                                                    slds-listbox__option_plain slds-media_small slds-media_center
+                                                                                    slds-is-selected':'slds-media slds-listbox__option
+                                                                                    slds-listbox__option_plain slds-media_small slds-media_center '}"
+                                                            role="option">
+                                                            <span class="slds-media__figure">
+                                                                <lightning:icon iconName="utility:check" size="xx-small"
+                                                                    class="slds-listbox__icon-selected" />
+                                                            </span>
+                                                            <span class="slds-media__body">
+                                                                <span class="slds-truncate" title="Select All">
+                                                                    Select All</span>
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                    <aura:iteration items="{!v.CIDNList}" var="item" indexVar="ind">
+                                                        <li onclick="{!c.selectOption}"
+                                                            id="{!item.label+'#BP#'+item.isChecked}" role="presentation"
+                                                            class="slds-listbox__item">
+
+                                                            <div id="{!'listbox-option-unique-id-'+(ind+1)}"
+                                                                class="{!item.isChecked==true?'slds-media slds-listbox__option
+                                                                                                slds-listbox__option_plain slds-media_small slds-media_center
+                                                                                                slds-is-selected':'slds-media slds-listbox__option
+                                                                                                slds-listbox__option_plain slds-media_small slds-media_center '}"
+                                                                role="option">
+                                                                <span class="slds-media__figure">
+                                                                    <lightning:icon iconName="utility:check"
+                                                                        size="xx-small"
+                                                                        class="slds-listbox__icon-selected" />
+                                                                </span>
+                                                                <span class="slds-media__body">
+                                                                    <span class="slds-truncate" title="{!item.label}">
+                                                                        {!item.label}</span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                    </aura:iteration>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                </div>
+                             </ui:scrollerWrapper> 
+                        </div>
+                        </div>
+                    </aura:if>-->
+                    <!--End Modified as part P2OB-6398,Sprint 20.08-->
+                    <lightning:inputField aura:id="SpecialRequirements" fieldName="Special_Requirements__c" />
+
+                    <div class="slds-align_absolute-center slds-p-vertical_medium">
+                        <lightning:button class="slds-m-top_small" variant="Neutral" type="cancel" name="Cancel"
+                            label="Cancel" onclick="{!c.onCancel}" />
+                        <lightning:button class="slds-m-top_small" variant="brand" type="submit" name="Save"
+                            label="Save" />
+                    </div>
+                </lightning:recordEditForm>
+                <aura:set attribute="else">
+                    <lightning:recordViewForm recordId="{!v.recordId}" objectApiName="Contact" density="comfy">
+                        <lightning:outputField fieldName="Report_Service_Incidents__c" />
+                        <lightning:outputField fieldName="Raise_Billing_Disputes__c" />
+                        <aura:if isTrue="{!v.contactRecord.Raise_Billing_Disputes__c}">
+                            <lightning:outputField fieldName="Authorised_Billing_Accounts__c" />
+                        </aura:if>
+                        <lightning:outputField fieldName="Order_Services__c" />
+                        <aura:if isTrue="{!v.contactRecord.Order_Services__c}">
+  <!--Modified as part P2OB-6398,Sprint 20.08,As a Sales User, I want to no longer see the "Authorised CIDNS" in the Limited Authority Management custom component-->
+                            <!--<lightning:outputField fieldName="Authorised_CIDNs__c" />-->
+                        </aura:if>
+                        <lightning:outputField fieldName="Special_Requirements__c" />
+                    </lightning:recordViewForm>
+                </aura:set>
+            </aura:if>
+        </div>
+    </lightning:card>
+</aura:component>

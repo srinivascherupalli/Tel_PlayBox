@@ -1,0 +1,92 @@
+<template>
+    <div id="container">
+        <template if:true={loadingSpinner}>
+            <div>
+                <lightning-spinner variant="brand" size="large" alternative-text="loading">
+                </lightning-spinner>
+            </div>
+        </template>
+        <template if:true={visible}>
+            <div class="slds-notify_container">
+                <div class={outerClass} role="status">
+                    <span class="slds-assistive-text">{type}</span>
+                    <span class={innerClass} title={message}>
+                        <lightning-icon icon-name={getIconName} alternative-text="icon" styleclass="slds-icon slds-icon_small" variant="inverse" size="small"></lightning-icon>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small">{message}</h2>
+                    </div>
+                    <div class="slds-notify__close">
+                        <lightning-button-icon icon-name="utility:close" size="small" variant="border-filled" class="slds-button slds-button_icon slds-button_icon-inverse" alternative-text="next" onclick={closeModel} ></lightning-button-icon>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <div class="slds-var-m-around_xx-large">
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-tabset>
+                    <lightning-tab label="Search Result" data-target-id="searchresulttab">
+                        <template if:true={isNumberAvailable}>
+                            <lightning-layout>
+                                <lightning-layout-item padding="around-small" size="6">
+                                    <div class="search-result-tab-heading">
+                                        <lightning-formatted-text value={totalSearchedNumbers}>
+                                        </lightning-formatted-text>
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                            <lightning-layout>
+                                <lightning-layout-item padding="around-small" size="12" class="select-all-reservation-pool_alignment" >
+                                    <lightning-button label="Add All to Reservation Pool" variant="brand" name="Add all to Reservation Pool"
+                                    onclick={handleReserveNumber} class="select-all-reservation-pool_padding">
+                                    </lightning-button>
+                                    <lightning-button label="Reserve Selected" variant="brand" name="Reserve Selected"
+                                        onclick={handleReserveNumber}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                            <c-generic-data-table data-id="searchNumbers" records-data={searchNumberResult} page-size="10"
+                                columns={columns} hide-row-checkbox={hideRowCheckbox} pagination-by-button="false">
+                            </c-generic-data-table>
+                        </template>
+                        <template if:false={isNumberAvailable}>
+                            <p>
+                                <lightning-formatted-text value="No number is available.">
+                                </lightning-formatted-text>
+                            </p>
+                        </template>
+                    </lightning-tab>
+                    <lightning-tab label="Reservation Pool" data-target-id="reservationpull">
+                        <template if:true={isNumberReserved}>
+                            <lightning-layout>
+                                <lightning-layout-item padding="around-small" size="6">
+                                    <div class="reservation-pool-tab-heading">
+
+                                    </div>
+                                </lightning-layout-item>
+                                <lightning-layout-item padding="around-small" size="6" class="select-all-reservation-pool_alignment" >
+                                    <lightning-button label="Remove All "  name="Remove All"
+                                    onclick={handleRemoveResPoolNumb} class="select-all-reservation-pool_padding">
+                                    </lightning-button>
+                                    <lightning-button label="Remove Selected"
+                                        name="removefromreservationPool" onclick={handleRemoveResPoolNumb}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                            <c-generic-data-table data-id="reservedNumbers" records-data={reservedNumbers} page-size="10"
+                                columns={reserveColumns} hide-row-checkbox={hideRowCheckbox} pagination-by-button="false">
+                            </c-generic-data-table>
+                        </template>
+                        <template if:false={isNumberReserved}>
+                            <p>
+                                <lightning-formatted-text value="No number is reserved.">
+                                </lightning-formatted-text>
+                            </p>
+                        </template>
+
+                    </lightning-tab>
+                </lightning-tabset>
+            </div>
+        </div>
+    </div>
+</template>

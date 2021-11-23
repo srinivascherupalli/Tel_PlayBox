@@ -1,0 +1,915 @@
+<apex:page showheader="false" standardstylesheets="false" applyhtmltag="false">
+    <html>
+        <head>
+            <title>Live Chat Telstra Connect Concierge</title>
+            
+        </head>
+        <body>
+            <h1>
+                Hi Welcome to Live Chat Telstra Connect Concierge
+            </h1> 
+            <style type='text/css'>
+                
+                .embeddedServiceSidebarHeader #headerTextLabel, .embeddedServiceSidebarHeader #headerSubtext {
+                height: 24px;
+                width: 136px;
+                color: #414141;
+                font-family: "Telstra Akkurat";
+                font-size: 16px;
+                font-weight: bold;
+                letter-spacing: -0.1px;
+                line-height: 20px;
+                text-align: center;
+                }
+                
+                .embeddedServiceSidebarHeader .headerText {
+                padding-right: 30px;
+                padding-left: 40px;
+                position: initial;
+                }
+                
+                span.minimize.x-small.embeddedServiceIcon {
+                width: 24px;
+                background-repeat: no-repeat;
+                background-image: url('{!$Label.ccd_headerItem}');                
+                }
+                .embeddedServiceIcon.x-small svg {
+                width: 0.2em;
+                height: 1em;
+                }
+               
+                button.closeButton.headerItem {
+                height: 24px;
+                width: 24px;
+                background-repeat: no-repeat;
+                background-position-y: bottom;
+                padding-right: 25px;
+                padding-top: 28px;
+                background-image: url('{!$Label.ccd_closeButton}');
+                }
+                
+                .embeddedServiceLiveAgentStateChatHeader:not(.alert) .message {
+                display: none;
+                }
+                
+                .embeddedServiceLiveAgentStateChatHeader .content {
+                height: 100px;
+                margin-top: 13px;
+                border-top: 1px solid #d6d0d0;
+                margin-bottom: 10px;
+                }
+                
+                .embeddedServiceLiveAgentStateChatHeaderOption {
+                color: rgb(255, 255, 255);
+                text-decoration: none;
+                width: inherit;
+                display: flex;
+                align-items: center;
+                }
+                .embeddedServiceLiveAgentStateChatItem.agent .agentName {
+                text-align: left;
+                margin-left: 44px;
+                height: 20px;
+                width: 156px;
+                color: #414141;
+                font-family: "Telstra Akkurat";
+                font-size: 14px;
+                letter-spacing: -0.2px;
+                line-height: 20px;
+                }
+                
+                .embeddedServiceLiveAgentStateChatInputFooter.dynamicResizeTextOneRow .chasitorText {
+                padding: 15px 8px;
+                color: #414141;
+                font-family: "Telstra Akkurat";
+                font-size: 16px;
+                font-weight: bold;
+                letter-spacing: -0.1px;
+                line-height: 20px;
+                }
+                
+                .embeddedServiceLiveAgentStateChatHeaderOption .embeddedServiceIcon {
+                width: 40px;
+                height: 40px;
+                border: none;
+                }
+                
+                .embeddedServiceLiveAgentStateChatHeaderOption .optionName {
+                font-size: .75em;
+                height: 19px;
+                width: 106px;
+                color: #0064D2;
+                font-family: "Telstra Akkurat";
+                font-size: 18px;
+                letter-spacing: -0.3px;
+                line-height: 19px;
+                white-space: nowrap;
+                width: auto;
+                }
+                
+                .embeddedServiceLiveAgentStateChatHeaderOption .embeddedServiceIcon svg {
+                position: relative;
+                display: block;
+                top: 50%;
+                height: 24px;
+                width: 24px;
+                background: #588e9e;
+                transform: translate(-50%, -50%);
+                }
+                
+                .embeddedServiceSidebarHeader .shortHeaderContent {
+                width: 328px;
+                height: 58px;
+                background-color: white;
+                border-top: 2px solid #68c8d2;
+                }
+
+               
+                .embeddedServiceSidebarForm.formContent {
+                width: 100%;
+                height: calc(100% - 81px);
+                overflow-y: auto;
+                position: relative;
+                background-color: #fff;
+                margin-top: 13px;
+                border-top: 1px solid #d6d0d0;
+                border-radius: 0 0 8px 8px;
+                }
+                
+                .embeddedServiceSidebarFormField .slds-style-inputtext, .embeddedServiceSidebarFormField .slds-style-select {
+                color: #333333;
+                font-family: "Telstra Akkurat",sans-serif;
+                height: 58px;
+                }
+                
+                .embeddedServiceSidebarFormField .uiInput {
+                text-align: left;
+                padding-top: 15px;
+                }
+                
+                .embeddedServiceSidebarForm.buttonWrapper {
+                width: 100%;
+                position: absolute;
+                padding: 0px;
+                }
+                .embeddedServiceLiveAgentQueuePosition .queuePositionChatIcon .embeddedServiceLoadingBalls {
+                left: 50%;
+                top: 50%;
+                height: 8px;
+                width: 48px;
+                transform: translate(-50%, -50%);
+                }
+                
+                .embeddedServiceLiveAgentStateWaitingHeader .waitingGreeting {
+                margin-top: 60px;
+                height: 30px;
+                width: 187px;
+                color: #414141;
+                font-family: "Telstra Akkurat";
+                font-size: 24px;
+                font-weight: bold;
+                letter-spacing: -0.5px;
+                margin-left: auto;
+                margin-right: auto;
+                }
+                
+                .embeddedServiceLiveAgentStateWaitingHeader .waitingMessage {
+                height: 25px;
+                width: 179px;
+                color: #414141;
+                font-family: "Telstra Akkurat";
+                font-size: 17px;
+                font-weight: 300;
+                letter-spacing: -0.15px;
+                line-height: 0px;
+                margin-left: auto;
+                margin-right: auto;
+                }
+                .embeddedServiceLiveAgentQueuePosition .embeddedServiceLoadingBalls .loadingBall {
+                background-color: #101010;
+                }
+                .embeddedServiceLiveAgentQueuePosition .embeddedServiceIcon>svg {
+                position: relative;
+                fill: none;
+                width: 82px;
+                height: 75.4px;
+                }
+                .waitingCancelChat {
+                outline: none;
+                }
+                
+                .embeddedServiceLiveAgentStateWaitingHeader .content {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                height: 120px;
+                margin-top: 13px;
+                border-top: 1px solid #d6d0d0;
+                }
+                .embeddedServiceSidebarDialogState .dialogTextContainer {
+                align-self: stretch;
+                max-height: 100%;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 0 24px;
+                margin-top: 13px;
+                border-top: 1px solid #d6d0d0;
+                }
+                
+                .embeddedServiceSidebarDialogState #dialogTextTitle {
+                height: 30px;
+                width: 244px;
+                color: #414141;
+                font-family: "Telstra Akkurat";
+                font-size: 24px;
+                font-weight: bold;
+                letter-spacing: -0.5px;
+                line-height: 30px;
+                position: absolute;
+                top: 50px;
+                margin-left: 20px;
+                }
+                
+                .embeddedServiceSidebarDialogState #dialogTextBody {
+                padding: 0 24px;
+                color: #414141;
+                text-align: center;
+                font-family: "Telstra Akkurat";
+                font-size: 18px;
+                letter-spacing: -0.15px;
+                text-align: center;
+                line-height: 25px;
+                font-weight: 300;
+                }
+                
+                .embeddedServiceSidebarDialogState .dialogButton {
+                margin: 0 0 8px;
+                height: 51px;
+                width: 280px;
+                }
+                
+                .embeddedServiceLiveAgentStateChat .messageArea {
+                margin-top: 13px;
+                border-top: 1px solid #d6d0d0;
+                }
+                
+                .embeddedServiceSidebarMinimizedDefaultUI.helpButton {
+                background-color: #FFFFFF !important;
+                font-family: "Arial", sans-serif;
+                font-weight: bold;
+                color: #0264D2 !important;
+                outline: 2px solid #0264D2 !important;
+                width: 700px;
+                }
+                
+                .embeddedServiceHelpButton .uiButton .helpButtonLabel .message {
+                overflow: hidden;
+                white-space: nowrap;
+                height: 19px;
+                width: 158.5px;
+                color: #0064D2;
+                font-family: "Telstra Akkurat";
+                font-size: 17px;
+                font-weight: bold;
+                letter-spacing: -0.5px;
+                line-height: 19px;
+                display: inline-block;
+                text-overflow: initial;
+                }
+                
+                .embeddedServiceSidebarMinimizedDefaultUI .minimizedText>.message {
+                text-overflow: initial;
+                font-family: "Telstra Akkurat";
+                color: #0064D2;
+                height: 19px;
+                width: 158.5px;
+                color: #0064D2;
+                font-family: "Telstra Akkurat";
+                font-size: 17px;
+                font-weight: bold;
+                letter-spacing: -0.5px;
+                line-height: 19px;
+                display: inline-block;
+                }
+                
+                
+                <!-- Changes above -->
+                
+                 .embeddedServiceHelpButton .helpButton {
+                
+                width: auto !important;
+                font-size: 18px !important;
+                }
+                
+                button.startButton.uiButton--default.uiButton.embeddedServiceSidebarButton {
+                font-family: "Arial",sans-serif !important;
+                outline: 2px solid #0264D2;
+                width: 280px;
+                height: 51px;
+                }
+                
+                .embeddedServiceSidebarButton:not(:disabled):focus, .embeddedServiceSidebarButton:not(:disabled):hover {
+                outline: none !important;
+                background: #0264D2 !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatPlaintextMessageDefaultUI.agent.plaintextContent {
+                background: #B2E0FD !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatPlaintextMessageDefaultUI.chasitor.plaintextContent {
+                background: #D2D2D2 !important;
+                color: black !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatAvatar.isLightningOutContext .agentIconColor0 {
+                background-color: #E6E6E6 !important;
+                color: black !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatInputFooter.dynamicResizeTextOneRow .chasitorText {
+                padding: 15px 8px
+                }
+               .headerTextContent {
+                
+                background-image: url('{!$Label.LogoURL_CCD}');
+                background-repeat:no-repeat;
+                background-position-y: center;
+                }
+                
+                #headerTextLabel { 
+                color:#FFF; 
+                padding: 8px 20px 1px;
+                font-weight: bold;
+                }
+                
+                .embeddedServiceSidebarButton.uiButton--inverse .label {
+                color: #0074bd !important;
+                }
+                
+                .embeddedServiceHelpButton .helpButton .uiButton {
+                background-color: #FFFFFF !important;
+                font-family: "Arial", sans-serif;
+                font-weight: bold;
+                color: #0264D2 !important;
+                outline: 2px solid #0264D2 !important;
+                width: 700px;
+                }
+                
+                .embeddedServiceSidebarButton.uiButton--inverse:not(:disabled):focus, .embeddedServiceSidebarButton.uiButton--inverse:not(:disabled):hover {
+                background: #0264D2 !important;
+                text-decoration-color: #0074bd !important;
+                }
+                
+                .embeddedServiceHelpButton .helpButton .uiButton:focus {
+                outline: 1px solid #E11A5C;
+                }
+                .embeddedServiceHelpButton .helpButton .uiButton.helpButtonDisabled { display: none;}
+                
+                .embeddedServiceSidebarFormField .uiInput .uiLabel-left {
+                margin-left: 16px;
+                }
+                
+                .embeddedServiceSidebarForm.buttonWrapper {
+                bottom: 65px;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper2 {
+                bottom: 65px;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper1 {
+                padding-top: 180px;
+                }
+                
+                li.inputSplitName.embeddedServiceSidebarFormField .FirstName {
+                
+                color:#AAA;;
+                background:#F5F5F5;
+                font-family: "Telstra Akkurat",sans-serif;
+                height: 58px;
+                width: 130px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .LastName {
+                
+                color:#AAA;
+                font-family: "Telstra Akkurat",sans-serif;
+                background:#F5F5F5;
+                width: 130px;
+                height: 58px;
+                margin-left: 5px;
+                }
+                
+                li.inputSplitName.embeddedServiceSidebarFormField .Email {
+                
+                color:#AAA;
+                background:#F5F5F5;
+                width: 130px;
+                height: 58px;
+                margin-left: 10px;
+                }
+                
+                .startButton{
+                background-color: #FFFFFF !important;
+                outline: 2px solid #0064D2;
+                }
+                
+                .dialogButton{
+                background-color: #FFFFFF !important;
+                outline: 2px solid #0064D2 !important;
+                }
+                
+                .dialogButton .label{
+                color: #0064D2 !important;
+                height: 19px;
+                font-family: "Telstra Akkurat";
+                font-size: 18px;
+                font-weight: bold;
+                letter-spacing: -0.5px;
+                line-height: 19px;
+                text-align: center;
+                }
+                .waitingCancelChat {
+                outline: none;
+                }
+                .startButton .label{
+                height: 19px;
+                width: 158.5px;
+                color: #0064D2;
+                font-family: "Telstra Akkurat";
+                font-size: 18px;
+                font-weight: bold;
+                letter-spacing: -0.5px;
+                line-height: 19px;
+                display: inline-block;
+                }
+                
+                .message{
+                font-weight:600;
+                }
+                .button:hover{
+                background-color: #FFFFFF;
+                }
+                .embeddedServiceSidebarButton{
+                font-weight:600;
+                }
+                
+                .embeddedServiceSidebarButton:not(:disabled):hover {
+                background: #0064D2 !important;
+                }
+                
+                .startButton .label:hover, .startButton :hover .label {
+                
+                color: #fff !important;
+                }
+                .waitingCancelChat:not(:disabled):hover {
+                background: #871037 !important;
+                }
+                
+                .embeddedServiceSidebarButton .label:hover, .embeddedServiceSidebarButton:focus .label{
+                color: #fff !important;
+                font: 15px;
+                }
+                .embeddedServiceSidebarButton .label:hover, .embeddedServiceSidebarButton:hover .label {
+                color: white !important;
+                }
+                .agentAvatarsContainer .embeddedServiceLiveAgentStateChatAvatar {
+                display:none;
+                }
+                .embeddedServiceSidebarHeader .headerChevron {
+                margin: 1px 0 0 8px;
+                align-self: center;
+                }
+                .embeddedServiceSidebarHeader .headerTextContent {
+                display: inline;
+                height: 24px;
+                width: 182px;
+                padding-top: 6px;
+                }
+                .embeddedServiceSidebarHeader.extended .headerChevron {
+                align-self: center;
+                }
+                .embeddedServiceHelpButton .helpButton .helpButtonEnabled:hover::before, .embeddedServiceHelpButton .helpButton .helpButtonEnabled:focus::before {
+                background-color:grey !important;
+                }
+                .embeddedServiceSidebarMinimizedDefaultUI .messageContent {
+                justify-content: center !important;
+                }
+                .embeddedServiceSidebarMinimizedDefaultUI .minimizedImage img, .embeddedServiceSidebarMinimizedDefaultUI .minimizedImage .uiImage {
+                border-radius: initial !important;
+                width: 21px !important;
+                height: 26px !important;
+                content: url('{!$Label.LogoURL_CCD}');
+                }
+                .embeddedServiceLiveAgentStateChatHeaderOption:hover {
+                color:white !important;
+                }
+                .embeddedServiceLiveAgentStatePostchat iframe {
+                height: 100%;
+                width: calc(100% - 8px);
+                border-style: hidden;
+                margin: 4px 4px 0 4px;
+                }
+                
+                @media only screen and (min-device-width: 1024px) and (max-device-height: 1366px) and (-webkit-min-device-pixel-ratio: 2)  and (orientation: portrait) {
+                
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 86% !important;
+                margin: 18% auto !important;
+                left: 0% !important;
+                max-width: 71em !important;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper2 {
+                padding-top: 210px;
+                bottom: 65px;
+                }
+                .cPreChat.u162 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgba(102, 102, 102, 1);
+                padding: 50px;
+                padding-top: 250px;
+                }
+                .cPreChat.u1621 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgb(80,80,80);
+                padding: 50px;
+                padding-top: 250px;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper1 {
+                padding-top: 550px;
+                }
+                .embeddedServiceSidebarFeature ul, .embeddedServiceSidebarFeature li {
+                display: block;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                padding-top: 40px;
+                }
+                
+                li.inputSplitName.embeddedServiceSidebarFormField .LastName {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 300px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .FirstName {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 300px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .Email {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 300px;
+                margin-left: 39px;
+                }
+                }
+                
+                @media only screen and (min-device-width: 1366px) and (max-device-height: 1024px) and (orientation: landscape) {
+                
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 86% !important;
+                /**margin: 18% auto !important;
+                left: 0% !important;**/
+                max-width: 71em !important;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper2 {
+                bottom: 65px;
+                }
+                .cPreChat.u162 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgba(102, 102, 102, 1);
+                }
+                .cPreChat.u1621 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgb(80,80,80);
+                }
+               
+                .embeddedServiceSidebarFeature ul, .embeddedServiceSidebarFeature li {
+                display: block;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                }
+                
+                li.inputSplitName.embeddedServiceSidebarFormField .LastName {
+                color: #AAA;
+                background: #F5F5F5;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .FirstName {
+                color: #AAA;
+                background: #F5F5F5;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .Email {
+                color: #AAA;
+                background: #F5F5F5;
+                }
+                }
+                
+                @media all and (device-width: 1024px) and (device-height: 768px) and (orientation:landscape) {
+                
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 86% !important;
+                margin: 10% auto !important;
+                left: 0% !important;
+                max-width: initial !important;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper2 {
+                padding-top: 50px;
+                bottom: 65px;
+                }
+                .cPreChat.u162 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgba(102, 102, 102, 1);
+                padding: 50px;
+                padding-top: 150px;
+                }
+                .cPreChat.u1621 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgb(80,80,80);
+                padding: 50px;
+                padding-top: 150px;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper1 {
+                padding-top: 200px;
+                }
+                .embeddedServiceSidebarFeature ul, .embeddedServiceSidebarFeature li {
+                display: block;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                padding-top: 40px;
+                }
+                
+                li.inputSplitName.embeddedServiceSidebarFormField .LastName {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 300px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .FirstName {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 300px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .Email {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 300px;
+                margin-left: 39px;
+                }
+                .helpButtonLabel{
+                display:none;
+                }
+                }
+                
+                @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait) {
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 78% !important;
+                margin: 28% auto !important;
+                left: 13% !important;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper2 {
+                padding-top: 210px;
+                bottom: 65px;
+                }
+                .cPreChat.u162 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgba(102, 102, 102, 1);
+                padding: 50px;
+                padding-top: 150px;
+                }
+                .cPreChat.u1621 {
+                text-align: center;
+                word-wrap: break-word;
+                font-size: 15px;
+                color: rgb(80,80,80);
+                padding: 50px;
+                padding-top: 150px;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper1 {
+                padding-top: 550px;
+                }
+                .embeddedServiceSidebarFeature ul, .embeddedServiceSidebarFeature li {
+                display: block;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                padding-top: 40px;
+                }
+                
+                li.inputSplitName.embeddedServiceSidebarFormField .LastName {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 200px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .FirstName {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 200px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .Email {
+                color: #AAA;
+                background: #F5F5F5;
+                width: 200px;
+                margin-left: 39px;
+                }
+                .helpButtonLabel{
+                display:none;
+                }
+                }
+                @media (min-width: 481px) and (max-width: 767px) {
+                
+                .helpButtonLabel{
+                display:none !important;
+                }
+                .embeddedServiceHelpButton .uiButton{
+                min-width: 0 !important;
+                }
+                .embeddedServiceHelpButton .embeddedServiceIcon {
+                margin-right:auto !important;
+                }
+                .embeddedServiceHelpButton .helpButton .uiButton {
+                outline: none !important;;
+                }
+                .embeddedServiceHelpButton .helpButton {
+                bottom: 5%;
+                }
+                }
+                
+                
+                @media (min-width: 320px) and (max-width: 480px) {
+                
+                .helpButtonLabel{
+                display:none !important;
+                }
+                .embeddedServiceHelpButton .uiButton{
+                min-width: 0 !important;
+                }
+                .embeddedServiceHelpButton .embeddedServiceIcon{
+                margin-right:auto !important;
+                }
+                .embeddedServiceHelpButton .helpButton .uiButton {
+                outline: none !important;;
+                }
+                .embeddedServiceHelpButton .helpButton {
+                bottom: 5%;
+                }
+                }
+            </style>
+            <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+            <script type='text/javascript'>
+                var initESW = function(gslbBaseURL) {
+                    embedded_svc.settings.displayHelpButton = true; //Or false
+                    embedded_svc.settings.language = ''; //For example, enter 'en' or 'en-US'
+                    embedded_svc.settings.defaultMinimizedText = 'Urgent issue?Chat now'; //(Defaults to Chat with an Expert)
+                    var currentURL = window.location.href;
+                    embedded_svc.settings.extraPrechatInfo = [{
+                        "entityFieldMaps": [
+                            {
+                                "doCreate":false,
+                                "doFind":false,
+                                "fieldName":"LastName",
+                                "isExactMatch":false,
+                                "label":"Last Name"
+                            }, {
+                                "doCreate":false,
+                                "doFind":false,
+                                "fieldName":"FirstName",
+                                "isExactMatch":false,
+                                "label":"First Name"
+                            }, {
+                                "doCreate":false,
+                                "doFind":true,
+                                "fieldName":"Email",
+                                "isExactMatch":true,
+                                "label":"Email"
+                            }],
+                        "entityName":"Contact"
+                    }];
+                    
+                    embedded_svc.addEventHandler("onHelpButtonClick", function(data) {
+                        console.log("onHelpButtonClick event was fired.");
+                        var a = document.getElementById('FirstName');
+                        //var firstname = 'Pratap';
+                        if (a) {
+                            a.disabled=true;
+                            document.getElementById('LastName').disabled=true;
+                            document.getElementById('Email').disabled=true;
+                        }
+                        else {
+                            setTimeout(arguments.callee, 10); // call myself again in 10 msecs
+                        }
+                    });
+                    
+                    embedded_svc.addEventHandler("onChatEstablished", function(data) {
+                        console.log("onChatEstablished event was fired.  liveAgentSessionKey was " +  data.liveAgentSessionKey);
+                    });
+                    
+                    /* Below details are to be changed */
+                    
+                    
+                    
+                    embedded_svc.settings.extraPrechatFormDetails = [
+                        {  
+                            "label":"Last Name",
+                            "transcriptFields":["PreChat_LastName__c"],
+                            "displayToAgent":false
+                        },
+                        {  
+                            "label":"First Name",
+                            "transcriptFields":["PreChat_FirstName__c"],
+                            "displayToAgent":false
+                        },
+                        {  
+                            "label":"Email",
+                            "transcriptFields":["PreChat_Email__c"],
+                            "displayToAgent":false
+                        },
+                        {  
+                            "label":"Chat Start URL",
+                            "transcriptFields":["Chat_Start_URL__c"],
+                            "value": currentURL,
+                            "displayToAgent":false
+                        }
+                    ];
+                    
+                    if (window.embedded_svc) {
+                        var firstName = 'Pratap';
+                        embedded_svc.settings.prepopulatedPrechatFields = {
+                            FirstName: firstName,
+                            LastName: 'Garani',
+                            Email: 'pratap.garani@team.telstra.com'
+                        };
+                    }
+                    
+                    embedded_svc.settings.autoOpenPostChat = true;
+                    embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+                    embedded_svc.settings.entryFeature = 'LiveAgent';
+                    
+                    embedded_svc.init(
+                        '{!$Label.ORGBaseURL}',
+                        '{!$Label.CHATSiteURL}',
+                        gslbBaseURL,
+                        '{!$Label.ORGId}',
+                        'Chat_Telstra_Connect_Concierge',
+                        {
+                            baseLiveAgentContentURL: '{!$Label.BaseLiveAgentContentURL}',
+                            deploymentId: '{!$Label.ChatDeploymentID_CCD}',
+                            buttonId: '{!$Label.ChatButtonId_CCD}',
+                            baseLiveAgentURL: '{!$Label.BaseLiveAgentURL}',
+                            eswLiveAgentDevName: '{!$Label.ESWLiveAgentDevName_CCD}',
+                            isOfflineSupportEnabled: false
+                        }
+                    );
+                };
+            
+            
+            
+
+            /*function initSFDCChat() {
+                if (!window.embedded_svc) {
+                    var s = document.createElement('script');
+                    s.setAttribute('src', 'https://telstrab2b--TB2BQA2.cs116.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+                    s.onload = function() {
+                        initESW(null);
+                    };
+                    document.body.appendChild(s);
+                } else {
+                    initESW('https://service.force.com');
+                }
+            }*/
+            
+            /* For Internal Testting */
+            if (!window.embedded_svc) {
+                var s = document.createElement('script');
+                s.setAttribute('src', '{!$Label.ESWMinJS}');
+                s.onload = function() {
+                    initESW(null);
+                };
+                document.body.appendChild(s);
+            } else {
+                initESW('https://service.force.com');
+            }
+            </script>
+        </body> 
+    </html>
+</apex:page>

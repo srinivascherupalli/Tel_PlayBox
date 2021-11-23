@@ -1,0 +1,13 @@
+<aura:event type="COMPONENT" description="Event template">
+  <aura:attribute
+    name="isSelectAll"
+    type="Boolean"
+    description="Use to select all rows"
+  />
+    <!--EDGE-129897, Kalashree Borgaonkar. send rowid-->
+  <aura:attribute
+    name="rowIndex"
+    type="Integer"
+    description="Use to select all rows"
+  />
+</aura:event>

@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="MMCvalue" type="integer"/>
+</aura:event>

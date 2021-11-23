@@ -1,0 +1,67 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="recordId" type="String" />
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="appDetailsSimple" type="Object"/>
+    <aura:attribute name="appDetails" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name="FieldsetName" type="String" default="Application_Detail"/>
+    <aura:attribute name="typeofbus" type="list" default="[{'label': 'Proprietoriship', 'value': 'Proprietoriship'},
+                                                          {'label': 'Partnership', 'value': 'Partnership'},
+                                                          {'label': 'Corporation', 'value': 'Corporation'}]"/>
+    <aura:attribute name="value" type="String" />
+    <aura:registerEvent name="ApplicationBooleanEvent" type="c:ApplicationBooleanEvent"/>
+	<aura:registerEvent name="ApplicationRecordEvent" type="c:ApplicationRecordEvent"/> 
+    <aura:registerEvent name="closeModalEvent" type="c:closeModalEvent"/>
+    <force:recordData aura:Id="ApplicantDetails"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.appDetailsSimple}"
+                      targetFields="{!v.appDetails}"
+                      targetError="{!v.recordError}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+   
+    <div class="slds-text-heading_large slds-text-align_center">
+	        <h1>Third Party Agent Application Form</h1>
+    	    </div>
+        	 <div class="slds-text-body_regular slds-text-align_left">
+                 <h3>Applicant's Details</h3>
+        </div>
+    
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+    <div area-labelledby="newAppform">
+        <form class="slds-form--stacked">
+    	<lightning:input label="{!v.queAndAns[0].Question}"  required="true" Name="cName" value="{!v.appDetails.Company_Name__c}" aura:id="expenseform"></lightning:input>
+    	<Lightning:textarea label="{!v.queAndAns[1].Question}" required="true" name="Address" value="{!v.appDetails.Branch_Office_Address_2__c}" aura:id="expenseform"/>
+        <lightning:input required="true" label="{!v.queAndAns[2].Question}" name="phoneno" value="{!v.appDetails.Company_Phone_Number__c}" aura:id="expenseform"/>
+            <lightning:input type="email" required="true" label="{!v.queAndAns[3].Question}" name="compemail" value="{!v.appDetails.Email__c}" aura:id="expenseform"/>
+        <lightning:input type="url" required="true" label="{!v.queAndAns[4].Question}" name="website" value="{!v.appDetails.Website__c}" aura:id="expenseform"/>
+        <!--<lightning:input name="typeofbusiness" label="{!v.queAndAns[5].Question}" required="true" value="{!v.appDetails.Type_of_business__c}"/>-->
+        <lightning:radioGroup name="typeofbusiness" label="{!v.queAndAns[5].Question}"
+        options="{!v.typeofbus}"
+        value="{!v.appDetails.Type_of_business__c}"  required="true"  />
+        <lightning:input type="date" required="true" label="{!v.queAndAns[6].Question}" value="{!v.appDetails.Date_of_establishment__c}" aura:id="expenseform"/>
+        <Lightning:input required="true" label="{!v.queAndAns[7].Question}" value="{!v.appDetails.Place_of_establishment__c}" aura:id="expenseform"/>
+        <Lightning:input required="true" label="{!v.queAndAns[8].Question}" value="{!v.appDetails.Business_Registration_Number__c}" aura:id="expenseform"/>
+        <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+        <div class="slds-modal__footer">
+            	<lightning:button label="Save" variant="brand" onclick="{!c.handleSaveRecord}" />
+                <lightning:button label="Next" variant="brand" onclick="{!c.navigateToMyComponent}" />
+            </div>
+        </form>
+    </div>
+    
+    
+</aura:component>

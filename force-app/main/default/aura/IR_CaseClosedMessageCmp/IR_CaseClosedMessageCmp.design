@@ -1,0 +1,4 @@
+<design:component label="CaseClosedMessageCmp">
+    <design:attribute name="message" label="message" description="text message" />
+    <design:attribute name="type" label="type" description="Message type error, warning, info, success etc" />
+</design:component>

@@ -1,0 +1,17 @@
+<template>
+
+    <div class="feedbackAccordion">
+        {labels.thankYouHeaderMsg}
+        <!--Make the font small-->
+    </div>
+    <div class="feedbackSubmittedSuccessfully">{labels.prmFeedbackSubmitted}</div>
+
+    <div class="feedbackCaseNo">
+        Case Number : <a onclick={viewRecord}>{caseNumber}</a>
+    </div>
+
+    <div class="feedbackAdditionalText">
+        {labels.prmFeedbackTeamMsg}
+    </div>
+
+</template>

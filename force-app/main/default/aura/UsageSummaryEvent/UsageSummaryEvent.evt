@@ -1,0 +1,13 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="Alldata" type="List"/>
+    <aura:attribute name="UsageList" type="List" default="[]"/>
+    <aura:attribute name="ChargeIdMap" type="Map" default="{}"/>
+    <aura:attribute name="mapKey" type="String" />
+    <aura:attribute name="selectedRows" type="List" default="[]"/>
+    <aura:attribute name="selrecords" type="List" default="[]"/>
+    <aura:attribute name="paginationMap" type="Map" default="{}"/>
+    <aura:attribute name="isCancelled" type="boolean" default="{}"/>
+    <!--EDGE-133408 - Component start - Creating a map of chargeidentifier as key and transaction id as a value to match selected identifiers from usage.  -->
+    <aura:attribute name="QLIMapToParent" type="Map" default="{}"/>
+    <!--END of EDGE - 133408- -->
+</aura:event>

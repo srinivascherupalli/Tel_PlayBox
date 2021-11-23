@@ -1,0 +1,11 @@
+<template>
+    <div>
+        <c-search-subscriptions-l-w-c  oncallsearchvaluechange={hanldeSearchValueChange}></c-search-subscriptions-l-w-c>
+        <div>
+        <template if:true={checkRecorddate}>
+            <c-manage-commissions-partner-result  recordata={recordata} oncallrefreshvaluechange={handleRefreshEvent}></c-manage-commissions-partner-result>
+        </template>
+    </div>
+    </div>
+
+</template>

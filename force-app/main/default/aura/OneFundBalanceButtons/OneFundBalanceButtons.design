@@ -1,0 +1,7 @@
+<design:component>
+    <design:attribute name="recordId" /> 
+    <design:attribute name="ProfileName" /> 
+    <design:attribute name="emptyFund" />
+    <design:attribute name="checkFundValue" />
+    
+</design:component>

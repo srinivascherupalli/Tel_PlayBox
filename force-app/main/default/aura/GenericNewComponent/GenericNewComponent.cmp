@@ -1,0 +1,38 @@
+<!-- Description :  P2OB-6525 Creating a generic component to launch any flow
+     Author      :  Vivian Charlie, Team Hawaii 
+     Created Date:  13 May 2020 
+     Jira        :  P2OB-6525
+ 	 Updates     :  15 May 2020 : Ritika Jaiswal : P2OB-6525 - Added redirection logic on click of 'Finish' in flow
+-->
+<aura:component controller="GenericNewController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:appHostable,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:actionOverride" access="global" >    
+    <aura:attribute name="objectName" type="String"/>
+    <aura:attribute name="pageType" type="String"/>
+    <aura:attribute name="isLoaded" type="Boolean" default = "false"/>
+    <aura:attribute name="flowName" type="String"/>
+    <aura:attribute name="buttonLabel" type="String"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <aura:handler name='init' action="{!c.doInit}" value="{!this}" />
+    <aura:attribute name="isOpen" type="Boolean" default="false" access="private"/>
+    <aura:if isTrue="{!not(empty(v.buttonLabel))}">
+        <div align="right">
+            <lightning:button variant="brand" class="claim-button" label="{!v.buttonLabel}" title="{!v.buttonLabel}" onclick="{! c.handleClick }"/>
+        </div>
+        <aura:set attribute="else">
+            <aura:if isTrue="{!and(v.isOpen, not(empty(v.flowName)))}">
+            <div>
+                <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header slds-modal__header_empty">
+                            <lightning:buttonIcon iconName="utility:close" class="slds-modal__close" onclick="{!c.closeFlowModal}"/>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">                            
+                            <c:GenericNewComponentModal flowName="{!v.flowName}"/> 
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div> 
+        </aura:if>            
+        </aura:set>
+    </aura:if>
+</aura:component>

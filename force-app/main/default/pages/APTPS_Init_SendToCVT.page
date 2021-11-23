@@ -1,0 +1,139 @@
+<apex:page extensions="APTPS_SendToCVTController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+    <apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+    <apex:includeScript value="{!$Resource.APTPS_Bootstrap_Min_JS}"></apex:includeScript> 
+    
+    <script>
+    
+       function ShowWrapper()
+        {
+            $('#myWrapper').show();
+            $('#progressBarOuter').show();     
+        }
+        
+        function hideWrapper()
+        {
+            $('#myWrapper').hide();
+            $('#progressBarOuter').hide();     
+        }
+        
+       function undoCheckAll(){
+          
+            var statusChange = false;
+            var inputElem = document.getElementsByTagName("input");
+            
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone")!=-1)
+                {
+                    if(!inputElem[i].checked)
+                    {
+                         var inputElemCheckBox = document.getElementsByTagName("input");
+                         for(var i=0; i<inputElemCheckBox.length; i++)
+                            {
+                                if(inputElemCheckBox[i].id.indexOf("checkAll")!=-1)
+                                {
+                                    inputElemCheckBox[i].checked = false;
+                                    statusChange = true;
+                                    break;
+                                }
+                            }
+                        break;        
+                    }
+                }
+                
+            }
+            
+            if(!statusChange)
+            {
+                var inputElemCheckBox = document.getElementsByTagName("input");
+                 for(var i=0; i<inputElemCheckBox.length; i++)
+                    {
+                        if(inputElemCheckBox[i].id.indexOf("checkAll")!=-1)
+                        {
+                            inputElemCheckBox[i].checked = true;
+                            break;
+                        }
+                    }
+            }
+        }        
+        
+
+        function checkAll(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+
+
+
+
+    </script>
+            <br/>
+            <br/>           
+            <h5>
+                <b>All the Agreements displayed here will be notified to CVT.</b>
+            </h5> 
+            <br/>                      
+            <br/>
+    <div style = "font-size:16px"><apex:pageMessages id="theMessages"/></div>
+            <br/>
+            <apex:form >                
+                <apex:outputPanel id="mainPanel">
+                    <div style="float:right;">
+                        <apex:outputPanel rendered="{!AND(IF(paginater.isAll, false, true), IF(paginater.totalPage == 1, false, true))}">                   
+                            <apex:outputText rendered="{!paginater.showPrevious}"> 
+                                <apex:commandLink action="{!previousPage}" value="Prev" rerender="mainPanel" oncomplete="undoCheckAll()"/> 
+                            </apex:outputText> 
+                            <apex:repeat value="{!paginater.pageList}" var="pl"> 
+                                <apex:outputText rendered="{!!pl.isActive}"> 
+                                    <apex:commandLink action="{!updatePage}" rerender="mainPanel" style="margin-right:7px;" oncomplete="undoCheckAll()"> 
+                                            {!pl.pageNum} <apex:param name="selectedPage" value="{!pl.pageNum}" assignTo="{!paginater.pageNum}" /> 
+                                    </apex:commandLink> 
+                                </apex:outputText> 
+                                <apex:outputText rendered="{!pl.isActive}" value="{!pl.pageNum}" /> 
+                            </apex:repeat>  
+                            <apex:outputText rendered="{!paginater.showNext}" > 
+                                <apex:commandLink action="{!nextPage}" value="Next" rerender="mainPanel" oncomplete="undoCheckAll()" /> 
+                            </apex:outputText> 
+                        </apex:outputPanel> 
+                    </div>
+                    <apex:pageBlock > 
+                        <apex:pageBlockTable style="font-size:16px" value="{!genericList}" var="a" id="table">
+                          <apex:column value="{!a.agreement.Apttus__FF_Agreement_Number__c}" />
+                            <apex:column value="{!a.agreement.Name}" />
+                            <apex:column value="{!a.agreement.Apttus__Status_Category__c}" />
+                            <apex:column value="{!a.agreement.Apttus__Status__c}" />
+                            <apex:column value="{!a.agreement.Apttus__Agreement_Category__c}" />
+                            <apex:column value="{!a.agreement.APTPS_Agreement_Subcategory__c}" />
+                           
+                        </apex:pageBlockTable>
+                    </apex:pageBlock>
+                </apex:outputPanel>                             
+                <br/>     
+                <apex:pageBlock >
+                    
+                <div id="outer" style="margin-top:20px;margin-bottom:20px;">
+                        <div id="inner" style="margin-left:40%">
+                            <apex:commandButton style="font-size:16px" value="Notify CVT" action="{!createListForAgreementsToBeSent}"  rerender="theMessages" status="status" 
+                                onclick="ShowWrapper()" oncomplete="hideWrapper()"></apex:commandButton>
+                            <apex:commandButton value="Cancel" action="{!cancel}" rerender="theMessages" style="font-size:16px;margin-left:2%"/>
+                        </div>
+                    </div>
+                </apex:pageBlock>
+                <div id="myWrapper" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                </div>
+                <div id= "progressBarOuter" style="display:none; position: fixed; left: 0; top: 10; bottom: 0; right: 0; z-index: 1001; margin: 20% 42%;width: 17%;background-color: white;
+             text-align:center; height: 140px; " class="rcorners">
+
+                    <apex:image id="theImage" style="margin-top:20px;margin-bottom:11px;" value="{!$Resource.APTS_WaitImage}" width="77" height="77"/>
+                    <div>
+                        <span id="statusSpan" style="margin-top:10px;font-weight:bold; font-size:13px;">Processing. Please Wait...</span>
+                    </div>
+                </div>
+
+            </apex:form>
+        </apex:page>

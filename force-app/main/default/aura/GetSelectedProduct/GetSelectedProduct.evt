@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION">
+    <aura:attribute name="selectedProduct" type="String[]"/>
+    <aura:attribute name="sitesMap_V2" type="Map"/>
+</aura:event>

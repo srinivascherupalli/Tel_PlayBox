@@ -1,0 +1,82 @@
+.search-result__img{
+    width: 425px;
+    height: 245px;
+    margin: 0;
+}
+.search-result__img img{
+    height: 275px;
+}
+.helpNtraining-result.singleTile{
+    margin-bottom: 1rem;
+    padding-bottom: 25px;
+    min-height: 275px;
+    overflow: hidden;
+    background: #f7f7f9;
+}
+.helpNtraining-result .search-result__listing {
+    grid-template-columns: repeat(2, 1fr);
+}
+.search-result__listing{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+.slds-box{
+    padding: 0px 0px 0px 0px;
+    display: flex;
+    flex-direction: row-reverse;
+    background-color: #f7f7f9;
+    border: 0;
+}
+.search-result__listing span{
+    display: block;
+    position: absolute;
+    display: none;
+}
+.helpNtraining-result .search-result__cat{
+    padding: 7px 0px 0px 0px;
+    color: #333333;
+    font-family: "akkuratLight";
+}
+.helpNtraining-result .search-result__readMore{
+    padding: 14px 0 0 0;
+    font-size: 1rem;
+    font-family: "akkuratLight";
+    height: 32px;
+}
+.helpNtraining-result .search-result__readMore .slds-m-left_x-small{
+    margin: 0;
+}
+lightning-formatted-text{
+    color: #333333;
+    font-family: "akkuratBold";
+}
+lightning-formatted-date-time{
+color: #333333;
+font-family: "akkuratBold";
+}
+.articleInfo{
+    padding-right: 45px;
+    padding-left: 15px;
+}
+.cPcThemeLayout .body-inner .slds-button_brand{
+    font-size: 1rem;
+    background-color: #0063d2;
+    color: #ffffff;
+    border-radius: 4px;
+    font-family: "akkuratLight";
+    height: 32px;
+}
+@media (max-width: 767px){
+    .helpNtraining-result.singleTile .search-result__listing .search-result__item{
+        overflow: hidden;
+    }
+    .search-.search-result__listing[c-prmEventDetails_prmEventDetails], .slds-box[c-prmEventDetails_prmEventDetails]{
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .search-result__img{
+        overflow: hidden;
+    }
+}

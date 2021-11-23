@@ -1,0 +1,255 @@
+<!--
+===============================================================================================================================
+Class : SimReplacementController
+Developer Name : Shubhi
+Test Class : SimReplacementControllerTest
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description
+1.        Shubhi Vijayvergia  21/3/2018     Edge-53882 MAC page for Sim Replacement action in addition to modify and cancel.
+                							We are slecting mobility subscription and raising sim replacemnet orders
+2.		  Ankit Goswami       02/09/2020    EDGE-166431 & EDGE-165020
+3.		  Ankit Goswami       22/09/2020    EDGE-167254 
+4.		  Ankit Goswami		  10/06/2020    EDGE-169091
+5.   Vamsi Krishna Vaddipalli 26OCT2021     DIGI-17911  Sim Replacement splunk logger
+===============================================================================================================================
+-->
+<aura:component controller="SimReplacementController" implements="flexipage:availableForAllPageTypes" access="global" >
+	<aura:dependency resource="markup://force:*" type="EVENT"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isListNotPresent" type="boolean" default="true"/>
+	<aura:attribute name="NoSearchRecord" type="boolean" default="false"/>
+    <aura:attribute name="acc" type="Account"/>
+	<aura:attribute name="columns" type="List" default="[]"/>
+	<aura:attribute name="data" type="List" default="[]"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="sortedBy" type="String"/>
+    <aura:attribute name="sortedDirection" type="String"/>
+    <aura:attribute name="resizeColumnDisabled" type="Boolean" default="false"/>
+    <aura:attribute name="defaultSortDirection" type="String"/>
+    <aura:attribute name="filteredData" type="List" />
+    <aura:attribute name="filter" type="String" />
+	<aura:attribute name="SelectedSubsID" type="List" default="[]"/>
+    <aura:handler 	event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="isError" type="boolean" default="false" />
+    <aura:attribute name="accountId" type="Id" />	
+    <aura:attribute name="showSpinner" type="boolean" default="false"/>
+    <aura:attribute name="wrapList" type="SubWrapper[]"/>
+    <aura:attribute name="SelectedAddress" type="string"/>
+    <aura:attribute name="SelectedDelivery" type="string"/>
+    <aura:attribute name="draftValues" type="Object" default="[]"/>
+    <aura:attribute name="isAddress" type="boolean" default="false"/>
+	<aura:attribute name="isContact" type="boolean" default="false"/>
+	<aura:attribute name="isOpen" type="boolean" default="false"/>  
+    <aura:attribute name="selectedLookUpRecord" type="SubWrapper" />
+    <aura:attribute name="selectedLookUpContactRecord" type="SubWrapper" />
+    <aura:attribute name="SelectedRow" type="Object" default="[]"/>
+    <aura:attribute name="disabledSubmitOrder" type="boolean" default="false"/>
+    <aura:attribute name="filteredData2" type="List" />
+    <aura:attribute name="selectedRows" type="List" default="[]"/>
+    <aura:attribute name="actionTypeSelected" type="string"/>
+    <aura:attribute name="tNowCaseRef" type="string"/><!--EDGE-132715-->
+    <aura:attribute name="IsBack" type="boolean" default="false"/>
+    <aura:attribute name="disabledDeliverySearch" type="boolean" default="true" description="To disable address and contact search if sim dispatched required is false"/>
+    <aura:attribute name="SelectReplacereason" type="string" default=""/> <!--EDGE-166431 -->
+	<aura:attribute name="SimType" type="boolean" default="false"/><!--EDGE-165020 -->
+	<aura:attribute name="IsExistingSIMTypValue" type="boolean" default="false"/><!--EDGE-165020 -->
+	 <aura:attribute name="ExistingSIMTypValue" type="string" default=""/><!--EDGE-165020 -->
+	<aura:attribute name="picklistValues" type="list"/><!--EDGE-165020 -->
+	<aura:attribute name="simTypeSelected" type="string"/><!--EDGE-165020-->
+	<aura:attribute name="simValidList" type="List" /><!--EDGE-167254-->
+    <aura:attribute name="errors" type="Object"/><!--EDGE-167254-->
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/><!--EDGE-167254-->
+    <aura:attribute name="disabledqualifySIM" type="boolean" default="true"/><!--EDGE-169091-->
+	<aura:attribute name="errorsForInvalid" type="boolean" default="false"/><!--EDGE-169091-->
+     <aura:attribute name="dateTimeMilliseconds" type="Date"/><!--DIGI-17911-->
+       <!--Header-->
+  	<lightning:navigation aura:id="navService"/>
+    <!--lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/-->
+    <aura:if isTrue="{!v.showSpinner}">
+    	<div class="slds-spinner_container">
+        <lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+    	</div>
+	</aura:if>
+
+	<aura:if isTrue="{!v.isError}">
+		<c:customToast type="error" message="{!$Label.c.Error_Loading_Component}" title="Error title" />
+	</aura:if>
+	<div aura:id="container"/>
+    <aura:if isTrue="{!v.IsBack}">
+        <div aura:id="cmpBody">
+            {!v.body}
+        </div>
+        <aura:set attribute="else">
+            <div class="slds-border_bottom slds-clearfix" style="padding: 0.25rem; background-color:white">
+                <!--EGDGE-87725 UI Changes-->    
+                <h4 class="slds-float_left" style="padding: 0 .25rem; font-size: x-large; color: #7d7d7d;">SIM Replacement Order</h4>
+                <p class="slds-float_left" style="padding:0.75rem; color: #7d7d7d;">SIM replacement at no charge to existing customers. Once submitted, this order will be processed immediately, average delivery time 2 business days.</p>
+            </div>    
+            <div class="slds-is-relative">
+                <aura:if isTrue="{!v.Spinner}">
+                    <div aura:id="spinnerId" class="slds-spinner_container">
+                       <div class="slds-spinner--brand  slds-spinner slds-spinner--large " role="alert">
+                         <span class="slds-assistive-text">Loading</span>
+                         <div class="slds-spinner__dot-a"></div>
+                         <div class="slds-spinner__dot-b"></div>
+                       </div>
+                    </div>
+                </aura:if>
+                <p class="slds-page-header__title slds-truncate" title=""></p><br/>
+                <lightning:input type="search" onchange="{!c.filter}" value="{!v.filter}"  placeholder="Search with Service ID" /><br/>
+                <!--- Subscriptions table--> 
+                <div>
+                    <lightning:datatable 
+                       aura:id="subscriptionTable"                                
+                       columns="{! v.columns}"
+                       data="{! v.filteredData}"
+                       keyField="SubscriptionID"
+                       resizeColumnDisabled="{!v.resizeColumnDisabled}"
+                       sortedBy="{! v.sortedBy}"              
+                       sortedDirection="{!v.sortedDirection}"
+                       defaultSortDirection="{!v.defaultSortDirection}"
+                       onsort="{!c.updateColumnSorting }" 
+                       onrowaction="{!c.handleRowAction}"
+                       draftValues="{!v.draftValues}"
+                       oncellchange="{!c.onInlineEdit}"                
+                       onsave="{! c.handleSaveEdition}"
+                       errors="{!v.errors}"
+                     />
+                    <aura:if isTrue="{!v.NoSearchRecord}">
+                        <span><b>There are no subscriptions that matches your search criteria.</b></span><br/>
+                    </aura:if>
+                </div>	
+                <br/><br/>
+                <div class="slds-grid slds-grid--align-end">
+                <lightning:button 
+                                  class="slds-button slds-button_text-destructive"  
+                                  iconPosition="left" 
+                                  label="Back" 
+					  onclick="{!c.ModalOpen}"
+				/>	
+              
+				<lightning:button 
+						  class="slds-button slds-button--brand" 
+						  label="Qualify SIM Serial" 
+						  iconPosition="left"  
+						  variant="brand" 
+						  onclick="{!c.qualifySIMSerial}"
+                          disabled="{!v.disabledqualifySIM}" 
+						  /><!--EDGE-169091 added disbaled-->
+                    <lightning:button 
+                                      class="slds-button slds-button--brand" 
+                                      label="Submit Order" 
+                                      iconPosition="left"  
+                                      variant="brand" 
+                                      onclick="{!c.SubmitOrder}"
+                                      disabled="{!v.disabledSubmitOrder}"/>
+                <!--button class="slds-button slds-button-brand" onclick="{!c.onCancel}">Testing</button--> 
+                </div>
+            </div>
+        </aura:set>
+    </aura:if>
+    <!--Modal popup for lookup-->
+     <div class="slds-m-around_xx-large">
+		 <aura:if isTrue="{!v.isOpen}">
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+						<aura:if isTrue="{!v.isAddress}">				  
+							<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delivery Address</h2>
+							 <!--###### MODAL BOX BODY Part Start######-->
+                            <div style="height:250px" class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                <c:customDeliveryLookup objectAPIName="{!v.accountId}" isContact="{!v.isContact}" isAddress="{!v.isAddress}" selectedRecord="{!v.selectedLookUpRecord}" />
+                            </div>                            
+						</aura:if>
+                        <aura:if isTrue="{!v.isContact}">
+								<h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">Delivery Contact</h2>
+								<div style="height:250px" class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                               	 <c:customDeliveryLookup objectAPIName="{!v.accountId}" isContact="{!v.isContact}" isAddress="{!v.isAddress}" selectedRecord="{!v.selectedLookUpContactRecord}" />
+                            	</div>
+                            <div style="float:left;position: absolute; bottom: 15%; left: 2.5%; ">
+                                From the <a href="{!'/lightning/r/' +v.accountId+ '/related/AccountContactRelations/view'}" target="_blank"><u>Account</u></a> screen, you can edit existing Contact Roles, or add a new Role.
+                            </div>
+                        </aura:if>
+						<!--EDGE-165020 added By ankit || start -->
+						 <aura:if isTrue="{!v.SimType}">
+								<h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">SIM TYPE</h2>
+								<div style="height:250px" class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+								<lightning:select aura:id="schType2" name="schType2" label="Requested SIM Type" value="{!v.simTypeSelected}">
+									<aura:iteration items="{!v.picklistValues}" var="item">
+										 <option value="{!item}">{!item}</option>
+									</aura:iteration>
+								</lightning:select>
+                            </div>
+                        </aura:if>
+					<!--EDGE-165020 added By ankit || END -->
+                    </header>                   
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel }"/>
+                        <lightning:button variant="brand" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{! c.onSaveSelect }"/>
+						<aura:if isTrue="{!v.SimType}">	<!--EDGE-165020 added By ankit-->		
+								<aura:set attribute="else">
+									<lightning:button variant="brand" 
+												  label="Add New"
+												  title="Add_new"
+											  onclick="{! c.onAddNew }"/>
+								</aura:set>
+						</aura:if>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+        </aura:if>
+	   <!--EDGE-167254 ||Start-->
+        <aura:if isTrue="{!v.isModalOpen}">
+             
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.onCancel}"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"  style="font-weight: bold;"><p>Leave page?</p></h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content slds-p-around_medium" style="text-align: center;" id="modal-content-id-1">
+                        Changes that you made may not be saved
+                            
+                    </div>
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{!c.onCancel }"/>
+                        <lightning:button variant="brand"
+                                          label="Leave"
+                                          title="Leave"
+                                          onclick="{!c.onLeave}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+		 <!--EDGE-167254 ||End-->
+    </div>
+</aura:component>

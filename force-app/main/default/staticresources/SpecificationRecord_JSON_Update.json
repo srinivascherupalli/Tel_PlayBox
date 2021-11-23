@@ -1,0 +1,1 @@
+{ "code": "PS_000049_Fulfilment", "name": "IP Site_Fulfilment", "description": "",  "cpqAttributes": {}, "attributes": {   "IP Site Offer Type": {     "value": "Connected Workplace",     "type": "ui"   },"Contract Term": {     "value": "30",     "type": "uiLOV"   },"__targetSystem": {"value": "FULFILMENT","type": "string"}}, "nonCommercialAttributes": []}

@@ -1,0 +1,89 @@
+<template>
+    <h1><b>Search Numbers:</b></h1>
+    <template if:true={visible}>
+        <div class="slds-notify_container">
+            <div class={outerClass} role="status">
+                <span class="slds-assistive-text">{type}</span>
+                <span class={innerClass} title={message}>
+                    <lightning-icon icon-name={getIconName} alternative-text="icon"
+                        styleclass="slds-icon slds-icon_small" variant="inverse" size="small"></lightning-icon>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small">{message}</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <lightning-button-icon icon-name="utility:close" size="small" variant="border-filled"
+                        class="slds-button slds-button_icon slds-button_icon-inverse" alternative-text="next"
+                        onclick={closeModel}></lightning-button-icon>
+                </div>
+            </div>
+        </div>
+    </template>
+    <div class="slds-box slds-theme_shade c-container">
+        <template if:true={loadingSpinner}>
+            <div>
+                <lightning-spinner variant="brand" size="large" alternative-text="loading">
+                </lightning-spinner>
+            </div>
+        </template>
+        <!-- <div style="font-weight: bold">Number Parameters</div> -->
+        <lightning-layout multiple-rows="true">
+            <lightning-layout-item padding="around-small" size="3">
+                <lightning-input label="Quantity" type="number" id="txtQty" value={numberReserve.quantity}
+                    onchange={handleQuantityChange}>
+                </lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="3">
+                <lightning-combobox label="Search Type" id="cbxSearchType" value={numberReserve.selectedSearchType}
+                    placeholder="Select Search Type" options={numberReserve.searchTypeList}
+                    onchange={handleSearchTypeChange}>
+                </lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="3">
+                <lightning-combobox label="Pattern Type" id="cbxPatternType" value={numberReserve.selectedPatternType}
+                    placeholder="Select Pattern Type" options={numberReserve.patternList}
+                    onchange={handlePatternTypeChange}></lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="3">
+                <lightning-input label="Pattern" type="text" id="txtPattern" maxlength="8"
+                    value={numberReserve.reqPattern} onchange={handlePatternChange}>
+                </lightning-input>
+            </lightning-layout-item>
+        </lightning-layout>
+        <h2><b>Geo Parameters:</b></h2>
+        <lightning-layout multiple-rows="true">
+            <lightning-layout-item padding="around-small" size="3">
+                <lightning-combobox label="Area Code" id="cbxAreaCode" value={numberReserve.selectedAreaCode}
+                    options={numberReserve.areaCodeList} placeholder="Select Area Code" onchange={handleAreaCodeChange}>
+                </lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="3">
+                <br />
+                <p class="field-title"><b>-- OR --</b></p>
+            </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="3">
+                <c-lwc-lookup id="txtAddress" object-api-name="cscrm__Address__c" filter-string={filterString}
+                    search-fields={searchFields} hide-search-fields="true" lookup-label="Address" icon-name="standard:account"
+                    onrecordselection={handleAddressselection}>
+                </c-lwc-lookup>
+                <!-- <lightning-input label="Address" type="text" id="txtAddress" value="">
+                </lightning-input> -->
+                <lightning-button id="btnAddAddress" variant="base" label="Manually add Address" title="Add Address"
+                    onclick={handleAddAddress} icon-name="utility:add" icon-position="left"></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="3">
+                <lightning-input type="checkbox" id="chkSameExchange" checked={numberReserve.sameExchange}
+                    label="Only show numbers under same Exchange" onchange={handleChangeSameExchange}></lightning-input>
+            </lightning-layout-item>
+        </lightning-layout>
+        <lightning-layout>
+            <lightning-layout-item alignment-bump="left" size="3">
+                <lightning-button label="Clear" class="slds-var-m-right_medium" variant="brand-outline"
+                    onclick={handleClearButtonClick}>
+                </lightning-button>
+                <lightning-button label="Search" variant="brand" onclick={handleSearchNumbers}>
+                </lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+</template>

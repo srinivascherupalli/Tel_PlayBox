@@ -1,0 +1,71 @@
+<!-- *******************************************************************
+DIGI        -15723
+Created Date   -10 OCT 2021
+Description -To show Product Zone details for the sites
+Author      -Ajith Kumar
+************************************************************************* -->
+<template>
+    <template if:false={loaded}>
+        <lightning-spinner alternative-text="Loading"></lightning-spinner>
+    </template>
+    <template if:true={loaded}>
+        <div class="slds-clearfix">
+            <lightning-button label="Refresh" title="Refresh" onclick={handleRefresh} icon-name="utility:refresh" class="slds-float_right slds-p-bottom_small">
+            </lightning-button>
+        </div>
+        <lightning-accordion  allow-multiple-sections-open active-section-name={activeSections}> 
+            <lightning-accordion-section class="slds-p-bottom_medium"  name="ProductZoneInfo"  label="Product Zone Information">
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item class="customPadding" size="6">        
+                        <lightning-input class="slds-form-element_readonly" type="text" readonly="true" label="Telstra Fibre / NBN EE Zone" value={zone}>                            
+                        </lightning-input>                        
+                    </lightning-layout-item> 
+                    <lightning-layout-item class="customPadding" size="6">                            
+                        <lightning-input class="slds-form-element_readonly" type="text" readonly="true" label="Assurance SLA" value={sla}>                            
+                        </lightning-input>                        
+                    </lightning-layout-item> 
+                    </lightning-layout>
+                <lightning-layout>
+                    <lightning-layout-item class="customPadding"  size="6">                           
+                        <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="MDN" value={mdn}>                            
+                        </lightning-input>                           
+                    </lightning-layout-item> 
+                    <lightning-layout-item class="customPadding" size="6">
+                        <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Last Verification Date" value={lastVerificationDate} >                            
+                        </lightning-input>
+                    </lightning-layout-item> 
+                </lightning-layout><br/>
+                <lightning-layout>
+                    <lightning-layout-item class="customPadding" size="12">
+                        <div><b>Products Availability</b></div>
+                    </lightning-layout-item>
+                </lightning-layout><br/>
+                <lightning-layout>
+                    <lightning-layout-item class="customPadding" size="12">
+                        <lightning-datatable
+                                    key-field="id"
+                                    data={productAvailability}
+                                    columns={columnsProductAvailability}
+                                    hide-checkbox-column="true">
+                        </lightning-datatable>
+                    </lightning-layout-item>
+                </lightning-layout><br/>
+                <lightning-layout>
+                    <lightning-layout-item class="customPadding" size="12">
+                        <div><b>Vendor Maintenance</b></div>
+                    </lightning-layout-item>
+                </lightning-layout><br/>
+                <lightning-layout>
+                    <lightning-layout-item class="customPadding" size="12">
+                        <lightning-datatable
+                                    key-field="id"
+                                    data={maintenanceAvailability}
+                                    columns={columnsVendorMaintenance}
+                                    hide-checkbox-column="true">
+                        </lightning-datatable>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-accordion-section> 
+        </lightning-accordion>
+    </template> 
+</template>

@@ -1,0 +1,206 @@
+<!-- 
+Created By          :   Sravanthi
+Created Date        :   26-August-2021
+Story               :   TEAM SFO Sprint 21.12 DIGI-8926
+Desc                :   TEAM SFO Sprint 21.12 DIGI-8926 This is used for Teams Component Display 
+-->
+<template>
+    <lightning-card class="slds-text-align_center">
+        <slot name="title" class="widthExpanded slds-text-heading--medium">
+            <h1>{title}</h1>
+        </slot>
+        <template if:true={isModalOpen}>
+            <section role="dialog" tabindex="-1" aria-label="Pop Up Messages for remove functionality" aria-modal="true"
+                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close">
+                            <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h3 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{confirmationHeader}</h3>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>{confirmationPopUpMessage}</p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={closeModal}>Cancel</button>
+                        <button class="slds-button slds-button_destructive"
+                            onclick={onRemoveSave}>{confirmationSaveButton}</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+        <template if:true={isErrorMsg}>
+            <div class="slds-align_absolute-center slds-theme-info--msg slds-p-around--small">
+                <lightning-icon icon-name="utility:info" size="medium" alternative-text="Info" title="Info">
+                </lightning-icon>
+                <span class="slds-p-around--small">{isErrorMsg}</span>
+            </div>
+            <div class="slds-modal__footer">
+                
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <lightning-button label="Finish" class="slds-m-right_small" name="Finish" onclick={cancel}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template if:false={isErrorMsg}>
+            <div class="slds-table_edit_container slds-is-relative">
+
+                <div class="slds-p-around_large slds-is-relative">
+                    <table class="slds-table slds-table_bordered
+                        slds-border_right 
+                        slds-border_left 
+                        slds-border_bottom 
+                        slds-border_top 
+                        slds-table--opptyTeamMember " role="grid">
+
+                        <thead>
+                            <tr class="">
+                                <th scope="col" class="slds-is-resizable slds-is-sortable">
+                                    <template if:true={isDefaultTeamCmp}>
+                                        <lightning-input aura:id="checkboxSelectAll" type="checkbox"
+                                            variant="label-hidden" onchange={onselectAll} checked={selectAll}>
+                                        </lightning-input>
+                                    </template>
+                                </th>
+                                <th scope="col" class="slds-is-resizable slds-is-sortable">
+                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                        role="button" tabindex="0">
+                                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                            <span class="slds-required">*</span>
+                                            <span class="slds-truncate">User</span>
+                                        </div>
+                                    </a>
+                                </th>
+                                <th scope="col" class="slds-is-resizable slds-is-sortable">
+                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                        role="button" tabindex="0">
+                                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                            <span class="slds-required">*</span>
+                                            <span class="slds-truncate">Member role</span>
+                                        </div>
+                                    </a>
+                                </th>
+                                <th scope="col" class="slds-is-resizable slds-is-sortable">
+                                    <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                        role="button" tabindex="0">
+                                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                            <span class="slds-required">*</span>
+                                            <span class="slds-truncate">Member access</span>
+                                        </div>
+                                    </a>
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            <template for:each={teamList} for:item="teammem" for:index="index">
+                                <!-- <div class="slds-p-around_xxx-small" key={teammem.Id}> -->
+                                <tr class=" slds-line-height_reset slds-hint-parent slds-p-around_xxx-small" key={teammem.Id}>
+                                    <td class="slds-cell-edit" role="gridcell">
+                                        <template if:true={isDefaultTeamCmp}>
+                                            <lightning-input type="checkbox" variant="label-hidden"
+                                                checked={teammem.isSelected} onchange={onselect}
+                                                disabled={teammem.alreadyTeam} data-index={index}> </lightning-input>
+                                        </template>
+                                        <template if:false={isDefaultTeamCmp}>
+                                            <span class="slds-row-number"></span>
+                                        </template>
+                                    </td>
+                                    <td class="slds-cell-edit" role="gridcell">
+                                        <div class="slds-table--cell">
+                                            <c-lwc-lookup object-api-name="user" filter-string={filterstring}
+                                                icon-name="standard:user" lookup-label=""
+                                                onrecordselection={handlerecordselection}
+                                                selected-value={teammem.UserName} make-readonly={teammem.exists}
+                                                selected-record-id={teammem.UserId} data-index={index} labelhide=true>
+                                            </c-lwc-lookup>
+                                        </div>
+                                    </td>
+                                    <td class="slds-cell-edit" role="gridcell">
+                                        <div class="slds-table--cell">
+                                            <lightning-combobox name="teamrole" value={teammem.TeamMemberRole}
+                                                placeholder="Select Role" options={teamMemberRoleoptions}
+                                                onchange={handleChange} data-index={index} variant="label-hidden"
+                                                read-only={teammem.alreadyTeam}>
+                                            </lightning-combobox>
+                                        </div>
+                                    </td>
+                                    <td class="slds-cell-edit" role="gridcell">
+                                        <div class="slds-table--cell">
+
+                                            <template if:false={isNonAccOwner}>
+                                                <lightning-combobox name="accesslevel" value={teammem.AccessLevel}
+                                                    placeholder="Select Access" options={acessLeveloptionsReadWrite}
+                                                    onchange={handleChange} data-index={index} variant="label-hidden"
+                                                    read-only={teammem.alreadyTeam} >
+                                                </lightning-combobox>
+                                            </template>
+                                            <template if:true={isNonAccOwner}>
+                                                <lightning-combobox name="accesslevel" value={teammem.AccessLevel}
+                                                    placeholder="Select Access" options={acessLeveloptionsReadWrite}
+                                                    onchange={handleChange} data-index={index} variant="label-hidden"
+                                                    read-only={teammem.alreadyTeam} readonly=true>
+                                                </lightning-combobox>
+                                            </template>
+                                        </div>
+                                    </td>
+                                    <td class="slds-cell-edit" role="gridcell">
+                                        <template if:false={isDefaultTeamCmp}>
+                                            <lightning-button-icon icon-name="utility:delete" alternative-text="Delete"
+                                                class="slds-m-left_xx-small" title="Delete" onclick={removeTeam}
+                                                data-index={index}></lightning-button-icon>
+                                            <span class="slds-assistive-text">Delete Icon</span>
+                                        </template>
+                                    </td>
+                                </tr>
+                                <!-- </div> -->
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="slds-modal__footer">
+                <template if:false={isDefaultTeamCmp}>
+                    <div class="slds-clearfix">
+                        <div class="slds-float_left">
+                            <lightning-button label="Add Row" class="slds-m-right_small" name="addrow"
+                                onclick={onAddRow}></lightning-button>
+                            <lightning-button label="Add from default team" class="slds-m-right_small"
+                                name="adddefaultteam" onclick={onAddDefaultTeam}></lightning-button>
+                            <lightning-button label="Remove all members" class="slds-m-right_small" name="removeallmem"
+                                onclick={onRemoveAll} disabled={isNonAccOwner}></lightning-button>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={selectOneUserError}>
+                    <div class="slds-text-align_left">
+                            <span class="slds-custom--errorMsg slds-text-color_error slds-p-left_x-small">
+                                {selectOneUserError}
+                            </span>
+                    </div>
+                </template>
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <lightning-button label="Cancel" class="slds-m-right_small" name="cancel" onclick={cancel}>
+                        </lightning-button>
+                        <lightning-button label="Save" class="slds-m-right_small" variant="brand" name="save"
+                            onclick={save}></lightning-button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>

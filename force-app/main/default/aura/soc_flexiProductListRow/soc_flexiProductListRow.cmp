@@ -1,0 +1,77 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" 
+                controller="soc_ProductListController" 
+                access="global">
+    
+        <aura:attribute name="prd" type="Object" access="global"/>
+        <aura:attribute name="serial" type="Integer" access="global"/>
+    	<aura:attribute name="visibility" type="Boolean" default="true" access="global"/>
+        <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+
+    
+    	<aura:attribute name="firstChangeDone" type="Boolean" default="false" access="global"/>
+    
+         <!--Field Dependency-->
+        <aura:attribute name="listControllingValues" type="list" default="[]" description="to store controller field values"/>
+        <aura:attribute name="listDependingValues" type="list" default="['--- None ---']" description="to store dependent field values"/>
+        <aura:attribute name="depnedentFieldMap" type="map" description="map to store dependent values with controlling value"/>
+        <aura:attribute name="bDisabledDependentFld" type="boolean" default="true"/> 
+        
+        <aura:attribute name="objDetail" type="case" default="{'sobjectType' : 'Case'}"/>
+        <aura:attribute name="controllingFieldAPI" type="string" default="soc_SFD_Product_Status__c" description="store field API name of Controller field"/>
+        <aura:attribute name="dependingFieldAPI" type="string" default="soc_SFD_Sub_Status__c" description="store field API name of dependent field"/>
+        <!--Field Dependency-->
+
+ 
+                    <tr>
+                        <td scope="row" data-label="S No.">
+                            <aura:renderIf isTrue="false"><ui:outputText aura:id="caseId"  value="{!v.prd.Id}"/></aura:renderIf>
+                            <ui:outputText  value="{!v.serial+1}"/>
+                        </td>
+                        <th scope="row" data-label="Domain">{!v.prd.soc_Domain__c}</th>
+                        <td scope="row" data-label="Product Name">
+                            <div class="slds-rich-text-area__content slds-grow slds-cell-wrap" title="Product Name">
+                                <a id="{!v.prd.soc_SFD_product_Text_ID__c}" onclick="{!c.navigateObject}" >{!v.prd.soc_Product__c}</a>
+                            </div>
+                        </td>
+                        <th scope="row" data-label="Order/Reference No">
+                            <lightning:input disabled="{!v.visibility}" aura:id="orderNumber" variant="label-hidden" value="{!v.prd.soc_Order_Number__c}" name="input2" placeholder="Number"/>
+                        </th>
+                        <th scope="row" data-label="Order Status">
+                            <lightning:select name="controllerFld" 
+                                              aura:id="orderStatus" 
+                                              class="setTop"  
+                                              variant="label-hidden"
+                          					  value="{!v.prd.soc_SFD_Product_Status__c}" 
+                                              label="Status" 
+                                              disabled="{!v.visibility}"
+                                              onchange="{!c.onControllerFieldChange}"
+                                              title="{!v.prd.soc_SFD_Product_Status__c}">
+            							<aura:iteration items="{!v.listControllingValues}" var="val">
+                							<option value="{!val}" text="{!val}" selected="{!val==v.prd.soc_SFD_Product_Status__c}" />
+            							</aura:iteration>
+        					</lightning:select>
+                        </th>
+                       <aura:if isTrue="{!!v.firstChangeDone}">
+                        <th scope="row" data-label="Order Sub-Status">
+                           <lightning:input name="input2"  disabled="true" 
+                                              variant="label-hidden" title="{!v.prd.soc_SFD_Sub_Status__c}" 
+                                              value="{#v.prd.soc_SFD_Sub_Status__c}"/>
+                        </th>
+                            <aura:set attribute="else">                               
+                                <th scope="row" data-label="Order Sub-Status">
+                                    <lightning:select name="dependentFld" 
+                                                      aura:id="orderSubStatus" 
+                                                      class="setTop"  variant="label-hidden"
+                                                      disabled="{!v.bDisabledDependentFld}"
+                                                      value="{!v.prd.soc_SFD_Sub_Status__c}" 
+                                                      label="Sub-Status"
+                                                      title="{!v.prd.soc_SFD_Sub_Status__c}">
+                                                <aura:iteration items="{!v.listDependingValues}" var="val">
+                                                    <option value="{!val}" text="{!val}" selected="{!val==v.prd.soc_SFD_Sub_Status__c}" />
+                                                </aura:iteration>
+                                    </lightning:select>
+                                </th>
+                                </aura:set>
+                         </aura:if>
+                    </tr>	
+</aura:component>

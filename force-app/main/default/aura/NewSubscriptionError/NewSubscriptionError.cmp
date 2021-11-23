@@ -1,0 +1,23 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride" access="global" >
+	
+  <div role="alertdialog" tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal--prompt">
+  <div class="slds-modal__container">
+    <div class="slds-modal__header slds-theme--error slds-theme--alert-texture">
+      <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close">
+        
+        
+      </button>
+      <h2 class="slds-text-heading--medium" id="prompt-heading-id"><b> ERROR </b></h2>
+    </div>
+    <div class="slds-modal__content slds-p-around--medium">
+      <div>
+        <p><b>A Subscription can only be generated from an order.
+                  Please follow the standard business process to generate a subscription.
+              </b></p>
+      </div>
+    </div>
+    
+  </div>
+</div>
+<div class="slds-backdrop slds-backdrop--open"></div>
+</aura:component>

@@ -1,0 +1,346 @@
+<!-- 
+@Modified By : Venkata Ramanan G
+@Sprint : R19.12 - EDGE-96379 & EDGE-108959
+@Description : Rendering the SQ buttons to be visible for solutions which requires SQ Check.Implemented as part of Adding Site functionality without SQ check in TID(Internet) Offer.
+@Modified By : Samish
+@EDGE# : EDGE-98322 - Initiate the widefeas API1 from solution console and display the SQ results against site
+@Modified by Laxmi
+@EDGE# : Sr no 3 -EDGE-98297 - TID to be offered at eligible site based on service qualification results (API1)
+@EDGE# : Sr no 4 -EDGE-98297 - Removed check for sqStatusDesc as its not needed for TID
+
+-->
+
+<apex:page controller="SCAddressSearchController" id="SCAddressSearchPage" lightningStylesheets="true" sidebar="false" showHeader="false" >
+
+
+    <apex:includeLightning />
+
+    <script>
+        console.log('Inside search page');     
+        var siteData = [];
+		var allowAddtoSolution = true;
+        window.onload = function() {
+        var offerSQcheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.offerSQcheckRequired}").value;//EDGE-108959
+        var newOfferSQcheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.newOfferSQcheckRequired}").value;//EDGE-108959
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled = true;
+             if (offerSQcheckRequired == 'Yes') {
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.sqButton}").disabled=true;
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.sqAddButton}").disabled=true;
+            }
+        }
+
+        function SelectionChanged(id, name, address, adborId, siteconfigId, nbnAvailability, nbnRFSDate, nbnTechnologyType, nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed, nbnMaxUploadSpeed, copperPairIndicator, nbnCompatibility, nbnServiceabilityClass, sqStatusDesc,telstraFibreStatus)
+        {
+            if (siteData.length>0) {
+                for (var i=0; i<siteData.length; i++){                        
+                    if (siteData[i].siteId === id){
+                        console.log("siteData.splice: ", id, name , address, adborId, siteconfigId, nbnAvailability, nbnRFSDate, nbnTechnologyType, nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed, nbnMaxUploadSpeed, copperPairIndicator, nbnCompatibility, nbnServiceabilityClass, sqStatusDesc,telstraFibreStatus);
+                        siteData.splice(i,1);
+                        UpdateSelectButton();
+                        return;
+                    }
+                }                    
+            }
+                   
+            console.log("siteData.push: ", id, name , address, adborId, siteconfigId, nbnAvailability, nbnRFSDate, nbnTechnologyType, nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed, nbnMaxUploadSpeed, copperPairIndicator, nbnCompatibility, nbnServiceabilityClass, sqStatusDesc, telstraFibreStatus);
+            //EDGE-98297 - Added telstraFibreStatus in the Site Data
+            siteData.push({siteId: id, siteName: name, siteAddress: address, adborID: adborId, ipSiteconfigId: siteconfigId, nbnAvailability: nbnAvailability, nbnRFSDate: nbnRFSDate, nbnTechnologyType: nbnTechnologyType, nbnTechnologyTypeAcrnym: nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed: nbnMaxDownloadSpeed, nbnMaxUploadSpeed: nbnMaxUploadSpeed, copperPairIndicator: copperPairIndicator, nbnCompatibility: nbnCompatibility, nbnServiceabilityClass: nbnServiceabilityClass, sqStatusDesc: sqStatusDesc,telstraFibreStatus: telstraFibreStatus });
+          //siteData.push({siteId: id, siteName: name, siteAddress: address, adborID:'141292938', ipSiteconfigId: siteconfigId});                
+          //siteData.push({siteId: id, siteName: name, siteAddress: address, adborID:'141300861', ipSiteconfigId: siteconfigId});                
+          //
+
+            UpdateSelectButton();
+        }
+
+        function UpdateSelected(id, name, address, adborId, siteconfigId, nbnAvailability, nbnRFSDate, nbnTechnologyType, nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed, nbnMaxUploadSpeed, copperPairIndicator, nbnCompatibility, nbnServiceabilityClass, sqStatusDesc,telstraFibreStatus)
+        {
+            if (siteData.length>0) {
+                for (var i=0; i<siteData.length; i++){
+                    if (siteData[i].siteId === id){
+                        console.log("found: ", id, name , address, adborId, siteconfigId, nbnAvailability, nbnRFSDate, nbnTechnologyType, nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed, nbnMaxUploadSpeed, copperPairIndicator, nbnCompatibility, nbnServiceabilityClass, sqStatusDesc,telstraFibreStatus);
+                        siteData.splice(i,1);
+                        break;
+                    }
+                }
+            }
+            console.log("replacing with: ", id, name , address, adborId, siteconfigId, nbnAvailability, nbnRFSDate, nbnTechnologyType, nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed, nbnMaxUploadSpeed, copperPairIndicator, nbnCompatibility, nbnServiceabilityClass, sqStatusDesc,telstraFibreStatus);
+           	//EDGE-98297 - Added telstraFibreStatus in the Site Data
+
+            siteData.push({siteId: id, siteName: name, siteAddress: address, adborID: adborId, ipSiteconfigId: siteconfigId, nbnAvailability: nbnAvailability, nbnRFSDate: nbnRFSDate, nbnTechnologyType: nbnTechnologyType, nbnTechnologyTypeAcrnym: nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed: nbnMaxDownloadSpeed, nbnMaxUploadSpeed: nbnMaxUploadSpeed, copperPairIndicator: copperPairIndicator, nbnCompatibility: nbnCompatibility, nbnServiceabilityClass: nbnServiceabilityClass, sqStatusDesc : sqStatusDesc,telstraFibreStatus: telstraFibreStatus});
+
+        }
+
+        function UpdateSelectButton() {
+
+ 			var offerSQcheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.offerSQcheckRequired}").value;//EDGE-108959
+            var newOfferSQcheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.newOfferSQcheckRequired}").value;//EDGE-108959
+
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=true;
+            console.log('offerSQcheckRequired>>>>>>>'+offerSQcheckRequired);
+            if(offerSQcheckRequired == 'Yes'){
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.sqButton}").disabled=false;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.sqAddButton}").disabled=false;
+            }
+            console.log("offerSQcheckRequired", offerSQcheckRequired);
+            //console.log('selectButton.disabled=false');
+            if (siteData.length>0) {
+                //EDGE-108959 if offer doesn't need SQ check no need to check anything else
+                //EDGE-98297 - Laxmi - Commented below section
+
+                //if (offerSQcheckRequired == 'No') {
+                    //offer doesn't require SQ check (master override) so SQ check buttons not needed and add to solution should be enabled
+                    //document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=false;
+                //    }
+                //EDGE-108959 end of logic
+				
+				//Sr no 4 -EDGE-98297 - Removed check for sqStatusDesc as its not needed for TID
+				// Added Below Condition  by Laxmi- For TID - the sqStatus desc check not needed
+				if(offerSQcheckRequired == 'Yes'){
+                for (var i=0; i<siteData.length; i++){
+                        if (siteData[i].sqStatusDesc == 'error' || siteData[i].sqStatusDesc == 'Error' || siteData[i].sqStatusDesc == ''){
+                        return;
+                    }
+				}
+                    //EDGE-98297 - Added below section - If the Telstra Fibre Status is blank or Available - The site shouldnt be added to solution
+
+                    // FOllowing condition checks the Telstra Fibew Status only when it is TID Offer - newOfferSQcheckRequired will be yes Only for TID
+                    if (newOfferSQcheckRequired != '' && newOfferSQcheckRequired == 'Yes' ) {  
+                    if (siteData[i].telstraFibreStatus == '' ){
+                        return;
+                    
+                    }
+                      }
+                }
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=false;
+            } else {
+                //EDGE-98297 - Added below section -For TID below buttons arent available
+ 	
+                if (offerSQcheckRequired == 'Yes') {
+ 
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.sqButton}").disabled=true;
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.sqAddButton}").disabled=true;
+                }// If end
+                
+            }//else end
+        }
+
+        function SelectAddress() {  
+ 
+
+            if (!allowAddtoSolution)
+                {
+                 	allowAddtoSolution = true;
+                    return;
+                }
+            var sqCheckEnabled = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.sqCheckEnabled}").value;
+            var sqCheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.sqCheckRequired}").value;
+            var sqCheckCompleted = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.sqCheckCompleted}").value;
+            var allowedToAdd = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.allowedToAdd}").value;
+            var caller = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.caller}").value;
+            var offerSQcheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.offerSQcheckRequired}").value;
+            console.log("sqCheckEnabled", sqCheckEnabled);
+            console.log("sqCheckRequired", sqCheckRequired);
+            console.log("sqCheckCompleted", sqCheckCompleted);
+            console.log("allowedToAdd", allowedToAdd);
+            console.log("Selected addresses", siteData);
+            console.log("caller", caller);
+            console.log("offerSQcheckRequired", offerSQcheckRequired);
+
+            var payload =
+            {
+                command: 'ADDRESS',
+                data: siteData,
+                caller: caller
+            };
+
+            if (sqCheckEnabled === 'No' || offerSQcheckRequired == 'No') {
+                window.parent.postMessage(payload, '*') ;
+                window.parent.postMessage("close", '*') ;
+    
+                sessionStorage.setItem("payload", JSON.stringify(payload));
+                sessionStorage.setItem("close", "close");
+            }
+            else {
+                if((sqCheckRequired === 'No' || (sqCheckRequired === 'Yes' && sqCheckCompleted === 'Yes')) && allowedToAdd === 'Yes') {
+                    window.parent.postMessage(payload, '*') ;
+                    window.parent.postMessage("close", '*') ;
+        
+                    sessionStorage.setItem("payload", JSON.stringify(payload));
+                    sessionStorage.setItem("close", "close");
+                }
+                else {
+                    SelectOffClick();
+                }
+            }
+        }       
+        
+        function Close() {
+            window.parent.postMessage("close", '*') ;
+            sessionStorage.setItem("close", "close");
+
+        }
+
+        function SearchStart(){
+            siteData = [];
+              var offerSQcheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.offerSQcheckRequired}").value;//EDGE-108959
+           document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.searchButton}").disabled=true;
+           if(offerSQcheckRequired == 'Yes'){
+           document.getElementById("{!$Component.SCAddressSearchPage.form1.sqButton}").disabled=true;
+           }
+           document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=true;
+           document.getElementById("{!$Component.SCAddressSearchPage.form1.cancelButton}").disabled=true;
+           document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.notificationLabel}").innerHTML  = "&nbsp;&nbsp;Searching ...";
+        }
+
+        function SearchEnd(){
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.searchButton}").disabled=false;
+          //  document.getElementById("{!$Component.SCAddressSearchPage.form1.sqButton}").disabled=false;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.cancelButton}").disabled=false;
+             //document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=false;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.notificationLabel}").innerHTML  = "";
+        }
+        
+        function sqStart(){
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.searchButton}").disabled=true;
+            if('{!offerSQcheckRequired}' == 'Yes'){ //added for EDGE-98322 by Samish
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.sqButton}").disabled=true;
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.sqAddButton}").disabled=true;
+            }
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=true;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.cancelButton}").disabled=true;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.notificationLabel}").innerHTML  = "&nbsp;&nbsp;Checking SQ ...";
+        }
+
+        function sqEnd(){
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.searchButton}").disabled=false;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.cancelButton}").disabled=false;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.notificationLabel}").innerHTML  = "";
+
+            var str = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.selectedAddressList}").value;
+            console.log("selectedAddressListStr", str);
+            var arrayList = JSON.parse(str);
+            console.log("selectedAddressList", arrayList);
+
+            if (arrayList) {
+                for (var i=0; i< arrayList.length;  i++) {
+                    
+                    UpdateSelected(arrayList[i].addressId, arrayList[i].addressName, arrayList[i].addressDisplayName, arrayList[i].adborID, arrayList[i].ipSiteconfigId, arrayList[i].nbnAvailability, arrayList[i].nbnRFSDate, arrayList[i].nbnTechnologyType, arrayList[i].nbnTechnologyTypeAcrnym, arrayList[i].nbnMaxDownloadSpeed, arrayList[i].nbnMaxUploadSpeed, arrayList[i].copperPairIndicator, arrayList[i].nbnCompatibility, arrayList[i].nbnServiceabilityClass, arrayList[i].sqStatusDesc, arrayList[i].telstraFibreStatus);
+                }
+            }
+
+            UpdateSelectButton();
+        }
+
+        function sqEndAndAdd () {
+            sqEnd();
+            if (document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled===false) {
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.sqAddButton}").disabled=true;
+                document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").click();
+            }
+        }
+
+        function SelectOnClick() {
+            var offerSQcheckRequired = document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.addressTable.offerSQcheckRequired}").value;//EDGE-108959
+        if(offerSQcheckRequired == 'Yes'){
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.sqAddButton}").disabled=true;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.sqButton}").disabled=true;
+            }
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=true;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.cancelButton}").disabled=true;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.searchButton}").disabled=true;
+         		if (offerSQcheckRequired == 'No') {  
+                  for (var i=0; i<siteData.length; i++){
+        
+                    if (siteData[i].telstraFibreStatus == '' || siteData[i].telstraFibreStatus == 'Available' ){
+                        if (siteData[i].telstraFibreStatus == 'Available')
+                            { 
+                               
+                                alert ('Telstra Fibre is available in this location. Legacy order flow will apply. Please email the TID Application form as per normal');
+                                //document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled = true;
+                                allowAddtoSolution = false;
+                                break;
+ 
+                            }
+                        
+                    }
+                      }
+              }    
+        
+        }
+        
+        function SelectOffClick() {
+
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.selectButton}").disabled=false;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.cancelButton}").disabled=false;
+            document.getElementById("{!$Component.SCAddressSearchPage.form1.addrSearchpb.searchButton}").disabled=false;
+
+            UpdateSelectButton();
+        }
+ 
+    </script>
+
+
+
+
+    <apex:form id="form1">
+
+        <div  align="right" draggable="false" style="margin:5px" >
+            <apex:commandButton value="X" id="xButton" onclick="Close()" />
+        </div>
+       
+    <apex:pageBlock title="Search Address" id="addrSearchpb" >
+                       
+        <apex:inputText id="searchLine1" label="Enter Address" value="{!searchString}"/>         
+        <apex:commandButton id="searchButton" action="{!runSearch}" value="Search" reRender="addressTable" onclick="SearchStart()" oncomplete="SearchEnd()"  />
+        <apex:outputLabel value="" id="notificationLabel" style="font-weight: bold" />     
+
+        <br/> <br/> 
+        <apex:pageMessages id="pgmsgs"/>
+
+        <apex:pageBlockSection title="Select an address" id="addressTable" columns="1">
+           
+            <apex:pageBlockTable value="{!addressList}" var="address" id="addressData" cellpadding="2" cellspacing="2"  width="100%" columnsWidth="5%,10%,20%,30%,10%25%">
+                <apex:column headerValue=" " >
+                 <!--EDGE-98297 Added by Laxmi - in the parameter list passing the  telstraFibreStatus as well-->
+
+                <apex:inputCheckbox value="{!address.isSelected}"  onchange="SelectionChanged('{!address.addressId}', '{!address.addressName}', '{!address.addressDisplayName}', '{!address.adborID}', '{!address.ipSiteconfigId}', '{!address.nbnAvailability}', '{!address.nbnRFSDate}', '{!address.nbnTechnologyType}','{!address.nbnTechnologyTypeAcrnym}' , '{!address.nbnMaxDownloadSpeed}', '{!address.nbnMaxUploadSpeed}', '{!address.copperPairIndicator}', '{!address.nbnCompatibility}', '{!address.nbnServiceabilityClass}', '{!address.sqStatusDesc}','{!address.telstraFibreStatus}')"/>
+               
+                </apex:column>                
+                <apex:column headerValue="LEGACY SITE" value="{!address.legacysite}"  />     
+                <apex:column headerValue="SITE NAME" value="{!address.addressName}"  />
+                <apex:column headerValue="SITE ADDRESS" value="{!address.addressDisplayName}" />  
+                
+                <!--Added for EDGE-98322 by Samish START-->               
+                <apex:column headerValue="TELSTRA FIBRE STATUS" value="{!address.telstraFibreStatus}" rendered="{!newOfferSQcheckRequired == 'Yes'}"/>
+                <apex:column headerValue="TELSTRA FIBRE ADDITIONAL INFO" value="{!address.telstraFibreAdditionalInfo}" rendered="{!newOfferSQcheckRequired == 'Yes'}"/>
+                <!--Added for EDGE-98322 by Samish End-->
+
+                <apex:column headerValue="SQ STATUS" value="{!address.sqStatusDesc}" rendered="{!offerSQcheckRequired == 'Yes'}" />
+                <apex:column headerValue="ADDITIONAL INFO" value="{!address.sqStatusErrorMessage}" rendered="{!offerSQcheckRequired == 'Yes'}"/>
+
+            </apex:pageBlockTable>
+            <apex:inputHidden value="{!sqCheckEnabled}" id="sqCheckEnabled" /> 
+            <apex:inputHidden value="{!sqCheckRequired}" id="sqCheckRequired" /> 
+            <apex:inputHidden value="{!sqCheckCompleted}" id="sqCheckCompleted" />      
+            <apex:inputHidden value="{!allowedToAdd}" id="allowedToAdd" />
+            <apex:inputHidden value="{!selectedAddressList}" id="selectedAddressList" />
+            <apex:inputHidden value="{!caller}" id="caller" />
+            <apex:inputHidden value="{!offerSQcheckRequired}" id="offerSQcheckRequired" />
+            <apex:inputHidden value="{!newOfferSQcheckRequired}" id="newOfferSQcheckRequired" />
+            
+            <!--<apex:inputHidden value="{!hiddenAddressList}" id="hiddenAddressList" /> -->
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    <div  align="right" draggable="false" style="margin:10px" >
+        <apex:commandButton value="Close" id="cancelButton" onclick="Close()" reRender="caller" />
+        <apex:commandButton id="sqButton" action="{!makeNBNSQCallout}" value="SQ Check" reRender="pgmsgs,addressTable,caller" onclick="sqStart()" oncomplete="sqEnd()" rendered="{!offerSQcheckRequired == 'Yes'}"/><!--action changed for EDGE-98322 by Samish-->
+
+       
+        <apex:commandButton value="Telstra Fibre Check" id="TelstraFibreCheckButton"  action="{!makeTelstraFibreSQCallout}" reRender="pgmsgs,addressTable,caller" onclick="sqStart()" oncomplete="sqEnd()" rendered="{!newOfferSQcheckRequired == 'Yes'}"/>
+        <!--Added for EDGE-98322 by Samish END-->
+        
+        <apex:commandButton value="Add to Solution" id="selectButton"  action="{!saveSelectedSitesToSfdc}" onclick="SelectOnClick()" oncomplete="SelectAddress()" rerender="pgmsgs,allowedToAdd,selectedAddressList,caller" />
+        <apex:commandButton id="sqAddButton" action="{!makeNBNSQCallout}" value="SQ Check & Add to Solution" reRender="pgmsgs,addressTable,allowedToAdd,selectedAddressList,caller" onclick="sqStart()" oncomplete="sqEndAndAdd()" rendered="{!offerSQcheckRequired == 'Yes'}"/><!--action changed for EDGE-98322 by Samish-->
+    </div>
+    </apex:form>
+</apex:page>

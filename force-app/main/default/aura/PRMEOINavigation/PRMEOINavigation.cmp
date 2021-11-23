@@ -1,0 +1,16 @@
+<aura:component>
+    <aura:attribute name="currentStep" type="String" default="1" />
+    <aura:html tag="style">
+        .slds-progress {
+        min-width:99%!important;
+        max-width:99%!important;
+        width:100%!important;
+        }
+    </aura:html>
+    <lightning:progressIndicator currentStep="{!v.currentStep}" type="base" hasError="false" variant="base">
+        <lightning:progressStep label="Contact Information" value="1" onclick="{!c.step1}" />
+        <lightning:progressStep label="Company Information" value="2" onclick="{!c.step2}" />
+        <lightning:progressStep label="Partner Information" value="3" onclick="{!c.step3}" />
+        <lightning:progressStep label="Verify and submit" value="4" onclick="{!c.step4}" />
+    </lightning:progressIndicator>
+</aura:component>

@@ -1,0 +1,92 @@
+<apex:page doctype="html-5.0" controller="cscfga.StatelessUIController" action="{!init}" showHeader="false" standardStylesheets="false" sidebar="false">
+    <div>
+        <apex:repeat var="screenSequence" value="{!screenSequences}">
+            <apex:repeat var="layout" value="{!screenSequence.layouts}">
+
+                <apex:outputText escape="false" value="{!'<script type=\"text/html\" data-cs-ref=\"' & layout.ref & '\">'}" />
+                <div class="slds-modal__header">
+                    <div class="slds-grid">
+                        <div class="slds-col">
+                            <h1 class="slds-text-heading--medium slds-m-right--small slds-truncate slds-align-middle" title="Record Title">{!layout.definition.Name}</h1>
+                        </div>
+                        <div class="slds-col slds-no-flex slds-align-bottom">
+                            <div class="CS_configButtons slds-button-group" role="group" />
+                        </div>
+                    </div>
+                </div>
+                <div id="RefineSearch" style="display:none;"> <!-- margin-left: -25px; -->
+                    <div id="slideDiv" class="slideDiv left-pos">
+
+                    </div>
+                    <a href="#" class="slideButton" onclick="togglePosition('slideDiv'); return false;" ><img style="margin: 0px 0px 0px -4px; padding: 5px 5px 3px 15px; background-color: rgb(8, 116, 211); border: 1px solid rgb(8, 116, 211); border-radius: 4px;" src="{!URLFOR($Resource.cscrm__slds, 'assets/images/fastQuote.png')}" /></a>
+                </div>
+                <div style="padding: 24px">
+                    <apex:repeat var="section" value="{!layout.sections}">
+                        <h2 class="slds-text-heading--small slds-m-top--large h2Border">{!section.name}</h2>
+                        <form role="form" class="slds-form--stacked slds-grid slds-wrap">
+                            <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2">
+                                <apex:repeat var="row" value="{!section.rows}">
+                                    <apex:outputPanel layout="none" rendered="{!NOT(row.hasFirst)}">
+                                        <apex:outputPanel layout="none" rendered="{!row.hasSecond && NOT(row.second.cscfga__Column_Span__c == 2)}">
+                                            <div class="slds-form-element slds-m-top-small">
+                                                <label class="slds-form-element__label">&nbsp;</label>
+                                                <div class="slds-form-element__control">
+                                                    <span class="slds-form-element__static">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+
+                                    <apex:outputPanel layout="none" rendered="{!row.hasFirst}">
+                                        <apex:outputPanel layout="none" rendered="{!row.first.cscfga__Type__c != ''}">
+                                            <c:AttributeTemplate2 type="{!row.first.cscfga__Type__c}" domId="{!layout.domSafeScreenName & ':' & row.first.cscfga__reference_name__c}" flavour="standard" ref="{!row.first.cscfga__reference_name__c}" definition="{!row.first}" cols="{!row.first.cscfga__Column_Span__c}" />
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                </apex:repeat>
+                            </div>
+                            <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2">
+                                <apex:repeat var="row" value="{!section.rows}">
+                                    <apex:outputPanel layout="none" rendered="{!row.hasSecond}">
+                                        <apex:outputPanel layout="none" rendered="{!row.second.cscfga__Type__c != ''}">
+                                            <c:AttributeTemplate2 type="{!row.second.cscfga__Type__c}" domId="{!layout.domSafeScreenName & ':' & row.second.cscfga__reference_name__c}" flavour="standard" ref="{!row.second.cscfga__reference_name__c}" definition="{!row.second}" cols="{!row.second.cscfga__Column_Span__c}" />
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+
+                                    <apex:outputPanel layout="none" rendered="{!NOT(row.hasSecond)}">
+                                        <apex:outputPanel layout="none" rendered="{!row.hasFirst && NOT(row.first.cscfga__Column_Span__c == 2)}">
+                                            <div class="slds-form-element slds-m-top--small">
+                                                <label class="slds-form-element__label">&nbsp;</label>
+                                                <div class="slds-form-element__control">
+                                                    <span class="slds-form-element__static">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                </apex:repeat>
+                            </div>
+                        </form>
+                    </apex:repeat>
+                    <apex:repeat var="list" value="{!layout.lists}">
+                        <div data-cs-binding="%ctx%{!list.def.cscfga__reference_name__c}_%idx%"></div>
+
+                    </apex:repeat>
+                </div>
+
+                <div class="slds-modal__footer">
+                    <div class="slds-grid">
+                        <div class="slds-col">
+                            &nbsp;
+                        </div>
+                        <div class="slds-col slds-no-flex slds-align-bottom">
+                            <div class="CS_configButtons slds-button-group" role="group" />
+                        </div>
+                    </div>
+                </div>
+                <apex:outputText escape="false" value="</script>" />
+            </apex:repeat>
+        </apex:repeat>
+
+        <cscfga:OutputRules />
+
+    </div>
+</apex:page>

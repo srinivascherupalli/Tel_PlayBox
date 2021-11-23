@@ -1,0 +1,25 @@
+.THIS.results-wrap td .slds-truncate {
+    white-space: normal!important;
+    overflow-wrap: break-word!important;
+    word-wrap: break-word!important;
+}
+.THIS .table-stl thead th span {
+background-color: #e6e6ff;
+}
+
+
+
+
+/*.THIS .slds-spinner_container::after {
+    position: relative;
+    content: 'Checking Compatibility \A We are checking compatibility of the chosen products. \A The average time needed for this process range from 5 mins to few hours. \A You can close this window without losing your progress. \A To get the latest update, Please refesh the window';
+    white-space: pre;
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}*/
+
+.THIS.toggle{
+display: none;
+}

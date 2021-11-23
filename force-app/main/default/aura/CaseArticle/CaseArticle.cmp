@@ -1,0 +1,30 @@
+<aura:component controller="CaseArticleController" implements="flexipage:availableForRecordHome,force:LightningQuickAction,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="pageTitle" type="String" default="Knowledge Articles"/>
+    <aura:attribute name="caseId" type="String"/>
+    <aura:attribute name="baseUrl" type="String"/>
+    <aura:attribute name="caseArticles" type="KnowledgeArticleVersion[]"/>
+    <aura:attribute name="articleCount" type="Integer" default='0'/>    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <div class="slds-box slds-theme_default">
+        <lightning:layout class="slds-page-header slds-page-header--object-home">
+            <lightning:layoutItem>
+                <lightning:icon iconName="custom:custom55" alternativeText="My Articles"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="horizontal-small">
+                <div class="page-section page-header">
+                    <h1 class="slds-text-heading--medium">Knowledge Articles ({!v.articleCount})</h1>
+                    <h1 class="slds-text-heading--medium">  </h1>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <br/>
+        <lightning:layout>  
+            <lightning:layoutItem>
+                <aura:iteration items="{!v.caseArticles}" var="art">
+                    <li><ui:outputURL value ="{!v.baseUrl + art.Id + '/view'}" label="{!art.Title}" target="_blank"/></li>
+                </aura:iteration>
+            </lightning:layoutItem> 
+        </lightning:layout> 			
+    </div>  
+    
+</aura:component>

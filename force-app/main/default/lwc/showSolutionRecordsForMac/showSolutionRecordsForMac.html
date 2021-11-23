@@ -1,0 +1,48 @@
+<!-- Created as Part of EDGE-141989-->
+<template>
+
+   <!--added filter screen as part of EDGE-138655-->
+    <div>
+        <span class="slds-badge">Selected Solution:{selectedRowsCount}</span><br/>
+           <!--changed placeholder as part of EDGE-149079-->
+			<lightning-input type="search" onchange={filterData}  placeholder="Search by Solution Name, Phone Number (starting with 614), Site Location or Device ID"  ></lightning-input><br/>
+	</div>
+	<div class="slds-grid slds-grid--align-end">
+		<!--a//EDGE-154023 added Add solution button by shubhi-->
+		<lightning-button   label="Add New Solution" 
+						class="slds-button"
+						variant="brand"
+						icon-name="utility:edit" 
+						icon-position="left"
+						disabled={disableAddbtn}
+						onclick={checkAndCreateNewSolution}>
+		</lightning-button>
+		<lightning-button   label="Change Solution" 
+							class="slds-button"
+							variant="brand"
+							icon-name="utility:edit" 
+							icon-position="left"
+							disabled={disablebtn}
+							onclick={checkForExistingMac}>
+		 </lightning-button><br/>
+	 </div>
+	 <template if:true={showMacError}>
+		<div class="slds-text-body_small slds-text-color_error " style="text-align: left;">Another MAC basket is in progress on the same solution. Please complete or cancel the other basket to progress with further MAC order.</div><br/>
+	</template>
+	<div>
+		<span><b>Select applicable Solution(s), then click ‘Change’ button to add chosen Solutions to the Product Basket where you can complete the order.</b></span><br/> 
+	</div>
+    <div>
+        <c-show-sub-cell-button-helper                         
+            columns = {columns} 
+            data = {filteredData}
+            key-field = "SolutionID"
+            onrowselection = {handleRowSelection}
+            onshowpoponsub ={showpoponsub}
+            onrowaction={handleRowAction}>                
+        </c-show-sub-cell-button-helper>
+        <div if:true={NoSearchRecord}>
+          <span> <b> There are no subscriptions that matches your search criteria.</b></span></div>
+
+    </div>
+</template>

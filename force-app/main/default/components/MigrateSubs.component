@@ -1,0 +1,506 @@
+<apex:component controller="cssmgnt.SolutionManagementController" extensions="MigrateSubscriptionsController" access="public" >
+    <apex:attribute name="appMode"
+        description="Loads solution console in either UI mode or API mode"
+        type="String"
+        required="false"
+        access="public"
+        default="api"
+    />
+    <apex:attribute name="resourceUrl"
+        description="Set path for solution console app so we can load assets (for standalone mode)"
+        type="String"
+        required="false"
+        access="public"
+    />
+    <apex:attribute name="standaloneMode"
+        description="Loads solution console to either use visualforce remoting manager or jsForce rest services."
+        type="Boolean"
+        required="false"
+        access="public"
+    />
+    <apex:attribute name="loadScripts"
+        description="Whether to load plugins or not"
+        type="Boolean"
+        required="false"
+        access="public"
+        default="true"
+    />
+    <div id="root"></div>
+    <apex:includeScript value="{!URLFOR($Resource.MigrateSubs, '/runtime-main.js?test=1')}" />
+    <apex:includeScript value="{!URLFOR($Resource.MigrateSubs, '/main.chunk.js?test=2')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.MigrateSubs, '/main.css?test=3')}"/>
+
+    <script type='text/javascript'>
+            var appMode = '{!JSENCODE(appMode)}';
+            var standaloneMode = '{!standaloneMode}';
+
+            Visualforce.remoting.timeout = 120000;
+            Visualforce.remoting.buffer = false;
+
+            var settings = {};
+
+            if (standaloneMode === 'false' || standaloneMode === false) {
+                console.log('standaloneMode false');
+                settings = {
+                    // sf has _, react-intl requires -
+                    locale: '{!userLocale}'.replace(/_/g, '-'),
+                    defaultCurrency: '{!defaultCurrency}',
+                    weekStartDay: '{!weekStartDay}',
+                    param: {
+                         basketId: '{!JSENCODE($CurrentPage.parameters.basketId)}',
+                        selectedSolution: '{!JSENCODE($CurrentPage.parameters.selectedSolution)}',
+                        appMode: appMode,
+                        showEditButton: {!showEditButton},
+                        basketName: "{!JSENCODE(basketName)}",
+                        toasterInterval: {!toasterInterval},
+                        stagesNotAllowingNegotiation: "{!JSENCODE(stagesNotAllowingNegotiation)}",
+                        stagesNotAllowingOE: "{!JSENCODE(stagesNotAllowingOE)}",
+                        basketStageValue:"{!JSENCODE(basketStageValue)}",
+                        showOEConsolebutton:"{!showOEConsolebutton}",
+                        numberOfSaveRetries:"{!numberOfRetries}",
+                        noOfConfigsPerDelete:"{!noOfConfigsPerDelete}",
+                        saveSetting: {
+                            saveInterval: {!saveInterval}, // milliseconds
+                            saveChunkSize: {!noOfConfigsPerSave},
+                        },
+                        changeProcessAsync:{!changeProcessAsync},
+                        useInMemoryMACD: {!useInMemoryMACD},
+                        macdConfigBatchSize: {!macdConfigBatchSize},
+                        accountId : '{!JSENCODE($CurrentPage.parameters.accountId)}',
+                        novation : '{!JSENCODE($CurrentPage.parameters.novation)}',
+                        retURL : '{!JSENCODE($CurrentPage.parameters.retURL)}'
+                    },
+                    asset : {
+                        approval : "{!URLFOR($Asset.SLDS, 'assets/icons/action-sprite/svg/symbols.svg#approval')}"
+                    },
+                    vfRemotingManager: Visualforce.remoting.Manager,
+                    resourceUrl: "",
+                    standaloneMode: false,
+                    connectionType: 'visualForceRemoting',
+                    dispatcherServiceRestEndpoint: "{!dispatcherServiceRestEndpoint}",
+                    migrateSubscriptionAddtionalAttributes: '{!JSENCODE(migrationAttributes)}',
+                    migrateSubscriptionMetadata : '{!JSENCODE(fieldMetadata)}',
+                    basketSummaryAttributes : '{!JSENCODE(basketSummaryAttributes)}',
+                    actions: {
+                        getDispatcherServiceSecurityToken: "{!$RemoteAction.SolutionManagementController.getDispatcherServiceSecurityToken}",
+                        getSolutionsAndOptions: "{!$RemoteAction.SolutionManagementController.getSolutionsAndOptions}",
+                        getSolutionProcessingStatus: "{!$RemoteAction.SolutionManagementController.getSolutionProcessingStatus}",
+                        getLookupValues: "{!$RemoteAction.SolutionManagementController.getLookupValues}",
+                        performAction: "{!$RemoteAction.SolutionManagementController.performAction}",
+                        deleteSolution: "{!$RemoteAction.SolutionManagementController.deleteSolution}",
+                        cloneSolution: "{!$RemoteAction.SolutionManagementController.cloneSolution}",
+                        getConfigEditPageURL: "{!$RemoteAction.SolutionManagementController.getConfigEditPageURL}",
+                        createNewSolution: "{!$RemoteAction.SolutionManagementController.createNewSolution}",
+                        getSolutionTemplates: "{!$RemoteAction.SolutionManagementController.getSolutionTemplates}",
+                        getFilteredSolutionTemplates: "{!$RemoteAction.SolutionManagementController.getFilteredSolutionTemplates}",
+                        getAvailableAddOns: "{!$RemoteAction.SolutionManagementController.getAddOnsForCommercialProduct}",
+                        getDynamicLookup: "{!$RemoteAction.SolutionManagementController.getDynamicLookup}",
+                        submitSolution: "{!$RemoteAction.SolutionManagementController.submitSolution}",
+                        addConfigurationsToMAC: "{!$RemoteAction.SolutionManagementController.addConfigurationsToMAC}",
+                        addConfigurationsToInflight: "{!$RemoteAction.SolutionManagementController.addConfigurationsToInflight}",
+                        createMACBasketForSolution: "{!$RemoteAction.SolutionManagementController.createMACBasketForSolution}",
+                        createInflightBasketForSolution: "{!$RemoteAction.SolutionManagementController.createInflightBasketForSolution}",
+                        postMACDProcessing: "{!$RemoteAction.SolutionManagementController.postMACDProcessing}",
+                        getSolutionAndPricingDetails: "{!$RemoteAction.SolutionManagementController.getSolutionAndPricingDetails}",
+                        recalculateTotals: "{!$RemoteAction.SolutionManagementController.recalculateTotals}",
+                        checkIfBatchJobRunningOnBasket: "{!$RemoteAction.SolutionManagementController.checkIfBatchJobRunningOnBasket}",
+                        getMACDResults: "{!$RemoteAction.SolutionManagementController.getMACDResults}",
+                        deleteConfigurations: "{!$RemoteAction.SolutionManagementController.deleteConfigurations}",
+                        getConfigurationPricing: "{!$RemoteAction.SolutionManagementController.getConfigurationPricing}",
+                        updateBasketDetails: "{!$RemoteAction.SolutionManagementController.updateBasketDetails}",
+                        setQBSConfigurations: "{!$RemoteAction.SolutionManagementController.setQBSConfigurations}",
+                        splitQBSConfiguration: "{!$RemoteAction.SolutionManagementController.splitQBSConfiguration}",
+                        getAllowedConfigurationsForInflight: "{!$RemoteAction.SolutionManagementController.getAllowedConfigurationsForInflight}",
+                        getConfigSubscriptionIds: "{!$RemoteAction.SolutionManagementController.getConfigSubscriptionIds}",
+                        getMCR: "{!$RemoteAction.MigrateSubscriptionsController.loadMigrations}",
+                        getLookupData : "{!$RemoteAction.MigrateSubscriptionsController.getLookupData}",
+                        getSolutionData : "{!$RemoteAction.MigrateSubscriptionsController.getFieldTableSolutions}",
+                        getSubscriptionData : "{!$RemoteAction.MigrateSubscriptionsController.getFieldTableSubscriptions}",
+                        upsertMCR : "{!$RemoteAction.MigrateSubscriptionsController.createMigrationJob}",
+                        getMCRDetails : "{!$RemoteAction.MigrateSubscriptionsController.loadMigrations}",
+                        createBasketWithSolution : "{!$RemoteAction.MigrateSubscriptionsController.createMacBasketOppty}",
+                        addSolutionToBasket : "{!$RemoteAction.MigrateSubscriptionsController.addSolutionToBasket}",
+                        checkIsBatchJobRunning : "{!$RemoteAction.MigrateSubscriptionsController.checkIsBatchJobRunning}",
+                        processBasket: "{!$RemoteAction.MigrateSubscriptionsController.processAllBasket}",
+                        createDatabaseMACDSolution : "{!$RemoteAction.MigrateSubscriptionsController.createDatabaseMACDSolution}",
+                        getConfigurationGUID : "{!$RemoteAction.MigrateSubscriptionsController.getSubscriptionGuids}",
+                        updateMCR : "{!$RemoteAction.MigrateSubscriptionsController.updateMCR}",
+                        submitMCR : "{!$RemoteAction.MigrateSubscriptionsController.submitMCR}",
+                        getCompiledLabels: "{!$RemoteAction.SolutionManagementController.getCompiledLabels}",
+                        getStandardPriceBook: "{!$RemoteAction.SolutionManagementController.getStandardPriceBook}",
+                        getBasketDetails : "{!$RemoteAction.MigrateSubscriptionsController.getBasketDetails}"
+                    },
+                    session: {
+                        id: '{! $Api.Session_Id }',
+                        username: '{! $User.Username }',
+                        loginHost: '{! loginHost }',
+                        includeLogs: '{! includeLogs }',
+                        organizationId: '{! organizationId }'
+                    },
+                    labels: {
+                        mcrTable  : {
+                            status : '{!$ObjectType.Migration_Change_Request__c.Fields.migration_status__c.Label}',
+                            targetSolution : '{!$ObjectType.Migration_Change_Request__c.Fields.target_solution_id__c.Label}',
+                            sourceSolution : '{!$ObjectType.Migration_Change_Request__c.Fields.selected_source_solution_ids__c.Label}',
+                            sourceSubscription   : '{!$ObjectType.Migration_Change_Request__c.Fields.selected_subscription_ids__c.Label}'
+                        },
+                        activeMigrationsTitle: '{!$Label.activeMigrationsTitle}',
+                        createNew: '{!$Label.createNew}',
+                        errorFetchingMCRList: '{!$Label.errorFetchingMCRList}',
+                        migrateSubsTitle: '{!$Label.migrateSubsTitle}',
+                        selectSolutionDescription: '{!$Label.selectSolutionDescription}',
+                        selectSourceSolutionsSectionTitle: '{!$Label.selectSourceSolutionsSectionTitle}',
+                        selectTargetSolutionSectionTitle: '{!$Label.selectTargetSolutionSectionTitle}',
+                        targetSolution: '{!$Label.targetSolution}',
+                        startMigration: '{!$Label.startMigration}',
+                        createNewSolution: '{!$Label.createNewSolution}',
+                        newSolution: '{!$Label.newSolution}',
+                        selectTargetSolutionDescription: '{!$Label.selectTargetSolutionDescription}',
+                        validSolution: "{!$Label.MigrateSubs_ValidStatus}",
+                        errorSolution: "{!$Label.MigrateSubs_ErrorStatus}",
+                        solutionName:"{!$Label.MigrateSubs_SolutionName}",
+                        migrationSummaryTitle: "{!$Label.MigrateSubs_MigrationSummaryTitle}",
+                        completeMigrationButton: "{!$Label.MigrateSubs_CompleteMigration}",
+                        startMigrationMessage: "{!$Label.MigrateSubs_MigrationMessage}",
+                        closeModalWindow: "{!$Label.MigrateSubs_CloseWindow}",
+                        editBasket: "{!$Label.MigrateSubs_Editbasket}",
+                        migrationSummaryHeaderMessage:" {!$Label.MigrateSubs_MigrateSummarySubTitle}",
+                        migrationProgressError: {
+                            basketError:
+                                "{!$Label.MigrateSubs_basketError}" ,
+                            solutionAddtionError:
+                                "{!$Label.MigrateSubs_solutionAddtionError}",
+                            processBasketError:
+                                "{!$Label.MigrateSubs_processBasketError}",
+                            createMACDBasketError:
+                                "{!$Label.MigrateSubs_createMACDBasketError}"
+                        },
+                        progressBarData: {
+                            progressBar0_1: "{!$Label.MigrateSubs_progressBarStep1_0}",
+                            progressBar1_1: "{!$Label.MigrateSubs_progressBarStep1_1}",
+                            progressBar1_2: "{!$Label.MigrateSubs_progressBarStep1_2}",
+                            progressBar1_3: "{!$Label.MigrateSubs_progressBarStep1_3}",
+                            progressBar2_1: "{!$Label.MigrateSubs_progressBarStep2_1}",
+                            progressBar2_2: "{!$Label.MigrateSubs_progressBarStep2_2}",
+                            progressBar2_3: "{!$Label.MigrateSubs_progressBarStep2_3}",
+                            progressBar2_4: "{!$Label.MigrateSubs_progressBarStep2_4}",
+                            progressBar2_5: "{!$Label.MigrateSubs_progressBarStep2_5}",
+                            progressBar3_1: "{!$Label.MigrateSubs_progressBarStep3_1}",
+                            progressBar3_2: "{!$Label.MigrateSubs_progressBarStep3_2}",
+                            progressBar4_1: "{!$Label.MigrateSubs_progressBarStep4_1}",
+                            progressBar4_2:
+                                "{!$Label.MigrateSubs_progressBarStep4_2}",
+                            progressBar4_3:
+                                "{!$Label.MigrateSubs_progressBarStep4_3}",
+                            progressBar5_1: "{!$Label.MigrateSubs_progressBarStep5_1}",
+                            progressBar5_2:
+                                "{!$Label.MigrateSubs_progressBarStep5_2}",
+                            progressBar5_3:
+                                "{!$Label.MigrateSubs_progressBarStep5_3}",
+                            progressBar6_1: "{!$Label.MigrateSubs_progressBarStep6_1}"
+                        },
+                        migrationProgressError: {
+                            basketError: "{!$Label.MigrateSubs_basketError}",
+                            solutionAddtionError: "{!$Label.MigrateSubs_solutionAddtionError}",
+                            processBasketError: "{!$Label.MigrateSubs_processBasketError}",
+                            createMACDBasketError: "{!$Label.MigrateSubs_createMACDBasketError}",
+                            loadBasketError: "{!$Label.MigrateSubs_loadBasketError}",
+                            targetSolutionError: "{!$Label.MigrateSubs_targetSolutionError}",
+                            sourceSolutionError:  "{!$Label.MigrateSubs_sourceSolutionError}",
+                            guidFetchError: "{!$Label.MigrateSubs_guidFetchError}"
+                        },
+                        basket: "{!$Label.MigrateSubs_Basket}",
+                    }
+                };
+            } else {
+                settings ={
+                    // sf has _, react-intl requires -
+                    locale: '{!userLocale}'.replace(/_/g, '-'),
+                    defaultCurrency: '{!defaultCurrency}',
+                    param: {
+                        basketId: '',
+                        selectedSolution: '',
+                        appMode: appMode,
+                    },
+                    endpoint: '/cssmgnt/api/v1',
+                    connectionType: 'jsforce',
+                    session: {
+                        id: '{!$Api.Session_Id}',
+                        url: ''
+                    },
+                    standaloneMode: true,
+                    labels: {
+                        solutionConsoleHeader: 'Solution Console',
+                        backToBasketbtn: 'Back to basket',
+                        addConfiguration: 'Add configuration',
+                        addToConfiguration: 'Add to configuration',
+                        solutionList: 'Solutions',
+                        configuredProducts: 'Configured Solution',
+                        configuredSolution: 'Configured Solution',
+                        saveBtn: 'Save',
+                        editBtn: 'Edit',
+                        deleteBtn: 'Delete',
+                        errorDecimalMsg: 'Please enter a valid decimal value!',
+                        errorDateMsg: 'Please enter a valid date!',
+                        errorRequiredMsg: 'This value cannot be empty!',
+                        errorCustomMsg: 'Please enter a valid input!',
+                        addMoreConfigurations: 'Add more configurations',
+                        tooManyConfigAdded: 'Too many configurations added',
+                        pleaseSelect: 'Please select',
+                        pleaseSelectProd: 'Please select a product',
+                        totalContractValue: 'Total contract value',
+                        totalOneOffCharge: 'Total one off charge',
+                        totalRecurringCharge: 'Total recurring charge',
+                        solutionSummary: 'Solution summary',
+                        addBtn: 'Add',
+                        selectTemplateHeader: 'Select Template',
+                        cancelBtn: 'Cancel',
+                        actionLabel: 'Action',
+                        addProducts: 'Add products',
+                        selectSiteProductHeader: 'Select Site Product',
+                        addRelatedProducts: 'Add Product',
+                        networkMapBtn: 'Network Map',
+                        selectProductMessage: 'Select Product',
+                        hideRelatedProducts: 'Hide',
+                        oneOffCharge: 'One Off Charge',
+                        recurringCharge: 'Recurring Change',
+                        contractTerm: 'Contract Term',
+                        closeBtn: 'Close',
+                        oeButton: 'Order Enrichment',
+                        orderEnrichmentHeader: 'Order Enrichment Editor',
+                        saveOrderEnrichment: 'Save',
+                        stageComplete: 'Stage complete',
+                        submittedSolutionStatus: 'Active',
+                        addToMacBasket: 'Add to MAC Basket',
+                        applyButton: 'Apply',
+                        applyToAllSelectedConfigurations: 'Apply To All Selected Configurations',
+                        addToInflightBasket: 'Add to Inflight Basket',
+                        overviewEndMessage: 'To complete solution, you first need to Calculate Totals',
+                        submitSolutionLabel: 'Submit Solution',
+                        totalSolutionValue: 'Total Solution Value',
+                        overviewStartMessage: 'Please review solution summary and complete it by clicking on "Submit" button',
+                        pricingSummaryTitle:'Pricing Summary',
+                        pricingSummaryMessage: 'To get exact pricing click on "Calculate Totals" button',
+                        detailsTabTitle: 'Details',
+                        addonTabTitle: 'Add-Ons',
+                        relatedProductTabTitle: 'Related Products',
+                        siteProductTabTitle: 'Site Products',
+                        undeleteBtn: 'Undelete',
+                        oeConsoleHeader: 'Order Enrichment Console',
+                        noAvailableOEs: 'There are no available order enrichment options for this configuration',
+                        selectOE: 'Please select configuration to display',
+                        cloneConfigsHeader: 'Clone Configuration Quantity',
+                        cloneConfigNoSelect: 'You haven\'t selected any configuration to clone',
+                        export: 'Export',
+                        import: 'Import',
+                        importConfigurations: 'Import configurations',
+                        updateQuantity: 'Update Quantity',
+                        quantity: 'Quantity',
+                        couldNotFindConfInComponent: 'Could not find the configuration $1 in the component $2',
+                        orderEnrichmentsGreaterThanMax: 'The number of order enrichments in $1 cannot be greater than $2.',
+                        orderEnrichmentsLessThanMin: 'The number of order enrichments in $1 cannot be less than $2.',
+                        oELessThanQuantity: 'The number of order enrichments in $1 for the configuration $2 is already larger than the quantity requested.',
+                        number:'Number',
+                        doneBtn: 'Done',
+                        splitOrderEnrichment: 'Split Order Enrichment',
+                        abandonSaveModelButton:'Abandon Save',
+                        saveResumeDialogMessage:'Would you like to resume save?',
+                        saveResumeDialogButton:'Resume',
+                        decreasingQuantityMac: 'Quantity changes to configuration $1 not applied, the quantity cannot be decreased in a MAC basket.',
+                        pricingSummary: {
+                            contractTerm: 'Contract Term -',
+                            total: 'Total',
+                            expandConfigurationButton: 'Toggle configuration list',
+                            header: {
+                                product: 'Product',
+                                totalContractValue: 'TCV'
+                            },
+                            collapsedButtonLabel: 'Expand pricing summary sidebar',
+                            buttonLabel: 'Close pricing summary sidebar',
+                            popup: {
+                                lineItem: 'Line Item',
+                                recurring: 'Recurring',
+                                oneOff: 'One-Off',
+                                productHeader: 'Products'
+                            }
+                        },
+                        name: 'Name',
+                        pricing: 'Pricing',
+                        extrasColumnHeader: 'Extras',
+                        notificationErrorTitle: 'Error',
+                        reservedAttributeName: '$1 is a reserved attribute name and cannot be used.',
+                        taskError: 'Error while running task',
+                        updatingPicklistError: 'Error while updating picklist "$1"',
+                        updatingLookupError: 'Error while updating lookup "$1"',
+                        errorBuildingAttributeHTML: 'Error while building custom attribute html',
+                        errorClosingAttributeModal: 'Error while closing custom attribute modal',
+                        errorBuildingAttributeDisplay: 'errorBuildingAttributeDisplay',
+                        errorFetchingLookupData: 'Error while fetching lookup data',
+                        navigationFailure: 'Navigation Failure',
+                        noActiveSolution: 'No active solution',
+                        couldNotFindComponentInSolution: 'Could not find component with name "$1" in active solution.',
+                        pleaseImplementOnCustomAttributeEdit: 'Please implement CS.SM.UIPlugin.onCustomAttributeEdit when you are using custom attribute feature',
+                        PleaseImplementOnCustomAttributeClose: 'Please implement CS.SM.UIPlugin.onCustomAttributeClose when you are using custom attribute feature',
+                        PleaseImplementOnCustomAttributeFormat: 'Please implement CS.SM.UIPlugin.onCustomAttributeFormat when you are using custom attribute feature',
+                        exception: 'Exception',
+                        invalidSettings: 'Invalid settings',
+                        addConfigurationsToMACBasket: 'Add configurations to MAC basket',
+                        UnableToFindAddOn: 'Unable to find add-on "$1" with related product name "$2"',
+                        solutionServiceSingleton: 'Solution service is a singleton and should be initialised only once!',
+                        orderEnrichmentTemplateNotFound: 'Order Enrichment Template not found!',
+                        saveConfigurationProgress: 'Save configuration progress.',
+                        failedToSaveConfigurations: 'Failed to save configurations',
+                        retryNumber: 'Retry #$1',
+                        ruleExecutionProgress: 'Rule execution progress.',
+                        incompleteConfigurations: 'Incomplete configurations',
+                        noEligibleConfigurations: 'There are no eligible configurations to add',
+                        addingToMACBasket: 'Adding to MAC basket',
+                        retryingToSaveConfigurations: 'Retrying to save $1 configurations',
+                        failedToSaveNoOfConfigurations: 'Failed to save $1 configurations',
+                        successfullySavedConfigurations: 'Successfully saved $1 configurations',
+                        successfullySavedSolution: 'Successfully saved solution',
+                        relatedProductTemplateNotFound: 'Related Product Template not found!',
+                        processingFiles: 'Processing files',
+                        noConfigurationsFound: 'No configurations found',
+                        importingConfigurations: 'Importing configurations',
+                        errorImportingConfiguration: 'Error while importing configuration #$1: $2',
+                        importedConfigurations: 'Imported $1 configurations',
+                        configurationImportError: '$1 configuration(s) resulted in import error',
+                        invalidExcelFile: 'Invalid excel/csv file',
+                        unableToReadFile: 'Unable to read file: $1',
+                        unableToParseFile: 'Unable to parse file: $1',
+                        addAddOnToConfiguration: 'Add Add-On to configuration',
+                        groupName: 'Group Name',
+                        minValue: 'min $1',
+                        maxValue: 'max $1',
+                        addOnName: 'Add-On Name',
+                        addNew: 'Add new',
+                        addOnMinMax: 'You need to enter at least $1 Add-on and max $2 of them',
+                        chipNew: 'New',
+                        chipDeleted: 'Deleted',
+                        chipDisabled: 'Disabled',
+                        chipChanged: 'Changed',
+                        defaultModalContents: 'Default modal contents',
+                        missingContent: 'Missing content',
+                        noMatchingConfigurations: 'No matching configurations',
+                        fieldNotValid: 'Field not valid',
+                        saveButton: 'Save',
+                        exceedsLength: 'Exceeds length',
+                        // This is the expect format for csForm.
+                        invalidName: '${name} invalid',
+                        required: 'Required',
+                        mondayShort: 'Mon',
+                        tuesdayShort: 'Tue',
+                        wednesdayShort: 'Wed',
+                        thursdayShort: 'Thu',
+                        fridayShort: 'Fri',
+                        saturdayShort: 'Sat',
+                        sundayShort: 'Sun',
+                        januaryShort: 'Jan',
+                        februaryShort: 'Feb',
+                        marchShort: 'Mar',
+                        aprilShort: 'Apr',
+                        mayShort: 'May',
+                        juneShort: 'Jun',
+                        julyShort: 'Jul',
+                        augustShort: 'Aug',
+                        septemberShort: 'Sep',
+                        octoberShort: 'Oct',
+                        novemberShort: 'Nov',
+                        decemberShort: 'Dec',
+                        cloneButton: 'Clone',
+                        cloneConfigurations: 'Clone configurations: ',
+                        selectAllConfigurations: 'Select all configurations',
+                        search: 'Search',
+                        filterConfigurations: 'Filter configurations',
+                        solutionSteps: 'solution steps',
+                        activeOrderEnrichments: 'active order enrichments',
+                        solutions: 'solutions',
+                        dirty: 'dirty',
+                        solutionConsoleName: 'Solution Console - $1',
+                        toggleConfigurationList: 'toggle configuration list',
+                        toggleConfiguration: 'toggle configuration',
+                        group: 'Group',
+                        addAddon: 'Add Addon',
+                        addObject: 'Add $1',
+                        lookupPayloadError: 'Labels must be array of objects in lookup payload',
+                        status: 'Status',
+                        progress: 'Progress',
+                        timetable: 'Timetable',
+                        clickToStop: 'Click to stop auto-closing',
+                        searchConfigurations: 'Search configurations',
+                        autoSaveError: 'Auto save error',
+                        selectSolutionTemplate: 'Select the solution template:',
+                        searchSolutions: 'Search solutions',
+                        deleteSolution: 'delete solution',
+                        copySolution: 'copy solution',
+                        solutionCreated: 'Solution was successfully created',
+                        namedSolutionCreated: 'Solution "$1" created',
+                        errorCreatingSolution: 'Error while creating solution',
+                        solutionCloned: 'Solution was successfully cloned',
+                        namedSolutionCloned: 'Solution "$1" cloned',
+                        errorCloningSolution: 'Error while cloning solution',
+                        expandSolutionSidebar: 'expand solution sidebar',
+                        solutionsTitle: 'Solutions',
+                        closeSolutionSidebar: 'close solution sidebar',
+                        numberedItems: '$1 items',
+                        caution: 'Caution',
+                        deleteNamedSolution: 'Are you sure you want to delete "$1"?',
+                        solutionSuccessfullyDeleted: 'Solution was successfully deleted',
+                        namedSolutionRemoved: 'Solution "$1" removed',
+                        errorDeletingSolution: 'Error while deleting solution',
+                        addNewSolutionTemplate: 'Add new solution by selecting appropriate template',
+                        infoTitle: 'Info',
+                        success: 'Success',
+                        warning: 'Warning',
+                        unknownErrorBasketLoad: 'Unknown error during basket load',
+                        unknownErrorSolutionCreation: 'Unknown error during solution creation',
+                        unknownErrorSolutionCloning: 'Unknown error during solution cloning',
+                        unknownErrorSolutionDeletion: 'Unknown error during solution deletion',
+                        unknownErrorSolutionSelection: 'Unknown error during solution selection',
+                        unknownErrorAddAddons: 'Unknown error during add addons',
+                        unknownErrorRelatedProduct: 'Unknown error during add new related product',
+                        unknownErrorConfiguration: 'Unknown error during add configuration',
+                        unknownErrorRemoveAddons: 'Unknown error during remove addons',
+                        unknownErrorSaveConfiguration: 'Unknown error during save configuration',
+                        unknownErrorDeleteConfiguration: 'Unknown error during delete configuration',
+                        unknownErrorDeleteConfigurations: 'Unknown error during delete configurations',
+                        unknownErrorDeleteRelatedProducts: 'Unknown error during delete related products',
+                        unknownErrorCloneConfiguration: 'Unknown error during clone configuration',
+                        unknownErrorCloneConfigurations: 'Unknown error during clone configurations',
+                        unknownErrorDeleteOrderEnrichmentConfigurations: 'Unknown error during delete order enrichment configurations',
+                        unknownErrorAddOrderEnrichmentConfiguration: 'Unknown error during add order enrichment configuration',
+                        unknownErrorAddOrderEnrichmentConfigurations: 'Unknown error during add order enrichment configurations',
+                        autoSaveSolution: 'Auto save of a solution',
+                        autoSaveSolutionFinished: 'Auto save of a solution finished',
+                        errorAutoSave: 'Error in auto save',
+                        errorLoadingBasket: 'Error while loading basket',
+                        basketLoadError: 'Basket load error',
+                        errorWhileLoadingBasket: 'Error occurred while loading basket: "$1"',
+                        tryAgain: 'Try again'
+                    }
+                };
+            }
+
+            //var csInit = SolutionConsoleReactAPI.buildApp('solution-console-react-root', settings);
+            var csInit = SolutionConsoleReactAPI.buildApp('root', settings);
+            window.CS = window.CS || {};
+            window.CS.SM = csInit.service;
+            window.settings = settings;
+            // Once app is initialized, all global APIs are moved to CS.SM and app is initialized
+            // no need for exposed module to be part of global namespace
+            delete SolutionConsoleReactAPI;
+
+            // To send proper events.
+            // It is not part of a module on purpose, it should be called only once
+            window.__scReady = csInit.notifyReady;
+    </script>
+
+    <script>
+        // Backward compatibility
+        // All plugins wait for "SolutionConsoleReady" event to invoke their registration
+        window.__scReady();
+        // No need for this to be exposed in global namespace anymore
+        delete window.__scReady;
+    </script>
+</apex:component>

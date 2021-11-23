@@ -1,0 +1,4 @@
+<design:component>
+    <design:attribute name="flowName" label="Enter flow name to be opened on"/>
+    <design:attribute name="buttonLabel" label="Enter button label to be displayed to end user"/>
+</design:component>

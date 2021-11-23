@@ -1,0 +1,294 @@
+<apex:page id="page" standardStylesheets="true" lightningStylesheets="true" showHeader="false" sidebar="false"
+	controller="NMMobilityBulkController">
+	<apex:includeLightning />
+	<apex:slds />
+	<apex:includeScript value="{!$Resource.cscfga__jQuery_min}"/>
+	<apex:includeScript value="{!$Resource.cscfga__cs_messaging}"/>
+	<apex:pageMessages id="error"/>
+
+	<script type="text/javascript">
+		function getAttributeCallbackSuccess(value) {// write custom logic here when message result is received
+			console.log('getAttrbuteCallback received value : ' + value);
+			// alert('flag ' + value);
+		}
+
+		// example of errorCallback
+		function getAttrbuteCallbackError(errorMsg) {// write custom logic here when error message is received
+			console.log('getAttrbuteCallbackError received error : ' + errorMsg);
+			//  alert('flag ' + value);
+		}
+
+		var winOrigin = parent;
+		CSMSG.setConfiguratorWindow(winOrigin);
+		$(document).ready(function() {
+			CSMSG.setAttribute('isNRCompleted_0', '{!JSENCODE(resrvedNumberQuantity)}');
+		});
+		window.onload = function WindowLoad(event) {
+			//alert('Page is loaded' + '{!JSENCODE(resrvedNumberQuantity)}');
+			CSMSG.setAttribute('isNRCompleted_0', '{!JSENCODE(resrvedNumberQuantity)}');
+		}
+
+		function selectAllCheckboxes(obj, receivedInputID) {
+			var inputCheckBox = document.getElementsByTagName("input");
+			for (var i = 0; i < inputCheckBox.length; i++) {
+				if (inputCheckBox[i].id.indexOf(receivedInputID) != -1) {
+					inputCheckBox[i].checked = obj.checked;
+				}
+			}
+		}
+
+	</script>
+	<style type="text/css">
+
+		#header {
+			background-color: black !important;
+		}
+
+		body .bPageBlock .pbBody .pbSubheader {
+			background-color: #566573;
+			color: white;
+			overflow: auto;
+		}
+
+		body .bPageBlock .pbBody {
+			background: #D6DBDF;
+			color: black;
+			height: 100%;
+			overflow: auto;
+			border: 1px solid #ccc;
+
+		}
+
+		body .bPageBlock {
+			border: 0;
+		}
+
+		.content1 {
+			width: 60%;
+			float: left;
+			overflow: auto;
+		}
+
+		.content2 {
+			width: 40%;
+			float: left;
+			overflow: auto;
+		}
+
+		.button {
+			background-color: #1A5276 !important;
+			border: none;
+			color: white;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+			border-radius: 20px;
+			padding: 10px;
+		}
+	</style>
+
+	<apex:actionStatus id="pageStatus">
+		<apex:facet name="start">
+			<div class="slds-spinner_container">
+				<div class="slds-spinner slds-spinner--medium" aria-hidden="false" role="alert">
+					<div class="slds-spinner__dot-a"></div>
+					<div class="slds-spinner__dot-b"></div>
+				</div>
+			</div>
+		</apex:facet>
+	</apex:actionStatus>
+
+	<apex:form id="form1">
+
+		<apex:actionFunction name="sendNotification" rerender="form1" action="{!sendChatterNotification}"/>
+		
+		<apex:outputPanel id="jobStatus" rendered="{!checkStatus}">
+			<apex:actionPoller action="{!checkjobStatus}"
+				reRender="error,counter,pb4,pb3,pb5,pb2,autoResCheck,pb6,successPannel" interval="25"
+				oncomplete="sendNotification()" enabled="{!isEnabled}" status="pageStatus"/>
+		</apex:outputPanel>
+		<div>
+			<apex:outputPanel rendered="{!showSuccess}" id="successPannel">
+				<apex:pageMessage id="SuccessMsg" escape="0" summary="{!successM}" severity="confirm" strength="3"/>
+			</apex:outputPanel>
+			<apex:outputPanel >
+				<apex:pageMessage id="msg" escape="0" summary="{!$Label.Reserve_number_notification}" severity="warning"
+					strength="3" rendered="{!If(tobeReserved !=0 ,true,false) }"/>
+			</apex:outputPanel>
+
+			<apex:pageBlock id="pb1">
+		
+
+			</apex:pageBlock>
+			<div class="content1">
+
+				<div>
+					<apex:pageBlock id="pb6">
+						<apex:outputPanel id="autoResCheck"
+							layout="block"
+							styleClass="slds-panel slds-grid slds-grid--vertical slds-nowrap slds-form--compound"
+							html-aria-labelledby="newaccountform">
+							<div class="slds-form-element">
+
+								<label class="slds-checkbox_toggle slds-grid"
+									style="background-color:#D6DBDF; padding: 10px;">
+									<span
+										class="slds-form-element__label slds-m-bottom_none">Search &#38; Reserve </span>
+									<apex:inputCheckbox value="{!isAutoRes}" disabled="{!isAutoDisable}">
+										<apex:actionsupport event="onchange"
+											reRender="jobStatus,msg,res1,op2,pb1,pb4,pb3,error,form1,autoResCheck"
+											action="{!doAutoReserve}" status="pageStatus"/>
+									</apex:inputCheckbox>
+
+									<span id="checkbox-toggle-2" class="slds-checkbox_faux_container"
+										aria-live="assertive">
+                                    <span class="slds-checkbox_faux"></span>
+										<!--apex:outputLabel value="Auto Reserve" for="temp"/-->
+
+                                </span>
+									&nbsp; Auto Reserve
+								</label>
+
+							</div>
+
+						</apex:outputPanel>
+					</apex:pageBlock>
+
+
+					<apex:pageBlock id="pb2">
+						<apex:pageBlockSection title="Search Numbers" columns="2" collapsible="false"
+							rendered="{!hide}">
+							<apex:outputLabel >
+								<!-- font color="red">*</font> Search Quantity <br/> <font color="red">Only 50 numbers can be searched at a time</font-->
+								Search Quantity :
+								<apex:inputText value="{!reqQuantity}" id="quant"/>
+							</apex:outputLabel>
+							<apex:outputLabel />
+							<!--apex:commandButton action="{!clearAll}"  value="Auto Reserve"   style="float:right;  padding: 10px;background:#25488e;border-radius: 20px;color:white;"  disabled="true" /-->
+
+
+							<apex:outputText >Search type:
+								<apex:selectList value="{!reqSearch}" size="1" id="search">
+									<apex:selectOptions value="{!SearchTypes}"/>
+									<apex:actionSupport event="onchange" rerender="pat"/>
+								</apex:selectList>
+							</apex:outputText>
+
+							<apex:outputText >Pattern: 614 -
+								<apex:inputText value="{!reqPattern}" id="pat"
+									disabled="{!IF(SearchTypes=='RANDOM',true,false)}"/>
+							</apex:outputText>
+
+						</apex:pageBlockSection>
+						<apex:outputPanel style="float:right;" id="pb7" rendered="{!hide}">
+
+
+							<apex:commandButton value="Clear" action="{!clearAll}"
+								style="background:#25488e; padding: 10px;border-radius: 20px;color:white;"
+								status="pageStatus" reRender="pb5,error,successPannel,form1"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<apex:commandButton value="Search" action="{!doSearch}"
+								reRender="pb5,error,successPannel,form1" status="pageStatus"
+								style=" padding: 10px;float:right; background:#25488e;border-radius: 20px;color:white;"/>
+
+						</apex:outputPanel>
+
+					</apex:pageBlock>
+					<apex:pageBlock id="pb5">
+						<apex:pageBlockSection title="Search Results" columns="2" collapsible="false"
+							rendered="{!hide}">
+							<apex:outputPanel id="op1">
+
+
+								<apex:dataTable value="{!reserveList}" var="res" border="1" rendered="{!showSearch}">
+									<apex:column >
+										<apex:facet name="header">
+											<apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId1')"/>
+										</apex:facet>
+										<apex:inputCheckbox value="{!res.isSelected}" id="inputId1"/>
+									</apex:column>
+
+									<apex:column headerValue="Available numbers">
+
+										<apex:outputText value="{!res.msisdn}"/>
+									</apex:column>
+								</apex:dataTable>
+							</apex:outputPanel>
+							<apex:commandButton action="{!reserveSelected}" value="Reserve Selected"
+								disabled="{!NOT(showSearch)}" reRender="jobStatus,msg,res1,op2,pb1,pb4,pb3,error,form1"
+								style=" padding: 10px;float:right; background:#25488e;border-radius: 20px;color:white;"
+								status="pageStatus"/>
+						</apex:pageBlockSection>
+					</apex:pageBlock>
+				</div>
+			</div>
+			<apex:outputPanel id="res1">
+				<div class="content2" style="margin-left:1em;width:37%">
+					<apex:pageBlock id="pb4">
+
+						<apex:pageBlockSection title="Number Pool" columns="1" collapsible="false">
+							<apex:outputPanel id="op2">
+								<apex:dataTable value="{!unreserveList}" var="unres" border="1">
+									<apex:column >
+										<apex:facet name="header">
+											<apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')"
+												selected="{!doSelect}"/>
+
+										</apex:facet>
+										<apex:inputCheckbox value="{!unres.isSelected}" id="inputId"/>
+									</apex:column>
+									<apex:column headerValue="Reserved numbers">
+										<apex:outputText value="{!unres.msisdn}"/>
+									</apex:column>
+								</apex:dataTable>
+							</apex:outputPanel>
+							<apex:commandButton action="{!unreserveSelected}" value="Unreserve Selected"
+								style=" padding: 10px;float:right; background:#25488e;border-radius: 20px;color:white;"
+								reRender="msg,jobStatus,form1,pb1,pb4,pb3,pb5,error,op1" status="pageStatus"/>
+						</apex:pageBlockSection>
+					</apex:pageBlock>
+					<apex:pageBlock id="pb3">
+						<apex:pageBlockSection title="Reservation Summary" columns="1" collapsible="false">
+							<apex:outputLabel value="Required: {!quantity}"/>
+							<apex:outputLabel value="Total Reserved:  "><font color="green">{!totalReserved}</font>
+							</apex:outputLabel>
+							<apex:outputLabel value="To-be Reserved: "><font color="red">{!tobeReserved}</font>
+							</apex:outputLabel>
+						</apex:pageBlockSection>
+					</apex:pageBlock>
+
+				</div>
+			</apex:outputPanel>
+			<div class="content2">
+			</div>
+		</div>
+	</apex:form>
+	<script>
+		// example of successCallback
+		function getAttributeCallbackSuccess(value) {// write custom logic here when message result is received
+			console.log('getAttrbuteCallback received value : ' + value);
+			//alert('flag ' + value);
+		}
+
+		// example of errorCallback
+		function getAttrbuteCallbackError(errorMsg) {// write custom logic here when error message is received
+			console.log('getAttrbuteCallbackError received error : ' + errorMsg);
+			//alert('flag ' + value);
+		}
+
+		var winOrigin = parent;
+		CSMSG.setConfiguratorWindow(winOrigin);
+		var previousOnload = window.onload;
+		window.onload = function() {
+			if (previousOnload) {
+				previousOnload();
+			}
+			CSMSG.setAttribute('isNRCompleted_0', '{!JSENCODE(resrvedNumberQuantity)}');
+			CSMSG.setAttribute('TotalNumbersReserved_0', '{!JSENCODE(totalReservedStr)}');
+			//alert('{!JSENCODE(totalReservedStr)}');
+		}
+
+	</script>
+</apex:page>

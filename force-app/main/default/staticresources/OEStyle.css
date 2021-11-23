@@ -1,0 +1,28 @@
+.oe-invalid {
+	background: rgba(200, 0, 0, .6)
+}
+
+.order-enrichment .section-header {
+    display: none!important
+}
+
+.oe-product-checkbox-wrapper {
+	visibility: hidden!important;
+}
+
+.order-enrichment {
+	position: relative;
+}
+
+#oe-notification {
+	color: rgba(200, 0, 0, 1);
+	font-size: .85rem;
+}
+.custom-overlay-solution{
+    pointer-events: none;
+}
+.custom-allow-pointer-button{
+    pointer-events:all;
+    z-index:1000;
+    border : 2px solid blue !important;
+}

@@ -1,0 +1,43 @@
+<!-- 
+EDGE -127943
+Name: DynamicLookupComponentChild
+Description: Handler Results of Lookup field and fire event
+Author: Pradeep Bhumi -->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <!--Obtained value from parent for user selection-->
+    <aura:attribute name="oRecord" type="sObject" />
+    <!-- Sent from calling component with the API name in primary and secondary field. Primary is mandatory.-->
+    <aura:attribute name="primaryField" type="String" />
+    <aura:attribute name="secondaryField" type="String" />
+    <aura:attribute name="primaryResult" type="String" />
+    <aura:attribute name="secondaryResult" type="String" />
+    <aura:attribute name="IconName" type="string"/> 
+    <aura:attribute name="wiperecord" type="Boolean" default="false"/> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global"/>
+    
+    <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedRecordEvent" type="c:DynamicLookupEvent"/>
+    <!--Rendering record value one after another as invoked by parent component.-->
+    <li role="presentation" class="slds-listbox__item" onclick="{!c.selectRecord}">
+        <span id="listbox-option-unique-id-01" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+            <aura:if isTrue="{!v.IconName != null}">
+                <span class="slds-media__figure">
+                    <span class="slds-icon_container" title="Description of icon when needed">
+                        <lightning:icon iconName="{!v.IconName}" class="slds-icon slds-icon_small" size="small" alternativeText="icon"/>
+                    </span>
+                </span>   
+            </aura:if> 
+            
+            <span class="slds-media__body">  
+                <!-- Dynamically render one value or two values(one below another) for each result in result. -->
+                <aura:if isTrue="{!and(v.primaryResult !=null, v.secondaryResult !=null)}">
+                    <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!v.primaryResult} <br></br> {!v.secondaryResult}</span>
+                </aura:if>  
+                <aura:if isTrue="{!and(v.primaryResult !=null, v.secondaryResult ==null)}">
+                    <span >{!v.primaryResult} </span>
+                </aura:if>
+            </span>
+        </span>
+    </li>
+</aura:component>

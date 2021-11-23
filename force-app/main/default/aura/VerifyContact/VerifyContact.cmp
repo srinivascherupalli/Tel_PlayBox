@@ -1,0 +1,52 @@
+<!-- 
+EDGE -127943
+Name: VerifyContact
+Description: Fetching contact List for an Account and show in search box
+Author: Pradeep Bhumi -->
+
+<aura:component controller="InvoiceCmpHandler" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    
+    <!--declare attributes--> 
+    <aura:attribute name="selectedRecord" type="sObject" default="{}" description="Used to store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords" type="List" description="Used to store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord" type="string" description="Used to include any keyword entered by user"/>
+    <aura:attribute name="objectAPIName" type="string" description="To keep the component reusable, object API name is configurable" default=""/>
+    <aura:attribute name="label" type="string" default="" description="Field label for introducing lookup."/>
+    <aura:attribute name="inputId" type="string" description="Input argument"/>
+    <aura:attribute name="primaryField" type="string" description="Display field 1 for dynamic lookup"/>
+    <aura:attribute name="secondaryField" type="string" description="Display field 2 for dynamic lookup"/>
+    <aura:attribute name="Message" type="String" default="" description="Dynamic display text."/>
+    <aura:attribute name="IconName" type="string" default=""/>
+
+    
+    <!--declare events hendlers-->  
+    <aura:handler name="oSelectedRecordEvent" event="c:VerifyContactEvent" action="{!c.handleComponentEvent}"/>
+    
+    <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+        <abbr class="slds-required" title="required">*</abbr>                	
+        <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+        <lightning:helptext iconName="utility:info" content="Please select a valid value." />
+        
+        <!--This part is for display search bar for lookup-->  
+        <div class="slds-input-has-icon slds-input-has-icon--right">
+            <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                <lightning:pill class="pillSize" label="{!v.selectedRecord.Name}" name="{!v.selectedRecord.Name}" onremove="{! c.clear }">
+                </lightning:pill>
+            </div>
+            <div aura:id="lookupField" class="slds-show">
+                <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="Search"/>
+                <ui:inputText click="{!c.onfocus}" updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord}" placeholder="Click to search.."/>
+            </div>
+        </div>  
+
+        <!--This part is for Display typehead lookup result List-->  
+        <ul style="min-height:40px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+            <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+            <center> {!v.Message}</center>
+            <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                <c:VerifyContactChild oRecord="{!singleRec}"  IconName="{!v.IconName}" primaryField="{!v.primaryField}" secondaryField="{!v.secondaryField}"/>
+            </aura:iteration>
+        </ul>        
+    </div>
+    
+</aura:component>

@@ -1,0 +1,166 @@
+{
+  "data": {
+    "customers": [
+      {
+        "location": "10410000000000",
+        "effectiveRetiredDate": "2017-10-19",
+        "servicingOrgUnit": "BUSSTD",
+        "languagePreference": "English",
+        "parentCidn": "",
+        "customerAccount": {
+          "preferredMethod": "White Mail",
+          "lastName": "GELLER",
+          "acn": "",
+          "fraudFlag": "N",
+          "driverLicenceNumber": "A11111C2",
+          "effectiveRetiredDate": "",
+          "webAddress": "shinyraj@gmail.com",
+          "emailAddress": "nate@test.com",
+          "dataSovereignty": "SFDC Integration",
+          "vipFlag": "N",
+          "abn": "10000000000",
+          "driverLicenceState": "ACT",
+          "title": "MR",
+          "faxNumber": "",
+          "phoneNumber": "+610438002699",
+          "birthDate": "1992-10-10",
+          "accountUuid": "427B046F-93AA-4673-8DF6-1B1B709732C3",
+          "firstName": "RAHUL"
+        },
+        "accountTrading": [
+          {
+            "isPrimary": "Y",
+            "tradingName": "GARFIELD"
+          },
+          {
+            "isPrimary": "N",
+            "tradingName": "BELS"
+          }
+        ],
+        "cac": "2021916635",
+        "relationshipType": "M",
+        "marketSegment": "Business Unsegmented",
+        "partners": "DESTERS",
+        "customerManagedFlag": "N",
+        "description": "Customer eligible for credit",
+        "accountStatus": "ACTIVE",
+        "createdDate": "2017-10-24T17:32:49+11:00",
+        "actualRetiredDate": "2017-09-14",
+        "lastVerifiedDate": "2017-10-14",
+        "currentRevenue": 300000,
+        "customerEffectiveStartDate": "2015-03-14",
+        "geographicalLocationCode": "3T",
+        "mergeStatus": "PENDING",
+        "customerEffectiveEndDate": "2020-07-17",
+        "customerType": "Company",
+        "customerSince": "2017-10-24",
+        "churnPropensity": "YES",
+        "lastUpdated": "2017-10-24T23:08:24+11:00",
+        "cidn": "7899251778",
+        "sourceSysOperation": "Update",
+        "writtenaAuthorityRequiredFlag": "Y",
+        "reportingPointIndicator": "Y",
+        "recommendedPaymentMethod": "Credit Card",
+        "ultimateParentCidn": "",
+        "ownershipCode": "",
+        "recommendedBillingFrequency": "Quarterly",
+        "businessUnit": "Business",
+        "category": {
+          "online": "N"
+        },
+        "revenueOrganisationUnit": "BBV3T0",
+        "priorityAssist": "N",
+        "concession": {
+          "concessionType": "DIS",
+          "concessionNumber": "A1234",
+          "validConcessionFlag": "Y",
+          "paymentType": "ONLINE",
+          "bypassConcessionValidation": "N",
+          "validationResultOverride": "SUCCESS",
+          "paymentStatus": "COMPLETE",
+          "lastValidatedDate": "2015-10-14",
+          "concessionAuthority": "VEDA"
+        },
+        "address": [
+          {
+            "state": "VIC",
+            "streetTypeCode": "",
+            "addressId": "T45296901",
+            "statusCode": "",
+            "streetTypeSuffixCode": "",
+            "postalCode": "3000",
+            "registeredPlan": "",
+            "streetNumberStart": "66",
+            "subAddress": {
+              "propertyName": "",
+              "privateStreetType": "",
+              "privateStreetName": "",
+              "details": [
+                {
+                  "detailType": "",
+                  "value": "",
+                  "detailTypeCode": ""
+                },
+                {
+                  "detailType": "",
+                  "value": "",
+                  "detailTypeCode": ""
+                }
+              ],
+              "numberStart": "23",
+              "buildingName": "",
+              "addressLines": [
+                "_",
+                "",
+                ""
+              ],
+              "numberEnd": "",
+              "privateStreetTypeCode": ""
+            },
+            "streetType": "",
+            "internationalState": "",
+            "isPrimary": "N",
+            "status": "",
+            "streetNumberStartSuffix": "",
+            "streetName": "LA TROBE",
+            "addressType": "",
+            "additionalInfo": "",
+            "country": "AUSTRALIA",
+            "internationalPostcode": "",
+            "addressTypeCode": "BUILDING",
+            "streetTypeSuffix": "",
+            "streetNumberEnd": "78",
+            "deliveryPointId": "",
+            "streetNumberEndSuffix": "",
+            "exchange": "1234",
+            "locality": "MELBOURNE"
+          }
+        ],
+        "masterID": "10000157370",
+        "validationConsentRequestDate": "2016-03-14T12:50:02+05:30",
+        "premiumService": "N",
+        "creditSituation": {
+          "creditRating": 90,
+          "creditManagementStatus": "ALRIGHT",
+          "creditLimit": 500
+        },
+        "franchiseArrange": "NOVA",
+        "retirementReason": "Unsatisfactory",
+        "portfolioCode": 86553,
+        "timeZone": "AEST",
+        "approveDeclineReason": "APPROVED",
+        "parentSourceSystem": "B2B",
+        "retiredUId": "shinyraj17",
+        "ansicCode": 38473,
+        "dateOfApplication": "2016-02-01T04:04:36+05:30",
+        "validationCustomerConsent": "YES"
+      }
+    ],
+    "paging": {
+      "limit": "50",
+      "lastPage": "Y",
+      "resultBlockSize": "1",
+      "offset": "0"
+    }
+  }
+}

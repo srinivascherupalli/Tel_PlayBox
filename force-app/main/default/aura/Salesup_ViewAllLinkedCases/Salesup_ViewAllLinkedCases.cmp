@@ -1,0 +1,55 @@
+<aura:component implements="lightning:isUrlAddressable" controller="Salesup_LinkedCasesController">
+    
+    
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="assignOption" type="String"/>
+    <aura:attribute name="linkedCases" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="selectedRows" type="List" />
+    <aura:attribute name="selectedRowsDetails" type="List" />
+
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    
+    
+
+    <lightning:workspaceAPI aura:id="workspace" />
+
+    <lightning:spinner aura:id="mySpinner" variant="brand" size="large" class="slds-hide"/>
+
+    <lightning:card>
+        <!-- Set the title of the Card -->
+        <aura:set attribute="title">
+            <lightning:icon iconName="standard:case" size="medium" class="iconCls"/>
+                <b>Linked Cases</b>
+        </aura:set>
+
+        <!-- Body the card-->
+        <div>
+            <aura:if isTrue="{!v.assignOption == 'true'}">
+                <p style="margin-left: 1%;margin-bottom: 1%;">Select Case(s) to be assigned</p>
+            </aura:if>
+            
+            <lightning:datatable data="{!v.linkedCases}" 
+                                columns="{!v.columns}"
+                                onrowselection="{!c.storeSelectedRows}" 
+                                keyField="Id"/>
+            <aura:if isTrue="{!v.assignOption == 'true'}">                     
+                <p style="margin-left: 1%;margin-bottom: 5px;margin-top:5px;">
+                    <b>Note : Please select at least one case to be assigned to you</b>
+                </p>
+            </aura:if>
+
+
+        </div>
+        
+        <!-- Footer of the Card-->
+        <aura:set attribute="footer">
+            <div>
+                <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.cancelClick }"/>
+                <aura:if isTrue="{!v.assignOption == 'true'}">
+                    <lightning:button variant="brand" label="Assign" title="Assign" onclick="{! c.assignCases }" />
+                </aura:if>
+            </div>                
+        </aura:set>
+    </lightning:card>   
+</aura:component>

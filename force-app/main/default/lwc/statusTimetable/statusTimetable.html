@@ -1,0 +1,64 @@
+<!-- This is a reausable component, created in order to get sync status and can be used in other details page according to requirement-->
+<!-- Created By : Kamlesh Kumar-->
+<!-- EDGE:189844 -->
+<template>
+  <template if:true={isModalOpen}>
+    <section>
+      <div>
+        <div
+          class="slds-modal__content slds-p-around_medium"
+          id="modal-content-id-1"
+        >
+        <div class="slds-grid ">
+          <div class="slds-size--1-of-2" >
+            <h3><span>{statustitle}</span></h3>
+            <h4><span> {asyncstatus}</span></h4>
+            <h3><span> {progresstitle}</span></h3>
+          </br>
+        </br>
+          <div class="slds-grid">
+            <div class="slds-size--11-of-12">
+              <span style="font-weight: bold;font-size : 90%">{progressbartitle}</span>
+              <div class="slds-progress-bar slds-progress-bar_circular " aria-valuemin="0" aria-valuemax="100" aria-valuenow="75" role="progressbar">
+                <template if:true={isstatuscompleted}>
+                  <span class="slds-progress-bar__value slds-progress-bar__value_success" style="width:100%">
+                  </span>
+                </template>
+                <template if:true={isstatusinprogress}>
+                  <span class="slds-progress-bar__value" style="width:100%;background:#778899">
+                  </span>
+                </template>
+                <template if:true={isstatuserror}>
+                  <span class="slds-progress-bar__value" style="width:100%;background:red">
+                  </span>
+                </template>
+              </div>
+            </div>
+            <!-- Commented as part of 199074-->
+            <!-- <template if:true={isstatuscompleted}>
+              <span>1/1</span>
+            </template>
+            <template if:true={isstatusrunning}>
+              <span>0/1</span>
+            </template> -->
+            <!--EDGE-199074 Display no of batch passed-->
+            <span>{currentbatchcompleted}</span>
+          </div>
+          </div>
+          <div class="slds-size--1-of-2">
+            <h3><span>{timetabletitle}</span></h3>
+            <!-- Adding Progress Indicatior-->
+            <c-vertical-progress-indicator lstopp = {timetable}></c-vertical-progress-indicator>
+          </div>
+        </div>
+        
+        </div>
+        <footer class="slds-modal__footer">
+            <template if:true={showCloseButton}>
+              <button class="slds-button slds-button_neutral" onclick={closeModal}>Close</button>
+            </template>
+        </footer>
+      </div>
+    </section>
+   </template>
+  </template>

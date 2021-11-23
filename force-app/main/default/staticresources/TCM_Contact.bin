@@ -1,0 +1,2 @@
+Contact_Status__c,Contact_Type__c,Phone,MobilePhone,Email,Title,Salutation,firstName,lastName,Birthdate,AccountID
+Active,3rd Party,439876780,0434567890,test.ray@gmail.com,test,Mr.,firstName,lastName,2000-02-02,1234561

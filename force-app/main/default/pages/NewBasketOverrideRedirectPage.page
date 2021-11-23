@@ -1,0 +1,63 @@
+<apex:page standardController="cscfga__Product_Basket__c"  extensions="NewBasketOverrideRedirectPageController"  standardStylesheets="false"  showheader="false" cache="false" action="{!init}">
+    <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script> 
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en"> 
+    <apex:slds />
+    
+    <script>
+    var basketId = '{!JSENCODE(basketId)}'; //Added JsEncode as per Team Amsterdam EDGE-144006 - Honey
+    var isNotError = '{!isNotError}';
+    var isOppRedirect = '{!isOppRedirect}';
+    var oppId = '{!JSENCODE(oppId)}'; //Added JsEncode as per Team Amsterdam jira EDGE-144002 - Aarathi
+    
+    console.log(basketId);
+    console.log(oppId);
+    console.log(isNotError);
+    console.log(isOppRedirect);
+    if(typeof sforce !== 'undefined' && isNotError == 'true' && isOppRedirect == 'false') {
+        console.log('****in if else');
+        console.log('****'+basketId);
+        window.top.location.href = '/one/one.app#/sObject/' + basketId + '/view';
+    }
+    else if (isNotError == 'true' && isOppRedirect == 'false') {
+        console.log('****in else');
+        console.log('****'+basketId);
+        window.top.location.href = '/' + basketId + '/e';
+    }
+        else if (isNotError == 'true' && isOppRedirect == 'true')  {
+            console.log('****in else');
+            console.log('****'+basketId);
+            // window.top.location.href = '/lightning/r/Opportunity/' + oppId + '/view';
+            window.top.location.href = '/one/one.app#/sObject/' + oppId + '/view';
+            if (window.top.location.href.includes('/partners/')) {
+                // partner community in sandboxes
+                window.top.location.href = '/partners/s/opportunity/' + oppId;
+            }
+            if (window.top.location.href.includes('partners.enterprise.telstra.com.au')) {
+                // partner community in production
+                window.top.location.href = '/s/opportunity/' + oppId;
+            }
+            
+        }
+    
+    </script>
+    <apex:outputPanel rendered="{!NOT(isNotError)}">   
+        <div class="slds">    
+            <div class="slds-notify slds-notify--alert slds-theme--warning slds-theme--alert-texture" role="alert">
+                
+                <span class="slds-icon_container slds-icon-utility-ban slds-m-right_x-small" title="Error">
+                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                        <use xlink:href= "{!URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#warning')}" />
+                    </svg>
+                </span>
+                <h2><b>
+                    <apex:pagemessages />
+                    </b></h2>
+                
+            </div>  
+        </div> 
+    </apex:outputPanel>  
+</html> 
+</apex:page>

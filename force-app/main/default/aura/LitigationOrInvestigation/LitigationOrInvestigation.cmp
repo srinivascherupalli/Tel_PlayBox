@@ -1,0 +1,43 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="record" type="Object"/>
+    <aura:attribute name="simpleRecord" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="FieldsetName" type="String" default="Litigation_Or_Investigation"/>
+    <aura:attribute name="queAndAnsLitigation1" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="queAndAnsLitigation2" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="queAndAnsLitigation3" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="queAndAnsInvestigation1" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="queAndAnsInvestigation2" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="queAndAnsInvestigation3" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="queAndAnsInvestigation" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="QuestionsInvestigation" type="QuestionAndAnswerWrapper[]"/>
+
+    <force:recordData aura:id="recordLoader"
+      recordId="{!v.recordId}"
+      layoutType="FULL"
+      targetRecord="{!v.record}"
+      targetFields="{!v.simpleRecord}"
+      targetError="{!v.recordError}"
+      recordUpdated="{!c.handleRecordUpdated}"
+      />
+    	<c:AplicationDetail queAndAns="{!v.queAndAns}" colNum="1"></c:AplicationDetail>
+        <c:AplicationDetail queAndAns="{!v.queAndAnsLitigation1}" sectiontitle="Litigation 1" colNum="2"></c:AplicationDetail>
+        <c:AplicationDetail queAndAns="{!v.queAndAnsLitigation2}" sectiontitle="Litigation 2" colNum="2"></c:AplicationDetail>
+        <c:AplicationDetail queAndAns="{!v.queAndAnsLitigation3}" sectiontitle="Litigation 3" colNum="2"></c:AplicationDetail>
+    	<c:AplicationDetail queAndAns="{!v.queAndAnsInvestigation}" colNum="1"></c:AplicationDetail>
+        <c:AplicationDetail queAndAns="{!v.queAndAnsInvestigation1}" sectiontitle="Investigation 1" colNum="2"></c:AplicationDetail>
+        <c:AplicationDetail queAndAns="{!v.queAndAnsInvestigation2}" sectiontitle="Investigation 2" colNum="2"></c:AplicationDetail>
+        <c:AplicationDetail queAndAns="{!v.queAndAnsInvestigation3}" sectiontitle="Investigation 3" colNum="2"></c:AplicationDetail>
+    	<c:AplicationDetail queAndAns="{!v.QuestionsInvestigation}" colNum="1"></c:AplicationDetail>
+    
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>	
+</aura:component>

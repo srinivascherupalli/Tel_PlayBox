@@ -1,0 +1,58 @@
+<template>
+    <div class="helpNtraining-result singleTile">
+        <div class="search-result__listing">
+                <div class="search-result__item">
+                    <div class = "slds-grid slds_wrap slds-box">
+                        <!--Show image-->
+                        <template if:true={showImage}>
+                            <div class="search-result__img slds-col slds-size--1-of-3">
+                                <img src={imageUrl} />
+                            </div>
+                        </template>
+
+                        <div class = "slds-col articleInfo">
+                            <template for:each={SobjectDetail} for:item="obj">
+                                <!-- Show Field Label-->
+                                <template if:true={obj.isLabelShow}>
+                                    <template if:false={obj.isButton}>
+                                    <div key={obj.fieldLabel} class="search-result__cat slds-p-around_medium">{obj.fieldLabel}</div>
+                                </template>
+                                </template> 
+
+                                <!--Show field value-->
+                                <template if:true={obj.isDateFormatted}>
+                                        <lightning-formatted-date-time key={obj.fieldDetails.stDate} value={obj.fieldDetails.stDate} year="numeric" month="long" day="2-digit" weekday="long" 
+                                        hour="2-digit" hour12="false" minute="2-digit" time-zone={userTimeZone}>
+                                        </lightning-formatted-date-time>
+                                        <template if:true={obj.fieldDetails.endDate}>
+                                            <b key={obj.fieldDetails.conChar}>{obj.fieldDetails.conChar}</b><br key={obj.isDateFormatted} />
+                                           <lightning-formatted-date-time key={obj.fieldDetails.endDate} value={obj.fieldDetails.endDate} year="numeric" month="long" day="2-digit" weekday="long" 
+                                                    hour="2-digit" hour12="false" minute="2-digit" time-zone={userTimeZone}>
+                                            </lightning-formatted-date-time>
+                                        </template>
+                                    </template>
+
+                                <template if:false={obj.isButton}>
+                                    <lightning-formatted-text value={obj.finalValue} key={obj.finalValue} ></lightning-formatted-text>
+                                </template>
+                                <template if:true={obj.isLabelShow}>
+                                <template if:true={obj.isButton}>
+                                    <div key={obj.fieldLabel} class="search-result__readMore slds-p-horizontal_medium">
+                                            <a href={obj.finalValue} target="_blank">
+                                        <lightning-button variant="brand" label={obj.fieldLabel} title="" class="slds-m-left_x-small">
+                                            </lightning-button>
+                                        </a>
+                                        <!--a href={obj.finalValue} target="_blank">{obj.fieldLabel}</a-->
+                                    </div>
+                                </template>
+                            </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            <!--template if:false={isArtclResult}>
+                <span>No Event found</span>
+            </template-->
+        </div>
+    </div>
+</template>

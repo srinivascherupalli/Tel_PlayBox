@@ -1,0 +1,78 @@
+<apex:page extensions="APTPS_AgreementGenerationController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+  <apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+  <apex:includeScript value="{!$Resource.APTPS_Bootstrap_Min_JS}"></apex:includeScript> 
+  <script src="{!$Resource.APTS_Pie_Progress}"></script>    
+  <style type="text/css">
+    .rcorners {
+    border: 2px solid #319431;
+    }
+  </style>
+    <script>
+       
+       function ShowWrapper()
+        {
+            $('#myWrapper').show();
+            $('#progressBarOuter').show();     
+        }
+        
+        function hideWrapper()
+        {
+            $('#myWrapper').hide();
+            $('#progressBarOuter').hide();     
+        }
+		
+       <!-- Apttus : Added for case 00213840  -->
+     function SelectRadio(id)
+        {
+            $("#" +  id).prop("checked", true);
+        } 
+     
+
+   </script>
+   <apex:sectionHeader subtitle="{!agreementName}" ></apex:sectionHeader>
+   <h5> <b>Select Template to Generate Document and Click Generate</b></h5>
+   <br/>
+    <apex:form >
+        <apex:pageBlock >
+          
+            
+            <apex:pageMessages id="theMessages"></apex:pageMessages>
+            
+            <!-- In our table we are displaying the Agreement records    -->
+             <apex:pageBlockTable value="{!templates}" var="t" id="templateTable">
+                <apex:column >
+                <input id="{!t.docTemplate.Id}" name="templatesDisplayed" value="{!t.selected}" type="radio" />
+                     <apex:actionSupport event="onclick" action="{!getSelected}" rerender="Selected_PBS" onsubmit="SelectRadio('{!t.docTemplate.Id}');ShowWrapper()" oncomplete="hideWrapper()">
+                         <apex:param name="selectedEmailTemplateid" value="{!t.docTemplate.id}"/>
+                                  </apex:actionSupport>
+                </apex:column>
+                <apex:column value="{!t.docTemplate.Name}" headervalue="Template Name"/>               
+                <apex:column value="{!t.docTemplate.Apttus__Guidance__c}" headervalue="Guidance" />
+                <apex:column value="{!t.docTemplate.Apttus__Category__c}" headervalue="Category"/>               
+                <apex:column value="{!t.docTemplate.Apttus__Subcategory__c}" headervalue="Sub Category"/>               
+            </apex:pageBlockTable>
+            
+            <div id="outer" style="margin-top:20px;margin-bottom:20px;">
+                <div id="inner" style="margin-left:40%">
+            <apex:commandButton value="Generate" action="{!generateAgreement}"  rerender="theMessages" status="status" 
+                    onclick="ShowWrapper()" oncomplete="hideWrapper()"></apex:commandButton>
+            
+                           <apex:commandButton value="Return" action="{!cancel}" rerender="theMessages" style="margin-left:2%"></apex:commandButton>
+            </div>
+            </div>
+        </apex:pageBlock>
+        
+        
+        <div id="myWrapper" style="display:none;  position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            </div>
+            <div id= "progressBarOuter" style="display:none; position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 42%;width: 17%;background-color: white;
+             text-align:center; height: 140px; " class="rcorners">
+                
+                <apex:image id="theImage" style="margin-top:20px;margin-bottom:11px;" value="{!$Resource.APTS_WaitImage}" width="77" height="77"/>
+                    <div>
+                        <span id="statusSpan" style="margin-top:10px;font-weight:bold; font-size:13px;">Processing. Please Wait</span>
+                    </div>
+               </div>
+           
+    </apex:form>
+</apex:page>

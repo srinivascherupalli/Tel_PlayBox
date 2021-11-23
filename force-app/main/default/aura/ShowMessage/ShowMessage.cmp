@@ -1,0 +1,23 @@
+<!--****************************************************************************
+@Name           :   ShowMessage
+@MOdified By    :   Pallavi (Team SFO)
+@CreateDate     :   20/05/2021
+@Description    :   Sprint 21.08 ; P2OB-14463, 
+                    This is a common  component used to display banner messages on multiple objects
+*****************************************************************************-->
+
+<aura:component  implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:attribute name="warnMessage" type="string" default = ""/>
+    <aura:attribute name="messageTheme" type="string" default = ""/>
+    <aura:attribute name="LearnMore" type="string" default = ""/>
+    <div class="{!'slds-notify slds-notify_alert slds-alert_' + v.messageTheme}" role ="alert">
+        <aura:if isTrue = "{!v.messageTheme == 'error' ? True : False}">
+        <lightning:icon class ="warnings" iconName="{!'utility:'+v.messageTheme}" alternativeText="{!v.message+'!'}"  size="small" />
+        <aura:set attribute="else"> 
+            <lightning:icon iconName="{!'utility:'+v.messageTheme}" alternativeText="{!v.warnMessage+'!'}" />
+            </aura:set>
+       </aura:if>
+        <p>{!v.warnMessage}&nbsp;<lightning:formattedUrl  value= "{!v.LearnMore}" label="click here"/>.</p>
+        </div>
+</aura:component>

@@ -1,0 +1,60 @@
+<aura:component controller="NewContactRelController" implements="force:appHostable,flexipage:availableForAllPageTypes,lightning:actionOverride,lightning:isUrlAddressable" access="global"  >
+    <!--<ltng:require styles="/resource/SLDS/assets/styles/salesforce-lightning-design-system-vf.css"/>-->
+    <aura:attribute name="hiddenAddressType" type="String" access="global"/>
+    <aura:attribute name="hiddenContactId" type="String" access="global"/> 
+    <aura:attribute name="hiddenAddressId" type="String" access="global"/>
+    <aura:attribute name="hiddenActive" type="Boolean" access="global"/>
+    <aura:attribute name="options" type="List" />
+    <aura:attribute name="contactIDURL" type="String"/>
+    <aura:attribute name="Contact" type="Contact"/>
+    <aura:attribute name="isEdit" type="Boolean" default="false"/>
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:handler name="init" value="{!this}" action="{!c.getConAddressTypes}" />
+    <aura:handler event="c:strikeCreateAddress" action="{!c.navigateToSearchAddress1}"/>
+    
+    <div class="slds-is-relative slds-p-bottom_medium slds-show">
+        <div class="slds-is-relative slds-p-bottom_medium slds-show">
+            <lightning:card>
+                <aura:set attribute="title">New Contact-Address Relationship</aura:set>
+                <aura:set attribute="footer">
+                    <div class="slds-clearfix">
+                        <div class="slds-float_right">
+                            <lightning:button label="Cancel" class="buttonWidth" onclick="{!c.cancelAddressRelCreation}"/>
+                            <lightning:button label="Save and New" aura:id="btnSaveNew" class="buttonWidth slds-p-left_small" value="saveandnew" onclick="{!c.saveAddressRel}"/>	
+                            <lightning:button label="Save" aura:id="btnSave" variant="brand"  class="buttonWidth" onclick="{!c.saveAddressRel}"/>
+                        </div>
+                    </div>
+                </aura:set>
+                <div class="slds-is-relative slds-box slds-m-around_small slds-grid">
+                    <div class="input-group slds-size_1-of-3 slds-m-right_x-small">
+                        <c:strike_lookup label="Contact Name" aura:id="contactLookup" object="Contact" searchField="Name" showRecentRecords="true" placeholder="Search Contact" iconName="standard:contact" disabled="true"/>
+                        <div class="uiInput uiInputCheckbox uiInput--default uiInput--checkbox">
+                            <label class="uiLabel-left form-element__label uiLabel">
+                                <span>Active?</span>
+                            </label>
+                            <ui:inputCheckbox name="hiddenActive" disabled="{!v.isEdit}" aura:id="hiddenActive"/>
+                            
+                        </div>
+                        <div class="uiInput uiInputCheckbox uiInput--default uiInput--checkbox">
+                            <label class="uiLabel-left form-element__label uiLabel">
+                                <span>Primary?</span>
+                            </label>
+                            <ui:inputCheckbox name="hiddenPrimary" aura:id="hiddenPrimary"/>
+                        </div>
+                    </div>
+                    <div class="input-group slds-size_1-of-3 slds-m-left_x-small slds-p-right_small">
+                        <c:strike_lookup label="Address" aura:id="addressLookup" object="cscrm__Address__c" searchField="Name" overrideNewEvent="true" limit="10" allowNewRecords="true" showRecentRecords="true" placeholder="Search Addresses" iconName="custom:custom24" loadingMessage="Loading..." required="true"/>
+                        <lightning:select name="addressType" required="true" messageWhenValueMissing="Please select Address Type" aura:id="addressType" label="Address Type" onchange="{!c.onChange}" >
+                            <option value="">--None--</option>
+                            <aura:iteration items="{!v.options}" var="item">
+                                <option text="{!item.label}" value="{!item.value}"></option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </div>
+            </lightning:card>
+        </div>
+    </div>
+</aura:component>

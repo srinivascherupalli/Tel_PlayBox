@@ -1,0 +1,105 @@
+<!--
+Created By : Team Hawaii
+Date : 25/02/2020
+Jira No : P2OB-4164
+Description: This component is Child Component for Lightning component "OpportunityTeamMemberComponent".This Component contains 
+UI for new team member insertion
+-->
+
+<aura:component controller = "AddOpptyTeamController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--Aura Attribute for storing OpportunityTeamMember Object List as Array--> 
+    <aura:attribute name="OpptyTeamMemberInstance" type="OpportunityTeamMember"/>
+    <aura:attribute name="NumberOfExistingTestMember" type="String"/>
+    <!--Aura Attribute to store opportunity id--> 
+    <aura:attribute name="OpptyId" type = "String"/>
+    <!--Aura Attribute to store team member role values-->
+    <aura:attribute name="TeamMemberRoleList" type="List" />
+    <!--Aura Attribute to store opportunity access values-->
+    <aura:attribute name="OpportunityAccessList" type="List" />
+    <!--Aura Attribute to store new team member -->
+    <aura:attribute name="TeamMemberList" type="List" />
+    <aura:attribute name="rowIndex" type="Integer"/>
+    <aura:attribute name="userDetails" type="SObject" />
+    <aura:attribute name="inValid_selectedUser" type="Boolean" default="false"/>
+    <aura:attribute name="objInfo" type="OpportunityTeamMember" default="{sobjectType : 'OpportunityTeamMember'}" />
+    <!--Use to store error msg-->
+    <aura:attribute name="OffshoreRestrictedError" type="String" />
+    <aura:attribute name="userPresent" type="String" default="" />
+    <aura:attribute name = "ListofTrueorFalse" type = "List"/>
+    <aura:attribute name = "UserErrorListFromParent" type = "String[]" />
+    <!--registration of event to delete row -->
+    <aura:registerEvent name="RowDeleteEvt" type="c:UserSearchEvent"/> 
+    <!--registration of event to add new row -->
+    <aura:registerEvent name="AddRowEvt" type="c:UserSearchEvent"/>
+    <!--registration of event to pass value of user selected is true or false when account is offshore restricted -->
+    <aura:registerEvent name="User_ErrorEvt" type="c:UserSearchEvent"/>
+    <!--registration of event clear userid on clear function -->
+    <aura:registerEvent name="EventOnClear" type="c:UserSearchEvent"/>
+    <!--registration of event to get access value and member role -->
+    <aura:registerEvent name="GetAccessLevelAndRole" type="c:UserSearchEvent"/> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!--handling of event on clear of user record -->
+    <aura:handler name="User_ErrorEvtOnClear" event="c:UserSearchEvent" action="{!c.EnableSaveButton}"/>
+    <aura:handler name="UserSearchEventForClearInstance" event="c:UserSearchEvent" action="{!c.clearInstanceVariable}"/>
+    <aura:handler name="UserSearchEvent" event="c:UserSearchEvent" includeFacets ="true" phase="bubble" action="{!c.handleComponentEvent1}"/>
+    <tr class="slds-opportunity--teamMember slds-line-height_reset">
+        <td class="slds-cell-edit" role="gridcell">
+           <aura:if isTrue="{!v.NumberOfExistingTestMember > 0}">
+                <span class="slds-text-body--small">
+                   	{!v.NumberOfExistingTestMember + v.rowIndex + 1}
+            	</span>
+            	<aura:set attribute="else">
+                   <span class="slds-text-body--small">
+            			{!v.rowIndex + 1}
+                    </span>
+               	</aura:set>
+            </aura:if>
+        </td>
+        <td class="slds-cell-edit" role="gridcell">
+            <div class="slds-table--cell">
+                <c:UserSearch></c:UserSearch> 
+                
+            </div>
+        </td>
+        <td class="slds-cell-edit" role="gridcell">
+            <div class="slds-table--cell">
+                <lightning:select name="Team Member"  aura:id="Consent1" value="{!v.OpptyTeamMemberInstance.TeamMemberRole}">
+                    <aura:iteration items="{!v.TeamMemberRoleList}" var="option">
+                        <option text="{!option.label}" value="{!option.id}" selected="{!option.selected}"/>
+                    </aura:iteration>
+                    
+                </lightning:select>
+            </div>
+        </td>
+        <td class="slds-cell-edit" role="gridcell">
+            <div class="slds-table--cell">
+                <lightning:select name="Access Level"  aura:id="Consent2" value="{!v.OpptyTeamMemberInstance.OpportunityAccessLevel}">
+                    <aura:iteration items="{!v.OpportunityAccessList}" var="option">
+                        <option text="{!option.label}" value="{!option.value}" selected="{!option.selected}"/>
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+        </td>
+        <td class="slds-cell-edit" role="gridcell">
+            <div class="slds-table--cell">
+                <a onclick="{!c.removeRow}" class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-border slds-buttonDyn--delete">
+                    <lightning:icon variant="border-filled" iconName="utility:delete" size="xx-small" alternativeText="icon"/>
+                    <span class="slds-assistive-text">Delete Icon</span>
+                </a>
+            </div>
+        </td> 
+    </tr>
+    <aura:if isTrue="{!v.inValid_selectedUser == true}">
+        <tr>
+            <td colspan="5">
+            <span class="slds-custom--errorMsg slds-text-color_error slds-p-left_x-small">
+                {!v.OffshoreRestrictedError}
+            </span>
+            </td>
+        </tr>
+    </aura:if>
+   
+    <aura:if isTrue="{!v.UserErrorListFromParent.length > 0}">
+        <c:PRMUserSelectionMsg ListOfErrorMsg="{!v.UserErrorListFromParent}" Index="{!v.rowIndex}"/>
+    </aura:if>
+</aura:component>

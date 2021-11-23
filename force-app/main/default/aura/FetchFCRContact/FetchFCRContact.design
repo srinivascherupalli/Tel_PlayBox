@@ -1,0 +1,5 @@
+<design:component>
+    <design:attribute name="fcrId" Label="fcrId"/>
+    <design:attribute name="selectedRowStr" Label="selectedRowStr"/>    
+	<!--<design:attribute name="selectedRows" Label="SelectedRecords" type="list"/>-->
+</design:component>

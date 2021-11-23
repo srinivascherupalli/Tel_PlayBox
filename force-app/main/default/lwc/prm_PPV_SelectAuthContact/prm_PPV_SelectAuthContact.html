@@ -1,0 +1,23 @@
+<!--
+- P2OB - 11853 : LWC Component to let user select full-authority customer contact
+- Created By   : Team Hawaii : Ritika Jaiswal
+-->
+<template>
+    <div class="PPV_AssociatedContacts">
+    <lightning-card title="Associated Contacts">
+        <p class="slds-p-horizontal_small">Please select your Customer Authorised Representative from the list.</p>
+
+        <div class="slds slds-p-horizontal--medium">
+         <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_4-of-12 slds-m-bottom--medium">
+                <lightning-Input type="search" placeholder="Search..." value={contacttName} name="contacttName" class="contacttName" onchange={handleChangeContactName}></lightning-input>                 
+             </div>
+         </div>
+
+         <lightning-datatable key-field="Id" data={records} columns={columns} onrowselection={handleContactSelection} max-row-selection="1"></lightning-datatable>   
+        </div>
+    </lightning-card>
+    <template if:true={NoContactsFound}>We couldnt find any full-authority active contacts in the customer account.</template>
+    </div>
+
+</template>

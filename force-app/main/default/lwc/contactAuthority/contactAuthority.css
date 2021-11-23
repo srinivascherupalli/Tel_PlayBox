@@ -1,0 +1,51 @@
+.wrapper {
+    padding-left: 550px;
+}
+.wrapper > span {
+    font-family: "Salesforce Sans",Arial,sans-serif;
+    color: #3e3e3c;
+    font-size: .75rem;
+    padding-right: 10px;
+}
+.input-wrapper {
+    display: inline-block;
+    max-width: 50%;
+    margin-bottom: .75rem;
+}
+.strong-text {
+    font-weight: bold;
+}
+
+.salesforce-text {
+    font-family: Salesforce Sans;
+}
+
+.spinner_container  {
+    background-color: rgba(0, 0, 0, 0.10);
+    margin-top: 200px;
+    margin-bottom: 200px; 
+}
+
+.centered {
+    position: fixed;  /*IE6 position:absolute */
+    top: 50%;
+    left: 50%;
+    margin-top: -50px; /* Half of the Height of div*/
+    margin-left: -100px; /* Half of the Width of div*/
+    
+  }
+
+
+  .outerBox {
+	position:relative;
+	height:280px;
+	border:1px solid #666;
+	overflow:auto;
+	background-color:#eee
+}
+ .slds-align--absolute-center {
+    background-color:#eee;
+ }
+.THIS .spinner {
+	position:absolute;
+}

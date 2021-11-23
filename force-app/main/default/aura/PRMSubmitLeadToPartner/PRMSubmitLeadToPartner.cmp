@@ -1,0 +1,51 @@
+<aura:component controller="PRMPartnerRecommendationRules" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:availableForFlowScreens" access="global" >
+	<!-- v1.0 P2OB-5948 Team Hawaii [Vivian Charlie] Lead sharing with Recommended Partner rules -->
+    <aura:attribute name="data" type="list"/>
+    <aura:attribute name="LeadId" type="String"/>
+    <aura:attribute name="blnRecommendationsFound" type="boolean"/>
+    <aura:attribute name="RecommendedPartnerId" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <h3 id="header99" class="slds-text-heading--medium SalesforceSansfontsubheadings">Partner Recommendations
+        <lightning:helptext iconName="utility:info" content="Accredited Partners in the primary domain of this Lead who have appropriate state coverage." />
+    </h3>
+    <br/>
+    <p>Choose one of the recommended Partners or search for your preferred one.</p>
+    <p>To find out more about these Partners, visit <a class="primary" href="{!$Label.c.PartnerResultsLink}" target="_blank">Partner Finder</a></p>  
+    <br/> 
+    <aura:if isTrue="{!not(empty(v.data))}">
+    	<div class="slds" style="overflow-x:auto;"> 
+			<table class="slds-table slds-table--bordered"> <!-- slds-table-striped -->
+        		<thead>
+            		<tr>
+                		<th scope="col"><span class="slds-truncate"></span></th>
+                		<th scope="col"><span class="slds-truncate">PARTNER NAME</span></th>
+                		<th scope="col"><span class="slds-truncate">TRADING NAME</span></th>
+                		<th scope="col"><span class="slds-truncate">ACCREDITATION LEVEL</span></th>
+                		<th scope="col"><span class="slds-truncate">STATE COVERAGE</span></th>
+           			</tr>
+        		</thead>
+        		<tbody>
+            		<aura:iteration items="{!v.data}" var="wrap">
+                		<tr class="{!wrap.isPartner == 'No' ? 'greyRow' : ''}"> <!--  -->
+                    		<td>
+                        		<aura:if isTrue="{!wrap.isPartner == 'Yes'}">
+                                    <ui:inputRadio aura:id="rad01" name="group" label="" text="{!wrap.Id}" change="{!c.updateSelectedText}"/>
+                         			<aura:set attribute="else">
+                            			<lightning:helptext class ="leftMargin" content="{!$Label.c.Partner_Not_Onboarded}"/>
+                        			</aura:set> 
+                        		</aura:if>
+                    		</td>   
+                    		<td>{!wrap.accountName}</td>
+                    		<td>{!wrap.TradingName}</td>
+                    		<td>{!wrap.accreditation}</td>
+                    		<td>{!wrap.stateCoverage}</td>
+                		</tr>
+            		</aura:iteration>
+        		</tbody>
+    		</table>
+    	</div>
+        <aura:set attribute="else">
+      		{!$Label.c.PRMNoRecommendedPartnerMsg}
+    	</aura:set>
+	</aura:if>
+</aura:component>

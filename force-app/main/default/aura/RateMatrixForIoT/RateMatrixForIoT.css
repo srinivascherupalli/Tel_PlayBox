@@ -1,0 +1,71 @@
+.THIS .makeBold {
+    font-weight: bold !important;
+}
+.THIS .centerAlign {
+    text-align: center !important;
+}
+.THIS .paddingAll {
+    padding: 5px !important;
+}
+
+.THIS .rateHeader{
+    border: solid #f5f5f0 1px; 
+    background-color: #e0edf5;
+    text-align: center;
+    color:#16325C;
+    padding: 5px !important;
+    width: 14.28%;
+}
+.THIS .rateHeader1{
+    border: solid #f5f5f0 1px; 
+    background-color: #F3F2F2;
+    text-align: center;
+    color:#16325C;
+    width: 14.28%;
+}.THIS .rateHeader2{
+    border: solid #f5f5f0 1px; 
+    background-color: #e7e5e5;
+    text-align: center;
+    color:#16325C;
+    width: 14.28%;
+}.THIS .rateHeader3{
+    border: solid #f5f5f0 1px; 
+    background-color: #DDDBDA;
+    text-align: center;
+    color:#16325C;
+    width: 14.28%;
+}.THIS .rateHeader4{
+    border: solid #f5f5f0 1px; 
+    background-color: #C9C7C5;
+    text-align: center;
+    color:#16325C;
+    width: 14.28%;
+}.THIS .rateHeader5{
+    border: solid #f5f5f0 1px; 
+    background-color: #969492;
+    text-align: center;
+    color: white;
+    width: 14.28%;
+}.THIS .rateHeader6{
+    border: solid #f5f5f0 1px; 
+    background-color: #706E6B;
+    text-align: center;
+    color: white;
+    width: 14.28%;
+}
+.THIS .unitPrice{
+    border: solid #f5f5f0 1px;
+    border-top-style: none;
+    text-align: center;
+    color:#16325C;
+}
+.THIS .columnAlign{
+    text-align: center;
+    padding: 5px !important;
+}
+.THIS.spinnerHolder{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}

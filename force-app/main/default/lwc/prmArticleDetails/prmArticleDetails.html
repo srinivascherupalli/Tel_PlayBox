@@ -1,0 +1,84 @@
+<!--P2OB-8379 - Remove In this article you will learn field and Subtitle field-->
+<template>
+  <div class="article-details">
+    <template if:true={knArticleDetail}>
+      <h1 class="title">{knArticleDetail.Title}</h1>
+      <!--P2OB-8379 - Display last published date on article page-->
+      <template if:true={showLastPublishedDate}>
+        <div class="lastUpdateddate"> Last updated on {displayLastPublishedDate}</div>
+      </template>
+      <template if:true={showChildComponent}>
+        <c-prm-event-details get-id-from-parent={knArticleDetail.Id} sobject-name="Knowledge__kav"
+          get-record={knArticleDetail}></c-prm-event-details>
+      </template>
+      <!--P2OB-8611 - Display banner if Product status field has value Discontinued/End of Life-->
+      <template if:true={showBanner}>
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+          <lightning-icon icon-name="utility:warning" alternative-text="Warning" title="Warning" size="small">
+          </lightning-icon>
+          <b class="slds-p-left_x-small">{bannerMsg}</b>
+        </div>
+      </template>
+      <div class="articleContent">
+        <div class="articleContentLeft">
+          <!--P2OB-7463 - Show Tab structure and apply Jquery for toggling functionality-->
+          <!--This section renders when record type of article is not 'FAQ'-->
+          <template if:true={nonFAQSection}>
+            <div class="htmlContent tabArticleHtmlContent">
+              <!--P2OB-8379 Hide tab1 if design attribute value is set to Tab_1_Name__c-->
+              <template if:false={obj.hideTab1}>
+                <!--P2OB-8956 - Restrict visibility of Details tab only for Retail live articles-->
+                <template if:true={showTab1}>
+                  <div class="articleTab">{knArticleDetail.Tab_1_Name__c}</div>
+                </template>
+                <div class="tabContent1 tabContent" lwc:dom="manual">
+                </div>
+              </template>
+              <!--Show/hide Tab2-->
+              <template if:false={obj.hideTab2}>
+                <template if:true={knArticleDetail.Tab_2_Content__c}>
+                  <div class="articleTab">{knArticleDetail.Tab_2_Name__c}</div>
+                  <div class="tabContent2 tabContent" lwc:dom="manual">
+                  </div>
+                </template>
+              </template>
+              <!--Show/hide Tab3-->
+              <template if:false={obj.hideTab3}>
+                <template if:true={knArticleDetail.Tab_3_Content__c}>
+                  <div class="articleTab">{knArticleDetail.Tab_3_Name__c}</div>
+                  <div class="tabContent3 tabContent" lwc:dom="manual">
+                  </div>
+                </template>
+              </template>
+              <!--Show/hide Tab4-->
+              <template if:false={obj.hideTab4}>
+                <template if:true={knArticleDetail.Tab_4_Content__c}>
+                  <div class="articleTab">{knArticleDetail.Tab_4_Name__c}</div>
+                  <div class="tabContent4 tabContent" lwc:dom="manual">
+                  </div>
+                </template>
+              </template>
+            </div>
+          </template>
+          <!--This section renders when record type of article is 'FAQ'-->
+          <template if:true={summary}>
+            {summary}
+          </template>
+          <div class="articleContentRight">
+            <img src={knArticleDetail.Featured_Image__c} class="article-img">
+          </div>
+        </div>
+      </div>
+    </template>
+    <!--Show message, when user does not have access to article -->
+    <template if:true={notAuthorize}>
+      <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+        <b class="slds-p-left_x-small">{notAuthorize}</b>
+      </div>
+    </template>
+    <!--Display error if any-->
+    <template if:true={error}>
+      <c-error-panel errors={error}></c-error-panel>
+    </template>
+  </div>
+</template>

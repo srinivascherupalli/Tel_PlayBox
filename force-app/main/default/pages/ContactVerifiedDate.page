@@ -1,0 +1,23 @@
+<!--EDGE-8897: To Display a Message on Contact Record based on the Contact Last Verified Date
+Author: Kunal Mannan-->
+
+<!-- Removing extensions as per the story 'P2OB-2843' and Deleting 'ACRErrorMessagesClass' and 'ACRErrorMessagesClass_Test' classes-->
+	<apex:page standardController="Contact" showHeader="false" 
+           sidebar="false" 
+           showChat="false">
+           <apex:form >
+        
+    <!--EDGE-28500(AC2): Added new message and updated the condition for previouse message-->
+    <apex:pageMessage summary="Contact is inactive" severity="INFO" strength="3" rendered="{!IF(Contact.Contact_Status__c == 'Inactive',true,false)}"></apex:pageMessage>
+    <apex:pageMessage summary="This contact has not been validated for 6 months, Please verify the contacts details."
+                      severity="INFO"
+                      strength="3"
+                      rendered="{!IF(Contact.Contact_Status__c != 'Inactive' && Contact.lastVerifiedDate__c!=NULL&&((TODAY() - Contact.lastVerifiedDate__c)  > VALUE($Label.Contact_Verified_Criteria_Days)),true,false)}" />
+  
+      <!--EDGE-58472:Navigation for ACR record-->       
+     <!-- Updated Below Message as per EDGE-68101 AC-9. Sprint 19.07 -->
+    <!-- Commneting below message as per the story 'P2OB-2843' and Deleting 'ACRErrorMessagesClass' and 'ACRErrorMessagesClass_Test' classes
+    <apex:pageMessage summary="Required ‘Primary Account Relationship’ information is missing." severity="INFO" strength="3" rendered="{!IF( NOT(ACRVer) && ACRVercode && Contact.Contact_Status__c != 'Inactive' ,True,False)}"></apex:pageMessage>
+    -->
+    </apex:form>
+</apex:page>

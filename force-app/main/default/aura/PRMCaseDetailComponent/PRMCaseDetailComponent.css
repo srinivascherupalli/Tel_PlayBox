@@ -1,0 +1,17 @@
+.THIS .slds-form-element_horizontal .slds-form-element__label {
+    max-width: unset;
+    flex-basis: unset;
+}
+.THIS .slds-form-element__label {
+    font-weight: bold;
+}
+
+.THIS .slds-form-element_horizontal .slds-form-element__control {
+    padding: 0;
+}
+.THIS .slds-form-element_horizontal:not(.slds-is-editing) {
+    padding: 0;
+}
+.THIS h2.slds-accordion__summary-heading {
+    FONT-WEIGHT: bold;
+}

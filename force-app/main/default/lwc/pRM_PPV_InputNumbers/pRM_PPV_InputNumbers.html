@@ -1,0 +1,61 @@
+<!--
+- P2OB - 11853 : LWC Component to let user add numbers for PPV
+- Created By   : Team Hawaii : Ritika Jaiswal
+-->
+<template>
+    <h1 class="slds-page-header__title adjust-height">
+
+        <b>Port-In Numbers</b>
+    </h1>
+    <p>Please enter and/or upload the numbers for the PPV Check that will be ported to Telstra.<br/><br/></p>
+    <div class="PPV_InputNumbers">
+
+
+    <div class="slds-grid slds-wrap">
+    <div class="slds-col slds-p-horizontal_x-small slds-size_1-of-2">
+            <div class="adjust-block slds-m-around_small">                      
+                    <div class="adjust-height">
+                            {itemList.length} Added
+                    </div>
+                    <table class="slds-table slds-table_bordered">   
+                        <tbody>
+                            <template for:each={itemList} for:item="item" for:index="index">                                                    
+                                <tr key={item.id}>
+                                    <td class="alignment2">
+                                        +614 -
+                                    </td>
+                                    <td class="alignment1">
+
+                                        <lightning-input class="alignment" type="phone" minlength="8" name="Phone" maxlength="8" value={item.Phone} onchange={updateList} data-record={index}></lightning-input>
+
+                                    </td>
+                                    <td>
+                                        <a class="slds-p-bottom_small" onclick={removeRow} data-record={index} >
+                                            <lightning-icon class="hovereffect" icon-name="utility:delete" variant="border-filled" size="small" alternative-text="Delete"></lightning-icon>
+                                            
+                                        </a>
+                                    </td> 
+                                </tr>
+                            </template>  
+                        </tbody>
+                    </table>                    
+                <div class="slds-float_left slds-p-bottom_small">
+                    <a class="slds-p-bottom_small" onclick={addRow} data-record={index} >                     
+                        <lightning-icon icon-name="utility:new"  size="small" variant="border-filled" alternative-text="Add" title="Add More"></lightning-icon>                    
+                        <span>Add More</span>
+                    </a>    
+                </div>
+            </div>
+</div>    
+    <div class="slds-col slds-p-horizontal_x-small slds-size_1-of-2" >
+        <div class="adjust-block slds-m-around_small"> 
+        <p>Upload via Spreadsheet</p>
+
+        <lightning-input files={FileList} accept=".csv" name="file uploader" onchange={handleUploadFinished} type="file" multiple="false"></lightning-input>                          
+    <div class="slds-text-body_small slds-text-color_error">{fileName}</div>
+    </div>    
+</div>
+</div>
+</div>
+
+</template>

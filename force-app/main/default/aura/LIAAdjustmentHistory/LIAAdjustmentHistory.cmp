@@ -1,0 +1,48 @@
+<!-- 
+Name : LIAAdjustmentHistory
+Description : <Adjustment UI Layout>Ability to display Retrospective Redemption & LIA adjustments for a given invoice line item for all charge types and offers	
+Author: Jayghosh Mishra
+Team  : Osaka
+Story : EDGE-163368
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="UsageSummaryHandler">
+	<!-- Below attributes to be displayed on UI based on invoiceLineItems details response -->
+    <aura:attribute name="fetchRecord" type="Object"/>
+    <aura:attribute name="residualCharge" type="String"/>
+    <aura:attribute name="chargeIdentifier" type="long"/>
+    <aura:attribute name="invoiceLineNumber" type="long"/>
+    <aura:attribute name="chargeType" type="String"/>
+	<aura:attribute name="mycolumns" type="List"/>
+    <aura:attribute name="customerAccountNumber" type="String"/>
+    <aura:attribute name="ariaInvoiceNumber" type="String"/>
+    <aura:attribute name="usageChargeType" type="String"/>
+    <aura:attribute name="creditChargeType" type="String"/>
+
+    <aura:attribute name="errorMessage" type="String"/>
+   
+
+	<aura:handler name="init" value="{!this}" action="{!c.getInvoiceLineItems}"/>
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.getDiscountDetails}"/> -->
+    	
+    <div class="slds-section__title-action" style="padding:6px;" onclick="{!c.InvoiceLineItemSectionDetails}">
+        <section class=" slds-text-align--left">
+            <div class="slds-float--left ">
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevronright" size="x-small"/>
+                <lightning:icon class="slds-show" aura:id="section" iconName="utility:chevrondown" size="x-small"/>
+            </div>
+            <div class="slds-m-left--large slds-text-heading_small "> Adjustment History  <aura:if isTrue="{!v.errorMessage!=null}">
+                <lightning:icon class="iconColorChange"  iconName="utility:warning" size="small"/>
+                <b style="color:red">{!v.errorMessage}</b>
+                </aura:if>
+            </div>
+        </section>
+    </div >
+     
+    
+		<div class="slds-scrollable_x" style="height: 20rem;width:2000px" aura:id="section">
+        <lightning:datatable data ="{!v.fetchRecord}"
+			 				 columns = "{!v.mycolumns}"
+			 				 keyField = "id"
+			 				 hideCheckboxColumn="true"/>
+		</div>
+</aura:component>

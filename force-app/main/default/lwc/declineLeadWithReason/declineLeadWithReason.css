@@ -1,0 +1,17 @@
+/*
+Created By          :   Team Hawaii : Ritika Jaiswal
+Created Date        :   2-April-2020
+Desc                :   This is used to capture decline reason when lead is declined by Partner.Child component embedded in Paremt-Component 'CardListView'
+Jira                :   P2OB-5611
+Date            Version             Modified By             Desc
+10-April-2020        1              Ritika Jaiswal          P2OB:5611 - Styling for container size and combobox overflow
+**/
+
+.slds-modal__content{
+    overflow: initial;
+}
+
+.slds-modal__container{
+    max-width: 40% !important;
+    width : 35% !important;    
+}

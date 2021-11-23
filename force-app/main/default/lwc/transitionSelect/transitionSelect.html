@@ -1,0 +1,418 @@
+<!--
+@description       : 
+@author            : ChangeMeIn@UserSettingsUnder.SFDoc
+@group             : 
+@last modified on  : 01-22-2021
+@last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+Modifications Log 
+Ver   Date         Author                               Modification
+1.0   12-13-2020   ChangeMeIn@UserSettingsUnder.SFDoc   Initial Version.
+-->
+<template>
+
+    <template if:true={responseReceived}>
+        
+        <div style="padding:20px;background-color:white; height:500px;">
+            <p style=" font-weight: bold;font-size: large;">
+                Service {serviceName}
+            </p>
+            <p>
+                Please choose how you would like to retrieve detailed information of your customer's legacy services to be transitioned.
+            </p>
+            <p style="width:20%;">
+                <lightning-combobox  name="retrievalMethod"  
+                onchange = {onRetrievalChange}
+                placeholder = 'Select'
+                options={options}>
+                </lightning-combobox>
+        </p>
+        <br/>
+        
+    
+        <!--Start of EDGE-198190 by Abhishek(Osaka)(to display radio Buttons)
+            for On-Screen retreival only  -->
+        <template if:true={isCidnSelection} >
+            <template if:false ={isOsakaDormantFor2109}> 
+            <p style= "font-weight: bold;font-size: medium;">
+                Legacy Product Family
+            </p>
+            <br/>
+             
+            <template if:true = {isSinglefamily}>
+                <div class="slds-box slds-box_xx-small slds-m-around_x-small" style="width:11%;">
+                    <lightning-input type="text" value={singleProductFamily} readonly="true">
+                    </lightning-input>
+                </div>
+            </template>
+            <template if:false = {isSinglefamily}>
+			<!--Calling re-usable component-->
+             <c-multi-Select-Lightning-Pill  values={products} onselectedvaluechange={prodFamilyValueChange}></c-multi-Select-Lightning-Pill>
+            </template>
+        </template> 
+        <template if:true={isLegacyProductError}>
+            <div class="slds-text-body_small slds-text-color_error " style="text-align: left;">Please select a Legacy Product.</div><br/>
+        </template>
+            <p>
+                Download CSV file of legacy services   <lightning-formatted-url value={powerbiURL} label="here"  target="_blank" ></lightning-formatted-url>.
+            </p><br/>
+            <!--Start of DIGI-5034 by Jay(Osaka)(to display radio Buttons for Plan Configuration)
+            for On-Screen retreival only in case of Migration scenario -->
+            
+            <!-- End of DIGI-5034 -->
+            <p style= "font-weight: bold;font-size: medium;">
+                CIDN - {accountCIDN} - {accountName} (Target)
+            </p>
+            <br/>
+                <div style="display: inline-block; font-weight: bold;font-size: medium;"> 
+                        <lightning-radio-group name="radioGroup"
+                                options={radioOptions}
+                                value={defaultRadioValue}
+                                type="radio"
+                                onchange={handleSelectedRadio}
+                                >
+                        </lightning-radio-group>  
+                </div>
+                
+                <br/>   
+                <br/><br/>
+         <!--Start of EDGE-198196 by Abhishek(Osaka)-->
+         
+         <template if:true={isCidnHierarchy}> 
+            <p style= "font-weight: bold;font-size: 14px;">
+                {customLabel.transitionDisplay}<!--Custom Label--> 
+            </p> <br/>
+            <p style= "font-size: small;">
+                <!--Start of EDGE-209986 by Abhishek(Osaka)-->
+                <template if:true = {isMobile}>
+                    {customLabel.transitionNote}<!--Custom Label--> 
+                </template>
+                <template if:true = {isNguc}>
+                    {customLabel.transitionHierarchyNoteNguc}<!--Custom Label--> 
+                </template>
+                <!--End of EDGE-209986 by Abhishek(Osaka)-->
+                                  
+            </p><br/>
+            <!--Calling re-usable component-->
+                <c-multi-Select-Lightning-Pill  values={objects} onselectedvaluechange={selectedValueChange}></c-multi-Select-Lightning-Pill>
+    
+            <template if:true={displayMsg}>
+                <p>Selected CIDNs :</p>
+                <p>{selectedCIDNs}</p>
+            </template>
+            <template if:false={displayMsg}>
+                <p>Selected CIDNs :</p>
+                <p>No CIDNs Selected</p>
+            </template>
+            </template>
+        
+         <br/> 
+         <br/>
+        <!--End of EDGE-198196 by Abhishek(Osaka)-->        
+        </template>
+        <!--End of EGE-198190 by Abhishek(Osaka) -->
+
+        <template if:false={isOsakaDormantFor2112} >
+            <template if:true={showPlanConfiguration}>
+            <template if:false={showBulkUpload}>
+                <p style= "font-weight: bold;font-size: medium;">
+                    Legacy Product Family
+                </p>
+                <br/>
+                <template if:true = {isSinglefamily}>
+                    <div class="slds-box slds-box_xx-small slds-m-around_x-small" style="width:11%;">
+                        <lightning-input type="text" value={singleProductFamily} readonly="true">
+                        </lightning-input>
+                    </div>
+                </template>
+            </template>
+        </template>
+    </template>
+        <template  if:true={showBulkUpload}>
+            <p>
+                Download CSV file of legacy services   <lightning-formatted-url value={powerbiURL} label="here"  target="_blank" ></lightning-formatted-url>.
+            </p> 
+            <br/>
+            <p>
+                Note:  Partners cannot access the above link. Work instructions to be followed to download CSV file
+                
+            </p>
+            <br/>
+            <p>
+            
+            Upload your pre-formatted CSV file.
+    
+            </p>
+            <br/>
+            <p>
+           
+    
+            </p>
+            
+            <div style="margin-left:4%; margin:0px auto; width: 300px;">
+                <div>
+                    <lightning-input label="" name="file uploader" onchange={handleFilesChange} type="file" multiple></lightning-input>
+                </div><br/>
+                <template if:false ={isDupliacte}>
+                <template if:true={fileuploadStatus}>
+                    <div class="slds-text-body_small slds-text-color_success">{fileName}</div><br/>
+                </template>
+                <template if:false={fileuploadStatus}>
+                    <div class="slds-text-body_small slds-text-color_error">{fileName}</div><br/>
+                </template> 
+            </template>           
+            </div>
+            <br/>
+        </template>
+        
+        
+        </div>
+        <!--START OF EDGE-198192 By Jay From Osaka Team-->
+        <template if:false={isOsakaDormantFor2112}>
+            <template if:true={showPlanConfiguration}>
+            <p style= "font-weight: bold;font-size: medium;">
+                Plan Configuration
+            </p>
+            <br/>
+                <div style="display: inline-block; font-weight: bold;font-size: medium;"> 
+                        <lightning-radio-group name="planConfigRodioGroup"
+                                options={planConfigurationOptions}
+                                value={}
+                                type="radio"
+                                onchange={handleSelectedPlanConfiguration}
+                                >
+                        </lightning-radio-group>  
+                </div>
+            </template>
+        </template>
+
+       <!--START OF EDGE-198192 By Jay From Osaka Team-->
+       <div class style="padding:20px; margin-top : 150px; ">
+            <template if:true={showAuthorization}>
+                <b>Upload Authorization </b>
+                <div class="tooltip">
+                    <lightning-helptext></lightning-helptext>
+                    <span class="tooltiptext">User need to upload CHOWN consent/Email forms (CHOWN form- different ABN and Email Forms - Same ABN)</span>
+                  </div>
+                
+               <!-- <p>Upload Authorization
+                
+                <lightning-helptext class ="lgc-bg" title="User need to upload CHOWN consent/Email forms (CHOWN form- different ABN and Email Forms - Same ABN)" role="tooltip" ></lightning-helptext>
+                    </p> -->
+                    <br/>
+                     <lightning-input type="file" 
+                                     label="" 
+                                     record-id={opportunityId}
+                                     onchange={handleUploadFinished} 
+                                     multiple>
+                    </lightning-input> 
+                <div if:true={fileNames} class="slds-text-body_small slds-text-color_error">{fileNames} ({contentFilesLength} files selected)
+                    
+                </div><br />
+                <template if:true={isFileSaved}>
+                    <lightning-button class="slds-m-top--medium" 
+                                  label="✓  Saved"  
+                                  variant="brand"
+                                  disabled= "{isSavedDisabled}">
+                </lightning-button>
+                
+            </template>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <template if:true={allFilesUploaded}>
+                {customLabel.chownSuccessMsg}<br/>
+            </template>
+            <template if:false={isFileSaved}>
+                <lightning-button class="slds-m-top--medium" 
+                label="Save File(s)" 
+                onclick={handleSaveFiles} 
+                variant="brand"
+                disabled= "{isSaveDisabled}">
+</lightning-button>
+            </template>
+            <br />
+        
+        </template>
+            <template if:true={LoadingSpinner}>
+                <div class = "spinnerHolder">
+                <div class="slds-spinner_container slds-is-fixed">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                  <span class="slds-assistive-text">Loading</span>
+                  <div class="slds-spinner__dot-a"></div>
+                  <div class="slds-spinner__dot-b"></div>
+                </div>
+              </div>
+            </div>
+            </template>
+             
+    </div>
+        
+          
+    <template if:true={isDuplicateFiles}>
+    <template if:true={isChownModel}>
+        <!-- Modal/Popup Box LWC starts here -->
+        
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            
+            <div class="slds-modal__container ">
+                
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header" >
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </header>
+                
+                <!-- Modal/Popup Box LWC body starts here -->
+                
+                <div class="slds-modal__content slds-p-around_medium slds-scrollable_y" id="modal-content-id-3" style="height: 10rem; width: 40rem;">
+                    <p><b>{duplicateMsg}
+                    </b></p>
+                </div>
+            
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                    <template if:true={isWarning}>
+                        <button class="slds-button slds-button_neutral" onclick={closeModal} title="Close">Close</button>
+                    </template>
+                </footer>
+            </div>
+        </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    </template>
+    
+    <template if:true={maxLengthError}>
+        <div class="slds-text-body_small slds-text-color_error " style="text-align: right;">You have attached file(s) that are more than the allowed size. Please try another file</div><br/>
+    </template>
+    <!--END OF EDGE-198192 -->
+    <div class="slds-col slds-size_2-of-2" style="background:white;height: 3.5rem;">
+        <div class="slds-page-header slds-page-header_related-list">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title" style="text-align: center;">    
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <div class="slds-page-header__control">
+                                <div class="slds-text-body_small slds-text-color_error ">
+                                <template if:true={isLegacyProductError}>
+                                    <!-- {customLabel.mtm_Legacy_Product_hardstop} -->
+                                    Please select a Legacy Product.
+                                </template>
+                                
+                            <lightning-button label="Next" 
+                                title="Next" 
+                                onclick={handleNext}
+                                variant="neutral"
+                                disabled = {isNextDisabled}
+                                class="slds-m-left_x-small">
+                            </lightning-button>
+
+                        </div> 
+                                   
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+    <!--START OF EDGE-198192 By Jay From Osaka Team-->
+    <template if:true={isMissingChown}>
+        <div class="slds-text-body_small slds-text-color_error " style="text-align: right;">{customLabel.chownHardStop}</div><br/>
+    </template>
+    <!--END OF EDGE-198192 -->
+
+    
+    
+    <!--START OF EDGE-189357 By Abhishek From Osaka Team-->
+    <template if:false ={isDupliacte}>
+    <template if:true={isModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p><b>{message}
+                    </b></p>
+                    
+                </div>
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                    <template if:true={isHardStop}>
+                        <button class="slds-button slds-button_neutral" onclick={closeModal} title="Close">Close</button>
+                    </template>
+                    <template if:true={isWarning}>
+                        <button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">OK</button>
+                    </template>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    </template>
+    <!--END OF EDGE-189357 By Abhishek From Osaka Team-->
+    
+    <!--START OF EDGE-198138 by  Jay from Osaka-->
+    <template if:true={isDupliacte}>
+        <template if:true={isModalOpen}>
+            <!-- Modal/Popup Box LWC starts here -->
+            
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                
+                <div class="slds-modal__container ">
+                    
+                    <!-- Modal/Popup Box LWC header here -->
+                    <header class="slds-modal__header" >
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </header>
+                    
+                    <!-- Modal/Popup Box LWC body starts here -->
+                    
+                    <div class="slds-modal__content slds-p-around_medium slds-scrollable_y" id="modal-content-id-2" style="height: 10rem; width: 40rem;">
+                        
+                        <p><b>The below services were not uploaded since they are already associated with other in-progress baskets. </b></p>
+                        <br/>
+                        <p class = "multiline">{duplicateData}</p>
+                    </div>
+                
+                    <!-- Modal/Popup Box LWC footer starts here -->
+                    <footer class="slds-modal__footer">
+                        <template if:true={isHardStop}>
+                            <button class="slds-button slds-button_neutral" onclick={closeModal} title="Close">Close</button>
+                        </template>
+                        
+                    </footer>
+                </div>
+               
+            
+            </section>
+        
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+        </template>
+        <!--END OF EDGE-198138 by  Jay from Osaka-->
+    
+    </template>
+    
+    </template>

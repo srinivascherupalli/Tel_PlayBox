@@ -1,0 +1,3 @@
+Obligation ID,Agreement Clause,Category,Sub-Category,Description,Due Date,Comments,Responsible,Accountable,Consulted,Informed,Created By,Status,Approval Required?,Responsible?
+OB-00001,,Post Termination Activity,Required Consents,Test Description 1,test,Test Comments 1,Customer Contact 1,Contract Manager 1,Customer 1,Executive Team 1,Ruchika Patil,Open,No Approval Required,Joint
+,,Post Termination Activity,Required Consents,Test Description 2,test,Test Comments 2,Customer Contact 2,Contract Manager 2,Customer 2,Executive Team 2,Ruchika Patil,Closed,Approval Required,Telstra

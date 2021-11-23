@@ -1,0 +1,217 @@
+<!--P2OB-8379 - Display Articles based on Cateory in view All/Carousel format-->
+<!--P20B - 9098 - Remove title from this component and move to parent component to adjust search component and filter component in one line-->
+<!--P2OB-12539 - Display single tile for recommendation-->
+<template>
+    <template if:true={displayCarouselSection}>
+        <div class="helpNtraining-result">
+            <div class = "topDiv slds-grid slds-grid--vertical-align-center slds-grid_align-end slds-m-bottom_medium">
+                <div class = "sortArticle slds-col slds-grid slds-grid--vertical-align-center">
+                    <!--show view all button,on click it navigate to category landing page-->
+                    <template if:true={navigateUsingViewAll}>
+                        <a href="#" class="viewAll slds-text-align_right slds-p-horizontal_small" onclick={navigateToCategoryLandingPage}>
+                            <span>View All</span>
+                        </a>
+                    </template>
+                    <!--Show sort article option on ui-->
+                    <template if:true={sortArticles}>
+                        <lightning-combobox
+                        name="SortBy"
+                        label="Sort Article By"
+                        value={value}
+                        options={options}
+                        onchange={handleChange} class="slds-grid slds-grid--vertical-align-center" >
+                        </lightning-combobox>
+                    </template>
+                    <!--P20B - 9098 - Show filter component conditionally-->
+                    <template if:true={showFilter}>
+                        <c-prm-knowledge-filter-component  onfilteredrecord={handleEvent} all-articles={cloneKnowledgeArticleRecordFromParent} title-string={categoryFromEvent}></c-prm-knowledge-filter-component>
+                    </template>
+                </div>
+            </div>
+            <!--generate tile for article-->
+            <div class="search-result__listing slds-grid slds-wrap">
+                <template for:each={knowledgeArticleList} for:item="res">
+                    <div key={keyCount} class="search-result__item slds-col">
+                        <!--show image-->
+                        <div class="search-result__img">
+                            <img src={res.sobjectRecord.Featured_Image__c} />
+                        </div>
+                        <!--show category label based on condition-->
+                        <template if:true={displayCategotyName}>
+                            <div class="search-result__cat">{res.categoryLabel}</div>
+                        </template>
+                        <!--P2OB - 8683 show article title-->
+                        <div class="search-result__item--title" title={res.sobjectRecord.Title}>{res.sobjectRecord.Title}</div>
+                        <!--show article description-->
+                        <div class="search-result__item--desc">{res.sobjectRecord.Summary}</div>
+                        <!--show read more button-->
+                        <div class="search-result__readMore">
+                            <!--Change reference of 'topCategoryName' in data - category to 'res.topCategoryName'-->
+                            <a href="#" data-category={res.topCategoryName} data-name ={res.categoryName} data-id={res.sobjectRecord.UrlName} onclick={handleReadMore}>Read More
+                                <lightning-icon icon-name="utility:forward" alternative-text="Read More" size="small"></lightning-icon>
+                            </a>
+                        </div>
+                    </div>
+                </template>
+                <!--Display carousel based on condition-->
+                <template if:true={displayCarousel}>
+                    <!--Display left carousel based on condition-->
+                    <template if:true={showLeftCarousel}>
+                        <a class="prev" onclick={previousArticles}>
+                            <span class="iconTelstra icon-left-chevron"></span>
+                        </a>
+                    </template>
+                    <!--Display right carousel based on condition-->
+                    <template if:true={showRightCarousel}>
+                        <a class="next" onclick={nextArticles}>
+                            <span class="iconTelstra icon-right-chevron"></span>
+                        </a>
+                    </template>
+                </template>
+                <!--Display message when no articles are retrieved-->
+                <template if:false={isArtlclResult}>
+                    <span>No result found</span>
+                </template>
+            </div>
+            <!--Display view all button if carousel format is set to view all-->
+            <template if:true={displayViewAll}>
+                <div class="slds-text-align_center slds-p-top_x-small">
+                    <a href="#" class="viewAll slds-p-horizontal_small" onclick={showAllArticles}>
+                        <span>View All</span>
+                    </a>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <!--P2OB-7893 - Display Single Article for Partner Sale Newsletters-->
+    <template if:true={displaySingleTile}>
+        <!--P2OB-12539 : Display single tile recommendation-->
+        <!--START-->
+        <template if:true={isAllowRecommendation}>
+            <div class="carousel-recommendation">
+                <div class="carousel-arrow">
+                <!--Display left carousel based on condition-->
+                <template if:true={showLeftCarousel}>
+                    <a class="carousel-prev" onclick={previousArticles}>
+                        <span class="iconTelstra icon-left-chevron"></span>
+                    </a>
+                </template>
+                <!--Display right carousel based on condition-->
+                <template if:true={showRightCarousel}>
+                    <a class="carousel-next" onclick={nextArticles}>
+                        <span class="iconTelstra icon-right-chevron"></span>
+                    </a>
+                </template>
+                </div>
+                <!--generate single tile for recommendation-->
+                <div class="helpNtraining-result singleTile">
+                    <div class="search-result__listing">
+                        <template for:each={knowledgeArticleList} for:item="res">
+                            <div key={keyCount} class="search-result__item">
+                                <div class = "slds-grid slds_wrap slds-box">
+                                    <!--Show image -->
+                                    <div class="search-result__img slds-col slds-size--1-of-3">
+                                        <img src={res.sobjectRecord.Featured_Image__c} />
+                                    </div>
+                                    <div class = "slds-col slds-size--2-of-3 articleInfo">
+                                        <!--show category label-->
+                                        <div class="search-result__cat slds-p-around_medium">{res.categoryLabel}</div>
+                                        <!--P2OB - 8683 show article title-->
+                                        <div class="search-result__item--title slds-p-horizontal_medium slds-truncate" title={res.sobjectRecord.Title}>{res.sobjectRecord.Title}</div>
+                                        <!--show description-->
+                                        <div class="search-result__item--desc slds-p-horizontal_medium slds-truncate">{res.sobjectRecord.Summary}</div>
+                                        <!--show read more-->
+                                        <div class="search-result__readMore slds-p-horizontal_medium">
+                                            <a href="#" data-category={res.topCategoryName} data-name ={res.categoryName} data-id={res.sobjectRecord.UrlName} onclick={handleReadMore}>Read More
+                                                <lightning-icon icon-name="utility:forward" alternative-text="Read More" size="small"></lightning-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <!--Display visual indicator-->
+                <div class='visualIndicator'>
+                    <template for:each={cloneKnowledgeArticleRecordFromParent} for:item="res" for:index="index">
+                        <a key={res.Id} href="#" role="tab" data-rec={index} onclick={openRecomendedArticle}>
+                            <li  class="dot-indicator" data-record={index}> </li>
+                        </a>
+                    </template>
+                </div>
+            </div>
+        </template>
+        <!--END-->
+        <template if:false={isAllowRecommendation}>
+            <!--generate single tile for article-->
+            <div class="helpNtraining-result singleTile">
+                <div class="search-result__listing">
+                    <template for:each={knowledgeArticleList} for:item="res">
+                        <div key={keyCount} class="search-result__item">
+                            <div class = "slds-grid slds_wrap slds-box">
+                                <!--Show image -->
+                                <div class="search-result__img slds-col slds-size--1-of-3">
+                                    <img src={res.sobjectRecord.Featured_Image__c} />
+                                </div>
+                                <div class = "slds-col slds-size--2-of-3 articleInfo">
+                                    <!--show category label-->
+                                    <div class="search-result__cat slds-p-around_medium">{res.categoryLabel}</div>
+                                    <!--P2OB - 8683 show article title-->
+                                    <div class="search-result__item--title slds-p-horizontal_medium slds-truncate" title={res.sobjectRecord.Title}>{res.sobjectRecord.Title}</div>
+                                    <!--show description-->
+                                    <div class="search-result__item--desc slds-p-horizontal_medium slds-truncate">{res.sobjectRecord.Summary}</div>
+                                    <!--show read more-->
+                                    <div class="search-result__readMore slds-p-horizontal_medium">
+                                        <a href="#" data-category={res.topCategoryName} data-name ={res.categoryName} data-id={res.sobjectRecord.UrlName} onclick={handleReadMore}>Read More
+                                            <lightning-icon icon-name="utility:forward" alternative-text="Read More" size="small"></lightning-icon>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template if:false={isArtlclResult}>
+                        <span>No result found</span>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </template>
+    <!--P2OB-7893 - Display Articles with Pagination-->
+    <template if:true={isPagination}>
+        <div class="helpNtraining-result">
+            <!--show title-->
+            <h2 class="title">{titleString}</h2>
+            <div class="search-result__listing slds-grid slds-wrap">
+                <template for:each={knowledgeArticleList} for:item="res">
+                    <div key={keyCount} class="search-result__item slds-col">
+                        <!--show image-->
+                        <div class="search-result__img">
+                            <img src={res.sobjectRecord.Featured_Image__c}/>
+                        </div>
+                        <!--show category label-->
+                        <div class="search-result__cat">{res.categoryLabel}</div>
+                        <!--P2OB - 8683 show article title-->
+                        <div class="search-result__item--title" title={res.sobjectRecord.Title}>{res.sobjectRecord.Title}</div>
+                        <!--show article description-->
+                        <div class="search-result__item--desc">{res.sobjectRecord.Summary}</div>
+                        <!--show read more-->
+                        <div class="search-result__readMore">
+                            <!--Get Top Category Name in data category attribute to navigate to top category in case of search article navigation -->
+                            <a href="#" data-category={res.topCategoryName} data-name ={res.categoryName} data-id={res.sobjectRecord.UrlName} onclick={handleReadMore}>Read More
+                                <lightning-icon icon-name="utility:forward" alternative-text="Read More" size="small"></lightning-icon>
+                            </a>
+                        </div>
+                    </div>
+                </template>
+                <!--Display message if no article found-->
+                <template if:false={isArtlclResult}>
+                    <span>No result found</span>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>

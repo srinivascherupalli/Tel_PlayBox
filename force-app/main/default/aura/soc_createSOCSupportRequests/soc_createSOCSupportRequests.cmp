@@ -1,0 +1,37 @@
+<aura:component controller="soc_CreateSOCRequestController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >
+    
+    <aura:attribute name="oppId" type="String" access="global"/>
+	<aura:attribute name="options" type="List" access="global"/>
+    <aura:attribute name="selectedValue" type="String" access="global"/>
+    <aura:attribute name="spinner" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <div class="container">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="5" smallDeviceSize="5" mediumDeviceSize="5" largeDeviceSize="5" padding="around-small">
+               <lightning:select  name="colorId" label="Support Category" aura:id="colorId">
+                   	<option text="Select One.." value="none" selected="none"/>
+        			<aura:iteration items="{!v.options}" var="option">
+            			<option text="{!option}" value="{!option}" />
+        			</aura:iteration>
+    			</lightning:select>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="7" smallDeviceSize="7" mediumDeviceSize="7" largeDeviceSize="7" padding="around-small">
+        			<lightning:textarea aura:id="description"  name="input3" label="Description" placeholder="Describe the issue"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" smallDeviceSize="6" mediumDeviceSize="6" largeDeviceSize="6" padding="none">
+            </lightning:layoutItem>
+            <lightning:layoutItem size="6" smallDeviceSize="6" mediumDeviceSize="6" largeDeviceSize="6" padding="none">
+            	 <div class="slds-text-align_right">
+        			 <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.closeModal }"/>
+                     <lightning:button variant="brand" label="Save" title="Save" onclick="{! c.validateAndSave }"/>       
+        		</div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+    <!-- P2OB-9178 : Adding spinner to indicate in-progress -->
+    <aura:if isTrue="{!v.spinner}" >
+        <c:soc_Spinner />
+    </aura:if>
+</aura:component>

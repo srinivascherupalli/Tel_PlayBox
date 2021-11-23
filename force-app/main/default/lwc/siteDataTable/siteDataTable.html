@@ -1,0 +1,179 @@
+<template>
+    <div class="slds-m-around_xx-small">
+        <div style="background-color: white;">
+            <!--- Header Section-->
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-media slds-size_1-of-3">
+                        <lightning-icon class="slds-m-right_xx-small" icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                        <a target="_self" class="slds-text-heading_small" onclick={navigateToAccount}>Account >{name}</a>             
+                    </div>
+                    <div class="slds-col slds-size_1-of-3 slds-text-heading_medium slds-text-align_center">
+                        Review and Add Sites
+                    </div>
+                    <div class=" slds-col slds-size_1-of-3 slds-text-align_right">
+                        <lightning-button disabled={isLoaded} variant="brand" label="Re-validate Addresses" title="Primary action" onclick={revalidateAddresses} class="slds-m-right_xx-small"></lightning-button>
+                    </div>
+                </div>
+                <div>
+                    <template if:true={showFailedRecordMessage}>
+                        <div class="slds-text-heading_small slds-text-align_center" style="padding-bottom:0.5%">
+                            Error in finding {failedRecordCount} addresses. Please click “Re-Validate” to try again.
+                        </div>
+                    </template>
+                </div>
+            </div>
+            
+            <!--- Table Data-->
+            <!--template if:true={isLoaded}-->
+                <template if:true={siteColumns}>
+                    <div class="scrollable">
+                        <!--- Table Header-->
+                        <table class="slds-table slds-table_bordered slds-no-row-hover slds-m-bottom_small" id="Table1">
+                            <thead>
+                                <tr>
+                                    <template for:each={siteColumns} for:item="column">
+                                        <th class="slds-text-align_left" scope="col" key={column.fieldName}>
+                                            <div title="column.fieldName">{column.label}</div>
+                                        </th>
+                                    </template>
+                                </tr> 
+                            </thead>
+                            <!--- Table Header-->
+                            
+                            <!--div if:true={isLoaded} class="slds-is-relative">
+                                <lightning-spinner
+                                    alternative-text="Please wait while fetching records..." variant="brand">
+                                </lightning-spinner>
+                            </div-->
+                            
+                            <tbody>
+                                <template if:true={isLoaded} class="slds-is-relative">
+                                    <lightning-spinner
+                                        class={loaderCSS}
+                                        alternative-text="Please wait while fetching records..." variant="brand">
+                                    </lightning-spinner>
+                                </template>    
+                                <template for:each={results} aria-disabled={isLoaded} for:item="siteData">
+                                    <tr key={siteData.corelationId}>
+                                        <td class="slds-text-align_left" style="width: 7%;" >
+                                            {siteData.siteName}
+                                        </td>
+                                        <td class="slds-text-align_left" style="width: 23%;" >
+                                            {siteData.address}
+                                        </td>
+                                        <td class="slds-text-align_left" style="width: 12%;" >
+                                            {siteData.adborId}
+                                        </td>
+                                        <td style="width: 8%;" >
+                                            <lightning-badge class={siteData.Color} label={siteData.status}></lightning-badge>
+                                        </td>
+                                        <td>
+                                            <lightning-combobox
+                                                variant="label-hidden" 
+                                                data-key={siteData.corelationId}
+                                                value={siteData.selectedAddress}
+                                                placeholder="Select Address"
+                                                options={siteData.newAddresses}
+                                                onchange={handleChange}
+                                                disabled={siteData.actionCombo}
+                                            ></lightning-combobox>
+                                        </td>
+                                        <td class="slds-text-align_left" style="width:10%;" >
+                                            <lightning-button variant="brand" data-key={siteData.corelationId}  label="Add Site" title="Primary action" disabled={siteData.actionAdd} onclick={handleAddSite} ></lightning-button>
+                                            <lightning-button-icon  data-key={siteData.corelationId} icon-name="utility:delete"  alternative-text="Delete" disabled={siteData.actionDelete} title="delete" class="slds-p-around_xx-small"  onclick={handleDelete}></lightning-button-icon>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table> 
+                    </div>
+                    
+                    
+                    <!--- Footer Section -->
+                    <div class="slds-m-bottom_small slds-text-align_center">
+                        <lightning-button-icon icon-name="utility:jump_to_left"  alternative-text="First" title="First" class="slds-m-left_xx-small slds-p-around_xx-small" onclick={handleFirst} disabled={disableFirst}></lightning-button-icon>
+                        <lightning-button-icon icon-name="utility:chevronleft"  alternative-text="Previous" title="Previous" class="slds-m-left_xx-small slds-p-around_xx-small" onclick={handlePrevious} disabled={disableFirst} ></lightning-button-icon>
+                        {currentPage}/{totalPage}
+                        <lightning-button-icon icon-name="utility:chevronright"  alternative-text="Next" title="Next" class="slds-m-left_xx-small slds-p-around_xx-small" onclick={handleNext} disabled={disableLast}></lightning-button-icon>
+                        <lightning-button-icon icon-name="utility:jump_to_right"   alternative-text="Last" title="Last" class="slds-m-left_xx-small slds-p-around_xx-small" onclick={handleLast} disabled={disableLast}></lightning-button-icon>
+                    </div>
+                </template>   
+            
+            <div class="slds-modal__footer">
+                <div class="slds-text-align_left">
+                    <p>Can't find an address?&nbsp;<a href="http://lxweb0013.in.telstra.com.au:7780/pls/ws/f?p=AFF:1:1" target="_blank">Click here&nbsp;</a>to add it to EAST</p>
+                </div>
+                <div class="slds-col slds-size_3-of-3 slds-text-align_right">
+                    <lightning-button disabled={isLoaded} variant="brand"  label="Export unmatched addresses" title="Primary action"  onclick={exportSites} class="slds-m-left_xx-small slds-p-around_xx-small"></lightning-button>
+                    <lightning-button disabled={isLoaded} variant="brand"  label="Delete All" title="Primary action"  onclick={showDeleteAllModal} class="slds-m-left_xx-small slds-p-around_xx-small"></lightning-button>
+                    <lightning-button  variant="brand"  label="Finish" title="Primary action" onclick={navigateToAccount} class="slds-m-left_xx-small slds-p-around_xx-small"></lightning-button>
+                </div> 
+            </div>
+             
+            
+
+            <template if:true={openDeleteModal}>
+                <div class="slds-modal slds-fade-in-open slds-backdrop slds-modal_small">  
+                    <div class="slds-modal__container">  
+                        <!------HEADER Section-->  
+                        <div class="slds-modal__header slds-text-heading_medium">   
+                                Delete Address Record
+                        </div>  
+                        <!------Body Section-->  
+                        <div class="slds-modal__content slds-p-around_large" >
+                            <div class="slds-grid slds-grid_vertical slds-size_6-of-6 slds-p-left_xx-large slds-p-right_xx-large slds-p-bottom_xx-large">
+                                <div class="slds-col slds-grid slds-grid_vertical slds-col slds-text-heading_small slds-p-bottom_medium">
+                                   Are you sure you want to delete the following record from the list?
+                                </div>
+                                
+                                <div class="slds-grid slds-grid_vertical">
+                                    <table>
+                                        <tr class="slds-text-color_success slds-p-bottom_xx-small">
+                                            <td>Site Name</td>
+                                            <td>Address</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{recordToDelete.siteName}</td>
+                                            <td>{recordToDelete.address}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!------Footer Section-->  
+                        <div class="slds-modal__footer">  
+                            <lightning-button label="Cancel" title="Non-primary action" onclick={hideDeleteModal} class="slds-m-left_x-small"></lightning-button>
+                            <lightning-button label="Confirm Delete"  title="Non-primary action" onclick={deleteConfirm} class="slds-m-left_x-small"></lightning-button>
+                        </div>  
+                    </div>
+                </div>
+                
+            </template>
+
+            <template if:true={openDeleteAllModal}>
+                <div class="slds-modal slds-fade-in-open slds-backdrop slds-modal_x-small">  
+                    <div class="slds-modal__container">  
+                        <!------HEADER Section-->  
+                        <div class="slds-modal__header slds-text-heading_medium">   
+                            Delete all remaining addresses?
+                        </div>  
+                       
+                        <!------Footer Section-->  
+                        <div class="slds-modal__footer">  
+                            <lightning-button label="Cancel" title="Non-primary action" onclick={hideDeleteModal} class="slds-m-left_x-small"></lightning-button>
+                            <lightning-button label="Confirm Delete"  title="Non-primary action" onclick={handleDeleteAll} class="slds-m-left_x-small"></lightning-button>
+                        </div>  
+                    </div>
+                </div>
+            </template>
+
+
+
+
+
+
+            
+        </div>
+    </div>    
+</template>

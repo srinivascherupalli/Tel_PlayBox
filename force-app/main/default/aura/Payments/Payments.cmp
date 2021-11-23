@@ -1,0 +1,76 @@
+<!-- **************************************************************************
+EDGE        -88306
+component   -payments
+Description -payments Component is used to show the payments details for the 
+             related billing account number.
+Author      -Dheeraj Bhatt
+Modified By - Kamlesh Kumar
+EDGE        - 212793
+Description - Added child component which will show extra payment details on click of telstra payment id
+********************************************************************************* -->
+<aura:component  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" controller="PaymentsController" >
+    <aura:attribute name="isBANPayments" type="Boolean" default="True"/>
+    <aura:attribute name="billingAccountId" type="string"/>
+    <aura:attribute name="ban" type="string"/>
+    <aura:attribute name="isInvoicePayments" type="Boolean" />
+    <aura:attribute name="InvoiceNumber" type="Integer" />
+    <aura:attribute name="from" type="Date"/>
+    <aura:attribute name="to" type="Date"/>
+    <aura:attribute name="todayDate" type="Date"/>
+    <aura:attribute name="recordList" type="List"/>
+    <aura:attribute name="handler" type="string" default="BillingAccountPayments" />
+    <aura:attribute name="dataColumns" type="List"/>
+    <aura:attribute name="sortBy" type="String" default="paymentDate"/>
+    <aura:attribute name="sortDirection" type="String" default="desc"/>
+    <aura:attribute name="IsError" type="Boolean"  default="False"/>
+    <aura:attribute name="errorMessage" type="string"/>
+    <!--EDGE 212793 -->
+    <aura:attribute name="displayModal" type="Boolean" default="false"/>
+    <aura:attribute name="transactionId" type="string"/>
+     <!--EDGE-212793-->
+    
+    <aura:handler   name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <aura:if isTrue="{!v.isBANPayments}">
+        <aura:if isTrue="{!v.IsError}">
+        <ui:message title="Error" severity="error" closable="true">
+            {!v.errorMessage}
+        </ui:message>
+    </aura:if>
+        <div aura:id="Payment" class="slds-show" >
+            <div class="slds-form_horizontal  slds-grid slds-wrap ">
+                <div class="slds-col">
+                        <lightning:input aura:id="from_field" type="date" name="From" value="{!v.from}" label="From" max="{!v.todayDate}"/> 
+                 </div> &nbsp;&nbsp;
+                <div class="slds-col">
+                        <lightning:input aura:id="to_field" type="date" name="To" value="{!v.to}" label ="To" max="{!v.todayDate}"/>
+                 </div>
+                &nbsp;&nbsp;
+                <div class="slds-col" style="padding:3px;">
+                    <lightning:button variant="brand" label="search" title="Base action" onclick="{! c.searchPayments}"/>
+                </div>
+            </div>
+        </div>
+        <lightning:datatable aura:id="accountTable"
+                             keyField="Id"
+                             hideCheckboxColumn="true"
+                             columns="{!v.dataColumns}"
+                             data="{!v.recordList}"
+                             sortedBy="{!v.sortBy}"
+                             sortedDirection="{!v.sortDirection}"
+                             onsort="{!c.handleSort}"
+                             class="BAN_Payments"
+                             onrowaction="{!c.handlePaymentAction}" 
+                             />
+        
+                             
+    </aura:if>
+   
+   <!--EDGE : 212793 Added LWC Component to display extra payment details ex Invoice details, Case no etc -->
+   <aura:if isTrue="{!v.displayModal}">
+       <c:paymentDetailsLwc aura:id="modal"  handler="{!v.handler}" ban="{!v.ban}" showLoading="{!v.showSpinner}" 
+                            transactionId="{!v.transactionId}"/>
+    </aura:if>
+    
+     
+    
+</aura:component>

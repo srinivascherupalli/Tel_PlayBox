@@ -1,0 +1,38 @@
+<!-- 
+* @Author : Kamlesh Kumar
+* @Date : 12 March 2020
+* @Jira : Edge-189844
+-->
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning /> 
+    <div  id="LightningComponentid" />    
+    <script>
+    var recordUrl = "{!JSENCODE($CurrentPage.parameters.recordUrl)}"; 
+    var basketId = "{!JSENCODE($CurrentPage.parameters.basketIds)}";
+    var basketName = "{!JSENCODE($CurrentPage.parameters.basketName)}";
+    $Lightning.use("c:OpportunitySyncStatusApp", function() {
+        $Lightning.createComponent("c:opportunitySyncStatus",
+          { 
+            'progressBarTitle' : 'Creating Opportunity Line Items',
+            'successMessgae' : 'Completed',
+            'erroMessage' : 'Opportunity Sync has failed. Please initiate Opportunity Sync again before closing this opportunity.',
+            'labelData' : [{Name: 'OLIs Created', Id: 'OLIs Created'}],
+            'basketId' : basketId,
+            'basketName' : basketName
+          },
+          "LightningComponentid",
+          function(cmp) {
+          });
+    });
+    
+    document.addEventListener("closesignal", function(event){
+    if(event.detail.data == 'navigateToRecord') {
+       window.top.location.href = recordUrl;
+    }
+    
+    else if(event.detail.data == 'close') {
+        window.parent.postMessage('closeModals', '*');
+    }
+});
+    </script>
+</apex:page>

@@ -1,0 +1,105 @@
+<!-- Component Name : PRMItemstoApproval
+     Author         : bhargav / Uday K
+     Description    : This will show Opportunities for your approval section
+                      PRM community home page tab  
+     Date           : 27-07-2018
+-->
+<!-- EDGE-76046 UX/UI feedback implementation. Only UI impact, functionality as is.
+	 Author: Ramya
+	 Sprint: 19.05 -->
+
+<aura:component controller="prmApprovalListContoller"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+<aura:dependency resource="markup://force:navigateToSObject" type="EVENT"/>
+    <aura:attribute name="ApprovalList" type="approvalWrapperClass[]"/>	
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+    <aura:attribute name="WorkitemIdval" type="Id" />
+    <aura:attribute name="opptyId" type="String" />
+    <aura:attribute name="actionType" type="String" />
+     <aura:attribute name="btnName" type="string" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+     <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="showModalB" type="Boolean" default="false" />
+    <aura:attribute name="sComments" type="string" default="" />
+    <aura:attribute name="recordId" type="String" default=""/> 
+
+        <c:SalesforceInterface aura:id="UtilityService" />
+
+    <!-- Instead of table tr tags in current codebase, now using slds-grid and slds-card -->
+    
+<div class="slds-text-heading_medium slds-text-align_center ">Opportunities for your acceptance</div>
+   <!-- <div class="slds-card-wrapper"> -->
+<aura:if isTrue="{!v.ApprovalList}">  
+ <aura:iteration items="{!v.ApprovalList}" var="accs1">
+  <article class="slds-card slds-card_boundary"> 
+    <div class="slds-card__header slds-grid"> </div>
+ 
+    <div class="slds-card__body slds-card__body_inner">
+	<div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1" style="color:#3333ff">
+          <!--  <span >{!accs1.oppName}</span> -->
+               <p><a onclick="{!c.handleClickToRecord}" data-record="{!accs1.oppId}"><ui:outputText aura:id="recordId" value="{!accs1.oppName}"></ui:outputText></a></p>
+        </div>
+        <div class="slds-col slds-size_1-of-1">
+            <div style="padding-top:5px">{!accs1.AccountName}</div>
+        </div>
+        <div class="left_margin slds-col slds-size_1-of-4">
+            <div style="padding-top:7px"><ui:outputCurrency aura:id="curr" value="{!accs1.Amount}" format="$##,##,###,###.00"></ui:outputCurrency></div>
+            
+        </div> 
+        
+        <div class="left_margin slds-col slds-size_1-of-4">
+            <div style="padding-top:7px"><ui:outputDate value="{!accs1.CloseDate}"></ui:outputDate></div>
+        </div>
+        <div class="slds-no-flex, slds-col slds-size_2-of-4">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
+               <lightning:buttonGroup> 
+                   <lightning:button  variant="brand" aura:id="Approve" name="{!accs1.oppty.Id}" label="Accept" value="{!accs1.workItemId}" onclick="{!c.handleOpenModalB}"/>
+                   <lightning:button  aura:id="Reject" name="{!accs1.oppty.Id}" label="Decline" value="{!accs1.workItemId}" onclick="{!c.handleOpenModalB}"/>                  
+               </lightning:buttonGroup>     
+        </div> 
+ 
+        </div>
+
+	</div>
+   
+  </article>
+  </aura:iteration>
+      <aura:set attribute="else">
+          <article class="slds-card slds-card_boundary"> 
+			<div class="slds-grid slds-wrap">
+	        <div class="slds-col slds-size_1-of-1" style="color:blue">
+            <span >No Records for Apporval</span>
+                </div></div></article>
+           <!-- <tr><td>No Records for Apporval</td></tr> -->
+            </aura:set>
+    </aura:if>
+<!-- </div> -->
+    <!--loading spinner start... style=Brand Medium (blue dots)-->
+         <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+               <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                 <span class="slds-assistive-text">Loading</span>
+                 <div class="slds-spinner__dot-a"></div>
+                 <div class="slds-spinner__dot-b"></div>
+               </div>
+            </div>
+         </aura:if>
+    
+  <!-- Loading spinner end--> 
+      <c:CustomModalComponent isActive="{!v.showModalB}">
+        Comments :
+          <!-- <ui:inputText aura:id="Cmnts" value="{!v.sComments}" required="true" />-->
+           <lightning:layoutItem class="slds-p-around--medium" flexibility="grow" >               
+               <ui:inputTextarea aura:id="Cmnts" required="true" value="{!v.sComments}" class="topText" maxlength="500" />
+            </lightning:layoutItem> 
+           <aura:set attribute="footer">
+            <lightning:button variant="neutral" label="Cancel" onclick="{!c.handleModalEditLeadCancel}" />
+            <lightning:button variant="brand"  label="Save" onclick="{!c.handleClickAction}" />
+        </aura:set>
+    </c:CustomModalComponent>
+    
+    
+        
+</aura:component>

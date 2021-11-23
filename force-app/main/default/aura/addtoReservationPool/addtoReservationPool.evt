@@ -1,0 +1,14 @@
+<!--//EDGE -93081
+Name: NumberReservationNewComp
+Description: Display New number resvation UI for Product Basket 
+Author:Mahima -->
+
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="Type" type="String"/>
+    <aura:attribute name="ServiceNumberLst" type="List"/>
+    <!--Defect EDGE-110273 fix -->
+	<aura:attribute name="len" type="Integer"/>
+    <aura:attribute name="Quan" type="Integer"/>
+    <aura:attribute name="Displaymsg" type="String"/>
+    <aura:attribute name="saveMsg" type="String"/>
+</aura:event>

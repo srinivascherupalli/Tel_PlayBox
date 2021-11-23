@@ -1,0 +1,110 @@
+.THIS .statusdisable{
+    background: #16324f !important;
+   pointer-events: none;
+}
+
+.THIS .uiInput--default .form-element__help {
+   float: left;
+}
+
+.THIS .disabledbtn{
+    background: #dddddd;
+}
+
+.THIS .myCheckbox{
+  display: inline-block;
+  float: left;
+}
+.THIS .pill-container-disable {
+    background : rgb(236, 235, 234);
+}
+.THIS .pill-disable{
+   background : rgb(236, 235, 234) ;
+    border : none;
+}
+.THIS .slds-table_cell-buffer{
+  padding-top: 16px;
+}
+.THIS .slds-no-flex{
+    
+}
+
+.THIS .popover {
+position: relative !important;
+left: 26%;
+bottom: 73%;
+margin-top: -14px;
+}
+
+.THIS .test {
+    margin-top: -15px;
+}
+
+.THIS .popover1 {
+position: absolute;
+left: 28%;
+bottom: 83%;
+}
+
+.THIS .slds-table_bordered{
+ border-top: 0px solid rgb(221, 219, 218) !important;
+}
+
+.THIS .slds-form-element__icon .slds-button_icon{
+margin-bottom: -4px;
+}
+.THIS .help-popup{
+            display: none;
+            position: absolute;
+            border-radius: .25rem;
+            background-color: #17325D;
+            bottom: 1.5rem;
+            left: -1rem;
+            color: #fff;
+            padding: .5rem;
+            font-family: 'Salesforce Sans' !important;
+            text-align: left;
+            width: 420px;
+            z-index:1 !important;
+        }
+        .THIS .help-icon:hover .help-popup{
+            display: block;
+            
+        }
+        .THIS .help-icon .help-popup p {
+            margin: 0;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .THIS .help-icon .help-popup:before {
+            width: 1rem;
+            height: 1rem;
+            position: absolute;
+            -webkit-transform: rotate(45deg);	
+            transform: rotate(45deg);
+            content: '';
+                background-color: #17325D;
+            bottom: -.2rem;
+            left: .95rem;
+            z-index:0 !important;
+            box-sizing: border-box;
+        }
+.THIS .help-icon{
+            display: inline-block;
+            position: relative;
+            margin-left: .3rem;
+            cursor: pointer;
+            font-family: 'Times New Roman', serif !important;
+            text-align: center;
+            height: 0.8rem;
+            width: 0.8rem;
+            background-color: #B1AEAB;
+            color: #fff;
+            border-radius: 50%;
+            font-size: .8rem;
+            line-height: 1rem;
+            opacity: 0.85;
+        }
+        .THIS .customIcon div{
+            vertical-align: top !important;
+            }

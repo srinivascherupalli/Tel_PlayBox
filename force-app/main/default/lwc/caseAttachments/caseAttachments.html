@@ -1,0 +1,57 @@
+<template>
+
+    <lightning-file-upload label={label} name="fileUploader" record-id={recordId}
+            onuploadfinished={handleActionFinished} multiple>
+    </lightning-file-upload>
+
+    <template if:true={displayFiles}>
+        <lightning-layout multiple-rows="true">
+            <lightning-layout-item padding="around-small" size="12">
+                <lightning-layout>
+                    <lightning-layout-item size="8">
+                        <b>Title</b>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="3">
+                        <b>File Type</b>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="1">
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-layout-item>
+            
+            <template for:each={upfiles} for:item="file">
+                <lightning-layout-item size="12" key={file.Title}>
+                    <lightning-layout>
+                        <template if:true={desktopDevice}>
+                            <lightning-layout-item size="8">
+                                <lightning-button variant="base" data-id={file.Id}
+                                    label={file.Title} value={file.Title} onclick={filePreview}>
+                                </lightning-button>
+                            </lightning-layout-item>
+                        </template>
+                        <template if:false={desktopDevice}>
+                            <lightning-layout-item size="8">
+                                {file.Title}
+                            </lightning-layout-item>
+                        </template>
+                        <lightning-layout-item size="3">
+                            {file.Type}
+                        </lightning-layout-item>
+                        <lightning-layout-item size="1">
+                            <lightning-button-icon variant="bare" icon-name="utility:delete" alternative-text="Delete"
+                                class="slds-m-left_xx-small" title="Delete" onclick={handleDelete} name="openConfirmation"
+                                data-id={file.Id}>
+                            </lightning-button-icon>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                     
+                </lightning-layout-item>
+            </template>
+        </lightning-layout>
+    </template> 	
+<!-- Confirmation Dialog for delete -->
+<c-confirmation-dialog title='Confirmation Title' message='Are you sure you want to delete this file?'
+confirm-label='Delete' cancel-label='Cancel' visible={isDialogVisible} original-message={originalMessage}
+name="confirmModal" onclick={handleDelete}>
+</c-confirmation-dialog>
+</template>

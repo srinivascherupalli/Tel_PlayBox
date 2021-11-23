@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION">
+     <aura:attribute name="selectedTransitionList" type="List" />
+     <aura:attribute name="showAssignButton" type="Boolean" />
+     <aura:attribute name="selectedTransitionNumberList" type="List" />
+</aura:event>

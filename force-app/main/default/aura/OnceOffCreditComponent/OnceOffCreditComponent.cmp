@@ -1,0 +1,155 @@
+<!--
+Author: Mahima Gandhe 
+Company: Telstra 
+Description: Component to show Credits_and_Adjustments__c object create layout with selected fields and added on Case layout.
+History 
+<16/04/2019> <Mahima Gandhe> <Component Created> 
+<26/06/2020> <Pradeep> <EDGE-149471> 
+-->
+<aura:component controller="OneOffCreditController" implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:attribute name="caseID" type="String" default=""/>
+    <aura:attribute name="recordId" type="String" default=""/>
+    <aura:attribute name="CredAdjId" type="String" default=""/>
+    <aura:attribute name="listOflookupRecords" type="List" />
+    <aura:attribute name="isformvalid" type="boolean"/>
+    <aura:attribute name="CAObj" type="string[]" default="['Billing_Account_Number_BAN__c','Credit_Change_Amount__c','Non_Marketable_Product__c','Date_when_credit_was_given_to_customer__c','Reason_Code__c']"/>
+    <aura:attribute name ="CreditAdjustValues" type ="Credits_and_Adjustments__c" default=""/>
+    <aura:attribute name="CreditObj"
+                    type="Credits_and_Adjustments__c" 
+                    default="{ 'sobjectType': 'Credits_and_Adjustments__c'}"/>
+    <aura:attribute name = "nonMarketableProductName" type="String"/>
+    <aura:attribute name="caseRecord" type="Object" description="A simplified view record object to be displayed"/>
+    <aura:attribute name="recordError" type="String" description="An error message bound to force:recordData"/>
+    <!--EDGE-149630: LDS for UI Layout for the Insolvency Line Item Credit and Debit transaction conditionally -->
+    <aura:attribute name="isPredebt" type="boolean"/>
+    <aura:attribute name="preDebt" type="boolean" description="EDGE-158381:Check Predebt billing account or Not"/>
+    <aura:attribute name="objInfo" type="Credits_and_Adjustments__c" default="{sobjectType : 'Credits_and_Adjustments__c'}" />
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}" 
+                      fields="RecordType.DeveloperName,CaseNumber"
+                      targetError="{!v.recordError}"
+                      targetFields="{!v.caseRecord}" />
+    <aura:handler name="change" value="{!v.CreditObj.Non_Marketable_Product__c}" action="{!c.checkSelectedProduct}"/>
+    <aura:handler name="change" value="{!v.CreditObj.Billing_Account_Number_BAN__c}" action="{!c.checkPredebtBAN}"/>
+    <aura:attribute name="loadData" type="Boolean" default="false" />
+    <aura:attribute name="selectedList" type="object[]" default="" description="EDGE-158381:get selected data from custom meta data"/>
+     <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+     <aura:attribute name="caseInputMap" type="Map" default="{}"/>
+       <aura:attribute name="isValid" type="Boolean" default="false" /> 
+    <!--DPG-3598 added below attribute-->
+    <aura:attribute name="disableReasonCode" type="Boolean" default="false" /> 
+    
+    <div class="slds-box slds-theme_default " aura:id="onceoffCreditForm">
+        <aura:if isTrue="{!v.caseRecord.RecordType.DeveloperName == $Label.c.Insolvency_Management}">
+            <div class="slds-page-header">Insolvency Adjustments</div>
+            <aura:set attribute="else">
+                <div class="slds-page-header">Once-Off Credit/Debit Details</div>
+            </aura:set>          
+        </aura:if> 
+        
+        <div class="slds-is-relative slds-m-top_small slds-m-bottom_small  slds-m-left_large slds-grid slds-wrap">
+            
+            <div class="slds-size_1-of-2 slds-p-right_small">
+                <div id="bannumber" class="slds-form-element ">
+                    <label class="slds-form-element__label" for="bannumber">Billing Account Number(BAN)</label>
+                    <label class="red" for="bannumber">*</label>
+                    <div class="slds-form-element__control slds-p-bottom_small ">
+                     <force:inputField required="true" value="{!v.CreditObj.Billing_Account_Number_BAN__c}" aura:id="banNumberField"/>
+                       <aura:if isTrue="{!and(v.preDebt, v.caseRecord.RecordType.DeveloperName == $Label.c.Insolvency_Management)}">
+                        <div class="slds-text-body_small">
+                        <lightning:icon variant="warning"  size="x-small" iconName="utility:warning" alternativeText="Warning!" title="Warning" /> 
+                         Note: This is a Pre-Debt account</div>
+                            </aura:if>
+                         </div>
+                </div>
+                <div aura:id="creditDate" class="slds-form-element ">
+                    <aura:if isTrue="{!v.caseRecord.RecordType.DeveloperName ==  $Label.c.Insolvency_Management}">                   
+                        <label class="slds-form-element__label" for="creditDate">Date when Credit/Debit was given to Customer</label>
+                        <aura:set attribute="else">
+                            <label class="slds-form-element__label" for="creditDate">Date when Credit/Debit was given to Customer</label>
+                        </aura:set>
+                    </aura:if>                     
+                    <label class="red" for="creditDate">*</label>
+                    <div class="slds-form-element__control slds-p-bottom_small ">
+                        
+                        <force:inputField aura:id="datefield" value="{!v.CreditObj.Date_when_credit_was_given_to_customer__c}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-p-left_small">
+                <div aura:id="creditType" class="slds-form-element ">
+                    <label class="slds-form-element__label" for="creditType">Non Marketable Product</label>
+                    <label class="red" for="creditType">*</label>            				
+                    <div class="slds-form-element__control slds-p-bottom_small ">
+                        <force:inputField aura:id="NMprod" value="{!v.CreditObj.Non_Marketable_Product__c}"/>  
+                    </div>
+                </div>
+                <aura:if isTrue="{!and(v.preDebt, v.caseRecord.RecordType.DeveloperName == $Label.c.Insolvency_Management)}">
+                    <br/>
+                    </aura:if>
+                <div aura:id="creditamountdiv" class="slds-form-element ">
+                    <aura:if isTrue="{!v.caseRecord.RecordType.DeveloperName == $Label.c.Insolvency_Management}">
+                        <label class="slds-form-element__label" for="creditamount">Credit/Debit Change Amount ($)</label>
+                        <aura:set attribute="else">
+                            <label class="slds-form-element__label" for="creditamount">Credit/Debit Change Amount($)</label>
+                        </aura:set>
+                    </aura:if>                     
+                    <label class="red" for="creditamount">*</label>
+                    <div class="slds-form-element__control slds-p-bottom_small ">
+                        
+                        <force:inputField  aura:id="creditAmount" value="{!v.CreditObj.Credit_Change_Amount__c}"/>		                  
+                    </div>
+                </div>
+            </div>
+            
+            <!--DPG-3598 added disabled attribute on inputField-->
+            <div class="slds-size_2-of-2 ">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="select-01"> Reason Code &amp; Description <abbr class="slds-required red" title="required">* </abbr></label>
+                    <div id="{!if(v.isPredebt == true,'uiMenu','resCode')}" class="slds-form-element__control slds-p-bottom_small">
+                        <ui:inputSelect  aura:id="reasonCodeField" class="slds-select" disabled="{!v.disableReasonCode}"/>
+                    </div>
+                </div>
+                
+                  <!--loading spinner start... style=Brand Medium (blue dots)-->
+            <aura:if isTrue="{!(v.loadData)}">
+                <div aura:id="spinnerId" class="slds-spinner_container">
+                    <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                        <span class="slds-assistive-text">Loading....</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </aura:if>
+                 <!--loading spinner start -->
+            </div>
+            <lightning:button variant="brand" label="Save" title="Save" onclick="{! c.handleSubmit }" />
+            <aura:if isTrue="{!and(v.showConfirmDialog, v.caseRecord.RecordType.DeveloperName == $Label.c.Insolvency_Management)}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    <!--Modal Box Header Start-->
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Confirm {!v.selectedList[0].Adjustment_Type__c}</h1>
+                    </header>
+                    <!--Modal Box Header End-->
+                     
+                    <!--Modal Box Content Start-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <center><b>Are you sure you want to {!v.selectedList[0].Adjustment_Type__c}  ${!v.CreditObj.Credit_Change_Amount__c} which is {!v.selectedList[0].Display_Product__c}?</b></center>
+                    </div>
+                    <!--Modal Box Content End-->
+                     
+                    <!--Modal Box Button Start-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                    </footer>
+                    <!--Modal Box Button End-->
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>
+        </div>
+    </div>
+</aura:component>

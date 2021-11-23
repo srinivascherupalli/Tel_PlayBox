@@ -1,0 +1,33 @@
+<!--
+   *  Description of the purpose of the method.
+   *  @name SiteContact
+   *  @description               : This LWC is used to display the Site and Contact details in datatable
+   *  @param fulfillmentId       : FulfilmentlineItem Id.
+   *  @return 				 	 : - 
+   *  @Jira Story Ref            : EDGE-120711
+   *  @createdBy  				 : Purushottama Sahu, Orlando
+-->
+<template>
+    <!-- handlers-->
+
+    <span class={tableDisplay}>
+        <lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle}
+            active-section-name={activeSections}>
+            <lightning-accordion-section class="relatedListLWCStyle" name="TaskContacts" label="Task Contacts">
+                <lightning-datatable data={data} columns={columns} key-field=" id" hide-checkbox-column="true">
+                </lightning-datatable>
+                <span class={cssDisplay}>
+                    <div id="spinnerDiv" class="demo-only demo--inverse" style="height: 10rem">
+                        <div class="slds-spinner_container">
+                            <div role="status" class="slds-spinner slds-spinner_medium">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </span>
+</template>

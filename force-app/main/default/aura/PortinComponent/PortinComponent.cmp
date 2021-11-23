@@ -1,0 +1,374 @@
+<!-- 
+Name : PortInComponent
+Description : Lightning UI for checking port-in numbers for MAC 
+Author: Kalashree Borgaonkar
+Story: EDGE-80749
+-->
+<aura:component
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                controller="PortInController"
+                >
+    <aura:dependency resource="markup://force:*" type="EVENT" />
+    <aura:attribute
+                    name="numberTypes"
+                    type="List"
+                    default="[
+                             {'label': 'Mobile', 'value': 'Mobile'},
+                             {'label': 'Fixed', 'value': 'Fixed'},                                                   
+                             ]"
+                    />
+    <aura:attribute name="numberList" type="Object[]" />
+    <aura:attribute name="portSelectionList" type="Object[]" />
+    <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="showQualifiedMsisdnList" type="Id" default="false" />
+    <aura:attribute name="isCafActive" type="Id" default="false" />
+    <aura:attribute name="numberType" type="String" default="Mobile" />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="areNumQualified" type="Boolean" default="true" />
+    <aura:attribute name="isAddRow" type="Boolean" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--EDGE-90327 Kalashree Borgaonkar, start -->
+    <aura:attribute name="variantPPV" type="String" default="neutral" />
+    <aura:attribute name="variantCustAuth" type="String" default="brand" />
+    <aura:attribute name="isPpvActive" type="Boolean" />
+    <aura:attribute name="isPortinValid" type="Boolean" default="false" />
+    <aura:attribute name="custAuth" type="String" />
+    <aura:attribute name="status" type="String" />
+    <aura:attribute name="expiry" type="String" />
+    <aura:attribute name="approver" type="String" />
+    <aura:attribute name="mobile" type="String" />
+    <aura:attribute name="cafId" type="String" />
+    <aura:attribute name="isSortAsc" type="Boolean" default="false"/>
+    <aura:attribute name="ppvDetail" type="PortInController.PpvDetails" />
+    <!--EDGE-117585 Kalashree Borgaonkar. Contact to be sent to PPV Comp-->
+    <aura:attribute name="defaultContact" type="String" />
+    <!--EDGE-90327 Kalashree Borgaonkar, end -->
+    <!--EDGE-107149 Port in Pagination-->
+    <aura:attribute name="pageNo" type="Integer" default="1" />
+    <aura:attribute name="PageSize" type="Integer" default="10" />
+    <aura:attribute name="CurrentPage" type="Integer" default="1" />
+    <aura:attribute name="TotalPages" type="Integer" default="1" />
+    <aura:attribute name="row" type="Integer" default="0" />
+    <aura:attribute name="dispList" type="List" />
+    <aura:attribute name="numTempList" type="List" />
+    <aura:attribute name="columns" type="Integer" />
+    <aura:attribute name="isNumberSelected" type="Boolean" default="true" />
+    <aura:attribute name="isSelectAll" type="Boolean" default="false" />
+    <aura:attribute name="isAllDisable" type="Boolean" default="false" />
+    
+    <aura:attribute name="selectedRowList" type="Object[]" />
+    <!--EDGE-107149 Port in Pagination, End-->
+    <aura:attribute name="isShowMobileport" type="Boolean" default="false" />
+    <aura:registerEvent name="AddRowEvt" type="c:AddNewRowEvt" />
+    <aura:attribute name="selectedRecords" type="Integer" default="0" />
+    <aura:attribute name="totalRecords" type="Integer" default="0" />
+    <aura:attribute name="showtotalRecords" type="Integer" default="0" />
+    <aura:attribute name="radioValue" type="string" default="Mobile"/>
+    <aura:registerEvent name="DeleteRowEvt" type="c:DeleteRowEvt" />
+    <aura:registerEvent name="SelectRows" type="c:SelectAllRows" />
+    <!--aura:registerEvent name="sampleCompEvent" 
+                         type="c:parentComponentEvent"/-->
+    <aura:registerEvent name="SelectRow" type="c:SelectAllRows" /> 
+    <aura:handler
+                  name="DeleteRowEvt"
+                  event="c:DeleteRowEvt"
+                  action="{!c.removeDeletedRow}"
+                  />
+    <aura:handler
+                  name="AddRowEvt"
+                  event="c:AddNewRowEvt"
+                  action="{!c.addNewRow}"
+                  />
+    <aura:handler
+                  name="SelectRows"
+                  event="c:SelectAllRows"
+                  action="{!c.handleSelectAllNumbers}"
+                  />
+    <!--aura:handler
+    name="sampleCompEvent"
+    event="c:parentComponentEvent"
+    action="{!c.handleCheckboxEvent}"
+  /-->
+    <aura:handler
+                  name="SelectRow"
+                  event="c:parentComponentEvent"
+                  action="{!c.handleCheckboxEvent}"
+                  />
+    
+    <aura:handler event="c:addtoReservationPool" action="{!c.handleEvent}" />
+    <aura:handler
+                  event="c:removeFromReservationPool"
+                  action="{!c.removeReservationPool}"
+                  />
+    
+    <!--EDGE-89299, NavigateToCAF event -->
+    <aura:handler event="c:NavigateToCAF" action="{!c.NavigateComponent}" />
+    <aura:handler
+                  name="sampleComponentEvent"
+                  action="{!c.handleSampleEvent}"
+                  event="c:parentComponentEvent"
+                  />
+    <aura:handler event="c:PpvUpdateEvent" action="{!c.handlePPVEvent}" />
+    <!--EDGE-107149 Port in Pagination-->
+    <aura:registerEvent name="paginationEvent" type="c:paginationEvent" />
+    <aura:handler event="c:paginationEvent" action="{!c.changeData}" />
+    <aura:handler name="closeModalEvent" event="c:FixedPortinModalcloseEvent" action="{!c.handlecloseModal}"/> 
+    
+    <div aura:id="parentcontainer" />
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <div aura:id="portInContainer">
+        <div aura:id="PortInSection" style="margin:15px;">
+            <!--<b>Port in Qualification</b>-->
+                    <c:SectionCollapse displayName="Port in Qualification">
+                        <!--<div style="margin:15px;margin-top:8px;">
+                            <br />
+                            <b>Upload Port in numbers </b>
+                            <lightning:helptext iconName="utility:info"
+                                content="Upload CSV file can be used to bulk upload of Port-In numbers for Port in qualification" />
+                            <lightning:fileUpload label="" name="fileUploader" multiple="true" accept="{!v.filetype}"
+                                recordId="{!v.recordId}" onuploadfinished="{!c.handleUploadFinished}" />
+                        </div>-->
+                        <c:bulkUploadPortIn onportinupload="{!c.handleBulkUploadChange}" />
+                        <!--DIGI-868:Removed Warning msg, Start-->
+
+                        <aura:if isTrue="{!v.isCafActive}">
+                            <div style="background-color: #f4f6f9;">
+<!--
+                                <lightning:icon iconName="utility:warning" alternativeText="Warning!"
+                                    variant="warning" />&nbsp;
+                                <b>{!$Label.c.InActiveCafWarning}</b>-->
+
+                            </div>
+                        </aura:if>
+                        <!--DIGI-868:Removed Warning msg, Start-->
+
+                        <div style="background-color:white;">
+                            <!--DIGI-868:Removed Information msg, Start-->
+                            <!--div aura:id="info" class="slds-box slds-theme_shade">
+                <div class="slds-grid" style="padding:8px;">
+                    <div class="slds-col slds-size_1-of-9" style="padding-right:10px;">
+                        <lightning:icon iconName="utility:info" alternativeText="info" />
+                    </div>
+                    <div class="slds-col ">
+                        <b>Number Qualification</b> <br /> Enter and qualify port in numbers
+                        below. Mobile numbers only.<br /> Fixed numbers cannot be currently
+                        ported in for modular products <br /> Only numbers currently managed
+                        by a competitor carrier qualify for port in. <br />
+                    </div>
+                    <div class="slds-col ">
+                        <div class="slds-truncate slds-float_right">
+                            <lightning:buttonIcon
+                                                  variant="Inverse"
+                                                  iconName="utility:close"
+                                                  title="Cancel"
+                                                  alternativeText="close"
+                                                  onclick="{!c.closeInfo}"
+                                                  />
+                        </div>
+                    </div>
+                </div-->
+            <!--EDGE-117585 Kalashree Borgaonkar. Changed alignment of buttons- start-->
+            <!--br/-->
+            <!--DIGI-868:Removed Information msg, End-->
+            <div class="slds-grid">
+                <div class="slds-col_bump-right" style="margin-top:13px;">
+                    <span><h4><b>Number Qualification {!v.selectedRecords} of {!v.showtotalRecords}</b></h4></span>
+                </div>
+                <div >
+                    
+                    <lightning:button
+                                      label="Add Row"
+                                      title="Add Row"
+                                      onclick="{!c.AddNewRow}"
+                                      class="buttonAlign"
+                                      />
+                </div>
+                <div> <lightning:button
+                                        label="Delete All"
+                                        title="Delete All"
+                                        onclick="{!c.deleteAllRows}"
+                                        class="buttonAlign"
+                                        /></div>
+                <div>
+                    <lightning:button
+                                      class="buttonAlign"
+                                      label="Qualify"
+                                      title="Qualify"
+                                      onclick="{!c.qualifyCallout}"
+                                      disabled="{!v.isNumberSelected}"
+                                      />
+                </div>
+                <div><!--button
+                            class="slds-button slds-button_brand buttonAlign"
+                            onclick="{!c.Save}"
+                            disabled="{!v.isPortinValid}">Add to CA pool</button-->
+                    <lightning:button
+                                      class="buttonAlign"
+                                      label="Add to CA pool"
+                                      title="Add to CA pool"
+                                      onclick="{!c.Save}"
+                                      disabled="{!v.isPortinValid}"
+                                      variant="brand"
+                                      />
+                </div>      
+            </div>
+            <!--EDGE-117585 Kalashree Borgaonkar. Changed alignment of buttons - end-->
+            <aura:if isTrue="{!v.showQualifiedMsisdnList}">
+                <div id="numberType" style="margin:15px;">
+                    <fieldset class="slds-form-element">
+                        <!--legend class="slds-form-element__legend slds-form-element__label">Radio Group Label</legend-->
+                        <div class="slds-form-element__control">
+                            <span
+                                  class="slds-radio"
+                                  style="display : inline-block !important;padding-right:15px"
+                                  >
+                                <input
+                                       type="radio"
+                                       id="radio-51"
+                                       value="Mobile"
+                                       name="options"
+                                       checked="true"
+                                       onchange="{! c.handleDisplay }"
+                                       />
+                                <label class="slds-radio__label" for="radio-51">
+                                    <span class="slds-radio_faux"></span>
+                                    <span class="slds-form-element__label">Mobile</span>
+                                </label>
+                            </span>
+                            <span
+                                  class="slds-radio"
+                                  style="display : inline-block !important;padding-right:15px"
+                                  >
+                                <input
+                                       type="radio"
+                                       id="radio-52"
+                                       value="Fixed"
+                                       name="options"
+                                       disabled="false"
+                                       onchange="{! c.handleDisplay }"
+                                       />
+                                <label class="slds-radio__label" for="radio-52">
+                                    <span class="slds-radio_faux"></span>
+                                    <span class="slds-form-element__label">Fixed</span>
+                                </label>
+                            </span>
+                        </div>
+                    </fieldset>
+                </div>
+            </aura:if>
+            
+            <div aura:id="MobilePanel" class="slds-show" style="margin-top:15px;">
+                <table class="slds-table slds-border_top slds-border_left slds-border_right slds-border_bottom">
+                    <thead>
+                        <tr class="slds-text-title slds-border_top slds-border_left slds-border_right slds-border_bottom" >
+                            <th style="background-color: #f4f6f9;">
+                                <label class="slds-checkbox">
+                                    <ui:inputCheckbox
+                                                      value="{!v.isSelectAll}"
+                                                      change="{!c.handleSelectAllNumbers1}"
+                                                      aura:id="selectAll"
+                                                      
+                                                      />
+                                    <span class="slds-checkbox--faux" />
+                                    <span class="slds-form-element__label"></span>
+                                </label>
+                            </th>
+                            <th scope="col" style="background-color: #f4f6f9;padding:13px;"> <div class="slds-truncate">Row</div> </th>
+                            <th scope="col" style="background-color: #f4f6f9;padding:13px;">
+                                <div class="slds-truncate" title="Number">Number</div>
+                            </th>
+                            <th scope="col" style="background-color: #f4f6f9;padding:13px;">
+                                <div class="slds-truncate" title="Incumbent Account number"
+                                     >Incumbent Account number</div
+                                    >
+                            </th>
+                            <!--Author: Ila
+                                Story: EDGE-80751
+                                -->
+                            <th scope="col" style="background-color: #f4f6f9;padding:13px;">
+                                <div class="slds-truncate" title="Incumbent Carrier"
+                                     >Incumbent Carrier</div
+                                    >
+                            </th>
+                            
+                            <th scope="col" style="background-color: #f4f6f9;padding:13px;">
+                                <div class="slds-truncate" title="Port In Ready" 
+                                     >Port In Ready &nbsp; 
+                           <!-- <aura:if isTrue="{!v.isSortAsc}">
+                                       <a><lightning:icon onclick = "{!c.sort}" iconName="utility:arrowup" alternativeText="Preview"  /></a> 
+                                <aura:set attribute="else">
+                                </aura:set>
+                                       <a><lightning:icon onclick = "{!c.sort}" iconName="utility:arrowup" alternativeText="Preview"  /></a> 
+                                    </aura:if>    -->
+                                    <aura:if isTrue="{!v.isSortAsc}">
+                                              <a><lightning:icon onclick = "{!c.sort}" iconName="utility:arrowup" alternativeText="Preview" class="iconSize" /></a> 
+
+        <aura:set attribute="else">
+                                                  <a><lightning:icon onclick = "{!c.sort}" iconName="utility:arrowdown" alternativeText="Preview" class="iconSize"  /></a> 
+
+        </aura:set>
+    </aura:if>
+                                </div>
+                            </th>
+                            <th scope="col" style="background-color: #f4f6f9; padding:13px;">
+                                Action
+                            </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!--Iterate the child Component for display Table rows 
+               with pass the List Item Index for track the Every child Component 
+               and pass each List  Instance -->
+                        
+                        <aura:iteration
+                                        items="{!v.numberList}"
+                                        var="item"
+                                        indexVar="index"
+                                        aura:id="container"
+                                        >
+                            <c:DynamicRowItem
+                                              msisdnNumber="{!item}"
+                                              rowIndex="{!index}"
+                                              basketId="{!v.basketId}"
+                                              />
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                <br />
+                
+                <!--EDGE-107149 Port in Pagination component-->
+                <c:paginationCmp
+                                 PageSize="{!v.PageSize}"
+                                 data="{!v.dispList}"
+                                 columns="{!v.columns}"
+                                 TotalPages="{!v.TotalPages}"
+                                 aura:id="pagination"
+                                 />
+                   <br />
+                </div>
+            </div>
+        </c:SectionCollapse>
+            <br />
+            <div >
+                <!--DIGI:778 Passed isCafActive and isCAExpired attribute values to child component-->
+                <c:CafAndPpvComponent  basket_Id="{!v.basketId}" aura:id="cafComp"  isCAExpired="{!v.isPortinValid}"/>
+            </div>
+            <br/>
+            <div></div>
+
+            
+        </div>
+        <div aura:id="FixedPanel" class="slds-hide" style="margin:15px;">
+           Please click on <b><a onclick="{!c.fixedPortInScreen}" >
+            Fixed Port-In  
+            </a></b>link to redirect to Fixed Port-In screen.
+        </div>
+        <br /><br />
+    </div>
+</aura:component>

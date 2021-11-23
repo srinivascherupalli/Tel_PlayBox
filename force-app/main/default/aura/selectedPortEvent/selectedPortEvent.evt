@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" description="by this event we are passing the selected Port in number in the parent component">
+    <aura:attribute name="portByEvent" type="contact"/>
+</aura:event>

@@ -1,0 +1,237 @@
+<!--*****************************************************************************
+@Name: FilterContacts
+@Author: Sravanthi(Team SFO)
+@CreateDate: 12/3/2020
+@Description:   Sprint 20.04 , P2OB-5245,P2OB-4979 :: This component retrives the list of 
+    Contacts's related to the given Account and shows related contact 
+    list on account pages,Active Flag implemented based on contact status picklist.
+    SFO 20.06 :P2OB-5883 : Implementing New button for Contact creation on Account Related List
+    SFO 20.09 :P2OB-6724 : Implementing Breadcrumbs when present in view all state
+    Alexandria 20.10:EDGE-151592 : View related list in PRM to the authorised Partners
+    SFO 21.04 P2OB-12577 : Telstra Connect Status Filters
+*******************************************************************************-->
+<aura:component controller="FilterContactsController"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable"
+    access="global">
+    <!-- attributes -->
+    <aura:attribute name="contactList" type="Contact[]" description="Stores the data to be displayed" />
+    <aura:attribute name="columns" type="List" description="stores the dynamic columns for the datatable" />
+    <aura:attribute name="recordId" type="Id" access="public" />
+    <aura:attribute name="ViewAllRec" type="Boolean" access="public" />
+    <aura:attribute name="Filter" type="String" access="public" />
+    <aura:attribute name="errors" type="Object" default="[]" />
+    <aura:attribute name="draftValues" type="Object" default="[]" />
+    <aura:attribute name="isMobile" type="Boolean" default="{!false}" />
+    <aura:attribute name="Spinner" type="boolean" default="false" />
+    <aura:attribute name="initialLoad" type="boolean" default="true" />
+    <aura:attribute name="sortBy" type="String" />
+    <aura:attribute name="sortDirection" type="String" default="asc" />
+    <aura:attribute name="fieldstoQuery" type="Object" default="[]" />
+    <aura:attribute name="createConaccess" type="Boolean" default="false" />
+    <aura:attribute name="recordLoadError" type="String"/>
+    <aura:attribute name="conIconName" type="String" default="standard:contact"/>
+    <aura:attribute name="accountRecord" type="Object"/>
+
+    <!--Added by Purushottam : EDGE-151592  Start-->
+    <lightning:navigation aura:id="navService"/>
+    <aura:attribute name="isPOR" type="Boolean" default="true" />
+    <aura:attribute name="recordTypeId" type="Id"/>
+    <!--Added by Purushottam : EDGE-151592  End-->
+    
+    <force:recordData aura:id="recordLoader"
+    recordId="{!v.recordId}"
+    fields="Name"   
+    targetFields="{!v.accountRecord}"
+    targetError="{!v.recordLoadError}"
+    />
+
+
+    <!--HeaderTile for the related list-->
+    <aura:attribute name="headerTitle" type="Aura.Component[]">
+        <h1 class="slds-text-heading_small">
+            <!--Added by Purushottam : EDGE-151592 -Start - Contact list is zero below block will execute -->
+            <aura:if isTrue="{!(empty(v.contactList))}"> 
+                <b>Related Contacts (0) </b>
+            </aura:if>
+            <aura:if isTrue="{!not(empty(v.contactList))}">   
+             <!--Added by Purushottam : EDGE-151592 -End -->
+            <aura:if isTrue="{!and(lessthan(v.contactList.length,6),not(v.isMobile))}">
+                <b>Related Contacts ({!(v.contactList.length)}) </b>
+                <aura:set attribute="else">
+                    <b>Related Contacts</b>
+
+                </aura:set>
+            </aura:if>
+            </aura:if>
+        </h1>
+    </aura:attribute>
+
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }" />
+    <aura:handler event="force:refreshView" action="{!c.isRefreshed}" />
+
+	<aura:if isTrue="{!(v.isPOR)}">  <!--Added by Purushottam : EDGE-151592  Start-->
+    <!-- For Desktop View -->
+    <aura:if isTrue="{!not(v.isMobile)}">
+        <lightning:card class="slds-card_boundary" iconName="{!v.conIconName}" variant="base">
+            <!--SFO 20.09 :P2OB-6724 : Implementing Breadcrumbs when present in view all state START -->
+            <aura:set attribute="title">
+                <aura:if isTrue="{!v.ViewAllRec}">
+                    {!v.headerTitle}
+                    <aura:set attribute="else">
+                        <div class="slds-text-body_regular">
+                        <lightning:breadcrumbs>
+                            <lightning:breadcrumb label="Accounts" href="path/to/place/1"
+                                onclick="{! c.navigateAccountrelated }" />
+                            <lightning:breadcrumb label="{!v.accountRecord.Name}" href="path/to/place/2"
+                                onclick="{! c.navigateAccountRec }" />
+                        </lightning:breadcrumbs></div>
+                        {!v.headerTitle}
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+            <!--SFO 20.09 :P2OB-6724 : Implementing Breadcrumbs when present in view all state END -->
+            <!--SFO 20.06 :P2OB-5883 : Implementing New button for Contact creation on Account Related List START -->
+            <aura:set attribute="actions">
+                <aura:if isTrue="{!v.createConaccess}">
+                    <div class=" slds-show_inline-block" style="vertical-align: bottom;">
+                        <lightning:button class="myBtn" variant="Neutral" label="New" title="New"
+                            onclick="{! c.createContact }" />
+                    </div>
+                </aura:if>
+                <div class=" slds-show_inline-block" style="vertical-align: bottom;">
+                    <!--SFO 20.06 :P2OB-5883 : Implementing New button for Contact creation on Account Related List END -->
+                    <!--SFO 21.04 :P2OB-12577 :Telstra Connect Status Selections -->
+                    <lightning:select aura:id="select" name="Select" label="" variant="Neutral" onchange="{! c.refresh}"
+                        class=" slds-show_inline-block slds-p-left_x-small">
+                        <option value="Active">{!$Label.c.Contact_Filter_Active}</option>
+                        <option value="InActive">{!$Label.c.Contact_Filter_Inactive}</option>
+                        <option value="All">{!$Label.c.Contact_Filter_All_Contacts}</option>
+                        <option value="RegisteredActive">{!$Label.c.Contact_Filter_Registered_Active}</option>
+                        <option value="RegisteredNotActive">{!$Label.c.Contact_Filter_Registered_Not_Active}</option>
+                        <option value="NotRegistered">{!$Label.c.Contact_Filter_Not_Registered}</option>
+                    </lightning:select>
+                </div>
+            </aura:set>
+
+            <aura:if isTrue="{!not(empty(v.contactList))}">
+
+                <aura:if isTrue="{!v.Spinner}">
+                    <div aura:id="spinnerId" class="slds-spinner_container">
+                        <div class="slds-spinner--brand  slds-spinner slds-spinner_medium slds-is-relative"
+                            role="alert">
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </aura:if>
+                <!--Desktop Version Lightning Datatable-->
+                <div class="slds-border_top slds-border_right">
+                    <lightning:datatable columns="{! v.columns }" data="{! v.contactList }" keyField="Id"
+                        hideCheckboxColumn="true" onrowaction="{! c.handleRowAction }" errors="{! v.errors }"   
+                        showRowNumberColumn="false" draftValues="{! v.draftValues }" onsave="{! c.handleSaveEdition }"
+                        sortedBy="{!v.sortBy}" sortedDirection="{!v.sortDirection}" onsort="{!c.handleSort}" minColumnWidth="150"/>
+                </div>
+                <aura:if isTrue="{!v.ViewAllRec}">
+                    <div class="slds-card__footer">
+                        <a href="javascript:void(0);" onclick="{!c.navigateToMyComponent}">View All</a>
+                    </div>
+                            
+                            
+
+                </aura:if>
+            </aura:if>
+
+        </lightning:card>
+        <!-- For Mobile View -->
+        <aura:set attribute="else">
+
+            <lightning:card class="slds-card_boundary">
+                <!--SFO 20.06 : P2OB-5883 : Implementing New button for Contact creation on Account Related List START -->
+                <aura:set attribute="title">
+                    <div align="center" draggable="false">
+                        <aura:if isTrue="{!v.createConaccess}">
+                            <lightning:icon iconName="action:add_contact" title="New" variant="border" size="xx-small"
+                                onclick="{! c.createContact }" /><br />
+                            <lightning:formattedText value="New" style="font-size: 13px;" />
+                        </aura:if>
+                    </div>
+                    <!--SFO 20.06 :P2OB-5883 : Implementing New button for Contact creation on Account Related List END -->
+                    <!--SFO 20.09 :P2OB-6724 :updating Aura Id for mobile -->
+                    <!--SFO 21.04 :P2OB-12577 :Telstra Connect Status Selections -->
+                    <lightning:select aura:id="selectMobile" name="Select" label="" variant="Neutral" onchange="{! c.refresh}"
+                        value="{!v.Filter}" class="slds-show_inline-block">
+                        <option value="Active">{!$Label.c.Contact_Filter_Active}</option>
+                        <option value="InActive">{!$Label.c.Contact_Filter_Inactive}</option>
+                        <option value="All">{!$Label.c.Contact_Filter_All_Contacts}</option>
+                        <option value="RegisteredActive">{!$Label.c.Contact_Filter_Registered_Active}</option>
+                        <option value="RegisteredNotActive">{!$Label.c.Contact_Filter_Registered_Not_Active}</option>
+                        <option value="NotRegistered">{!$Label.c.Contact_Filter_Not_Registered}</option>
+                    </lightning:select>
+                </aura:set>
+
+                <aura:if isTrue="{!v.Spinner}">
+                    <div aura:id="spinnerId" class="slds-spinner_container">
+                        <div class="slds-spinner--brand  slds-spinner slds-spinner_medium slds-is-relative"
+                            role="alert">
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </aura:if>
+
+                <aura:if isTrue="{!greaterthan(v.contactList.length,0)}">
+                    <aura:iteration items="{!v.contactList}" var="item" indexVar="index">
+                        <div class="slds-p-bottom_xx-small" aura:id="conId" onclick="{!c.navigatetoContact}"
+                            data-id="{!item.Id}">
+
+                            <!--Mobile Version Lightning RecordViewForm for each record-->
+                            <lightning:recordViewForm recordId="{!item.Id}" objectApiName="Contact">
+                                <lightning:layout verticalAlign="center">
+                                    <lightning:layoutItem padding="around-small">
+                                        <article class="slds-tile">
+                                            <div class="slds-p-bottom_x-small">
+                                                <h1 class="slds-text-heading_small slds-truncate" title="ContactName">
+                                                    <lightning:icon iconName="standard:contact" size="medium" />
+                                                    <ui:outputText value="{!item.Name}" />
+                                                </h1>
+                                            </div>
+                                            <div class="slds-tile__detail">
+                                                <dl class="slds-list_horizontal slds-wrap">
+                                                    <aura:iteration items="{!v.columns}" var="col">
+                                                        <dt class="slds-item_label  slds-truncate" title="Second Label">
+                                                            {!col.label}:</dt>
+                                                        <dd class="slds-item_detail slds-truncate"
+                                                            title="Description for second label">
+                                                            <!--P2OB-5905 Bug Fix -->
+                                                            <aura:if isTrue="{!col.label=='Active'}">
+                                                                <lightning:input type="checkbox"
+                                                                    checked="{!item.Active}" disabled="true" />
+                                                                <aura:set attribute="else">
+                                                                    <lightning:outputField variant="label-hidden"
+                                                                        fieldName="{!col.fieldName}" />
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        </dd>
+                                                    </aura:iteration>
+                                                </dl>
+                                            </div>
+                                        </article>
+                                    </lightning:layoutItem>
+                                </lightning:layout>
+                            </lightning:recordViewForm>
+                        </div>
+                    </aura:iteration>
+                    <aura:set attribute="else">
+                        <div class="slds-align_absolute-center slds-p-top_large">
+                            <ui:outputText value="There are no records in this list" />
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </lightning:card>
+        </aura:set>
+    </aura:if>
+    </aura:if>
+</aura:component>

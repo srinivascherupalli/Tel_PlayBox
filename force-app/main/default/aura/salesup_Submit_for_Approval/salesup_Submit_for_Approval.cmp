@@ -1,0 +1,28 @@
+<aura:component controller="salesup_Submit_for_ApprovalClass"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowScreens,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="cases" type="Case"/>
+    <aura:attribute name="showSubmitBtn" type="Boolean" default="true" />
+    <aura:attribute name="showComp" type="Boolean" default="true" />
+    <aura:dependency resource="markup://force:navigateToSObject" type="EVENT"/>
+    
+    <lightning:flow aura:id="flowData" onstatuschange="{!c.handleStatusChange}"/>
+   
+    
+     <lightning:layout horizontalAlign="space" class="align">
+         
+        {!cases}
+         <aura:if isTrue="{!v.showSubmitBtn}">
+                <lightning:layoutItem alignmentBump ="right">
+                    <lightning:button label="Submit for Approval"  
+                                      class="mybuttonCust"
+                                      iconName="utility:send" 
+                                      iconPosition="left"
+                                      title="Submit for Approval" 
+                                      variant="neutral"
+                                      onclick="{!c.FlowCall}" />
+                </lightning:layoutItem >
+            </aura:if>
+        </lightning:layout>
+</aura:component>

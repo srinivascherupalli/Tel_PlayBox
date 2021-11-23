@@ -1,0 +1,16 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+ 
+    <aura:attribute name="durationTime" type="String"/>
+ 	<aura:attribute name="pretimerText" type="String"/>
+    <aura:attribute name="posttimerText" type="String"/>
+    <aura:attribute name="timeLeft" type="String"/>
+    <aura:attribute name="futuretime" type="Integer" default="5"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit }"/>
+    <aura:registerEvent name="countdownevent" type="c:CountdownTimerafterFinish"/>
+    <aura:registerEvent name="resetNumbermgmtForm" type="c:ResetNumberManagementForm"/>
+    
+    <lightning:tile aura:id="MobiletimerBlock"  class="timerblock" >
+        <div style="text-decoration: underline;"><b > {!v.pretimerText} 
+            <span style="color: teal;font-size: larger;" >{!v.timeLeft} minutes</span> {!v.posttimerText}</b></div> 
+    </lightning:tile>
+</aura:component>

@@ -1,0 +1,154 @@
+<template>
+  <div class="wrapper">
+    <c-modal
+      title={formTitle}
+      ondone={saveForm}
+      is-loading={isLoading}
+    >
+      <div class="body" slot="body" if:false={isLoading}>
+        <!-- Start Solution List -->
+        <div class="left-section solution-section" if:false={solutionId}>
+          <h2 class="slds-p-vertical_small slds-p-left_small">
+            Saved Solutions
+          </h2>
+          <div class="solutions-list">
+            <template for:each={solutionList} for:item="solution">
+              <div
+                key={solution.id}
+                class="check-row"
+                data-is-selected={solution.isSelected}
+              >
+                <div
+                  class="option-item"
+                  data-solution-id={solution.id}
+                  onclick={handleSolutionChange}
+                >
+                  <div class="selection-faux">
+                    <template if:true={solution.isSelected}>
+                      <div class="selection-faux_is-selected"></div>
+                    </template>
+                  </div>
+                  <span class="option-label">{solution.label}</span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <!-- End Solution List -->
+        <!-- Start Procuct definition and configuration List -->
+        <div class="left-section">
+          <div class="quick-search">
+            <div class="slds-m-horizontal_xx-small">
+              <lightning-input
+                name="Quick-search"
+                label=" "
+                placeholder="Quick search"
+                type="search"
+                autocomplete="off"
+                onchange={handleQuickSearch}
+              ></lightning-input>
+            </div>
+          </div>
+          <div class="select-option">
+            <template
+              for:each={selectedSolutionMap}
+              for:item="selectedSolution"
+            >
+              <div key={selectedSolution.componentName} class="pd-row">
+                <div class="slds-p-left_small">
+                  <h2 class="slds-p-bottom_small pd-name">
+                    {selectedSolution.componentName}
+                  </h2>
+                  <lightning-button
+                    label={selectedSolution.buttonConfig.label}
+                    onclick={handleSelectAll}
+                    data-component-id={selectedSolution.componentName}
+                  ></lightning-button>
+                </div>
+                <div class="custom-checkbox-list slds-p-vertical_medium">
+                  <template
+                    for:each={selectedSolution.productConfigurationList}
+                    for:item="pc"
+                  >
+                    <div
+                      key={pc.Id}
+                      class="check-row"
+                      data-is-selected={pc.isSelected}
+                      data-is-visible={pc.isVisible}
+                      data-component-id={selectedSolution.componentName}
+                      data-pc-id={pc.Id}
+                      onclick={handlePCChange}
+                    >
+                      <div
+                        class="option-item"
+                      >
+                        <div
+                          class="selection-faux"
+                          data-component-id={selectedSolution.componentName}
+                          data-pc-id={pc.Id}
+                          onclick={handlePCSelect}
+                        >
+                          <template if:true={pc.isChecked}>
+                            <!-- <lightning-icon icon-name="utility:success" alternative-text="selected!" size="xx-small" variant="inverse"></lightning-icon> -->
+                            <div class="selection-faux_is-selected">
+                              <lightning-icon
+                                icon-name="utility:check"
+                                alternative-text="selected!"
+                                size="xx-small"
+                                variant="inverse"
+                              ></lightning-icon>
+                            </div>
+                          </template>
+                        </div>
+                        <span class="option-label">{pc.Name}</span>
+                      </div>
+                      <!-- End PC Item -->
+                    </div>
+                  </template>
+                  <div class="h-splitter slds-m-horizontal_medium"></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <!-- End Procuct definition and configuration List -->
+        <!-- StartRight side section Tabs and Meta Data driven form  -->
+        <div class="right-section">
+          <!-- <lightning-spinner
+            if:false={isRightSection}
+            alternative-text="Loading"
+            size="large"
+          ></lightning-spinner> -->
+          <template if:true={isRightSection}>
+            <div class="path-wrapper">
+              <!-- Tab component -->
+              <c-path-tabs
+                tabs={selectedTabMap.tabList}
+                active-tab={selectedTabMap.selectedTab}
+                onchange={handleTabChange}
+              ></c-path-tabs>
+            </div>
+            <div class="tab-content" if:true={isMetaData}>
+              <c-meta-data-form-renderer
+                is-apply-config={isApplyConfig}
+                basket-id={basketId}
+                validation-rules={validationRules}
+                attributes={selectedTabSchema.attributes}
+                onattributechange={handleAttributeChange}
+                onapplynotall={handleNoApplyAll}
+                onapplychange={handleApplyConfig}
+              ></c-meta-data-form-renderer>
+            </div>
+          </template>
+        </div>
+        <!-- End Right side section Tabs and Meta Data driven form  -->
+      </div>
+      <div class="body" slot="body" if:true={isLoading}>
+        <lightning-spinner
+          alternative-text="Loading"
+          size="large"
+        ></lightning-spinner>
+      </div>
+    </c-modal>
+  </div>
+</template>

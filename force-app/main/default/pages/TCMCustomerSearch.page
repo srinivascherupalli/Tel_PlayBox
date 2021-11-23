@@ -1,0 +1,331 @@
+<apex:page id="thePage" standardStylesheets="false" controller="TCMCustomerSearchController" showChat="false" showHeader="true" sidebar="true" >
+
+  <apex:includeLightning />
+    <!--<apex:slds /> -->
+<style>
+    #test1{
+    	background-color: #00396b !important;
+    }
+     body .bPageBlock .pbBody .pbSubheader{
+                background-color: #00396b;
+       }
+    </style>
+    <!--
+  <script>
+    function getId(elem) {
+        return "thePage:pb:f1:pbs1:"+elem;
+    }
+
+    function getElement(ele) {
+        return document.getElementById(getId(ele));
+    }
+    
+    function disableText(elemId){
+        var element = getElement(elemId);
+        element.value = '';
+        element.disabled = true;
+    }
+    
+    function enableText(elemId){
+        getElement(elemId).disabled = false;
+    }
+    
+    function disableCheckBox(elemId){
+        var element = getElement(elemId);
+        element.checked = false;
+        element.disabled = true;
+    }
+    
+    function enableCheckBox(elemId){
+        getElement(elemId).disabled = false;
+    }
+    
+    function setMessage(message){
+        var element = getElement("msg");
+        element.innerHtml= message;
+    }
+    
+    function clearMessage(){
+        var element = getElement("msg");
+        element.innerHtml= '';
+    }
+    
+    function validateMasterId() {
+        var val = getElement("masterId").value;
+        if(val.length > 0){
+            disableText("name");
+            disableText("abn");
+            disableText("acn");
+            disableText("cidn");
+            disableText("cac");
+            disableText("birthDate");
+        }
+        else{
+            enableText("name");
+            enableText("abn");
+            enableText("acn");
+            enableText("cidn");
+            enableText("cac");
+            enableText("birthDate");
+        }
+        setMessage("Valid search criteria is MasterId and Include Contacts");
+    }
+    
+    function validateCAC() {
+        var val = getElement("cac").value;
+        if(val.length > 0){
+            disableText("name");
+            disableText("abn");
+            disableText("acn");
+            disableText("cidn");
+            disableText("masterId");
+            disableText("birthDate");
+            disableCheckBox("includeContacts");
+        }
+        else{
+            enableText("name");
+            enableText("abn");
+            enableText("acn");
+            enableText("cidn");
+            enableText("masterId");
+            enableText("birthDate");
+            enableCheckBox("includeContacts");
+        }
+    }
+    
+    function validateCIDN() {
+        var val = getElement("cidn").value;
+        console.log(val);
+        if(val.length > 0){
+            disableText("name");
+            disableText("abn");
+            disableText("acn");
+            disableText("masterId");
+            disableText("birthDate");
+            disableText("cac");
+            disableCheckBox("includeContacts");
+            
+        }
+        else{
+            enableText("name");
+            enableText("abn");
+            enableText("acn");
+            enableText("masterId");
+            enableText("birthDate");
+            enableText("cac");
+            enableCheckBox("includeContacts");
+            
+        }
+    }
+    
+    function validateABN() {
+        var val = getElement("abn").value;
+        if(val.length > 0){
+            disableText("cidn");
+            disableText("acn");
+            disableText("masterId");
+            disableText("cac");
+            disableText("birthDate");
+            disableCheckBox("includeContacts");
+            
+        }
+        else{
+            enableText("cidn");
+            enableText("acn");
+            enableText("masterId");
+            enableText("cac");
+            enableText("birthDate");
+            enableCheckBox("includeContacts");
+            
+        }
+    }
+    
+    function validateACN() {
+        var val = getElement("acn").value;
+        if(val.length > 0){
+            disableText("cidn");
+            disableText("abn");
+            disableText("masterId");
+            disableText("cac");
+            diableText("birthDate");
+            disableCheckBox("includeContacts");
+            
+            
+        }
+        else{
+            enableText("cidn");
+            enableText("abn");
+            enableText("masterId");
+            enableText("cac");
+            enableText("birthDate");
+            enableCheckBox("includeContacts");
+            
+        }
+    }
+    
+    function validateLastName() {
+        var val = getElement("name").value;
+        if(val.length > 0){
+            disableText("cidn");
+            disableText("masterId");
+            disableText("cac");
+            disableCheckBox("includeContacts");
+            
+        }
+        else{
+            enableText("cidn");
+            enableText("masterId");
+            enableText("cac");
+            enableCheckBox("includeContacts");
+            
+        }
+    }
+    function validateBirthDate(){
+        var val = getElement("birthDate").value;
+        if(val.length > 0){
+            disableText("abn");
+            disableText("acn");
+            disableText("cidn");
+            disableText("masterId");
+            disableText("cac");
+            disableText("cidn");
+            disableCheckBox("includeContacts");
+           
+        }
+        else{
+            enableText("abn");
+            enableText("acn");
+            enableText("cidn");
+            enableText("masterId");
+            enableText("cac");
+            enableText("cidn");
+            enableCheckBox("includeContacts");
+            
+        }
+    }
+    function openTheAccount(accountId) {
+        openCurrentAccount(accountId);
+    }
+	function colorPageBlock(pageblock) {
+		if (pageblock != null) pageblock.firstChild.style.cssText = "background-color: #00396b !important";
+
+	}
+
+  </script> 
+    -->
+
+  <apex:sectionHeader title="Customer Search" />
+
+  <apex:pageMessages id="messages"></apex:pageMessages>
+
+  <!-- Search Critera Block -->
+  <apex:pageBlock id="pb">
+    <apex:form id="f1">
+      
+      <apex:actionFunction name="selectCustomer" action="{!selectCustomer}" rerender="showstate">
+        <apex:param name="selectId" value="" id="si" assignTo="{!selectedCustomerAccountUUID}" />   
+      </apex:actionFunction>
+
+      <apex:pageBlockSection id="test1" title="Search Criteria" columns="3" collapsible="false">                    
+        <apex:inputText id="name" value="{!lastName}" label="Business Name" onkeyup="validateLastName()" />
+        <apex:inputText id="abn" value="{!abn}" label="ABN" onkeyup="validateABN()" maxlength="11"/>
+        <apex:inputText id="acn" value="{!acn}" label="ACN" onkeyup="validateACN()" maxlength="9"/>
+        <apex:inputText id="cac" value="{!cac}" label="CAC" onkeyup="validateCAC()" maxlength="10"/>
+        <apex:inputText id="cidn" value="{!cidn}" label="CIDN" onkeyup="validateCIDN()" maxlength="10"/>
+        <apex:inputText id="masterId" value="{!masterId}" label="MasterID" onkeyup="validateMasterId()" maxlength="30"/>
+        <apex:inputText id="birthDate"  value="{!birthDate}" onkeyup="validateBirthDate()" label="Birth Date"   />
+       <!-- <apex:inputText id="record"  value="{!record}" label="Record to be displayed"  maxlength="10"/>-->
+          <!-- <apex:input type="date" value="{!birthDate}" label="Birth Date"/>-->
+        <script>colorPageBlock(document.getElementById("{!$Component.test1}"), "red");</script>
+          </apex:pageBlockSection>
+        
+      <!-- Search Button -->
+      <apex:pageBlockSection columns="2">
+          <apex:commandButton action="{!startSearch}" value="Search" reRender="SearchResult,AdvancedSearchResult,AdvSearchButton,messages" status="InitStatus">
+              <apex:actionStatus id="InitStatus">
+                <apex:facet name="start">
+                  <img src="/img/loading.gif" />
+                </apex:facet>
+              </apex:actionStatus>
+          </apex:commandButton>
+          <apex:commandButton action="{!clear}" value="Clear" rerender="pbs1,SearchResult,AdvSearchResult,CreateCustButton,messages">
+            </apex:commandButton>
+      </apex:pageBlockSection>
+
+      <!-- Advanced Search Button -->
+      <apex:pageBlockSection columns="1" id="AdvSearchButton">
+            <apex:commandButton id="advSearchBtn" action="{!startAdvancedSearch}" value="TCM Search" status="AdvStatus" rendered="{!IF(searchedInternally, true, false)}" rerender="AdvSearchResult,CreateCustButton,messages">
+                <apex:actionStatus id="AdvStatus">
+                    <apex:facet name="start">
+                      <img src="/img/loading.gif" />                    
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:commandButton>                    
+      </apex:pageBlockSection>
+
+    </apex:form>
+  </apex:pageBlock>
+
+  <!-- Internal Search Block -->
+  <apex:pageBlock id="pb2">
+    <apex:form id="f2">
+        
+        <apex:actionFunction name="openCurrentAccount" action="{!openAccount}" rerender="showstate">
+          <apex:param name="openingAccount" assignTo="{!openingAccount}" value="" />
+        </apex:actionFunction>
+        
+        <apex:pageBlockSection title="Internal Search Results" id="SearchResult" columns="1" collapsible="false" >
+          <apex:pageBlockTable value="{!accountsList}" var="account" rendered="{!IF(accountsList!= null && accountsList.size > 0, true, false)}">
+              <apex:column ><apex:outputLink value="/{!account.Id}">View</apex:outputLink></apex:column>
+             
+              <apex:column headerValue="CIDN" value="{!account.CIDN__c}"/>
+              <apex:column headerValue="Business Name" value="{!account.Name}"/>
+                 
+			  <apex:column headerValue="ABN" value="{!account.ABN__c}"/>
+              <apex:column headerValue="ACN" value="{!account.ACN__c}"/>
+              <apex:column headerValue="Data Sovereignty" value="{!account.Data_Sovereign_Status__c}"/>
+              <apex:column headerValue="Date of Birth" value="{!account.birthDate__c}"/>
+              <apex:column headerValue="Customer Type" value="{!account.Type}"/>
+              <apex:column headerValue="Business Unit" value="{!account.Business_Unit__c}"/>
+          </apex:pageBlockTable>
+        </apex:pageBlockSection>
+
+    </apex:form>
+  </apex:pageBlock>
+
+  <!-- TCM Search Block -->
+  <apex:pageBlock id="pb3">
+    <apex:form id="f3">              
+      <apex:pageBlockSection title="TCM Search Results" id="AdvSearchResult" columns="1" collapsible="false">
+          <apex:commandButton action="{!importAccount}" value="Import" rendered="{!IF(customer.data != null && customer.data.customers != null, true, false)}" />
+          <apex:pageBlockTable title="Customers" value="{!customer.data.customers}" var="cust" rendered="{!IF(customer.data != null && customer.data.customers != null, true, false)}">
+            <apex:column headerValue="">
+                <input type="radio" value="{!cust.customerAccount}" name="<strong>selectRadio</strong>" onclick="selectCustomer('{!cust.customerAccount.accountUuid}')" />
+            </apex:column>
+            
+            <apex:column headerValue="CIDN" value="{!cust.cidn}"/>
+            <apex:column headerValue="Business Name" value="{!cust.customerAccount.lastName}"/>
+            
+            <apex:column headerValue="ABN" value="{!cust.customerAccount.abn}"/> 
+            <apex:column headerValue="ACN" value="{!cust.customerAccount.acn}"/> 
+            <apex:column headerValue="Data Sovereignty" value="{!cust.customerAccount.dataSovereignty}"/>
+            <apex:column headerValue="Date Of Birth" value="{!cust.customerAccount.birthDate}"/>
+            <apex:column headerValue="Customer Type" value="{!cust.customerType}"/>
+            <apex:column headerValue="Business Unit" value="{!cust.businessUnit}"/>
+          </apex:pageBlockTable>                      
+           
+          <apex:panelGrid id="pg1" columns="3" border="0" width="10%">
+            <apex:commandButton action="{!previous}" value="<< Previous" rendered="{!IF(customer.data!=null&&customer.data.paging!=null&&customer.data.paging!=null&&customer.data.paging.offset!='0', true, false)}"/>
+            <apex:outputLabel value=""/>
+            <apex:commandButton action="{!next}" value="Next >>" rendered="{!IF(customer.data!=null&&customer.data.paging!=null&&customer.data.paging!=null&&customer.data.paging.lastPage!='Y', true, false)}"/>
+          </apex:panelGrid>
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection title="TCM Search Results" id="AdvancedSearchResult" collapsible="true" columns="1" rendered="false">
+        <apex:outputText value="{!result}" />
+      </apex:pageBlockSection>
+      
+    </apex:form>
+  </apex:pageBlock>
+
+</apex:page>

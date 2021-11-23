@@ -1,0 +1,13 @@
+<!-- P2OB-7462 - Hawaii- 19-07-2020 - get the article on the basis of Category -->
+<template>
+    <template if:true={knowledgeArticleDetails}>
+        <template for:each={knowledgeArticleDetails} for:item="firstChild">
+            <template if:true={firstChild.value}>
+                <template for:each={firstChild.value} for:item="element">
+                    <a key={element.Id} data-id={element.Parent.UrlName} data-name={childCategoryName} onclick={showArticleDetail}>{element.Parent.Title}</br>
+                    </a>
+                </template>
+            </template>
+        </template>
+    </template>
+</template>

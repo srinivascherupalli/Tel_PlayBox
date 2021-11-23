@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata" fqn="prmKArticleAccord">
+    <apiVersion>48.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="sortArticlesBy" type="String" default="LastPublishedDate" label="Sort Article By Field" description="API Name of article field to sort article in hierarchy"/>
+            <property name="sortArticlesByOrder" type="String" default="Descending" label="Sort Article By Order" description="Order in which article to be sorted.Value for this field should be (Descending or Ascending)"/>
+            <property name="parentCategoryName" type="String" default="All" label="Parent Category Name" description="Parent Category Name for Tree structure"/>
+            <property name="showParent" type="Boolean" default="false" label="Show Parent" description="If user want to show Parent category should also be part of Tree structure"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

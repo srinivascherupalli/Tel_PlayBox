@@ -1,0 +1,114 @@
+<!--
+===============================================================================================================================
+Component Name : CompUtilityProdBasket
+Developer Name : Ravi
+COntroller Class : CompUtilityReplicatorManager
+===============================================================================================================================
+Sr.No.    Developer Name       	Modified  Date          Story Description
+1.        Shubhi ,Harsh,Rohit   23/5/2019     			CheckEligibilitySolution (EDGE-66570 ,EDGE-72453,EDGE-73521)
+
+===============================================================================================================================
+-->
+
+<aura:component controller="CompUtilityReplicatorManager" implements="force:appHostable,flexipage:availableForAllPageTypes"
+    access="global">
+    <!--<aura:attribute name="accIDURL" type="String"/>
+    <aura:attribute name="basketIDURL" type="String"/>-->
+    <aura:attribute name="siteCount" type="Integer" />
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" />
+    <aura:attribute name="siteDTOList" type="ProductBasketSiteDataObject[]" access="global"
+    />
+    <aura:attribute name="siteDTOMap" type="Map" />
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <aura:attribute name="cidn" type="String" />
+    <aura:attribute name="cmpFlag" type="boolean" default="false" />
+    <aura:attribute name="allSiteAndMobileClicked" type="Map" default="" />
+    <aura:attribute name="selectedSiteReplicatorData" type="ReplicatorGetServiceDataObject_V2"
+        access="global" />
+    <aura:attribute name="loadingSpinnerLeft" type="Boolean" default="false" />
+    <aura:attribute name="allSitesWrapper" type="Map" access="global" />
+    <aura:attribute name="siteClickedList" type="list" access="global" />
+    <aura:attribute name="mobileFlag" type="Boolean" access="global" default="false"
+    />
+    <aura:registerEvent name="getSerEvt" type="c:GetServicesEvent" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:GetSelectedProduct" action="{!c.handleGetSelectedProduct}"
+    />
+
+    <aura:method name="getSiteAgnosticService" access="PUBLIC" action="{!c.mobileDisplayAction}">
+        <aura:attribute name="CIDNString" type="String" access="global" />
+        <aura:attribute name="basketId" type="String" access="global" />
+        <aura:attribute name="isMobilityProduct" type="String" access="global" />
+    </aura:method>
+
+    <aura:if isTrue="{!v.loadingSpinnerLeft}">
+        <lightning:spinner variant="brand" size="large" />
+    </aura:if>
+    <aura:method name="displaySites" access="PUBLIC" />
+    <div aura:id="main" class="slds" style="background-color:white;">
+        <div style="padding-bottom: 5px; padding-top: 5px;">
+            <!-- <span><b>&nbsp;&nbsp;{!v.ProdBasket.Name}&nbsp;({!v.siteCount})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></span> -->
+            <h3 class="blue-text" style="padding-left: 6px; font-weight:bold; line-height: 2.2; ">
+                Product Basket Summary
+            </h3>
+            <!-- <h3 class="blue-text" style = "padding-left: 12px; line-height: 2.2;">You have {!v.siteCount} items in your Active Product Basket with Legacy Services.</h3>-->
+            <!--DIGI-16451: Removing below text from UI by Abhishek (Osaka) -->
+            <!--<p style="padding-left: 12px; line-height: 1.5;">
+                Select an item below then select either 'Legacy Services' or 'Existing Subscription'
+                tab
+            </p> -->
+        </div>
+        <div>
+            <!--class="slds-scrollable_y" style="height: 28rem; width: 100%; direction: rtl;">-->
+            <aura:iteration items="{!v.siteDTOList}" var="site" indexVar="tidx">
+                <div id="{!'site' + tidx}" class="left-content display-width" style="direction: ltr;"
+                    aura:Id="sites" onclick="{!c.fireGetServicesEvent}" data-id="{!site.adBorId +'-'+site.siteName}">
+                    <div class="left-content-top" data-id="{!site.adBorId +'-'+site.siteName}">
+                        <span class="down-arrow" data-id="{!site.adBorId +'-'+site.siteName}">
+              <lightning:icon class="slds-show" aura:id="iconChevron" iconName="utility:chevronright" size="x-small"
+                alternativeText="{!site.adBorId +'-'+site.siteName}" />
+            </span>
+                        <div class="top-right" data-id="{!site.adBorId +'-'+site.siteName}">
+                            <p class="blue-text" data-id="{!site.adBorId +'-'+site.siteName}">{!site.pcrName}
+                                <aura:if isTrue="{!site.pcIsEligible}">
+                                    <!-- added for edge-90158-->
+                                    <lightning:icon iconName="action:approval" alternativeText="Approval!" size="xx-small"
+                                    />
+                                    <aura:set attribute="else">
+                                        <lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="warning"
+                                            size="small" />
+                                    </aura:set>
+                                </aura:if>
+                            </p>
+                            <p data-id="{!site.adBorId +'-'+site.siteName}">Site Name:<span class="p-right-name" data-id="{!site.adBorId +'-'+site.siteName}"><b
+                    data-id="{!site.adBorId +'-'+site.siteName}">{!site.siteName}</b></span></p>
+                            <p data-id="{!site.adBorId +'-'+site.siteName}">Site Address:<span class="p-right-address" data-id="{!site.adBorId +'-'+site.siteName}"><b
+                    data-id="{!site.adBorId +'-'+site.siteName}">{!site.siteAddress}</b></span></p>
+                            <p data-id="{!site.adBorId +'-'+site.siteName}">Order Type:<span class="p-right-order" data-id="{!site.adBorId +'-'+site.siteName}"><b
+                    data-id="{!site.adBorId +'-'+site.siteName}">{!site.orderType}</b></span></p>
+                        </div>
+                    </div>
+                    <div class="left-content-bottom white-bg float-width display-none" aura:Id="siteDetail">
+                        <div class="table-heading float-width slds slds-grid left-padding">
+                            <div class="slds-col slds-size_1-of-2 slds-text-title_caps">Description</div>
+                            <div class="slds-col slds-size_1-of-2 slds-text-title_caps">Quantity</div>
+                        </div>
+                        <div class="table-content float-width">
+                            <aura:iteration items="{!site.lstProdConfig}" var="siteDetails" indexVar="tidx">
+                                <div name="{!site.adBorId +'-'+site.siteName}" class="table-list-data float-width slds slds-grid left-padding">
+                                    <div class="slds-col slds-size_1-of-2">{!siteDetails.description}</div>
+                                    <div class="slds-col slds-size_1-of-2">{!siteDetails.quantity}</div>
+                                </div>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                </div>
+            </aura:iteration>
+        </div>
+        <aura:if isTrue="{!v.mobileFlag}">
+            <c:CompUtilityMobileServices aura:id="GetMobileServicePanel" sitesMap_V2="{!v.sitesMap_V2}"
+                allSiteAndMobileClicked="{!v.allSiteAndMobileClicked}" siteDTOMap="{!v.siteDTOMap}" ProdBasket="{!v.ProdBasket}"/>
+        </aura:if>
+    </div>
+
+</aura:component>

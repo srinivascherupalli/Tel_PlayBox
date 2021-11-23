@@ -1,0 +1,155 @@
+<!-- 
+Name : CustomerAuthorityFormComponent
+Description : Lightning UI for uploading CustomerAuthorityForm
+Author: Aishwarya Yeware
+Story: EDGE-89299
+-->
+<aura:component controller="PortInController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                >
+    <ltng:require styles="{!$Resource.popupCSS}" />
+  	<aura:attribute type="Date" name="toDate" />
+    <aura:attribute type="Date" name="todayDate" />
+    <aura:attribute type="String" name="basketid" />
+     <aura:attribute type="String" name="basketName" />
+    <aura:attribute type="String" name="portBasketid" />
+    <aura:attribute name="isCafActive" type="Boolean" default="false"/>
+    <aura:attribute name="isUpload" type="Boolean" default="false"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="dateValidationError" type="boolean" />
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+ <!-- Lightning Input with file type and on file change call the 'handleFilesChange' controller -->
+    <aura:attribute name="myRecordId" type="String" description="Record to which the files should be attached" />
+	 <!-- EDGE-130044 Starts-->
+    <aura:attribute name="areNumQualified" type="Boolean" default="true" />
+    <aura:attribute name="isnumSelected" type="Boolean" default="true"/>
+    
+    <aura:attribute name="portSelectionList" type="Object[]" />
+    <!-- EDGE-130044 Ends-->
+     <aura:handler event="c:NavigateToCAF" action="{!c.handleEvent}" />
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:registerEvent name="sampleComponentEvent" type="c:parentComponentEvent"/>
+     <!--aura:registerEvent name="updatePpv" 
+                         type="c:PpvUpdateEvent"/-->
+     <aura:handler event="c:PpvUpdateEvent" action="{!c.handlePPVEvent}" />
+    <div aura:id="maincontainer"/>
+    <div aura:id="parentContainer">
+        <aura:if isTrue="{!v.loadingSpinner}"> 
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <p class="slds-text-heading_medium slds-m-right_small  modal-header slds-modal__header slds-size_1-of-1
+              slds-truncate slds-align_absolute-center slds-border_bottom"><b>Customer Authority Form</b></p>
+    <br/>
+         <aura:if isTrue="{!v.isCafActive}"> 
+         <div aura:id="ConfirmpopUp" class="slds-hide slds-grid" style="background-color: #f4f6f9;margin:15px; ">
+        <div
+      class="slds-border_bottom slds-border_top slds-border_right slds-border_left" 
+    >
+            <div style="padding:10px">
+        <p>
+          
+             <lightning:icon iconName="utility:warning" 
+                             alternativeText="Warning!"
+                             variant="warning"/>&nbsp; <b>An active CA form already exists. Click on Yes if you want to upload a new CA form. By this, the existing active CA form will be deactivated.</b>
+        </p>
+      </div>
+            <br/>
+        <div class="slds-truncate slds-align_absolute-center">
+           <lightning:button variant="Brand" class="slds-button" label="YES" onclick="{!c.doUpload}"/>       
+      &nbsp;
+            
+        <lightning:button variant="Brand" class="slds-button" label="NO" onclick="{!c.handleClose}"/>       
+     
+      </div>
+            <br/>
+        </div>
+    </div>
+    </aura:if>
+    <div aura:id="exampleModal" width="100%">
+   
+    <div class="row">
+        <div class="slds-col slds-float_left " title="Detail" style="margin:15px;" >
+            &nbsp;Product Basket  <br/>
+            &nbsp;<span style="background-color: #f4f6f9 margin:15px;">
+        <b><ui:outputText aura:id="basketid" value="{!v.portBasketid}" /></b>	
+        </span>
+        </div>
+        <div class="slds-col slds-truncate slds-float_right slds-size_2-of-4 " style="margin:15px;">
+             <h3 class="header">Customer Authorised Date</h3>
+          <lightning:input
+            type="date"
+            name="toDateP"
+            value="{!v.toDate}"
+            max="{!v.todayDate}"
+           	required="true"
+            id="datepickerId"
+          />
+        </div>
+          
+        </div>
+        <br/><br/><br/>
+        <div class="row" style="margin:15px;">
+             &nbsp;&nbsp;Active?<br/>
+            	&nbsp;&nbsp;<ui:inputCheckbox aura:id="checkbox" value="{!v.isCafActive}" />
+
+        </div>
+        
+        <div class="slds-float_right" style="margin:15px;">
+         <!--lightning:button variant="brand" label="Upload" title="Brand action" /-->
+        
+          
+ 
+   <lightning:input aura:id="fileId" onchange="{!c.handleUploadFinished}" 
+                     recordId="{!v.myRecordId}"
+                    type="file" 
+                    name="file" 
+                    multiple="false"
+                    disabled="{!v.isUpload}"/>
+            		
+   <div class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>
+            </div>
+    </div> 
+    <br/><br/><br/><br/>
+	   
+<div class="modal-footer slds-modal__footer slds-size_1-of-1">
+       
+    <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.handleClose}"/>
+	        <lightning:button variant="Brand" class="slds-button" label="Save" onclick="{!c.doSave}"/>
+
+    </div>
+	<br/>
+	<!-- EDGE-130044 Starts-->
+        <div style="margin-top:5px">
+            <h3 class="slds-section-title--divider">Select number(s) mentioned on CA form</h3>
+            <aura:if isTrue="{!v.areNumQualified}">
+                <table class="slds-table slds-table_cell-buffer ">
+                    <tbody>
+                        <aura:iteration
+                                        items="{!v.portSelectionList}"
+                                        var="num"
+                                        indexVar="index"
+                                        >
+                            <tr>
+                                <td scope="col">
+                                    <lightning:input type="checkbox" label="{!num.qualifiedMsisdn}" name="{!num.qualifiedMsisdn}" checked="{!num.isSelected}" />
+                                    
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                
+                <aura:set attribute="else">
+                    <p>There are no qualified numbers for this product basket.</p>
+                </aura:set>
+            </aura:if>
+        </div>
+        <!-- EDGE-130044 Ends-->
+        
+        
+</div>
+   
+</aura:component>

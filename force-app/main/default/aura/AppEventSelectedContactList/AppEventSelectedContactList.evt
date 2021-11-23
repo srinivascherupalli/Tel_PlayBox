@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="selectedContactlistbyEvent" type="AccountContactRelation[]"/>
+    <aura:attribute name="isAllCon" type="Boolean"/>
+</aura:event>

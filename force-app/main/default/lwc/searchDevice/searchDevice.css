@@ -1,0 +1,32 @@
+.box{
+    border: hidden;
+}
+
+.clearBtn{
+    text-decoration: underline;
+    border: none;
+	box-shadow: none;
+	color:#0099f8;
+	background:none;
+	padding-top:4px;
+    font-size: large;
+}
+
+.searchBtn{
+    background: white;
+    color:#0099f8;
+    min-width: 0px;
+    border-color:#0099f8;
+    
+}
+.inputBox{
+    border-top: hidden;
+    border-right: hidden;
+    border-left: hidden;
+    border-bottom: solid; 
+    border-color:darkgray;
+    outline: none;
+}
+.h1{
+    font-size: 2em;
+}

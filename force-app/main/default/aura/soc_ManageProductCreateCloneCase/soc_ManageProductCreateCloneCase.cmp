@@ -1,0 +1,42 @@
+<aura:component controller="soc_ManageProductController" 
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="recordId" type="String" access="global"/>
+    <aura:attribute name="selectedRows" type="List" access="global"/>
+    <aura:attribute name="pageType" type="String" default="datatable"/>
+    <aura:attribute name="clonedCase" type="Case" />
+    <aura:attribute name="isCloneOpen" type="Boolean" default="true"/>
+    <aura:attribute name="clonedCaseGeneratedRecordId" type="String" access="global"/>
+    <aura:attribute name="isOpen" type="Boolean"/>
+    <aura:attribute name="cliSizeOne" type="boolean" access="global" default="false"/>
+    
+    <aura:if isTrue="{!v.isCloneOpen}">
+        <div>
+            <h2 id="modal-heading-01" ><b>Clone of SFD Child Request</b></h2>
+        </div><br></br>
+        
+        <!--###### MODAL BOX BODY Part Start From Here ######-->
+        <div >
+            <div> 
+                <lightning:recordEditForm objectApiName="Case">
+                    
+                    <lightning:messages />
+                    
+                    <lightning:inputField fieldName="Subject" value="{!v.clonedCase.Subject}"/>
+                    
+                    <div class="slds-m-top_medium">
+                        <lightning:button disabled="{!v.disabled}" variant="brand"  name="save" label="Save" onclick="{!c.handleSubmit}"/>
+                        
+                        <lightning:button label="Cancel" title="Cancel" onclick="{! c.closeModel }"/>
+                        <lightning:button label="Back" title="Back" onclick="{!c.back}" disabled="{!v.cliSizeOne}"/>
+                    </div>
+                </lightning:recordEditForm>
+                
+                
+                
+            </div>
+            
+        </div><br/><br/>
+    </aura:if>
+    
+</aura:component>

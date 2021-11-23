@@ -1,0 +1,46 @@
+<template>
+  <div class="modal-window">
+    <div class="header">
+      <h2>{title}</h2>
+    </div>
+    <slot name="body"></slot>
+    <div class="footer">
+      <div class="left-section">
+        <lightning-button
+          if:true={isReset}
+          variant="destructive"
+          label="Reset Section"
+          class="slds-m-left_x-small action-button"
+          onclick={handleReset}
+          disabled={isLoading}
+        ></lightning-button>
+        <lightning-input
+          if:true={isApplyToggle}
+          type="toggle"
+          label={applyLabel}
+          name="apply-label"
+          message-toggle-active=""
+          message-toggle-inactive=""
+          onchange={handleToggleChange}
+        ></lightning-input>
+      </div>
+      <div class="right-section">
+        <lightning-button
+          if:true={isCancel}
+          label="Cancel"
+          class="slds-m-left_x-small action-button"
+          onclick={handleCancel}
+          disabled={isLoading}
+        ></lightning-button>
+        <lightning-button
+          variant={successBtnBrand}
+          label={successBtnLabel}
+          class="slds-m-left_x-small action-button"
+          onclick={handleSuccess}
+          disabled={isLoading}
+        ></lightning-button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-bg-drop"></div>
+</template>

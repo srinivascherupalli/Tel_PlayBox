@@ -1,0 +1,28 @@
+.THIS .slds-table--opptyTeamMember td.slds-cell-edit .slds-table--cell {
+    border: 1px solid #dddbda;
+    border-radius: 5px;
+}
+
+.THIS .slds-custom--errorMsg {
+    overflow: visible;
+    white-space: normal;
+    color: #c23934;
+    padding: 0 0.25rem;
+    display: inline-block;
+}
+
+.THIS .slds-table--opptyTeamMember .slds-table--cell label.slds-form-element__label, 
+.THIS .slds-table--opptyTeamMember .slds-table--cell div.slds-select_container:before {
+    display: none;
+}
+/* .THIS .slds-table--opptyTeamMember .slds-table--cell .slds-select_container select {
+    border: 0;
+    height: calc((1.5rem) + (1px));
+    line-height: 1.25;
+} */
+.THIS .slds-table--opptyTeamMember .slds-table--cell div.slds-select_container:after {
+    bottom: calc((1.75rem / 2) - 5px);
+}
+/* .THIS .label-hidden > label {
+    display: none;
+} */

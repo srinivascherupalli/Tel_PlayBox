@@ -1,0 +1,68 @@
+<!--Author: Nilima Borse, Team: Jaipur, P2OB-11451
+ Date: 12/02/2021 ,
+ Description:Parent Lightning Web Component to enable all screens-->
+<aura:component implements="force:lightningQuickActionWithoutHeader,forceCommunity:availableForAllPageTypes" controller="csGetCaseConfigurationsCtrl">
+    <aura:attribute name="recordId" type="String" default=""/>
+    <aura:attribute name="AccountId" type="String" default=""/>
+    <aura:attribute name="flowInput" type="String" default=""/>
+    <aura:attribute name="categoryLabel" type="String" default=""/>
+    <aura:attribute name="isSearched" type="boolean" default="false"/>
+    <aura:attribute name="showFlowScreen" type="boolean" default="false"/>
+    <aura:attribute name="showProgressBar" type="boolean" default="false"/>
+    <aura:attribute name="currentStage" type="Object"/>
+    <aura:attribute name="currentStageName" type="string"/> 
+    <aura:attribute name="activeStages" type="Object[]"/>
+    <aura:attribute name="linkCaseIds" type="String"  default =""/>
+    <aura:attribute name="parentCaseId" type="String" default =""/>
+    <aura:attribute name="mapSubTypeFlowName" type="Map" default="" />
+    <aura:attribute name="mapTypetoSubTypesConst" type="Map" default="" />
+    <aura:attribute name="typeValue" type="String" default="" />
+    <aura:attribute name="showProductDomain" type="Boolean" default="false"/> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:handler event="c:jprScreenNavigationEvent" action="{!c.subEvt}"/>
+    <aura:handler event="c:closeParentPopupFromThankYouScreen" action="{!c.closeModel}"/> <!--v1.1 P2OB-12119 autoclose parent popup on thank you screen closure-->
+    
+    
+  <div class="demo-only" style="height: 640px;">
+  <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+    <div class="slds-modal__container">
+      <header class="slds-modal__header">
+         <lightning:buttonIcon iconName="utility:close"
+                                            onclick="{! c.closeModel }"
+                                            alternativeText="close"
+                                            variant="bare-inverse"
+                                            class="slds-modal__close"/>
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Get Support</b></h2>
+         <aura:if isTrue="{!v.showFlowScreen}">
+         	<h3 id="modal-heading-02" class="slds-text-heading_x-small slds-hyphenate">{!v.categoryLabel}</h3>
+             	<aura:if isTrue="{!v.showProgressBar}">
+        			<lightning:progressIndicator aura:id="progressIndicator" currentStep="{!v.currentStage.name}" type="base"/>
+                 </aura:if>
+          </aura:if>
+      </header>
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height: 300px !important;">
+		 <aura:if isTrue="{!v.showFlowScreen}">
+             <lightning:flow aura:id="flowData" onstatuschange="{!c.handleStatusChange}" />         
+         <aura:set attribute="else">
+         	<c:csGetCaseConfigurations flowInput="{!v.flowInput}" recordId="{!v.recordId}" onvaluechange="{!c.getFlowInputFromLwc}" onflowname ="{!c.getFlowNames}" ontypeSelected="{!c.typeChanged}" onsearchDone="{!c.markIsSearched}"/>
+         </aura:set>
+         </aura:if>
+      </div>
+      <aura:if isTrue="{! !(v.showFlowScreen)}">
+          <footer class="slds-modal__footer">
+           <div style="padding:10px;">
+                <div class="slds-float_left">
+                    <lightning:button label="Cancel" class="slds-button_neutral" onclick="{!c.closeModel}"></lightning:button>
+                </div>
+                <div style="float:right">
+                    <lightning:button label="Next" class="slds-button_brand" onclick="{!c.nextClick}"></lightning:button>
+                </div>
+            </div>
+          </footer>
+      </aura:if>
+    </div>
+  </section>
+  <div class="slds-backdrop slds-backdrop_open"></div>
+</div>
+		
+</aura:component>

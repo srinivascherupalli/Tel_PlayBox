@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>48.0</apiVersion>
+    <description>EDGE-153317:As a billing consultant, I should not be allowed to change the billing account status as &quot;Final&quot; if there are any active baskets against the billing account</description>
+</AuraDefinitionBundle>

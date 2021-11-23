@@ -1,0 +1,231 @@
+<!-- **************************************************************************
+EDGE        -108332,92016,92018,124071,126965
+component   -UsageSummary
+Description -UsageSummary Component is used to show the summary details of UsageCharges for the given
+    Invoice Line Item record.
+Author      -Sasidhar Devarapalli
+Modified    -Manjunath Ediga
+Team        -Osaka
+********************************************************************************* -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                controller="UsageSummaryHandler">
+    <aura:set attribute="auraPreInitBlock">
+        <auraStorage:init
+                          name="actions"
+                          persistent="true"
+                          secure="true"
+                          maxSize="1024"
+                          defaultExpiration="900"
+                          defaultAutoRefreshInterval="30" />
+    </aura:set>
+    <!-- Record ID-->
+    <aura:attribute name="invoiceLineItemId" type="String" /> 
+    <aura:attribute name="recordId" type="string" />
+    <!--Page related attributes-->
+    <aura:attribute name="errorMessage" type="string"/>
+    <aura:attribute name="IsError" type="Boolean"  default="False"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global"  />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" /> 
+    <!--Populating the Usage data in a Datatable with corresponding Usage Types -->
+    <aura:attribute name="BooleanVar" type = "Boolean" default="false" />
+    <aura:attribute name="usageType" type="String" />
+    <aura:attribute name="usageCharges" type="List" />
+    <aura:attribute name="ChargeIdMap" type="Map" default="{}"/>
+    <aura:attribute name="mapKey" type="String" />
+    <aura:attribute name="selectedRows" type="List"/>
+    <!-- EDGE-141682 - Component Start-->
+    <!-- EDGE-157970 -  Component Start invoiceTransactionId added-->
+    <aura:attribute name="invoiceTransactionId" type="integer"/>
+    <!-- EDGE-157970 -  Component End invoiceTransactionId added-->
+    <aura:attribute name="selReords" type="List" default = "[]" description="List of records selected by user for case query."/>
+    <aura:attribute name="usageColumns" type="List" default = "[]" description="List of column headers per usage type code"/>
+    <aura:attribute name="validUsage" type ="Boolean" default="false" description="Set if usage API returns success."/>
+    <!-- EDGE-141682 - Component Start-->
+    <!--Pagination attributes START-->
+    <aura:attribute name="PaginationList" type="list"/> 
+    <aura:attribute name="selectedCount" type="integer" default="0"
+                    description="selected Records Count"/>
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecordsCount" type="Integer"/>
+    <aura:attribute name="pageSize" type="Integer" default="20"/>
+    <aura:attribute name="CurrentPage" type="integer" default="1"/>
+    <aura:attribute name="paginationMap" type="Map" default="{}"/>
+    <aura:attribute name="paginationMapInt" type="Map" default="{}"/>
+    <aura:attribute name="childPaginationMap" type="Map" default="{}"/>
+    <aura:attribute name="totalPagesCount" type="integer"/>
+    <!--Pagination attributes END-->
+    <!-- EDGE-141682 - Component Start-->
+    <aura:registerEvent name="UsageInvoice" type="c:UsageSummaryEvent" />
+    <aura:attribute name="invoiceMapping" type="Map" />
+    <!-- EDGE-141682 - Component End-->
+    <aura:attribute name="isInvoiceLineItem" type ="Boolean" default = "true" />
+    <aura:attribute name="selectedReords" type="List" default = "[]"/>
+    <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <!-- EDGE-133408 - Component start -->
+    <aura:attribute name="QLIMap" type="Map" default="{}"/>
+    <!-- EDGE-133408 - Component start-->
+    <!-- EDGE-139436 - Component start to track if primary checkbox selected from Parent (InvoiceCmp)-->
+    <aura:attribute name="isSelectAll" type="Boolean" default = "false" />
+    <!-- EDGE-139436 - Component End-->
+    <aura:attribute name="usageTypeCode" type="String" description="Usage type code required to get corresponding Usage labels from meta Data"/>
+    <!-- Start of EDGE-124068 Download function  -->
+    <aura:attribute name="ListofInvoiceLineItem" type="List"/> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="updatedListToDownload" type="List"/>
+    <aura:attribute name="accountName" type="String"/>
+    <aura:attribute name="caseNumber" type="String"/>
+    <aura:attribute name="accountNumber" type="String"/>
+    <ui:outputDate value="{!v.today}" />
+    <aura:attribute name="oldData" type="List" default="[]"/>
+    <aura:attribute name="deviceModel" type="List" />
+    <aura:attribute name="columns" type="Integer" />
+    <aura:attribute name="TotalPages" type="Integer" default="1" />
+    <aura:attribute type="string" name="componentName" default="UsageSummary" />
+    <aura:registerEvent name="paginationEvent" type="c:paginationEvent" />
+    <aura:handler event="c:paginationEvent" action="{!c.changeData}" /> 
+    <!--- End of EDGE-124068 Download function -->  
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <div>
+            <lightning:spinner class="spin" aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.IsError}">
+        <ui:message title="Error" severity="error" closable="true">
+            {!v.errorMessage}
+        </ui:message>
+    </aura:if>
+    <!-- EDGE-157970 -  Component Start Usage component collapsible section added-->
+    <!-- EDGE-179537 -  Added to Fix download button aligment-->
+   <aura:if isTrue="{!(v.isInvoiceLineItem == false)}" >
+    <c:paginationCmp
+      PageSize="{!v.pageSize}"
+      data="{!v.deviceModel}"
+      columns="{!v.columns}"
+      TotalPages="{!v.TotalPages}"
+      componentName ="{!v.componentName}"
+    />
+   </aura:if>
+    <aura:if isTrue="{!(empty(v.invoiceLineItemId))}">
+      <!--EDGE-157955 : added componentName attribute to paginationCmp for avoiding duplicate handling of pagination events-->
+    <!-- EDGE-157970 -  Component Start Usage component collapsible section added-->
+    <div class="slds-section__title-action" style="padding:6px;" onclick="{!c.sectionUsageDetails}">
+        <section class=" slds-text-align--left">
+            <div class="slds-float--left ">
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevronright" size="x-small"/>
+                <lightning:icon class="slds-show" aura:id="section" iconName="utility:chevrondown" size="x-small"/>
+            </div>
+            <div class="slds-m-left--large slds-text-heading_small "> {!v.usageType} </div>
+
+        </section>
+    </div> 
+</aura:if>
+    <div  aura:id="section">
+        <!--  Pagination Buttons Start --> 
+        <div class="slds-align_absolute-center"> 
+
+            <!--<div class="slds-float_right">  
+
+                <lightning:button label="Previous"
+                                  disabled="{!v.startPage == 0}"  
+                                  onclick="{!c.navigation}"
+                                  variant="brand"
+                                  iconName="utility:back"
+                                  name="previous"/>
+                <span class="slds-badge slds-badge_lightest"
+                      style="margin-right: 10px;margin-left: 10px;">
+                    Page {!v.currentPage} out of {!v.totalPagesCount}
+                </span>
+                <lightning:button label="Next"
+                                  disabled="{!v.currentPage == v.totalPagesCount}" 
+                                  onclick="{!c.navigation}"
+                                  variant="brand"
+                                  iconName="utility:forward"
+                                  iconPosition="right"
+                                  name="next"/> 
+
+            </div>-->   
+   			</div>
+            <!-- Start of EDGE-124068 Download function  -->
+        <br></br>
+            
+            <aura:if isTrue="{!(empty(v.invoiceLineItemId))}"> 
+                <div class="slds-float_right">
+                <aura:if isTrue="{!not(empty(v.usageCharges))}">
+                    <lightning:button variant="brand" label="Download" title="Download" onclick="{!c.downloadCsv}"/>
+                </aura:if>
+                <aura:if isTrue="{!(empty(v.usageCharges))}">
+                    <lightning:button variant="brand" label="Download" title="Download" disabled="true" onclick="{!c.downloadCsv}"/>
+                </aura:if>
+                    &nbsp;&nbsp;<br></br>
+                    </div>
+            </aura:if> 
+
+            <!-- End of EDGE-124068 Download function  -->   
+     
+
+        <br></br>
+            <!-- End of EDGE-124068 Download function  -->
+        <aura:if isTrue="{!v.validUsage}">
+            <div aura:id="Adjustmentdiv" class="margin10"  > 
+
+
+                <div class="slds-scrollable_x" style="height: 20rem;width:2000px" >
+                    <lightning:datatable 
+                                         aura:id="PaginationDataTable"
+                                         columns="{!v.usageColumns}"
+                                         data="{!v.PaginationList}"
+                                         keyField="chargeIdentifier"  
+                                         hideCheckboxColumn="{!v.isInvoiceLineItem}"
+                                         minColumnWidth="130"
+                                         onrowselection="{!c.doSelectRecord }"
+                                         selectedRows="{!v.selReords}" 
+                                         />
+                    <br/>   
+                </div>
+                <aura:if isTrue="{!(empty(v.invoiceLineItemId))}"> 
+                    <span class="slds-badge slds-badge_lightest"
+                          style="margin-right: 10px;margin-left: 10px;">
+                        {!v.currentPage} of total {!v.totalPagesCount} Pages
+                    </span>
+                <div class="slds-float_right">
+                <lightning:button label="First"
+                                  disabled="{!v.currentPage == 1}"
+                                  onclick="{!c.navigation}"
+                                  iconPosition="right"
+                                  variant="brand"
+                                  name="first"/>
+                 <lightning:button label="Previous"
+                                  disabled="{!v.startPage == 0}"  
+                                  onclick="{!c.navigation}"
+                                  variant="brand"
+                                  name="previous"/>   
+                 <lightning:button label="Next"
+                                  disabled="{!v.currentPage == v.totalPagesCount}" 
+                                  onclick="{!c.navigation}"
+                                  variant="brand"
+                                  iconPosition="right"
+                                  name="next"/> 
+                <lightning:button label="Last"
+                                  onclick="{!c.navigation}"
+                                  disabled="{!v.currentPage == v.totalPagesCount}" 
+                                  variant="brand"
+                                  iconPosition="right"
+                                  name="last"/>    
+                </div>
+                </aura:if>      
+            </div>
+        </aura:if>
+    </div>    
+   <!-- EDGE-157970 -  Component End Usage component collapsible section added-->
+    <aura:if isTrue="{!(v.isInvoiceLineItem == false)}" >
+        <div class="slds-clearfix">
+            <div class="slds-float--left"><p>† Includes GST-free items</p><!--EDGE-157960--></div>
+            <div class="slds-float--right">
+                <lightning:layoutItem padding="around-small" size="12">
+                    <lightning:button label="Save and return to Invoice"  onclick="{!c.makeSelection}"/>
+                </lightning:layoutItem>
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

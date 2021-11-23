@@ -1,0 +1,40 @@
+<!--
+   *  Description of the purpose of the method.
+   *  @name partnerDetails
+   *  @description               : This LWC is used to display the partner details on Mobility Managed Services Subscription page
+   *  @param subscriptionId      : Subscription Id.
+   *  @return                       : - 
+   *  @Jira Story Ref            : EDGE-125950
+   *  @createdBy                   : Sri Ramya, Orlando
+-->
+<!-- wireGetRecordDynamicContact.html -->
+<template>
+    <lightning-card title="" >
+        <!-- <template if:true={csord__Subscription__c.data}></template>
+                    <p>Partner Account: {csord__Subscription__c.csord__Order__r.csordtelcoa__Opportunity__r.PartnerAccount.Name}</p>
+                    <p>Partner User: {csord__Subscription__c.csord__Order__r.csordtelcoa__Opportunity__r.Owner.Name}</p>
+        </template> -->
+
+ 
+
+    <template if:true={show}>
+        <div class="slds-grid slds-gutters" style="padding-left: 2%;">
+            <div class="slds-col slds-size_1-of-2">
+                <div  class="slds-form-element__label">
+                    <span>Partner Account</span><br/>
+                    <a href={PartnerURL}>{PartnerName}</a>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-2" >
+                <div class="slds-form-element__label" style="padding-left: 3%;">
+                    <span >Partner User</span><br/>
+                    <a href={OwnerURL} >{OwnerName}</a>
+                </div>
+            </div> 
+          </div>
+
+ 
+
+        </template>
+    </lightning-card>
+</template>

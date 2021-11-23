@@ -1,0 +1,30 @@
+<apex:page controller="importO2ADataFromCSVController" title="Import JSON">
+    <style>
+    	.controlPanel td{
+        	width:200px;
+        }
+        .controlPanel{
+        	margin-top:20px;
+        }
+    </style>    
+    <apex:form >                	
+        <apex:pageBlock id="controlPanel">                        
+            <table class="controlPanel fromFile">
+                <tr>
+                    <td colspan="2"><b>Upload a O2A extract JSON file to update dates</b></td>
+                </tr>
+                <tr>
+                	<td>Upload JSON file</td><td><apex:inputFile value="{!csvFileBody}" accept="json" contentType="text/json" /></td>
+                </tr>
+                <tr>
+                	<td>&nbsp;</td><td><apex:commandButton value="Upload JSON" action="{!readFromFile}"/></td>
+                </tr>
+            </table>                                                             
+        </apex:pageBlock>
+        <apex:pageBlock id="dataPanel">
+            <apex:pagemessages />
+          
+            <apex:commandButton value="Update Dates" action="{!saveData}" rendered="{!readSuccess}" />
+        </apex:pageBlock>
+    </apex:form>        
+</apex:page>

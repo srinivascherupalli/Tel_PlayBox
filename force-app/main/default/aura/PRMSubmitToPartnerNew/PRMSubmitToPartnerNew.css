@@ -1,0 +1,49 @@
+.THIS .slds-modal__container{
+    max-width: 74% !important;
+    min-width:74% !important;
+}
+
+.THIS .slds-modal__container .modal-body.slds-modal__content{
+    height: auto !important;
+}
+
+.THIS {
+    margin: 0 -1.75rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.THIS .SalesforceSansfont {
+    /*font-family: 'SalesforceSansfont';*/
+    font-size: 1rem;
+ }
+
+.THIS .SalesforceSans_small {
+    font-family: 'SalesforceSansfont';
+    font-size: 11pt;
+ }
+
+.THIS .cPRMDataTable.cPRMIncumbentPartners:not(.slds-modal__footer) {
+    margin: 0 1.75rem;
+}
+.THIS .errPanel{
+	color: red;
+	margin-left: 5px;    
+}
+ 
+ @font-face {
+   font-family: 'SalesforceSansfont';
+   src: url(/resource/SalesforceSansfont); 
+  
+ }
+ .THIS .modal-footer .slds-col button,
+ .THIS .slds-modal__footer .slds-col button{
+     margin-right: 0.25rem;
+     margin-left: 0.25rem;
+ }
+ .THIS .modal-body {
+    height: auto !important;
+}
+.THIS .cPRMDataTable .slds-table.slds-table--bordered thead tr th{
+    background-color: #d8d8d8;
+}

@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT">
+    <aura:attribute name="selectedrecords" type="list"/>
+    <aura:attribute name="btnName" type="String"/>
+</aura:event>

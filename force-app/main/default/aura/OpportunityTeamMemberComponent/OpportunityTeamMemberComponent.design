@@ -1,0 +1,4 @@
+<design:component>
+   	<design:attribute name="OpportunityId" label="Opportunity Id"/>
+   	<design:attribute name="AccountId" label="Account Id"/>
+</design:component>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata" fqn="offersCarousel">
+    
+    <apiVersion>46.0</apiVersion>
+    
+    <isExposed>true</isExposed>
+    
+    <targets>
+        
+        <target>lightning__AppPage</target>
+        
+        <target>lightning__RecordPage</target>
+        
+        <target>lightning__HomePage</target>
+        
+        <target>lightningCommunity__Page</target>
+        
+        <target>lightningCommunity__Default</target>
+        
+    </targets>
+    
+    <targetConfigs>
+        
+        <targetConfig targets="lightning__HomePage, lightningCommunity__Default">
+            
+            <property name="objectNameCarosule" type="String" label="Object Name" required="true" datasource="Offer, Knowledge Article" default="Knowledge Article"/>
+            
+            <property name="recordNumberCarosule" type="Integer" label="Number Of Record" min="1" max="10" default="5" required="true"/>
+            
+        </targetConfig>
+        
+    </targetConfigs>
+    
+</LightningComponentBundle>

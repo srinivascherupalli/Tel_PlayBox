@@ -1,0 +1,1 @@
+{ "code" : "DMCAT_ProductSpecification_000163", "attributes" : [  {"name" : "InternetProtectionSolutionType", "value" : "Web and Mail" , "type" : "String",  "description": ""},{"name" : "EnterpriseInternetProductInstanceID", "value" : "DMCAT_ProductSpecification_000114" , "type" : "String",  "description": ""}], "autoAdd": "true" }

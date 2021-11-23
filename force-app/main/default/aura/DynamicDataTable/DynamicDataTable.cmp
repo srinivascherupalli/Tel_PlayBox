@@ -1,0 +1,110 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                    access="global" controller="DynamicDataTableController">
+        <aura:attribute name="data" type="List"/>
+        <aura:handler name="change" value="{!v.data}" action="{!c.doInit}"/>
+        <aura:attribute name="tabledata" type="object"/>
+        <aura:attribute name="SelectedRecords" type="Map" default="{}"/>
+        <aura:attribute name="selectedRows" type="List" />
+        <aura:attribute name="preSelectRows" type="List" />
+        <aura:attribute name="columns" type="List"/>    
+        <!-- Attribute Declration For Pagination -->
+        <aura:attribute name="PaginationList" type="list"/>
+        <aura:attribute name="currentPage" type="Integer" />
+        <aura:attribute name="startPage" type="Integer" />
+        <aura:attribute name="endPage" type="Integer"/>
+        <aura:attribute name="totalRecords" type="Integer"/>
+        <aura:attribute name="totalPages" type="Integer"/><!--EDGE-144140 Kalashree number of pages-->
+        <aura:attribute name="pageSize" type="Integer" />
+        <aura:attribute name="header" type="String" />
+        
+        <aura:attribute name="IsShowCSV" type="boolean" />
+        
+        <aura:attribute name="hidecheckbox" type="boolean" />
+        <aura:attribute name="loadingSpinner" type="boolean" default="false" />
+        <aura:attribute name="keyvalue" type="string" default=""/>
+        <aura:attribute name="tableId" type="string" />
+        <aura:attribute name="sortBy" type="String"/>
+        <aura:attribute name="sortDirection" type="String" default="desc"/>
+        <aura:attribute name="showFirstLast" type="Boolean" default="false"/> <!--EDGE-144140 Kalashree show first and last buttons-->
+        <!-- Attribute Declration For Pagination End-->
+        <aura:handler name="init" value="{!this}" action="{!c.doInit }"/>
+        <aura:registerEvent name="tableevent" type="c:DynamicDataTableEvent"/>
+        <aura:if isTrue="{!v.loadingSpinner}">
+            <div>
+                <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+            </div>
+        </aura:if>
+        <div style="overflow: hidden;"> 
+            
+            <aura:if isTrue="{!v.IsShowCSV}">
+                <lightning:icon iconName="action:download" alternativeText="download" title="download" size="x-small" onclick="{!c.downloadCsv}" />
+            </aura:if>
+            <div style="border-bottom-color: white" class="slds-border_bottom"  ></div>
+            <aura:if isTrue="{!v.hidecheckbox}">
+                <div style="font-size: large;font-weight: inherit;margin-bottom: .5rem;">{!v.header}</div>
+            </aura:if>
+            <!--EDGE-142086 - Added below IF to show Available Solution Header -->
+            <aura:IF isTrue="{!v.header == 'Available Solutions'}">
+                <div style="font-size: large;font-weight: inherit;margin-bottom: .5rem;">{!v.header}</div>
+            </aura:IF>
+            <div class="slds-border_top slds-border_left slds-border_right slds-border_bottom">
+                <aura:if isTrue="{!v.keyvalue != ''}">
+                <lightning:datatable class="tablecol" aura:id="tableId" data="{!v.PaginationList }" 
+                                     columns="{!v.columns }" 
+                                     keyField="{!v.keyvalue}"
+                                     onrowselection="{!c.getSelectedName}"
+                                     selectedRows="{!v.selectedRows}"
+                                     sortedBy="{!v.sortBy}"
+                                     sortedDirection="{!v.sortDirection}"
+                                     onsort="{!c.handleSorting}"
+                                     hideCheckboxColumn="{!v.hidecheckbox}"
+                                     
+                                     /> 
+                </aura:if>
+            </div>
+        </div>
+        
+        <br/>
+        <aura:If isTrue="{!v.data.length > 0}">
+            <div style="text-align: end;">
+              <aura:if isTrue="{!v.showFirstLast}"><!--EDGE-144140 Kalashree conditionally render First and Last buttons-->
+                 <lightning:button
+                                      label="First"
+                                      disabled="{!v.startPage == 0}"
+                                      onclick="{!c.first}"
+                                      variant="brand"
+                                      name="First"
+                                      /> 
+                </aura:if>
+                          
+    
+                            
+                    <lightning:button
+                                      label="Previous"
+                                      disabled="{!v.startPage == 0}"
+                                      onclick="{!c.previous}"
+                                      variant="brand"
+                                      name="previous"
+                                      /> 
+     
+                    <lightning:button
+                                      label="Next"
+                                      disabled="{!(v.endPage+1) >= v.totalRecords}"
+                                      onclick="{!c.next}"
+                                      variant="brand"
+                                      name="next"
+                                      />
+                  
+     <aura:if isTrue="{!v.showFirstLast}">
+                    <lightning:button
+                                      label="Last"
+                                      disabled="{!(v.endPage+1) >= v.totalRecords}"
+                                      onclick="{!c.last}"
+                                      variant="brand"
+                                      name="next"
+                                      />
+                </aura:if>
+                
+            </div>
+        </aura:If>
+    </aura:component>

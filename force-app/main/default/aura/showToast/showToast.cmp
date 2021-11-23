@@ -1,0 +1,23 @@
+<aura:component implements="lightning:availableForFlowScreens,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global">
+      <aura:attribute name="MessageType" type="String" access="global"  default="" />
+    <aura:attribute name="Message" type="String" access="global"  default="" />
+   <aura:attribute name="error" type="String" access="global"  default="error" />
+    <aura:attribute name="ShowError" type="Boolean" default="true" />
+    
+    <aura:if isTrue="{!v.ShowError}">  
+        <aura:if isTrue="{!v.MessageType == v.error}">        
+          <div class="mt-toast--error mt-card mt-card--elevation-5" aria-label="example Toast" id="toast20853" aria-live="polite" style="border-left: 3px solid #d0021b;width:80%;" >
+            <div class="mt-card__content">
+              <p> <lightning:icon class="Iconcolor" iconName="utility:warning" alternativeText="Warning!" size="x-small"/>
+              &nbsp;&nbsp; {!v.Message} </p>
+                <button class="slds-button mt-toast__close" onclick="{!c.hadleClose}">
+                   <lightning:icon iconName="utility:close" alternativeText="Close" size="x-small"/>
+                </button>
+            </div>
+            </div>
+            <br/>
+        </aura:if>
+    </aura:if>
+    
+</aura:component>

@@ -1,0 +1,15 @@
+/*Start:EDGE-202803*/
+.accordionClass{
+	--sds-c-accordion-heading-font-size:0.8125rem;
+	--lwc-fontFamilyHeader:akkuratLight;
+}
+
+.checkboxClass{
+	margin-left: 5px;
+	margin-top:16px;
+}
+
+.accordionValue {
+    margin-left: 3.5rem;
+}
+/*End:EDGE-202803*/

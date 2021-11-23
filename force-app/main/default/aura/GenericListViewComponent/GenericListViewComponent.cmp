@@ -1,0 +1,20 @@
+<!--
+Created By   : Team Hawaii
+Created Date : 21 Nov 2019
+Story : P20B - 4016
+-->
+
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="ObjectName" type="String" Required ="true"/>
+    <aura:attribute name="FilterViewName" type="String" Required ="true" />
+    <aura:attribute name="NumberOfRecord" type="Integer" Required ="true" />
+    <lightning:listView aura:id="listViewAccounts"
+        objectApiName="{!v.ObjectName}"
+        listName="{!v.FilterViewName}"
+        rows="{!v.NumberOfRecord}"
+        showSearchBar="true"
+        showActionBar="false"
+        enableInlineEdit="false"
+        showRowLevelActions="false"
+	/>
+</aura:component>

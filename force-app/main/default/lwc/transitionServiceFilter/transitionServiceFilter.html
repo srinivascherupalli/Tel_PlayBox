@@ -1,0 +1,13 @@
+<template>
+    <template if:true={showService}>
+        <template if:true={MapKey.containsRecords}>
+            <lightning-accordion-section key={MapKey.serviceStr} name={MapKey.serviceStr} label={MapKey.serviceStr}>
+                <c-inline-edit-data-table table-name={tableName} table-data={tableData}></c-inline-edit-data-table>
+            </lightning-accordion-section>
+        </template>
+        <template if:false={MapKey.containsRecords}>
+            <lightning-accordion-section key={MapKey.serviceStr} name={MapKey.serviceStr} label={MapKey.noAddon}>
+            </lightning-accordion-section>
+        </template>
+    </template>
+</template>

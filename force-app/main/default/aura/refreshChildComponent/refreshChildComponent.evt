@@ -1,0 +1,12 @@
+<!--
+****************************************************************************
+@Name: CustomRelatedList
+@Author: Sri Chittoori(Team SFO)
+@CreateDate: 29/05/2019
+@Description: Sprint 19.07 , EDGE-85148 
+*******************************************************************************
+--><!--c:compEvent-->
+<aura:event type="APPLICATION">
+    <!-- pass context of where the event was fired to the handler. -->
+    <aura:attribute name="context" type="String"/>
+</aura:event>

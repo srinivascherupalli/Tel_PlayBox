@@ -1,0 +1,5 @@
+.THIS .slds-button.slds-modal__close.uiButton--modal-closeBtn {
+    border: none;
+    box-shadow: none;
+    color: rgba(255,255,255,1);
+}

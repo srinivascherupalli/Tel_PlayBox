@@ -1,0 +1,92 @@
+<template>
+    <template if:true={loadspinner}>
+        
+            <lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+        
+    </template>
+    <div>  
+        <c-lwc-custom-toast title = {toasttitle} 
+                            message = {toastmsg}
+                            variant = {toastvariant} 
+                            auto-close="true" ></c-lwc-custom-toast>
+        <br/>
+        <!--<h1><b>Port Out Reversal</b></h1>-->
+        <br/>
+        <h3><b>Validate Number</b></h3>
+        <div class="slds-box slds-theme_shade c-container">
+            <lightning-layout >
+                <lightning-layout-item >
+                    <p class="field-title" title="phoneNumber">Enter Phone Number</p>
+                   <p> <lightning-input type="text" 
+                    value={enteredNumber}
+                     onblur={handleEntereNumberChange}
+                     pattern="^(0|[0-9][0-9]*)$"
+                     message-when-pattern-mismatch="Only numbers can be entered">
+                   </lightning-input></p>
+                </lightning-layout-item>
+            </lightning-layout>
+            <br/>            
+               
+                <!-- EDGE-170886 --> 
+                <lightning-layout >
+                    <lightning-layout-item >
+                        <div class="slds-float_right slds-p-bottom_medium">
+                            <p class="field-title" title="phoneNumber">New/Existing SIM?</p>
+                            <template if:true={simAvailabilityValues.data}>
+                            <p><lightning-combobox  name="SimAvailability"  
+                                                    value={SimAvailabilityvalue}
+                                                    onchange = {onradioButtonClick}
+                                                    placeholder = '--Select--'
+                                                    options={simAvailabilityValues.data.values}>
+                                </lightning-combobox></p>
+                        </template>
+                    </div> 
+                    </lightning-layout-item>
+                </lightning-layout>
+                <!-- EDGE-170886 -->
+               <lightning-layout>
+                    <lightning-layout-item>
+                        <div class="slds-float_left slds-p-bottom_medium" >
+                            <p class="field-title" title="SIMserialNumber">SIM serial Number</p>
+                            <p> <lightning-input type="text"
+                                value={simSerialNumber} 
+                                disabled={isdisabled}
+                                onchange={handleSimNumberChange}
+                                pattern="^(0|[1-9][0-9]*)$"
+                                message-when-pattern-mismatch="Only numbers can be entered">
+                            </lightning-input></p>                            
+                        </div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <!-- as part of EDGE-166187  -->
+                        <div class="slds-float_right slds-p-bottom_medium">
+                            <template if:true={isAdaptiveMobility}>
+                                <p class="field-title" title="phoneNumber">SIM Type</p>
+                                <p><lightning-combobox  name="progress"  
+                                                        value={existingsimvalue}
+                                                        onchange = {handlechange}
+                                                        placeholder = '--Select--'
+                                                        options={simvalues}>                            
+                                </lightning-combobox></p>
+                            </template>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+                &nbsp;&nbsp;
+            
+
+            <div style="text-align: right;">
+                <lightning-button label="Clear" 
+                                  title="Clear"   
+                                  onclick={handleClear} 
+                                  class="slds-m-left_x-small"></lightning-button>
+                <lightning-button label="Validate and Assign" 
+                                  title="validateAndSave" 
+                                  variant ="brand"
+                                  onclick={handleValidateAndSave} 
+                                  class="slds-m-left_x-small"></lightning-button>
+    
+              </div>
+            <br/>
+        </div>    
+        <br/>   
+    </div>     
+</template>

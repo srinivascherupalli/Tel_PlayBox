@@ -1,0 +1,76 @@
+<!-- P2OB-7462 - Changed lightning-accordion to multi-level hierarchy -->
+<template>
+    <lightning-accordion allow-multiple-sections-open class = "level1-accordion" onsectiontoggle={openLevel1Category} active-section-name={levelOpenCategory.level1OpenCategory}>
+        <template for:each={parentCategoryArticleList} for:item="category">
+            <template if:true={category.value}>
+                <lightning-accordion-section key={category.key} class = "TestJquery1" name={category.key.name} label={category.key.label}>
+                    <template for:each={category.value} for:item="article">
+                        {article.Parent.urlName}
+                        <a key={article.Id} data-id={article.Parent.UrlName} data-name = {category.key.name} onclick={showArticleDetail}>{article.Parent.Title}</br>
+                        </a>
+                    </template>
+                    <template if:true={category.key.childCategories} >
+                        <lightning-accordion allow-multiple-sections-open class = "{category.key.name}" onsectiontoggle={openLevel2Category} active-section-name={levelOpenCategory.level2OpenCategory}>
+                            <template for:each={category.key.childCategories} for:item="category1">
+                                <lightning-accordion-section key={category1.label} name={category1.name} label={category1.label}>
+                                    <template if:true={categoryGroupArticleList}>
+                                        <template for:each={categoryGroupArticleList} for:item="firstLevel">
+                                            <c-prm-k-article-child-accord key={firstLevel.key} knowledge-article-data = {firstLevel} child-category-label = {category1.label} child-category-name={category1.name} parent-cate-name={parentCategoryFromURL}>
+                                            </c-prm-k-article-child-accord>
+                                        </template>
+                                    </template>
+                                    <template if:true={category1.childCategories}>
+                                        <lightning-accordion allow-multiple-sections-open class = "{category1.name}" onsectiontoggle={openLevel3Category} active-section-name={levelOpenCategory.level3OpenCategory}>
+                                            <template for:each={category1.childCategories} for:item="category2">
+                                                <lightning-accordion-section key={category2.label} name={category2.name} label={category2.label}>
+                                                <template if:true={categoryGroupArticleList}>
+                                                    <template for:each={categoryGroupArticleList} for:item="secondLevel">
+                                                        <c-prm-k-article-child-accord key={secondLevel.key} knowledge-article-data = {secondLevel} child-category-label = {category2.label} child-category-name={category2.name} parent-cate-name={parentCategoryFromURL}>
+                                                        </c-prm-k-article-child-accord>
+                                                    </template>
+                                                </template>
+                                                <template if:true={category2.childCategories}>
+                                                    <lightning-accordion allow-multiple-sections-open class = "{category2.name}" key = {category2.childCategories} onsectiontoggle={openLevel4Category} active-section-name={levelOpenCategory.level4OpenCategory}>
+                                                        <template for:each={category2.childCategories} for:item="category3">
+                                                            <lightning-accordion-section key={category3.label} name={category3.name} label={category3.label}>
+                                                            <template if:true={categoryGroupArticleList}>
+                                                                <template for:each={categoryGroupArticleList} for:item="secondLevel1">
+                                                                    <c-prm-k-article-child-accord key={secondLevel1.key} knowledge-article-data = {secondLevel1} child-category-label = {category3.label} child-category-name={category3.name} parent-cate-name={parentCategoryFromURL}>
+                                                                    </c-prm-k-article-child-accord>
+                                                                </template>
+                                                            </template>
+                                                            <template if:true={category3.childCategories}>
+                                                                <lightning-accordion allow-multiple-sections-open class = "{category3.name}" key = {category3.childCategories} onsectiontoggle={openLevel5Category} active-section-name={levelOpenCategory.level5OpenCategory}>
+                                                                    <template for:each={category3.childCategories} for:item="category4">
+                                                                        <lightning-accordion-section key={category4.label} name={category4.name}
+                                                                        label={category4.label}>
+                                                                        <template if:true={categoryGroupArticleList}>
+                                                                            <template for:each={categoryGroupArticleList} for:item="secondLevel2">
+                                                                                <c-prm-k-article-child-accord key={secondLevel2.key} knowledge-article-data = {secondLevel2} child-category-label = {category4.label} child-category-name={category4.name} parent-cate-name={parentCategoryFromURL}>
+                                                                                </c-prm-k-article-child-accord>
+                                                                            </template>
+                                                                        </template>
+                                                                        </lightning-accordion-section> <!-- level 5 accordion section closure -->
+                                                                    </template>
+                                                                </lightning-accordion>
+                                                            </template>
+                                                           </lightning-accordion-section> <!-- level 4 accordion section closure -->
+                                                        </template>
+                                                    </lightning-accordion>
+                                                </template>
+                                                </lightning-accordion-section> <!-- level 3 accordion section closure -->
+                                            </template>
+                                        </lightning-accordion>
+                                    </template>
+                                </lightning-accordion-section> <!-- level 2 accordion section closure -->
+                            </template>
+                        </lightning-accordion>
+                    </template>
+                </lightning-accordion-section>
+            </template> 
+        </template>
+    </lightning-accordion>
+	<template if:true={errors}>
+		<p>{errors}</p>
+	</template>
+</template>

@@ -1,0 +1,10 @@
+<aura:event type="APPLICATION" description="Event template"  access="global">
+    <aura:attribute name="parentID" type="String" access="GLOBAL"/>
+    <aura:attribute name="searchedText" type="String" access="global" />
+    <aura:attribute name="searchType" type="String" access="global" />
+    <aura:attribute name="loadingSpinner" type="Boolean" access="global" />
+    <!--edge-71384-->
+     <aura:attribute name="addressMap" type="Map" default="{}"/>
+    <aura:attribute name="searchedResult" type="String" access="global" default=""/>
+    <aura:attribute name="hiddenNavigator" type="String" access="global"/>
+</aura:event>

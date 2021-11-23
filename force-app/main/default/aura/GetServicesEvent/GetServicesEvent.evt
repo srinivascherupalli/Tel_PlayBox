@@ -1,0 +1,27 @@
+<!--
+===============================================================================================================================
+Sr.No.    Developer Name       	Modified  Date          Story Description
+1.        Shubhi ,Harsh,Rohit   23/5/2019     			CheckEligibilitySolution (EDGE-66570 ,EDGE-72453,EDGE-73521)
+2.        Maq                   15/07/2019
+===============================================================================================================================
+-->
+<aura:event type="APPLICATION">
+    <aura:attribute name="adborid" type="String" />
+    <aura:attribute name="siteName" type="String" />
+    <aura:attribute name="oldConfigId" type="String" />
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <!-- edge 90736 -->
+    <aura:attribute name="selectedSiteResponse" type="ReplicatorGetServiceDataObject_V2" />
+    <!-- EDGE-66392 -->
+    <aura:attribute name="callFrom" type="String" />
+    <aura:attribute name="allSiteClickedFlag" type="Boolean" />
+    <aura:attribute name="CIDN_String" type="String" />
+    <aura:attribute name="basketId" type="String" />
+    <aura:attribute name="mobileTransitionDataEvt" type="TransitionDataDTO" />
+    <aura:attribute name="selectedMobileRecrodEvt" type="List" />
+    <!-- EDGE-66392 -->
+    <aura:attribute name="ngUcTransitionDataEvt" type="TransitionDataDTO" />
+    <aura:attribute name="selectedNgUcRecrodEvt" type="List" />
+    <!--EGE-1681-->
+    <aura:attribute name="sioConfigMode" type="String" /><!--Added for DIGI-1681-->
+</aura:event>

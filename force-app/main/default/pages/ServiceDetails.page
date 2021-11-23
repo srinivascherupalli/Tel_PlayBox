@@ -1,0 +1,2 @@
+<apex:page standardController="csord__Service__c" extensions="ServiceDetailsController" id="serviceDetails" showHeader="true" sidebar="true" action="{!initFlow}">
+</apex:page>

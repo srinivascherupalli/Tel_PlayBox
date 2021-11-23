@@ -1,0 +1,7 @@
+.THIS.customRadioCls .slds-form-element__control .slds-radio{
+    display : inline-block;
+}
+
+.THIS.customRadioCls .slds-form-element__control{
+    text-align: center;
+}

@@ -1,0 +1,12 @@
+<design:component >
+    <design:attribute name="strTitle"  label="Title" />
+    <design:attribute name="headerIcon" label="Header Icon"/>
+    <design:attribute name="objectName" label="Object Name" />
+    <design:attribute name="hyperlinkField" label="Hyperlink Field" />
+    <design:attribute name="parentObjectName" label="Parent Object Name" />
+    <design:attribute name="relationshipApiName" label="Relationship Name" />
+    <design:attribute name="paramsList" label="Params" />
+    <design:attribute name="filterStr" label="Filter String" />
+    <design:attribute name="fieldsList"  label="Fields List" />
+    <design:attribute name="fieldsLabelLst"  label="Fields Labels List"/>   
+</design:component>

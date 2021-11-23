@@ -1,0 +1,41 @@
+.THIS {
+}
+.THIS .tab-background-color
+{
+    background-color: #A4A09F !important;
+}
+.THIS .selected-tab-background-color
+{
+    background-color: #1797c0 !important;
+}
+.THIS .tab-padding
+{
+    padding-top:1%;padding-bottom:1%;
+}
+.THIS .tab-background-color:hover, .THIS .selected-tab-background-color:hover{
+    cursor:pointer;
+}
+.THIS .blue-text-tab {
+    color: white;
+    font-weight: bold;
+}.THIS {
+}
+.THIS .tab-background-color
+{
+    background-color: #f4f4f4;
+}
+.THIS .selected-tab-background-color
+{
+    background-color: transparent;
+}
+.THIS .tab-padding
+{
+    padding-top:1%;padding-bottom:1%;
+}
+.THIS .tab-background-color:hover, .THIS .selected-tab-background-color:hover{
+    cursor:pointer;
+}
+.THIS .blue-text-tab {
+    color: white;
+    font-weight: bold;
+}

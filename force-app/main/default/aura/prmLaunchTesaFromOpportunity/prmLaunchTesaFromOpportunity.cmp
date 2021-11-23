@@ -1,0 +1,51 @@
+<!--P2OB-6450 : Hawaii : Launch TESA from quick action on opportunity-->
+<aura:component controller="PRMLaunchTesaController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<!--variable to store opportunity id-->
+    <aura:attribute name="recordId" type="String" />
+    <!--variable to store errormessages-->
+    <aura:attribute name="errorList" type="String[]"/>
+    <!--lightning init event to access data on load of component-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--Boolean variable to make true and false-->
+    <aura:attribute name="showPopUp" type="Boolean" default="true"/>
+    <!--attribute to show/hide spinner-->
+    <aura:attribute name="spinner" type="boolean" default="false" />
+    <!--Conditionally displayed Popup-->
+    <aura:if isTrue="{!v.showPopUp}">
+        <aura:html tag="style">
+            .slds-fade-in-open { 
+                visibility:hidden !important; 
+            }
+            .slds-backdrop{
+                visibility:hidden !important; 
+            }
+        </aura:html>
+        <aura:set attribute="else">
+            <aura:html tag="style">
+                .slds-fade-in-open { 
+                    visibility:block !important; 
+                }
+                .slds-backdrop{
+                    visibility:block !important; 
+                }
+        	</aura:html>
+    	</aura:set>
+    </aura:if>
+    <!--Show spinner conditionally-->
+    <aura:if isTrue="{!v.spinner}">
+    	<div aura:id="spinnerId" class="slds-spinner_container">
+       		<div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+            	<span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                	<div class="slds-spinner__dot-b"></div>
+                </div>
+         </div>
+    </aura:if>
+    <!--iterate on errorlist to display errors-->
+    <aura:if isTrue="{!v.errorList}">
+    	<aura:iteration items="{!v.errorList}" var="error">
+            <div class="slds-text-color_error errorClass">{!error}</div>
+            <br></br>
+        </aura:iteration>
+    </aura:if>
+</aura:component>

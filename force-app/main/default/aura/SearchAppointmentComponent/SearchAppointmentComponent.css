@@ -1,0 +1,16 @@
+.THIS {
+}
+
+.THIS .headercomp {
+    background-color:white;
+}
+
+.THIS.backgroundInverse {
+    display: inline-block;
+    background-color: #16325c;
+    height: 50%;
+}
+
+.THIS.timerblock{
+    text-decoration: underline;
+}

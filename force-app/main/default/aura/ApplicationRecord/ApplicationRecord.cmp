@@ -1,0 +1,20 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<c:collapsableSection header="Applicant's Detail">
+    	<c:ApplicationDetailsTEI recordId="{!v.recordId}"></c:ApplicationDetailsTEI>
+    </c:collapsableSection>
+    <c:collapsableSection header="Stock Exchange Listings">
+    	<c:StockExchnageListing recordId="{!v.recordId}"></c:StockExchnageListing>
+    </c:collapsableSection>
+    <c:collapsableSection header="Applicant's Operations">
+    	<c:ApplicationOperation recordId="{!v.recordId}"></c:ApplicationOperation>
+    </c:collapsableSection>
+    <c:collapsableSection header="Relationship to Telstra">
+    	<c:RelationshipToTelstra recordId="{!v.recordId}"></c:RelationshipToTelstra>
+    </c:collapsableSection>
+    <c:collapsableSection header="Relationship with Governmental Organization">
+    	<c:RelationshipWithGovt recordId="{!v.recordId}"></c:RelationshipWithGovt>
+    </c:collapsableSection>
+    <c:collapsableSection header="Litigation/Investigation">
+    	<c:LitigationOrInvestigation recordId="{!v.recordId}"></c:LitigationOrInvestigation>
+    </c:collapsableSection>
+</aura:component>

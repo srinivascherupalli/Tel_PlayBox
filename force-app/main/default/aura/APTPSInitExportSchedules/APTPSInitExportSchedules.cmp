@@ -1,0 +1,9 @@
+<aura:component controller="APTPS_ExportSchedulesController" implements="lightning:actionOverride,flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="paramname" type="String"/>
+    <aura:attribute name="agreementId" type="String"/>
+    <aura:attribute name="schedules" type="APTPS_ScheduleWrapper[]"  /> 
+	
+</aura:component>

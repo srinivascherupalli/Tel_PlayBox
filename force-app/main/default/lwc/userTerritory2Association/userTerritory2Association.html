@@ -1,0 +1,76 @@
+<template>
+  <article
+    class="slds-card slds-card_boundary headerBottomBorder forceRelatedListCardDesktop"
+    data-aura-class="forceRelatedListCardDesktop"
+  >
+    <div
+      class="slds-grid slds-page-header forceRelatedListCardHeader"
+      data-aura-class="forceRelatedListCardHeader"
+    >
+      <header class="slds-media slds-media--center slds-has-flexi-truncate">
+        <div
+          class="slds-media__figure stencil slds-avatar slds-avatar_small"
+          aria-hidden="true"
+        >
+          <div
+            class="extraSmall forceEntityIcon"
+            style="background-color: #3c97dd"
+            data-aura-class="forceEntityIcon"
+          >
+            <span class="uiImage" data-aura-class="uiImage">
+              <lightning-icon
+                icon-name="standard:service_territory_member"
+                size="small"
+              ></lightning-icon>
+            </span>
+          </div>
+        </div>
+        <div class="slds-media__body">
+          <h2>
+            <span
+              class="slds-card__header-link baseCard__header-title-container slds-card__header-title slds-truncate slds-m-right--xx-small"
+            >
+              Users in Assigned Territories ({recordCount})
+            </span>
+          </h2>
+        </div>
+      </header>
+    </div>
+    <div>
+      <template id="datatable" if:true={data}>
+        <lightning-datatable
+          columns={cols}
+          data={data}
+          key-field="id"
+          hide-checkbox-column="true"
+        >
+        </lightning-datatable>
+        <template id="recordNotFound" if:false={isRecordExist}>
+          <table
+            role="grid"
+            class="slds-table slds-table_header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols"
+            style="table-layout: fixed; width: 854px"
+          >
+            <tr>
+              <td class="norecordfoundblock">
+                <center>No User found for this territory</center>
+              </td>
+            </tr>
+          </table>
+        </template>
+      </template>
+      <template id="Pagination" if:true={isRecordExist}>
+        <div class="slds-m-around_medium">
+          <p class="slds-m-vertical_medium content">
+            Displaying {startingRecord} to {endingRecord} of {totalRecountCount}
+            records. Page {page} of {totalPage}.
+          </p>
+          <c-Pagination
+            onprevious={previousHandler}
+            onnext={nextHandler}
+          ></c-Pagination>
+        </div>
+      </template>
+    </div>
+  </article>
+</template>

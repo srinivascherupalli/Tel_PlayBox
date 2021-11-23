@@ -1,0 +1,62 @@
+<template>
+    <!-- It will show and hide loading spinner -->
+    <div if:false={isLoaded} class="slds-is-relative">
+        <lightning-spinner variant="brand" size="medium">
+        </lightning-spinner>
+    </div>
+    <!-- End here loading spinner -->
+    <H2 class="title2">{headerLabel}</H2>
+    <div class="leads-listing">
+        <template for:each={record} for:item="cardRow">
+            <lightning-card key={cardRow.Id}>
+                <template if:true={cardRow.forClosure}>
+                    <div slot="footer" class="card-footer">
+                        <lightning-button variant="base" label="Approve" title="Approve" icon-name="utility:forward" icon-position="right" data-id={cardRow.workItemId} 
+                            class="btn-accept slds-m-right_small" onclick={handleAccept}></lightning-button>
+                        <lightning-button variant="base" label="Reject" title="Reject" icon-name="utility:forward" icon-position="right" data-id={cardRow.workItemId} 
+                            class="btn-reject slds-m-right_small" onclick={handleDecline}></lightning-button>
+                    </div>
+                    <div align="right">
+                        <div class="displayPill orangePill">{cardRow.tileType}</div> <!--style="width: 30%; background-color:orange;border: none;color: white;padding: 3px 7px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 2px 2px;border-radius: 16px;"-->
+                    </div>
+                </template>
+                <template if:false={cardRow.forClosure}>
+                    <div slot="footer" class="card-footer">
+                        <lightning-button variant="base" label="Accept" title="Accept" icon-name="utility:forward" icon-position="right" data-id={cardRow.workItemId}
+                            class="btn-accept slds-m-right_small" onclick={handleAccept}></lightning-button>
+                        <lightning-button variant="base" label="Decline" title="Decline" icon-name="utility:forward" icon-position="right" data-id={cardRow.workItemId}
+                            class="btn-reject slds-m-right_small" onclick={handleDecline}></lightning-button>
+                    </div>
+                    <div align="right">
+                        <div class="displayPill greenPill">{cardRow.tileType}</div> <!--style="width: 30%; background-color:green;border: none;color: white;padding: 3px 7px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 2px 2px;border-radius: 16px;"-->
+                    </div>
+                </template>
+                <h4 class="card-title">
+                    <a href="#" onclick={recordView} data-id={cardRow.Id}>{cardRow.Name}</a>
+                </h4>
+                <div class="card-name">{cardRow.primaryDomain}</div>
+                <div class="card-name">{cardRow.AccountName}</div>
+                <div class="card-data">
+                    <lightning-formatted-number format-style="currency" value={cardRow.Amount}></lightning-formatted-number>
+                    <!-- for acceptance opportunities display Shared Date and Shared By-->
+                    <br/>
+                    <template if:false={cardRow.forClosure}>
+                        {label.labelSharedOn}&nbsp;
+                        <lightning-formatted-date-time value={cardRow.CloseDate}></lightning-formatted-date-time>
+                        </br>{label.labelSharedBy}&nbsp; {cardRow.DchOwner}
+                    </template>
+                    <!-- for closure opportunities display Submited By-->
+                    <template if:true={cardRow.forClosure}>
+                        {label.labelSubmittedBy}&nbsp; {cardRow.DchOwner}
+                    </template>
+                </div>
+            </lightning-card>
+        </template>
+        <template if:true={hasRecord}>
+            <div class="alert no-bg">There are no new Opportunities</div>
+        </template>
+    </div>
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+ </template>

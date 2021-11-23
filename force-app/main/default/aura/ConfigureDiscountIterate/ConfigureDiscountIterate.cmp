@@ -1,0 +1,55 @@
+<!--********************************************************************
+    EDGE        : 114351
+    Component   : ConfigureDiscountIterate
+    Description : Add multiple offers
+    Author      : Deepak Kumar
+    *********************************************************************--> 
+
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride">
+    
+    <aura:attribute name="CommercialProduct" type="cspmb__Price_Item__c[]" default="[{}]"/>
+    <aura:attribute name="PlanTypeData" type="List" />
+    <aura:attribute name="planTypeSections" type="Array" />
+    <aura:attribute name="SelectedProduct" type="String" />
+    <aura:attribute name="hardwareOpt" type="String" />
+    <aura:attribute name="planSelected" type="String" /><!-- Badri -->
+    <aura:attribute name="OfferType" type="String" />
+    <aura:attribute name="Selectedcommitteddata" type="String" />
+    <aura:attribute name="SelctdPlanType" type="string"/>
+    <aura:attribute name="SelctdPlanVal" type="string"/>
+    <aura:attribute name="noOfPlanSection" type="Integer"/>
+    <aura:attribute name="methodcfgureDisc" type="string"/>
+    <aura:attribute type="String" name="DprOfferId"/><!-- added  by deepak -->
+    <aura:attribute name="planTypeValues" type="List" /> <!-- added  by deepak -->
+    <aura:attribute name="getcommitteddata" type="String" />
+
+    <aura:attribute name="PlanList" type="List" />
+
+    
+     <!-- Holds the New create Plan Id -->
+    <aura:attribute name="DPRPlanId" type="String"/><!--Added by Rishabh-->
+    <aura:method name="callConfigDisIterate" action="{!c.callConfigureDiscount}" /><!-- added by Rishabh -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="addMoreOffer" event="c:ConfigureDiscountIterateEvent" action="{!c.addRows}"/>
+    <aura:handler  event="c:deletePlanSection" action="{!c.deletePlanSect}"/>
+    <aura:handler  event="c:storePlanValue" action="{!c.passPlanValueToChild}"/>
+
+    <aura:iteration items="{!v.CommercialProduct}" var="itemVal" indexVar="index">
+        
+        <c:ConfigureDiscount planTypeSections="{v.planTypeSections}" DprOfferId="{!v.DprOfferId}"
+                             PlanTypeValues="{!v.PlanTypeData}" 
+                             hardwareOpt="{!v.hardwareOpt}"
+                             noOfPlanSection="{!v.noOfPlanSection}"
+                             OfferType="{!v.OfferType}"
+                             Selectedcommitteddata ="{!v.Selectedcommitteddata}"
+                             planSelected="{!v.planSelected}"
+                             SelectedProductToPass="{!v.SelectedProduct}" 
+                             CommercialProduct="{!itemVal}" 
+                             CommercialProductList = "{!v.CommercialProduct}"
+                             aura:id="ConfigureDiscountId"
+                             DPRPlanId="{!v.DPRPlanId}"
+                             DiscountplanList="{!v.PlanList}"
+                             rowNo="{!index}"
+                             />
+    </aura:iteration>
+</aura:component>

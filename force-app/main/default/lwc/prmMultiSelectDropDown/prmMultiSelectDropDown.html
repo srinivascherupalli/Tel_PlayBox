@@ -1,0 +1,35 @@
+<template>
+    <div id="main-div" class=" slds-picklist slds-dropdown-trigger slds-dropdown-trigger_click ">
+
+        <!--the disclosure triangle button-->
+        <label class="form-element__label">Filter by:</label>
+        <button class="slds-button slds-button_neutral slds-picklist__label" aria-haspopup="true" onclick={handleClick} onmouseleave={handleMouseOutButton}>
+            <span class="slds-truncate" title="Category">Category</span>
+            <lightning-icon icon-name="utility:down" size="small"></lightning-icon>
+        </button>
+
+        <!--the multiselect list-->
+        <div class="slds-dropdown slds-dropdown_left" style="display:block">
+            <ul class="slds-dropdown__list" role="menu">
+
+                <template for:each={dropDownBuild} for:item="option">
+                    <li key={option.id} class="slds-dropdown__item" data-id={option.id}>
+                        <a href="javascript.void(0)" data-id={option.id} onclick={handleSelection}>
+                            <span class="slds-truncate" data-id={option.id}>
+                                <lightning-icon data-id={option.id} icon-name="utility:check" size="x-small" class="slds-icon slds-icon_selected slds-icon_x-small slds-icon-text-default slds-m-right_x-small"></lightning-icon>{option.value}
+                            </span>
+                        </a>
+                    </li>
+                </template>
+
+            </ul>
+        </div>
+        <div class="selectedoption">
+            <template for:each={dropDownBuild} for:item="selectedoption">
+                <template if:true={selectedoption.selected}>
+                    <lightning-pill key={selectedoption.id} data-id={selectedoption.id} label={selectedoption.value} onremove={handleSelection}></lightning-pill>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>

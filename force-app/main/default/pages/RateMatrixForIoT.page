@@ -1,0 +1,58 @@
+<!-- 
+* @Author : Suyash Chiplunkar
+* @Date : 1 July 2020
+* @Jira : DPG-1964
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description 
+1         Payal Popat         01/12/2020     Added few parameters from page and passing the same to lightning component
+===============================================================================================================================
+-->
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:slds />
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+    <apex:includeLightning />
+    <script>
+    var CallingPlan = "{!JSENCODE($CurrentPage.parameters.CallingPlan) }";
+    var Mode = "{!JSENCODE($CurrentPage.parameters.Mode) }";//<!---EDge-120919 -->
+    var offerid = "{!JSENCODE($CurrentPage.parameters.offerid) }";
+    var commProdId= "{!JSENCODE($CurrentPage.parameters.commProdId) }";//DPG-2319
+    var json_sios= "{!JSENCODE($CurrentPage.parameters.jsonsios) }";
+    var guid= "{!JSENCODE($CurrentPage.parameters.guid) }";
+    var changeType= "{!JSENCODE($CurrentPage.parameters.changeType) }";
+    var basketStage= "{!JSENCODE($CurrentPage.parameters.basketStage) }";
+    var compName = "{!JSENCODE($CurrentPage.parameters.compName) }";
+    var selectplanname = "{!JSENCODE($CurrentPage.parameters.selectplanname) }";
+    var solutionId = "{!JSENCODE($CurrentPage.parameters.solutionId) }";//Vamsi
+    $Lightning.use("c:LightningAppDependencyHandler", function() {
+        $Lightning.createComponent(
+            "c:RateMatrixForIoT",
+            {   "CallingPlan": CallingPlan,
+                "offerid": offerid,
+                "commProdId":commProdId,
+                "jsonsios" :json_sios.replace(/'/g,"\""),
+             	"guid" : guid,
+                "changeType" : changeType,
+                "basketStage" : basketStage,
+                "componentName" :compName,
+             	"selectplanname" :selectplanname,
+                "solutionId" :solutionId
+            },
+            "lightning",
+            function(cmp){
+                console.log("Component created!");
+                var div = document.getElementById("spinnerContainer");   
+                div.style.display = "none";   
+            });
+    });
+    </script>
+    <div id="lightning" ></div>
+    <div style="height:6rem" id="spinnerContainer">
+        <div class="slds-spinner_container">
+            <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                <span class="slds-assistive-text">Loading Rate Card</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </div>
+</apex:page>

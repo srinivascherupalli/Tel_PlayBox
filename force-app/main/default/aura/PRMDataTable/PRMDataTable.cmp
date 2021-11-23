@@ -1,0 +1,225 @@
+<aura:component controller="PRMSubmitToPartnerRules"  implements="flexipage:availableForAllPageTypes,lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:appHostable"  access="global">
+    <!-- v1.2 Team Hawaii [Vivian Charlie] updates to incubembency as per P2OB-2448 -->
+    <!-- v1.3 Team Hawaii [Vivian Charlie] Opportunity optimization updates P2OB-4628 and P2OB-4670 -->
+    <!-- v1.4 Team Alexandria [RaviTeja] EDGE-151598 adding Partner of record table -->
+
+    <!-- <aura:attribute name="mycolumns" type="List"/>-->
+    <aura:attribute name="DataTableName" type="String" />
+    <aura:attribute name="IsRecommended" type="boolean" default="true"/>
+    <aura:attribute name="IsIncumbent" type="boolean" default="true"/>
+    <aura:attribute name="OverideIncumbent" type="boolean" default="false"/>
+    <aura:attribute name="IsOveride" type="boolean" default="false"/>
+    <aura:attribute name="IsContinue" type="boolean" default="false"/>
+    <aura:attribute name="severity" type="string" default="error"/>
+    <aura:registerEvent name="SubmitToPartnerEvent" type="c:SubmitToPartnerEvent"/>
+    <!--<aura:handler event="c:SubmitToPartnerEvent" action="{!c.handleApplicationEvent}"/>-->
+    <aura:attribute name="columns" type="list" default="[{ label: 'PARTNER NAME', fieldName: 'accountName', type: 'text'},{ label: 'TRADING NAME', fieldName: 'TradingName', type: 'text'},{ label: 'ACCREDITATION LEVEL', fieldName: 'accreditation', type: 'text'},{ label: 'STATE COVERAGE', fieldName: 'stateCoverage', type: 'text'}]"/> <!-- ,{ label: 'PARTNER ONBOARDED', fieldName: 'isPartner', type: 'text'} -->
+    <aura:attribute name="columnData" type="list" access="global"/>
+    <aura:attribute name="data" type="list"/>
+    <aura:attribute name="porData" type="list"/> <!--EDGE-151598 adding Partner of record table -->
+    <aura:attribute name="distributorId" type="string"/>
+    <aura:attribute name="distributorName" type="string"/>
+    <!--<aura:attribute name="columnData" type="list" default="[{'Id':'0012O000003ghs3QAA', 'accountName':'Copado1 sudhakar', 'accreditation':'Platinum','stateCoverage':'VIC;QLD;SA;ACT','OptySuccessRate':'0.0'},{'Id':'0012O000003lJQjQAM', 'accountName':'Copado2Sudhakar', 'accreditation':'Platinum','stateCoverage':'VIC;QLD;SA;ACT','OptySuccessRate':'0.0'}]"/>
+    -->
+    <!-- 
+ default="[{'Id':'0012O000003ghs3QAA', 'accountName':'Copado1 sudhakar', 'accreditation':'Platinum','stateCoverage':'VIC;QLD;SA;ACT','OptySuccessRate':'0.0'}]
+ <aura:attribute name="columns" type="list" default="[{ label: 'NAME', fieldName: 'Name', type: 'text'},{ label: 'Accreditation', fieldName: 'Accreditation', type: 'text'},{ label: 'Opportunity Success Rate', fieldName: 'OptySuccessRate', type: 'text'}]"/>
+    <aura:attribute name="columnData" type="list" default="[{ 'Id':'0012O000003lJQj','Name': 'Adam Company', 'Accreditation': 'Gold','OptySuccessRate':'20'},{ 'Id':'0012O0000037hRj','Name': 'TBS DISTRIBUTION', 'Accreditation': 'Gold','OptySuccessRate':'20'},{ 'Id':'0012O000003csYe','Name': '2109 TEST Account', 'Accreditation': 'Gold','OptySuccessRate':'20'}]"/>-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="selectedRowsCount" type="Integer" default="1"/>
+    <aura:attribute name="maxRowSelection" type="Integer" default="1"/>
+    <aura:attribute name="selectedRows" type="list" />
+    <aura:attribute name="PartnerAccId" type="String" />
+    <aura:attribute name="RecomondedAccId" type="String"/>
+    <aura:attribute name="selectedRowsDetails" type="Object" />
+    <aura:attribute name="showTable" type="boolean" default="false" />
+    <!--<h1>Selected Objects:{!v.RecomondedAccId}</h1>-->
+    <!--<h1>Selected Rows: {! v.selectedRowsCount }</h1>
+  <h1>Data from Parent : {! v.columnData }</h1>
+  <h1>Columns: {! v.columns }</h1>-->
+    <!--<div class="slds-header">-->
+  
+    <aura:if isTrue="false">
+        <div class="{!'slds-box slds-theme--'+v.severity}">
+            <table >
+                <tr>
+                    <aura:if isTrue="{!'error'==  v.severity}">
+                        <td><lightning:icon class="slds-float_left" iconName="utility:error" alternativeText="Error!" variant="inverse" /></td>
+                    </aura:if>
+                    <aura:if isTrue="{!'success'==  v.severity}">
+                        <td><lightning:icon class="slds-float_left" iconName="utility:success" alternativeText="Success!" variant="inverse" /></td>
+                    </aura:if>
+                    <td>
+                        {'message'}  <div class="slds-text-body_small">Instruction </div>
+                        
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </aura:if>
+    
+    <br/>
+    <aura:if  isTrue="{!and(v.DataTableName=='INCPartner',not(empty(v.data)))}">
+        <h3 id="header99" class="slds-text-heading--medium">Incumbent Partners
+        <lightning:helptext iconName="utility:info" content="Partners who have worked with this customer on the same primary domain as this Opportunity in the last 12 months" />
+        </h3>
+    <br/>
+        <p><p class="SalesforceSansfontstandardtext">You can choose an incumbent partner or continue to select your preferred Partner.</p></p>
+    </aura:if>
+    <aura:if  isTrue="{!v.DataTableName=='RecPartner'}" >
+        <h3 id="header99" class="slds-text-heading--medium SalesforceSansfontsubheadings">Partner Recommendations
+        <lightning:helptext iconName="utility:info" content="Platinum or Gold accredited Partners in the primary domain of this Opportunity who have appropriate state coverage." />
+        </h3>
+        <br/>
+        <p>Choose one of the recommended Partners or search for your preferred one.</p>
+   
+    </aura:if>
+    <!--</div>-->  
+   <!-- <p>You can choose an incumbent partner or continue to select your preferred Partner.</p>  -->
+    <p >To find out more about these Partners, visit <a class="primary" href="{!$Label.c.PartnerResultsLink}" target="_blank">Partner Finder</a></p>  
+    <!-- <a class="primary" href="{!$label.my_link}">Help Centre</a> -->
+     <br/>  
+    <!--<div style="height:20px;max-height:20px;">-->
+    
+    <!--
+        <div class="{!v.showTable ? 'slds-show ' : 'slds-hide'}">
+            <div style="height:175px;max-height:175px;">
+
+            <lightning:datatable aura:id="datatable" 
+                                 data="{! v.columnData}" 
+                                 columns="{!v.columns}" 
+                                 keyField="Id"
+                                 Id="PRMDataTable"
+                                 hideCheckboxColumn="false" 
+                                 maxRowSelection="{! v.maxRowSelection }"
+                                 onrowselection="{! c.updateSelectedText }"/>
+                </div>
+        </div>
+    -->
+<aura:if isTrue="{!not(empty(v.data))}">
+    <div class="slds" style="overflow-x:auto;"> 
+		<table class="slds-table slds-table--bordered"> <!-- slds-table-striped -->
+        <thead>
+            <tr>
+                <th scope="col"><span class="slds-truncate"></span></th>
+                <th scope="col"><span class="slds-truncate">PARTNER NAME</span></th>
+                <th scope="col"><span class="slds-truncate">TRADING NAME</span></th>
+                <th scope="col"><span class="slds-truncate">ACCREDITATION LEVEL</span></th>
+                <th scope="col"><span class="slds-truncate">STATE COVERAGE</span></th>
+                <th scope="col"><span class="slds-truncate">PRIMARY DISTRIBUTOR</span></th> <!-- v1.2 -->
+           </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.data}" var="wrap">
+                <tr class="{!wrap.isPartner == 'No' ? 'greyRow' : ''}"> <!--  -->
+                    <td>
+                        <aura:if isTrue="{!wrap.isPartner == 'Yes'}">
+                            <ui:inputRadio aura:id="rad01" name="group" label="" text="{!wrap.Id +':'+wrap.accountName+'*'+wrap.DistributorName+'^'+wrap.DistributorId}" change="{!c.updateSelectedText }"/>
+                         <aura:set attribute="else">
+                            <lightning:helptext class ="leftMargin" content="{!$Label.c.Partner_Not_Onboarded}"/>
+                        </aura:set> 
+                        </aura:if>
+                    </td>   
+                    <td>{!wrap.accountName}</td>
+                    <td>{!wrap.TradingName}</td>
+                    <td>{!wrap.accreditation}</td>
+                    <td>{!wrap.stateCoverage}</td>
+                    <td>{!wrap.DistributorName}</td><!-- v1.2 -->
+                 
+                    
+                </tr>
+            </aura:iteration>
+        </tbody>
+    	</table>
+    </div>
+</aura:if>
+<aura:if isTrue="{!not(empty(v.porData))}"> <!--EDGE-151598 adding Partner of record table -->
+    <br/>
+    <br/>
+    <div>
+        <h3 id="header99" class="slds-text-heading--medium">Partner of Record Agreements
+        </h3>
+    <br/>
+     <div class="slds" style="overflow-x:auto;"> 
+		<table class="slds-table slds-table--bordered"> 
+        <thead>
+            <tr>
+                <th scope="col"><span class="slds-truncate"></span></th>
+                <th scope="col"><span class="slds-truncate">PARTNER NAME</span></th>
+                <th scope="col"><span class="slds-truncate">TRADING NAME</span></th>
+                <th scope="col"><span class="slds-truncate">STATE</span></th>
+                <th scope="col"><span class="slds-truncate">PRODUCT DOMAIN</span></th>
+                <th scope="col"><span class="slds-truncate">AGREEMENT END DATE</span></th> 
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.porData}" var="wrap">
+                <tr class="{!wrap.isPartner == 'No' ? 'greyRow' : ''}"> 
+                    <td>
+                        <aura:if isTrue="{!wrap.isPartner == 'Yes'}">
+                            <ui:inputRadio aura:id="rad02" name="group" label="" text="{!wrap.Id +':'+wrap.accountName+'*'+wrap.DistributorName+'^'+wrap.DistributorId}" change="{!c.updateSelectedText }"/>
+                         <aura:set attribute="else">
+                            <lightning:helptext class ="leftMargin" content="{!$Label.c.Partner_Not_Onboarded}"/>
+                        </aura:set> 
+                        </aura:if>
+                    </td>   
+                    <td>{!wrap.accountName}</td>
+                    <td>{!wrap.TradingName}</td>
+                    <td>{!wrap.stateCoverage}</td>
+                    <td>{!wrap.porProductDomain}</td>
+                    <td>{!wrap.porAgreementEnddate}</td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    	</table>
+    </div>
+    </div>
+</aura:if>
+    
+   <!-- </div>-->
+    <!-- <hideCheckboxColumn="true">
+    selectedRows="{!v.selectedRows}"
+    selectedRows="{!v.selectedRows1}"-->
+    <aura:if  isTrue="{!v.DataTableName=='RecPartner'}">
+        <div class="slds-modal__footer" > 
+            <div class="slds-grid slds-grid_align-end">
+                <div class="slds-col">
+                    <lightning:button label="Override" class="slds-button slds-button_neutral"  onclick="{!c.handleOveride}" />
+                </div>
+                <div class="slds-col">
+                    <lightning:button label="Cancel"  class="slds-button slds-button_neutral" onclick="{!c.handleCancel}" />
+                </div>
+                <div class="slds-col">
+                    <lightning:button aura:id="btnContinueRec" disabled="true" label="Continue" variant="brand" class="slds-button slds-button_brand" onclick="{!c.handleContinue}"/>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!--<div class="slds-modal__footer">
+        <lightning:button label="Cancel" variant="brand" onclick="{!c.handleCancel}" />
+        <lightning:button label="Override" variant="brand" onclick="{!c.handleOveride}" />
+        <lightning:button label="Continue" variant="brand" onclick="{!c.handleContinue}" />
+        </div>-->
+    </aura:if>
+    <aura:if  isTrue="{!v.DataTableName=='INCPartner'}">
+        <div class="slds-modal__footer" >
+                        <div class="slds-grid slds-grid_align-end">
+                <div class="slds-col">
+                    <lightning:button label="Override" class="slds-button slds-button_neutral"  onclick="{!c.handleOverideINC}" />
+                </div>
+                <div class="slds-col">
+                    <lightning:button label="Cancel" class="slds-button slds-button_neutral" onclick="{!c.handleCancel}" />
+                </div>
+                <div class="slds-col">
+                    <lightning:button aura:id="btnContinue" disabled="true" label="Continue" variant="brand" class="slds-button slds-button_brand" onclick="{!c.handleContinue}" />
+                </div>
+            </div>
+        </div>
+        <!-- <div class="slds-modal__footer">
+        <lightning:button label="Cancel" variant="brand" onclick="{!c.handleCancel}" />
+        <lightning:button label="Override" variant="brand" onclick="{!c.handleOverideINC}" />
+        <lightning:button label="Continue" variant="brand" onclick="{!c.handleContinue}" />
+        </div>-->
+    </aura:if>
+</aura:component>

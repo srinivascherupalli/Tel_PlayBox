@@ -1,0 +1,10 @@
+<aura:event type="APPLICATION">
+    <aura:attribute name="OperationName" type="String"/>
+    <aura:attribute name="Category" type="String"/>
+    <aura:attribute name="AppID" type="String"/>
+    <aura:attribute name="SubID" type="String"/>
+    <aura:attribute name="SiteName" type="String"/>
+    <aura:attribute name="SiteAddress" type="String"/>    
+    <aura:attribute name="ReqAppId" type="String"/>
+    <aura:attribute name="startDate" type="Date"/>
+</aura:event>

@@ -1,0 +1,5 @@
+<design:component>
+	<design:attribute name="LeadId" label="Lead Id" description="Pass the current lead id"/>
+    <design:attribute name="blnRecommendationsFound" label="Were Recommendations Found" description="Return true if recommendations were found, else false"/>
+    <design:attribute name="RecommendedPartnerId" label="Recommended Partner Id" description="Returns the selected recommended partner"/>
+</design:component>

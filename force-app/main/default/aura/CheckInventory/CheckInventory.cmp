@@ -1,0 +1,101 @@
+<!-- 
+Name : CheckInventoryComponent
+Description : Lightning UI for checking stock availability for mobile devices 
+Author: Aishwarya Yeware
+Story: EDGE-80858
+-->
+<aura:component controller="stockCheckController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                >
+    <aura:attribute name="actionName" type="String" default="" />
+    <aura:attribute name="displayName" type="String" />
+    <aura:attribute name="productId" type="String" />
+    <aura:attribute name="available" type="String" />
+    <aura:attribute name="restocked" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:if isTrue="{!v.loadingSpinner}">
+        
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <div>
+        <table class="slds-table slds-table_cell-buffer" >
+            
+            <tbody>
+                
+                <tr class="slds-hint-parent ">
+                    
+                    <aura:if isTrue="{!if(v.actionName=='search',true,false)}">
+                        <!--div class="slds-box slds-box_xx-small" style="margin:5px;padding:5px;"-->
+                        
+                        <lightning:layout  horizontalAlign="space">
+                            <lightning:layoutItem size="6" >
+                                <td data-label="Device Name">
+                                    <div class="slds-box header-column slds-container--small" title="DeviceName" style="margin:5px;padding:5px;" >{!v.displayName} 
+                                    </div>
+                                </td>
+                            </lightning:layoutItem>
+                            
+                            <lightning:layoutItem size="4" >
+                                <td data-label="Detail">
+                                    <div style="text-align:center" class=" header-column slds-button_middle ">
+                                        <lightning:button variant="brand" label="Check"  onclick="{! c.checkInventory}" title="Check" />                                        
+                                    </div>
+                                </td>
+                            </lightning:layoutItem> 
+                            
+                            &nbsp;&nbsp;
+                            <lightning:layoutItem size="2" >
+                                <td>
+                                    
+                                    <!--lightning:icon iconName="action:info" size="xx-small" alternativeText="Indicates approval"/-->
+                                    
+                                    
+                                    <div class="slds-align_absolute-center" title="Available" >
+                                        
+                                        
+                                        <aura:if isTrue="{!v.available=='0 Available'}" >
+                                            <aura:if isTrue="{!v.restocked !=''}" >
+                                                <lightning:helptext
+                                                                    content="{!'This device is currently out of stock. Inventory is expected to be restocked on : '+ v.restocked }"
+                                                                    iconName="action:info"
+                                                                    />
+                                                <span class="slds-text-color_destructive">&nbsp;{!v.available} </span>
+                                            </aura:if>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.available=='0 Available'}" >
+                                            <aura:if isTrue="{!v.restocked ==''}" >
+                                                <lightning:helptext
+                                                                    content="{!'This device is currently out of stock. Delay in delivery may apply if you order at this time.'}"
+                                                                    iconName="action:info"
+                                                                    />
+                                                <span class="slds-text-color_destructive">&nbsp;{!v.available} </span>
+                                            </aura:if>
+                                        </aura:if> 
+                                        
+                                        <aura:if isTrue="{!v.available!='0 Available'}">
+                                            <aura:if isTrue="{!v.available !='Check Failed.Please Retry'}">
+                                                <span>{!v.available}</span>
+                                            </aura:if>
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.available=='Check Failed.Please Retry'}">
+                                            <div class="slds-align_absolute-center slds-text-color_destructive">{!v.available} </div>
+                                        </aura:if>
+                                    </div>
+                                    
+                                </td>
+                            </lightning:layoutItem> 
+                            
+                        </lightning:layout>
+                    </aura:if>
+                    
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+</aura:component>

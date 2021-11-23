@@ -1,0 +1,41 @@
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:form >
+        <apex:includeScript value="/lightning/lightning.out.js"/>
+        <apex:includeLightning />
+        <script>
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+            var attributes = {
+                basketId: "{!JSENCODE($CurrentPage.parameters.id)}",
+                caller: "{!JSENCODE($CurrentPage.parameters.caller)}"
+            };
+            $Lightning.createComponent("c:SCAddLegacyTenancy",attributes,"lightning",
+                                       function(cmp){
+                                           $A.eventService.addHandler({
+                                               event: 'c:CustomerExistingTenancyEvent',
+                                               handler: function (event){
+                                                   var myEventData = event.getParam("selectedTenancyIds");
+                                                   //alert('value passed from component;'+JSON.stringify(myEventData));
+                                                   // var payload = myEventData;
+                                                   if(JSON.stringify(myEventData).includes("closeWindow")){
+                                                       //alert('value passed from component;'+JSON.stringify(myEventData));
+                                                           window.top.close();
+                                                       }
+
+                                                   else {
+                                                       var payload =
+                                                           {
+                                                               command: 'AddLegacyTenancy',
+                                                               data: JSON.stringify(myEventData),
+                                                               caller: 'MDMTenancy'
+                                                           };
+                                                       window.parent.postMessage(payload, '*') ;
+                                                       sessionStorage.setItem("payload", JSON.stringify(payload));
+                                                   }
+                                               }
+                                           });
+                                       });
+        });
+        </script>
+        <div id="lightning" ></div>
+    </apex:form> 
+</apex:page>

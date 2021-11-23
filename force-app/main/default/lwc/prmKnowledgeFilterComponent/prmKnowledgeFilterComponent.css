@@ -1,0 +1,29 @@
+.filterclass div.slds-col.slds-dropdown-trigger:last-child .slds-picklist__label {
+    margin-right: 0;
+}
+
+.filterclass .slds-col.slds-dropdown-trigger .slds-picklist__label {
+    width: 10rem;border: 0;border-bottom: 1px solid rgb(217, 219, 221);border-radius: 0;margin-right: 0.75rem;padding: 0 0.25rem;justify-content:left;
+}
+
+.filterclass div.slds-col:first-child {
+    margin-right: 0.75rem;
+}
+
+.filterclass {
+    margin-top: -1.25rem;
+}
+
+.filterclass .errMsg{
+    color:red;
+}
+
+.filterclass .slds-dropdown.slds-dropdown_left{
+    display: block;padding: 0.5rem;width: 160px;
+}
+
+.filterclass .slds-dropdown-trigger .slds-dropdown {
+    transition: all ease-out 2s;
+}
+
+div.dateDropdown:hover,div.dateDropdown:focus, div.dateDropdown:focus-within { opacity: 1;}

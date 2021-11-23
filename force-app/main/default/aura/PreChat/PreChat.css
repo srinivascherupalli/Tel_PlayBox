@@ -1,0 +1,207 @@
+.THIS .errormessage {
+    color: rgb(194, 57, 52);
+    font-size: .9rem;
+   /* animation: blinker 2s linear infinite; */
+    margin-bottom: 10px;
+}
+
+@keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }
+
+
+.THIS .welcomePreChat{
+    height: 60px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #414141;
+    text-align: inherit;
+    font-family: "Telstra Akkurat";
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+    line-height: 30px;
+}
+
+.THIS .startButtonPrechat {
+    background-color: #FFFFFF !important; 
+    box-sizing: border-box;
+    color: #0064D2;
+    font-family: "Telstra Akkurat";
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+    line-height: 19px;
+    text-align: center;
+    width: 327px;
+    border: 2px solid #0064D2;
+    background-color: #FFFFFF;
+    height: 56px;
+    border-radius: 0px !important;
+}
+
+
+.THIS .startButtonPrechat:hover, .THIS .startButtonPrechat:focus {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+.THIS.greeting {
+    padding-top: 40px;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+
+.THIS .welcome {
+    height: 30px;
+    width: 327px;
+    color: #414141;
+    font-family: "Telstra Akkurat";
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+    line-height: 30px;
+    text-align: initial;
+}
+
+.THIS  .rectangle {
+    height: 25px;
+    width: 272px;
+}
+
+.THIS .welcomeMessage {
+    height: 75.6px;
+    width: 327px;
+    color: #414141;
+    font-family: "Telstra Akkurat";
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 25.2px;
+    text-align: initial;
+    letter-spacing: -0.15px;
+}
+
+.THIS.buttons {
+    padding-top: 30px;
+}
+
+.THIS .query {
+    height: 25px;
+    width: 327px;
+    color: #414141;
+    font-family: "Telstra Akkurat";
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: -0.2px;
+    margin-bottom: 10px;
+    line-height: 25px;
+    text-align: initial;  
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.THIS .buttonsDiv {
+    width: 375px;
+}
+
+.THIS  .blurb {
+    height: 19.6px;
+    text-align: left;
+    margin-top: -05px;
+    margin-bottom: 0;
+    margin-left: 30px;
+    width: 295px;
+    color: #787878;
+    font-family: "Telstra Akkurat";
+    font-size: 14px;
+    letter-spacing: -.2px;
+    line-height: .00001px;
+}
+
+.THIS .initialButtons {
+    height: 61px;
+    width: 315px;
+    margin-left: 20px;
+    margin-right: 30px;
+    text-align: left;
+    background-color: #FFFFFF !important;
+    border: none;
+    outline:none;
+    font-family: "Telstra Akkurat";
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: -0.1px;
+    line-height: 20px;
+    transition: all .5s ease;
+}
+
+.THIS .initialButtons:hover {
+    
+    color: #0064D2 !important;
+   
+}
+
+.THIS .line{
+    height: 1px;
+    width: 375px;
+    background-color: #E8E8E8;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.THIS .sidebarHeader {
+    background-color: cornsilk;
+}
+
+
+
+.THIS.ax_default {
+    border-width: 0px;
+    position: center;
+    left: 38px;
+    top: 106px;
+    width: 225px;
+    height: 48px;
+    text-align: center;
+    font-family: 'Arial';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    color: #333333;
+    line-height: normal;
+    display: block;
+}
+
+
+
+.THIS.u1621 {
+    text-align: center;
+    word-wrap: break-word;
+    padding: 25px;
+    padding-top: 60px;
+    padding-bottom: 2px;
+    height: 76px;
+    color: #414141;
+    font-family: "Telstra Akkurat";
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: -0.15px;
+    line-height: 25.2px;
+}
+
+.THIS.buttonWrapper2 {
+    padding-top: 120px;
+}
+
+.THIS .back {
+    background-color: transparent;
+    border: none;
+    outline:none;
+    padding-top: 5px;
+    color: #0064D2 !important;
+    font-size: 15px !important;
+    font-weight: lighter;
+}

@@ -1,0 +1,5 @@
+Salutation,FirstName,LastName,MobilePhone,Contact_Status__c,Contact_Type__c,Email,AccountId
+Mr.,First,Contact,+61445678006,Active,3rd Partty,test1@test.com,1
+Mr.,Second,lastName,+61445678006,Active,4th Partty,test2@test.com,2
+Mr.,Third,Contact,+61445678006,Active,3rd Partty,test3@test.com,3
+Mr.,Fourth,Contact,+61445678006,Active,4th Partty,test4@test.com,4

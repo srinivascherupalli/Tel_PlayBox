@@ -1,0 +1,26 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="WithdrawAgreement">
+<aura:attribute name="ltngSelectedvalue" type="string" default="Customer Choice"/>
+<aura:attribute name="Modification" type="Boolean" default="false" />
+<aura:handler name="init" value="{!this}" action="{!c.doInit}" />	
+    
+    <aura:if isTrue="{!v.Modification}"> 
+        <div  class="slds-text-heading_medium slds-theme_shade ">
+            <b>Your POR Agreement will not be modified any further. It will be reverted back to the original POR agreement </b>
+        </div> 
+        <div class="slds-align_absolute-center" style="height:5rem">
+     <lightning:button aura:id="disablebuttonid" disabled="false" variant="brand" label="Revert" title="Brand action" onclick="{! c.changetoPrevious }"/>
+        </div>
+        <aura:set attribute="else">
+    <lightning:select name="cStat" label="Withdrawal Reason" value="{!v.ltngSelectedvalue}" aura:id="statusPicklist" >
+ <option value="Customer Choice">Customer Choice</option>
+ <option value="Partner Choice">Partner Choice</option>
+ <option value="Telstra Choice">Telstra Choice</option>
+ <option value="Data Error">Data Error</option>
+ <option value="Other">Other</option>
+</lightning:select>
+       <div class="slds-align_absolute-center" style="height:5rem">
+    <lightning:button aura:id="disablebuttonid" disabled="false" variant="brand" label="save" title="Brand action" onclick="{! c.saveRecord }" />
+            </div>    
+    </aura:set>
+    </aura:if>
+</aura:component>

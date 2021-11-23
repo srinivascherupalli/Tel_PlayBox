@@ -1,0 +1,41 @@
+.THIS .error-text {
+    display:none;
+}
+
+.THIS .show {
+    display:flex;
+    color:red;
+}
+
+.THIS .disp {
+    display:flex;
+    color:red;
+}
+
+.THIS .sub {
+    display:flex;
+    color:red;
+}
+.THIS .emailErr {
+    display:flex;
+    color:red;
+}
+.THIS .space-Button{
+    margin:3px;
+}
+/*Added for EDGE-207867 by Aman Soni*/
+.THIS.customRadioCls .slds-form-element__control .slds-radio{
+    display : inline-block !important;
+    margin-right: 5%;
+}
+/*Added for EDGE-215753 by Akanksha*/
+.THIS.customBadgeClass {
+  display:inline-block;
+
+  padding-top:50%;
+  padding-bottom:50%;
+
+  margin-left:8px;
+  margin-right:8px;
+  text-align:left;
+}

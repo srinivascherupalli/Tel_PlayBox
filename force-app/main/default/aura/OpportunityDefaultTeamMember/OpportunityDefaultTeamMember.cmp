@@ -1,0 +1,189 @@
+<!--
+@Created By : Team SFO
+@Date : 01/02/2021
+Description: P2OB-11748 ,P2OB-11378 This component is invoked from AddToTeamMember flow & OpportunityTeamMemberComponent
+Modified : P2OB-13741 , modified for UI and added spinner.
+-->
+<aura:component controller="AddOpptyTeamController"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:availableForFlowScreens"
+    access="global">
+    <!--Aura Attribute to  store User's Default UserTeamMember Object List-->
+    <aura:attribute name="DefaultTeamMemberList" type="UserTeamMember[]" />
+    <aura:attribute name="OpportunityId" type="String" />
+    <!--Aura Attribute to store TeamMemberRole picklist field values this is being set in parent Opportunity Team Member component-->
+    <aura:attribute name="TeamMemberRoleList" type="List" />
+    <!--Aura Attribute to store OpportunityAccessLevel picklist field values this is being set in parent Opportunity Team Member component-->
+    <aura:attribute name="OpportunityAccessList" type="List" />
+    <!--Aura Attribute to store error messages-->
+    <aura:attribute name="ErrorMsg" type="String" />
+    <aura:attribute name="ErrorSelectOne" type="String" />
+    <!--Aura Attribute to store object info-->
+    <aura:attribute name="objInfo" type="OpportunityTeamMember" default="{sobjectType : 'OpportunityTeamMember'}" />
+
+    <aura:attribute name="selectAll" type="Boolean" />
+    <aura:attribute name="isloading" type="boolean" default="false" />
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--Aura Attribute to store OpportunityAccessLevel picklist field values this is being set in parent Opportunity Team Member component-->
+    <aura:if isTrue="{!v.isloading}">
+        <lightning:spinner alternativeText="Loading" size="medium" />
+        <br />
+        <aura:set attribute="else">
+            <aura:if isTrue="{!not(empty(v.ErrorMsg))}">
+                <!--Displays Error Messages-->
+                <div class="slds-align_absolute-center slds-theme-info--msg slds-p-around--small">
+                    <lightning:icon iconName="utility:info" size="medium" alternativeText="Info" title="Info" />
+                    <span class="slds-p-around--small">{!v.ErrorMsg}</span>
+                </div>
+                <!--SFO Changes P2OB-13700 START-->
+                <div class="slds-modal__footer">
+                    <lightning:button aura:id="FINISH" label="Finish" variant="brand"
+                        onclick="{!c.onFlowActionPressed}" />
+                </div>
+                <!--SFO Changes P2OB-13700 END-->
+                <!--Displays User Default Team Members-->
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!not(empty(v.DefaultTeamMemberList))}">
+                        <div class="slds-p-around_large slds-is-relative">
+                            <div class="slds-table_edit_container slds-is-relative">
+                                <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table--opptyTeamMember slds-border_right 
+                                      slds-border_left 
+                                      slds-border_bottom 
+                                      slds-border_top " role="grid">
+                                    <!--table header-->
+                                    <thead>
+
+                                        <tr class="slds-opportunity--teamMember slds-line-height_reset">
+                                            <th scope="col" class="slds-is-resizable slds-is-sortable"
+                                                style="width: 41px;">
+                                                <div
+                                                    class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate slds-p-left_x-small">
+                                                    <lightning:input aura:id="checkboxSelectAll" type="checkbox"
+                                                        variant="label-hidden" checked="{!v.selectAll}"
+                                                        onchange="{!c.onselectAll}" />
+                                                </div>
+                                            </th>
+                                            <th scope="col" class="slds-is-resizable slds-is-sortable">
+                                                <a class="slds-th__action slds-text-link_reset"
+                                                    href="javascript:void(0);" role="button" tabindex="0">
+                                                    <div
+                                                        class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                        <span class="slds-truncate">User</span>
+                                                    </div>
+                                                </a>
+                                            </th>
+                                            <th scope="col" class="slds-is-resizable slds-is-sortable">
+                                                <a class="slds-th__action slds-text-link_reset"
+                                                    href="javascript:void(0);" role="button" tabindex="0">
+                                                    <div
+                                                        class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                        <span class="slds-truncate">Member role</span>
+                                                    </div>
+                                                </a>
+                                            </th>
+                                            <th scope="col" class="slds-is-resizable slds-is-sortable">
+                                                <a class="slds-th__action slds-text-link_reset"
+                                                    href="javascript:void(0);" role="button" tabindex="0">
+                                                    <div
+                                                        class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                        <span class="slds-truncate">Member access</span>
+                                                    </div>
+                                                </a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <!--table body-->
+                                    <tbody>
+                                        <aura:iteration items="{!v.DefaultTeamMemberList}" var="item" indexVar="index">
+                                            <tr
+                                                class="slds-hint-parent slds-opportunity--teamMember slds-line-height_reset">
+                                                <td class="slds-cell-edit slds-row-select" role="gridcell">
+                                                    <div
+                                                        class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate slds-p-left_x-small">
+
+                                                        <lightning:input id="{!item.UserId}" aura:id="checkboxMem"
+                                                            type="checkbox" variant="label-hidden"
+                                                            checked="{!item.checkboxIsSelect}"
+                                                            disabled="{!item.exists}" />
+                                                    </div>
+                                                </td>
+                                                <th data-label="User-name" role="row">
+                                                    <a href="javascript:void(0)" class="slds-truncate"
+                                                        id="{!item.UserId}"
+                                                        onclick="{!c.userRedirect}">{!item.User.Name}</a>
+                                                </th>
+                                                <td data-label="TeamMemberRole" class="slds-cell-edit" role="gridcell">
+                                                    <aura:if isTrue="{!item.exists}">
+                                                        <aura:set attribute="else">
+                                                            <div class="slds-table--cell">
+                                                                <lightning:select name="Team Member" aura:id="TeamMem"
+                                                                    value="{!item.TeamMemberRole}">
+                                                                    <aura:iteration items="{!v.TeamMemberRoleList}"
+                                                                        var="option">
+                                                                        <option text="{!option.label}"
+                                                                            value="{!option.id}"
+                                                                            selected="{!option.selected}" />
+                                                                    </aura:iteration>
+                                                                </lightning:select>
+                                                            </div>
+                                                        </aura:set>
+                                                        <div class="slds-p-around_x-small slds-table--cell">
+                                                            <span
+                                                                class="slds-truncate slds-p-left_xx-small">{!item.TeamMemberRole}</span>
+                                                        </div>
+                                                    </aura:if>
+                                                </td>
+                                                <td data-label="OpportunityAccessLevel" class="slds-cell-edit"
+                                                    role="gridcell">
+                                                    <aura:if isTrue="{!item.exists}">
+                                                        <aura:set attribute="else">
+                                                            <div class="slds-table--cell">
+                                                                <lightning:select name="Access Level"
+                                                                    aura:id="Accesslevel"
+                                                                    value="{!item.OpportunityAccessLevel}">
+                                                                    <aura:iteration items="{!v.OpportunityAccessList}"
+                                                                        var="option">
+                                                                        <option text="{!option.label}"
+                                                                            value="{!option.value}"
+                                                                            selected="{!option.selected}" />
+                                                                    </aura:iteration>
+                                                                </lightning:select>
+                                                            </div>
+                                                        </aura:set>
+                                                        <div class="slds-p-around_x-small slds-table--cell">
+                                                            <span
+                                                                class="slds-truncate slds-p-left_xx-small">{!item.OpportunityAccessLevel}</span>
+                                                        </div>
+                                                    </aura:if>
+                                                </td>
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <!--Error Message to Select atleast one Team Member-->
+                            <div class="slds-text-align_left">
+                                <aura:if isTrue="{!not(empty(v.ErrorSelectOne))}">
+                                    <span class="slds-custom--errorMsg slds-text-color_error slds-p-left_x-small">
+                                        {!v.ErrorSelectOne}
+                                    </span>
+                                </aura:if>
+                            </div>
+                            <br />
+                            <button class="slds-button slds-button--neutral uiButton" onclick="{!c.Cancel}">
+                                Cancel
+                            </button>
+                            <button class="slds-button slds-button--brand uiButton" onclick="{!c.Save}">
+                                Add to opportunity team
+                            </button>
+                        </div>
+
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,33 @@
+<aura:component controller="CheckQuoteTime" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="recordId" type="String" />
+    <!--<aura:handler event="aura:waiting" action="{!c.waiting}"/> -->
+	<aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"/>
+    <aura:attribute name="HideSpinner" type="Boolean" default="true"/>
+    <aura:attribute name="ShowSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="displayError" type="String" default="false"/>
+    <aura:attribute name="timeInterval" type="Integer" default="1000"/>
+    <aura:attribute name="quoteStatusMsg" type="String" />
+    <aura:attribute name="quoteInfoHeader" type="String" default=""/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:if isTrue="{!and(v.ShowSpinner,v.displayError!='Failure')}">
+    <lightning:spinner alternativeText="Loading" />
+    </aura:if>
+    <aura:if isTrue="{!v.displayError=='Failure'}">
+        <ui:message title="Error" severity="error" closable="False">
+            {!$Label.c.	Quote_AttachmentMsg_Failure}
+        </ui:message>    
+    </aura:if>
+    <aura:if isTrue="{!v.displayError=='Success'}">
+		<ui:message title="{!v.quoteInfoHeader}" severity="confirm" closable="False">
+        	<!-- {!$Label.c.	Quote_AttachmentMsg_Success} -->
+            {!v.quoteStatusMsg}
+        </ui:message>
+    </aura:if>
+    <aura:if isTrue="{!v.displayError=='InProgress'}">        
+    	<ui:message title="Notice" severity="info" closable="False">
+			{!$Label.c.	Quote_AttachmentMsg_Notice}
+        </ui:message>
+     </aura:if>
+    
+</aura:component>

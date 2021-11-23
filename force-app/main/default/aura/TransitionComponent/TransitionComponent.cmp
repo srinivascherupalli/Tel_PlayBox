@@ -1,0 +1,204 @@
+<!--***************************************************************************
+EDGE        -85161
+Class Name  -TransitionComponent
+Description -To show Transition number on NumberReservation Component.
+Author      -Dheeraj Bhatt
+********************************************************************************-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global" controller="TransitionController">
+    <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="transitionList" type="object"/>
+    <aura:attribute name="selectedTransitionList" type="object"/>
+    <aura:attribute name="transitionMobileList" type="list" />
+    <aura:attribute name="transitionNgUcList" type="list" />
+    <aura:attribute name="showtransitionButton" type="boolean" default="false"/>
+    <aura:attribute name="showMessage" type="boolean" default="false"/>
+    
+    <!-- EDGE-148075 - Added Attribute for checking Selected Tab-->
+    <aura:attribute name="selectedTab" type="String" />
+    <aura:registerEvent name="reservationEvent" type="c:addtoReservationPool"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <!-- Start of EDGE-181293- Attribute to Handle Select All Transition functionality-->
+    <aura:attribute name="isSelectAll" type="boolean" default="false"/>
+    <aura:attribute name="selectedCount" type="Integer" default= '0' />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />    
+    <!-- End of EDGE-181293 -->
+    
+    <!-- START EDGE-198374 -->
+    <aura:attribute name="fnnsList" type="list" default="[]"/>
+    <aura:attribute name="cidn" type="String" />
+    <aura:attribute name="transitionId" type="String" />    
+    <aura:attribute name="isCaseCreated" type="Boolean" default="false"/>    
+    <aura:attribute name="isEnabled" type="Boolean" default="true" /> 
+ 	<aura:attribute name="isreqSupportEnabled" type="Boolean" default="true" />     
+    <aura:attribute name="caseId" type="String" />
+    <aura:attribute name="CaseNumber" type="String" />
+    <!--EDGE-218031 :vivek--> 
+    <aura:attribute name="CommunityUrl" type="String"/>
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <lightning:navigation aura:id="navId"/>
+    <!--END EDGE-198374 -->   
+    <aura:attribute name="errorWrap" type="NumberReservationTM2CallOut.ErrorWrapper"/>
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" />
+    <aura:registerEvent name="callSelectedProduct" type="c:CallGetSelectedProduct" />
+    
+    <!-- EDGE-195766 Starts-->
+    <div aura:id="container" />
+    <aura:attribute name="loadingFixedSpinner" type="Boolean" default="false"
+                    description="Boolean to run Spinner while callout" />
+    <aura:attribute name="showProgressRing" type="Boolean" default="false"
+                    description="Boolean to show Progress Ring while callout" /> 
+    <aura:attribute name="valuemax" type="Integer" default="0"
+                    description="To store number of sites Triggered for Eligibilty Check" />
+    <aura:attribute name="value" type="Integer" default="0"
+                    description="To store number of sites Processed for Eligibilty Check" />  
+    <br />
+    <!-- EDGE-195766 Ends -->
+    <!-- EDGE-203927 Starts -->
+    <aura:attribute name="transitiontablename" type="String" default="Transition_Numbers"/>
+    <aura:attribute name="transitiontablemobile" type="String" default="Transition_Numbers_Mobile"/>
+    <aura:attribute name="selectedReserverec" type="List" />
+    <aura:attribute name="selectedresrecords" type="object" />
+    <aura:attribute name="transitionBolVal" type="boolean" default="false"/>
+    <aura:registerEvent name="selectTransitionNumber" type="c:selectTransitionNumberEvt"/>
+    <aura:attribute name="isngEMPresent" type="boolean" />
+    <aura:handler event="c:refreshLegacyTransitionTableEvt" action="{!c.handleRefreshTransitionTableEvt}"/>
+     <aura:attribute name="showAssignButton" type="boolean" default="true"/>
+    <!-- EDGE-203927 Ends -->
+     <aura:if isTrue="{!v.loadingSpinner}">  
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" alternativeText="loading"/>
+        </div>
+    </aura:if>  
+    
+    <aura:if isTrue="{!v.showMessage}">
+        <ui:message title="" severity="confirm" closable="true">
+            <b>{!$Label.c.Transition_Message}</b>
+        </ui:message>
+    </aura:if>
+    <div></div>
+    <div class="slds-box slds-theme_shade c-container">
+        <div aura:id="transitionPanel" class="slds-show slds-include" style="margin:15px;">            
+             <!-- EDGE-195765 - Added two new buttons "Retrieve Services" and "Request Support -->
+            <!-- EDGE-195766 - Triggers TM2 callout from 'getServices' -->         
+            <!--EDGE-206365-Dheeraj Bhatt-disable the "Retrieve Services" button When the status for all the services is "Completed" as per the TM2 response -->
+            <div style="text-align: right;margin-bottom: 0.5rem;">
+                <lightning:button
+                                  label="Retrieve Services"
+                                  variant="brand"                                  
+                                  name="retrieveservices"
+                                  onclick="{!c.getServices}"
+                                 disabled ="{!v.isEnabled}"/>
+                
+                <!-- EDGE-198374 Added disabled logic and added createSupportCase -->
+                <lightning:button
+                                  label="Request Support"
+                                  variant="brand"                                                  
+                                  disabled ="{!v.isreqSupportEnabled}"
+                                  name="requestsupport" 
+                                  onclick="{!c.createSupportCase}"/>           
+            </div><br />
+            
+            <!-- EDGE-203927 - converted Legacy services table to LWC Starts -->
+            <aura:if isTrue="{!v.transitionList}">
+                <aura:if isTrue="{!v.selectedTab != 'Mobile'}">
+                    <c:inlineEditDataTable aura:id= "inlineEditFixedTransitionTable" 
+                                           tableName="{!v.transitiontablename}"
+                                           tableData="{!v.transitionList}"
+                                           onselectedrowevent="{!c.transitionRowSelection}" /> 
+                </aura:if>
+                <aura:if isTrue="{!v.selectedTab == 'Mobile'}">
+                    <c:inlineEditDataTable aura:id= "inlineEditMobileTransitionTable" 
+                                           tableName="{!v.transitiontablemobile}"
+                                           tableData="{!v.transitionList}"
+                                           onselectedrowevent="{!c.transitionRowSelection}" /> 
+                </aura:if>
+            </aura:if>
+            <!-- EDGE-203927 - converted Legacy services table to LWC Ends -->
+            
+            <br/>
+        </div>
+        
+        <!-- Start EDGE-198374 -->
+        <div class="slds-m-around_xx-large">
+            
+            <!--Use aura:if tag to display/hide popup based on isModalOpen value-->  
+            <aura:if isTrue="{!v.isModalOpen}">
+                
+                <!-- Modal/Popup Box starts here-->
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">                  
+                        <!--Modal/Popup Box Body Starts here-->
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <center><p><b> Case <a data-caseid="{!v.caseId}" href="javascript:void(0)" onclick="{!c.handleClick}" >{!v.CaseNumber}</a> was created. </b></p></center>
+                        </div>
+                        <!--Modal/Popup Box Footer Starts here-->
+                        <footer class="slds-modal__footer">
+                            <lightning:button variant="neutral"
+                                              label="Close"
+                                              title="Close"
+                                              onclick="{! c.closeModel }"/>                        
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </aura:if>
+        </div> 
+<!-- EDGE-195766 Starts -->
+        <aura:if isTrue="{!v.loadingFixedSpinner}">
+            <lightning:spinner aura:id="spinner2" alternativeText="Loading" size="medium" variant="brand"/>            
+        </aura:if>     
+    </div>
+    
+    <div>
+        <aura:if isTrue="{!v.ProdBasket.Transition_basket_stage__c=='Reservation Triggered'}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">                  
+                
+                    
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">                        
+                        <div class="slds-col slds-size_9-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-12">
+                                    <lightning:icon iconName="utility:info" size="small" />
+                                </div>
+                                <div class="slds-col slds-size_11-of-12 slds-p-left_small">
+                                    <div class="slds-text-align_left">
+                                        We are checking compatibility of the chosen products. The average time
+                                        needed for this process ranges from 5 mins to a few hours,
+                                        You can close this window without losing your progress. To get the
+                                        latest update Please refesh the Page</div>
+                                    <div class="slds-col slds-align-bottom">
+                                        
+                                    </div>
+                                </div>
+                                
+                            </div> 
+                        </div>                           
+                    </div>
+                    
+                    
+                    <footer class="slds-modal__footer">
+                        <div class="slds-col slds-size_2-of-12">
+                            <aura:if isTrue="{!v.showRing}">
+                                <c:progressRing value="{!v.value}" valuemax="{!v.valuemax}" />
+                            </aura:if>
+                        </div>
+                        <div class="slds-col slds-align-bottom">
+                            <lightning:button aura:id="refresh" label="Refresh Page" variant="brand"
+                                              onclick="{!c.refreshLoader}" />
+                        </div>                      
+                    </footer>
+                    
+                </div>
+            </section>
+            <div class="slds-grid slds-wrap">
+                
+            </div>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if> 
+        
+    </div>
+<!-- EDGE-195766 Ends -->
+    
+</aura:component>

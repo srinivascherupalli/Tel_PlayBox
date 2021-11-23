@@ -1,0 +1,15 @@
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+  width:100%!important
+}
+
+.THIS .slds-modal__content {
+  height : unset !important;
+    max-height : unset !important;
+}
+
+.THIS .hrclass {
+  margin-top : 1%;
+  margin-bottom : -1%;
+}

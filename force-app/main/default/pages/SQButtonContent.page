@@ -1,0 +1,58 @@
+<!--************************************************************************************************
+Name : SQButtonContentHandler
+EDGE-> 72901
+Description : To Make Callout To Initiate SQ for Site
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description
+1.        Rohit Tripathi     16/04/2019     To initiate the NBN SQ from the product configuration page
+2.        Shubhi Vijayvergia 7/02/2019      Edge-93552 Intiate SQ update  
+===============================================================================================================================
+***************************************************************************************************/-->
+
+<apex:page id="pg" controller="SQButtonContentHandler" showHeader="false" sidebar="false" docType="html-5.0">
+    <apex:includeScript value="{!$Resource.cscfga__jQuery_min}" />
+    <apex:includeScript value="{!$Resource.cscfga__cs_messaging}"/>
+    <apex:slds />
+    <script type="text/javascript">
+    $(document).ready(function(){
+        document.getElementById("MessageContainer").style.display = "none";
+        document.getElementById("msgBlockText").innerHTML = "";
+    });
+    
+    function disableSQButton(){
+        $('.SQButtonContainer').attr('disabled', 'disabled');
+        $('.SQButtonContainer').addClass("SQButtonDisabled");
+        document.getElementById("msgBlockText").innerHTML = 'Transaction in progress...';
+    }
+    
+    </script>
+    <style>
+        .SQButtonDisabled{
+        cursor: not-allowed !important;
+        background : #e8e8e9 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        }
+    </style>
+    <apex:form >
+        <apex:outputPanel id="NBNSQApp">
+        <div id="SQButtonContainer">
+            <apex:commandButton value="Initiate NBN SQ"  styleClass="slds-button slds-button--brand SQButtonContainer" action="{!callSQService}" reRender="NBNSQApp" onclick="disableSQButton()" oncomplete="enableSQButton()"/>
+            &nbsp;&nbsp;&nbsp;<span id="msgBlockText"></span>
+        </div>
+        <script type="text/javascript">
+            function enableSQButton(){
+                if('{!JSENCODE(SQCheckDone)}'== 'true'){
+                    document.getElementById("msgBlockText").innerHTML = 'Transaction Processed. Proceed for validation or refresh the page';//Edge-93552
+                    
+                }else{
+                    document.getElementById("msgBlockText").innerHTML = 'Transaction Failed. Please initiate SQ again';//Edge-93552
+                    $('.SQButtonContainer').removeAttr('disabled');
+                    $('.SQButtonContainer').removeClass("SQButtonDisabled");
+                }
+    		}  
+    </script>
+        </apex:outputPanel>
+    </apex:form>
+    
+    
+</apex:page>

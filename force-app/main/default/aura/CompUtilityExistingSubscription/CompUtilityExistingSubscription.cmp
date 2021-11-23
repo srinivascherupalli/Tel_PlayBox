@@ -1,0 +1,48 @@
+<aura:component controller="CompUtilityReplicatorManager" implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    <aura:attribute name="oldConfigId" type="String" access="global"/>
+    <aura:attribute name="isMac" type="Boolean" default="true"/>
+    <aura:attribute name="existingSubscriptions" type="ProductBasketSiteDataObject.ProductConfiguration[]" access="global"/>
+    <aura:method name="displayNone" access="PUBLIC"/>
+    <aura:method name="getExistSub" access="PUBLIC"/>
+    <div aura:id="container"/>
+    <div aura:id="ExistSubCmp" id="ExistSubCmp" style="display:none">
+        
+        <aura:if isTrue="{!v.isMac}"> <!-- N(count of MAC Product Configuration) -->
+        <h3 class="blue-text" style = "padding-left: 12px; line-height: 2.2;">You have items in your Active Product Basket with Existing Subscriptions.</h3><br/>
+        <p style = "padding-left: 14px; line-height: 2.2;">This is current configuration of the Existing Subscription for the offer specified in the currently selected site.</p>
+
+            <div id="" class="boxBorder box-property">
+                <div class="left-content display-width gray-bg">
+                    <div class="left-content-top">
+                        <span class="down-arrow">
+                            <lightning:icon class="slds-show" aura:id="iconChevron" iconName="utility:chevrondown" size="x-small" alternativeText=""/>
+                        </span> 
+                        <div class="top-right">
+                            <p class="blue-text">Connected Workplace</p>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="left-content-bottom white-bg float-width" aura:Id="siteDetail">
+                        <div class="table-heading float-width slds slds-grid left-padding">
+                            <div class="slds-col slds-size_1-of-2 slds-text-title_caps">Description</div>
+                            <div class="slds-col slds-size_1-of-2 slds-text-title_caps">Quantity</div>
+                        </div>
+                        <div class="table-content float-width">
+                            <aura:iteration items="{!v.existingSubscriptions}" var="extSub" indexVar="tidx">
+                                <div class="table-list-data float-width slds slds-grid left-padding">
+                                    <div class="slds-col slds-size_1-of-2">{!extSub.description}</div>
+                                    <div class="slds-col slds-size_1-of-2">{!extSub.quantity}</div>
+                                </div>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <aura:set attribute="else">
+                <br/>
+                <p class ="box-property">This is not a modify order type. Only modify orders types will have existing subscriptions.</p>
+            </aura:set>
+        </aura:if>
+    </div>
+    
+</aura:component>

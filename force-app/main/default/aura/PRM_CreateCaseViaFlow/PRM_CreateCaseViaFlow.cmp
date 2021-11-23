@@ -1,0 +1,20 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"  controller="PRM_CreateCaseFromOpportunityController">
+	<aura:attribute name="userType" type="String" default="PowerPartner" />
+    <aura:attribute name="isPilotUser" type="Boolean" default="false"/>
+    <aura:attribute name="isPartner" type="Boolean" default="false"/>
+    <aura:attribute name="uiTheme" type="String" default="Theme3"/>
+    <aura:attribute name="flowName" type="String" default="" /> <!-- Adedd part of EDGE-150892-->
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+         .slds-modal__content{
+        overflow-y:auto !important;
+        height:unset !important;
+        max-height:400px !important;
+        }
+    </aura:html>
+    <lightning:flow aura:id="flowData" />
+
+</aura:component>

@@ -1,0 +1,169 @@
+<!--//EDGE -66472/84934/66471
+Description: Display slot values through map 
+Author:Ila/Mahima/Kalashree -->
+<aura:component controller = "AppointmentBOMBaseCtrl" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" > 
+    <ltng:require styles="{!$Resource.popupCSS}" />
+    
+    <aura:attribute name="order" type="csord__Order__c" />
+    <aura:attribute name="totalAppt" type="Integer" />
+    <aura:attribute name="reservedAppt" type="Integer" />
+    <aura:attribute type="String" name="OperationName" default="Test"/>
+    <aura:attribute type="String" name="OperationNameLabel" default="Test"/>
+    <aura:attribute type="String" name="SubID" />
+    <aura:attribute type="String" name="AppID" />
+    <aura:attribute type="String" name="ReqApptId" />
+    <aura:attribute type="String" name="Category" />
+    <aura:attribute type="Date" name="startDate" default=""/>
+    <aura:attribute type="Date" name="startDateMin" default=""/>
+    <!--added for fix of- EDGE-103647-->
+    <aura:attribute type="Date" name="startDatemax" default=""/>
+    <aura:attribute type="String" name="SiteName" />
+    <aura:attribute type="String" name="SiteAddress" />
+    <!--aura:attribute type="boolean" name="IsScheduled" default="true" /-->
+    
+    <aura:attribute name="showProgressButton" type="boolean" default="false"/>
+    <aura:attribute name="showMessage" type="boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:registerEvent name="searchAppointment" type="c:searchAppointment"/>
+    <aura:handler event="c:searchAppointment" action="{!c.searchedCompletedAction}"/>
+    <!--aura:handler name="nvgSearchAppointment" event="c:searchAppointment"
+        action="{!c.handleUpdateExpense}"/-->
+    <p class="slds-page-header__title slds-m-right_small
+              slds-truncate slds-align-left">Set Appointments for {!v.order.Name}</p>
+    <br/><br/>
+    <aura:attribute name="wrapperList" type="List" />
+    <aura:attribute name="reqWrapList" type="AppointmentBOMBaseCtrl.requiredAppointmentWrapper[]" />
+    
+    <p class="slds-p-horizontal_small">
+    </p>
+    <aura:if isTrue="{!v.showMessage}">
+        <ui:message title="" severity="confirm" closable="true">
+            <b>{!$Label.c.Order_stage_change_message}</b>
+        </ui:message>
+    </aura:if>
+    <div aura:id="listApptSection">
+        <aura:iteration items= "{!v.wrapperList}" var="subscription">
+                        <c:CollapsibleSection displayName = "{!subscription.Address}" actionName="search" totalAppt = "{!subscription.reqAppCount}" appNotReq = "{!subscription.appNotRequired}" reservedAppt="{!subscription.appointmentCount}" subID="{!subscription.SubscriptionId}" orderId="{!subscription.orderId}">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered" width = "100%">
+                    <tbody>
+                        <aura:iteration items = "{!v.reqWrapList}" var ="reqApp">
+                            <aura:if isTrue="{!(reqApp.SubscriptionId == subscription.SubscriptionId) }" >
+                                
+                                <aura:iteration items ="{!subscription.subApptWrapperList}" var="childAppt" >
+                                    
+                                    
+                                    
+                                    <aura:if isTrue="{!and(reqApp.CategoryName==childAppt.Category, reqApp.SubscriptionId==childAppt.SubsId)}" >
+                                        <aura:if isTrue="{!childAppt.isRescheduleRequired}">
+                                            <tr  class="slds-hint-parent">
+                                                <td colspan="5">
+                                                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                                                        <h2 style="text-align: left;">Reschedule of {!childAppt.AppointmentCategory} Appointment {!childAppt.AppointmentID} is Required. Adjust the start date after {!childAppt.suggestedRescheduleDate}.</h2></div></td></tr>
+                                        </aura:if>
+                                        <tr class="slds-hint-parent">
+                                            <td data-label="AppointmentType">
+                                                <div class="slds-truncate" >{!reqApp.CategoryName} &nbsp;Appointment &nbsp; 
+                                                    <aura:if isTrue="{!(reqApp.CategoryName == 'TELSTRA') }">
+                                                        <lightning:helptext iconName="utility:info"  content="{!reqApp.leadTime}" />
+                                                    </aura:if>
+                                                </div>
+                                                
+                                                <aura:if isTrue="{!childAppt.isScheduled}">
+                                                    <div>  
+                                                        
+                                                        <aura:if isTrue="{!childAppt.isRescheduleRequired}">
+                                                            <p>
+                                                                <lightning:icon style="fill : red;" iconName="utility:warning" alternativeText="Reschedule Required !" variant="warning"/>&nbsp;<span style="color:red"> Reschedule Required</span>
+                                                            </p>
+                                                        </aura:if>
+                                                        <aura:if isTrue="{!childAppt.isRescheduleRequired==false}">
+                                                            <p><lightning:icon iconName="action:approval" size="xx-small" alternativeText="{!childAppt.Status}" />&nbsp; {!childAppt.Status}
+                                                            </p>
+                                                        </aura:if>
+                                                    </div>
+                                                </aura:if>
+                                            </td>
+                                            
+                                            <td data-label="AppointmentType">
+                                                <aura:if isTrue="{!childAppt.isScheduled}">
+                                                    <div class="slds-truncate" >Appointment ID
+                                                    </div>                                           
+                                                    <div class="slds-truncate" >
+                                                        {!childAppt.AppointmentID}&nbsp;
+                                                        <a href ="javascript:void(0)" id="{!childAppt.AppointmentID}" onmouseover = "{!c.openPop}" onmouseout="{!c.closePop}">
+                                                    <lightning:icon iconName="utility:info" size="xx-small"  /></a>
+                                                            
+                                                    </div>
+                                                </aura:if> 
+                                            </td>
+                                            <td data-label="AppointmentType">
+                                                <aura:if isTrue="{!childAppt.isScheduled}">
+                                                    <div class="slds-truncate" >Date
+                                                    </div>
+                                                    <div class="slds-truncate" >{!childAppt.ApptDate}
+                                                    </div>
+                                                </aura:if>
+                                            </td>
+                                            
+                                            <td data-label="AppointmentType">
+                                                <aura:if isTrue="{!childAppt.isScheduled}">
+                                                    <div class="slds-truncate" >Time
+                                                    </div>
+                                                    <div class="slds-truncate" >{!childAppt.ApptTime}
+                                                    </div>
+                                                </aura:if>
+                                            </td>
+                                            
+                                            <td data-label="Schedule button">
+                                                <div class="slds-truncate slds-float_right" > 
+                                                    <aura:if isTrue="{!(childAppt.isScheduled==false)}">
+                                                        
+                                                        <button class="slds-button  slds-button_brand" disabled="{!reqApp.disable}"  label="Schedule an appointment"  onclick="{!c.handleSchedule}" id="{!reqApp.SubscriptionId+'_'+subscription.subscriptionName+'_'+subscription.Address}" name="{!reqApp.CategoryName+'_'+reqApp.fromDate}">Schedule an Appointment </button>                                  
+                                                        <br/>
+                                                    </aura:if>
+                                                    
+                                                    <aura:if isTrue="{!childAppt.isScheduled}">
+                                                        <div style="margin-top:5px">
+                                                            <!--EDGE-90315-modified condition for Reschedule and rebook button visibility-->
+                                                            <aura:if isTrue="{!and(childAppt.IsParent!= true,or(childAppt.Category=='NBN',and(childAppt.Category=='TELSTRA',and(childAppt.Status!='Partial Complete', childAppt.Status!='REBOOKED', childAppt.Status!='CANCELLED', childAppt.Status!='Cancelled', childAppt.Status!='Complete'))))}">
+                                                                <button class="slds-button  slds-button_brand" onclick="{!c.handleReScheduleRebook}" id="{!childAppt.AppointmentID+'_Reschedule_'+reqApp.SubscriptionId+'_'+subscription.subscriptionName+'_'+subscription.Address}" name="{!reqApp.CategoryName+'_'+childAppt.ApptDateDT}">Reschedule </button>
+                                                            </aura:if>
+                                                            <aura:if isTrue="{!and(childAppt.IsParent!= true,or(childAppt.Category=='NBN', and(childAppt.Category=='TELSTRA',childAppt.Status=='Partial Complete')))}">
+                                                                
+                                                                <button class="slds-button  slds-button_brand" onclick="{!c.handleReScheduleRebook}" id="{!childAppt.AppointmentID+'_Rebook_'+reqApp.SubscriptionId+'_'+subscription.subscriptionName+'_'+subscription.Address}" name="{!reqApp.CategoryName+'_'+childAppt.ApptDateDT}">Rebook </button>
+                                                            </aura:if>
+                                                            
+                                                        </div>
+                                                    </aura:if>
+                                                </div>
+                                            </td>
+                                        </tr>    
+                                        <div class="{! 'slds-popover slds-hide '+childAppt.AppointmentID}" style="margin-left:0;position:absolute;right:95px;width:auto;align:center;top:5px;">
+										
+				                                        <c:AppointmentDetails childAttribute="{!childAppt.AppointmentID}" aura:id = "pop" product="{!subscription.subscriptionName}" site="{!subscription.Address}" date_x="{!childAppt.apptDay}" time_x="{!childAppt.ApptTime}" appointmentid="{!childAppt.AppointmentID}"/>
+
+                                        </div>                                    
+                                        
+                                        
+                                    </aura:if> 
+                                    
+                                </aura:iteration> 
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>    
+            </c:CollapsibleSection>  
+            
+        </aura:iteration>
+         <aura:if isTrue="{!v.wrapperList.length>0}"> 
+               <div class="slds-align_absolute-center">
+                   <lightning:button variant="success" label="Save and Progress"  title="Save and Progress" onclick="{!c.saveProgress }" disabled="{!!v.showProgressButton}"/>
+               </div>
+        </aura:if>
+    </div>
+    <div  aura:id="searchSection"  class="slds-hide">
+         <!--added startDatemax for fix of- EDGE-103647-->
+        <c:SearchAppointmentComponent OperationName="{!v.OperationName}" OperationNameLabel="{!v.OperationNameLabel}" SubID="{!v.SubID}"  AppID="{!v.AppID}" Category="{!v.Category}" startDate="{!v.startDateMin}" SiteName="{!v.SiteName}" SiteAddress="{!v.SiteAddress}" startDateSelected="{!v.startDate}" startDatemax="{!v.startDatemax}"/>
+    </div>
+</aura:component>

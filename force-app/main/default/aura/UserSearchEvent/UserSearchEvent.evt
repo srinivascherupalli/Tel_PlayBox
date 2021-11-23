@@ -1,0 +1,16 @@
+<!--
+Created By : Team Hawaii
+Date : 27/02/2020
+Jira No : P2OB-4164
+Description: Component event to call parent from child component 
+-->
+<aura:event type="COMPONENT">
+    <aura:attribute name="recordByEvent" type="sObject" description = "It stores instance of opportunity team member object"/>
+    <aura:attribute name="indexVar" type="Integer" description="Use For Delete Row" />
+    <aura:attribute name="accessLevel" type="List" description="Use for getting access level in parent" />
+    <aura:attribute name="teamMemberRole" type="List" description="Use for getting team member role in parent" />
+    <aura:attribute name="userError" type="Boolean" description="Use for disabling save button, when validation-error" />   
+    <aura:attribute name="userErrorOnClear" type="Boolean" description="Use for passing value as true and false" />   
+    <aura:attribute name = "userId" type = "String" description = "Use for storing userId"/>
+    <aura:attribute name = "userRecordSelected" type="sObject" description= "Userfor Storing User record"/>
+</aura:event>

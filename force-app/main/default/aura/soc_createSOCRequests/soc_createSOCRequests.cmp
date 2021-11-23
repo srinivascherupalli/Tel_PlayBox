@@ -1,0 +1,164 @@
+<aura:component controller="soc_CreateSOCRequestController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" 
+                access="global" >
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:attribute name="openSupportForm" type="Boolean" default="false"/>
+    <aura:attribute name="isOpportunityClosed" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="String" default="{ 'sobjectType': 'Case'}"/>
+    <aura:attribute name="hasOppLineItemsNotPresent" type="Boolean" default="false"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="isNextClicked" type="Boolean" default="false"/>
+    <aura:attribute name="showFlowScreen" type="Boolean" default="false"/>	    
+    <aura:attribute name="showProductDomain" type="Boolean" default="false"/>
+    <aura:attribute name="isGetSupport" type="Boolean" default="false"/>
+    <aura:attribute name="isCommunityDisabled" type="Boolean"/> 
+    <aura:attribute name="validForCBS" type="Boolean" default="false"/>
+    <aura:attribute name="validForCBSContract" type="Boolean" default="false"/>
+    <aura:attribute name="ShowAllBeforeFlow" type="Boolean" default="true"/>
+    
+    <ltng:require styles="{!$Resource.multilineToastCSS}" />
+    
+    
+    
+    <div class="c-container">                    
+        <!--<header class="slds-modal__header">   
+            <aura:if isTrue="{!v.isOpportunityClosed}">
+                <h1 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Extension of Sales Facilitation And Design (SFD) to Partners</b></h1>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.openSupportForm}" >
+                        <h1 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Sales Facilitation And Design (SFD)</b></h1>
+                        <aura:set attribute="else"> 
+                            <h1 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>SFD and CPE Support Request</b></h1>
+                        </aura:set>
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+        </header>-->
+        <aura:if isTrue="{!v.ShowAllBeforeFlow}">
+            <aura:if isTrue="{!v.isOpportunityClosed}">
+                <br/>
+                <div style="font-style: normal;color: black;font-size: medium;">
+                    The current opportunity is NOT CLOSED WON. You cannot create New SFD Order Request.
+                </div>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.openSupportForm}" >            <c:soc_createSOCSupportRequests oppId="{!v.recordId}"/>                        
+                        <aura:set attribute="else">  
+                            <aura:if isTrue="{!not(v.isNextClicked)}">
+                                <fieldset class="slds-form-element">
+                                    <div class="slds-text-heading_medium slds-text-align_center"></div>
+                                    <div class="slds-form-element__control">
+                                        <br/>
+                                        <aura:if isTrue="{!v.isCommunityDisabled}">
+                                            <header class="slds-modal__header s">
+                                                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"> <b> Get Support</b></h2>
+                                            </header> 
+                                            <br></br>
+                                            
+                                            <div style ="font-size: 18px;line-height: 21px;text-align: left;"> 
+                                                <b>Sales Support </b></div>
+                                            <br> </br>
+                                            <span class="slds-radio">
+                                                <input type="radio" id="radio-5" value="createCBSCase" name="options" onclick="{!c.enableNext}" />
+                                                <label class="slds-radio__label" for="radio-5">
+                                                    <span class="slds-radio_faux"></span>
+                                                    <span class="slds-form-element__label">
+                                                        <b>CBS billing solution design</b><br/>
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a request to design a custom billing solution (as requested by the customer).<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Before you begin, the opportunity must have :</p> <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1) A synced product basket.</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2)The opportunity stage progressed to Develop or beyond.
+                                                    </span>
+                                                </label>
+                                                <!--P2OB-11749 CBS case creation Option START-->
+                                            </span>
+                                            <br></br>
+                                            <span class="slds-radio">
+                                                <input type="radio" id="radio-2" value="createCBSContractCase" name="options" onclick="{!c.enableNext}" />
+                                                <label class="slds-radio__label" for="radio-2">
+                                                    <span class="slds-radio_faux"></span>
+                                                    <span class="slds-form-element__label">
+                                                        <b>CBS Billing Solution Contract Implementation</b><br/>
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a request to implement a billing contract (as requested by the customer).<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Before you begin, the opportunity must have :</p> <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1) A synced product basket.</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2)The opportunity is Close/Won and you have not raised a CBS billing solution contract
+                                                        <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; request for this opportunity.</p></span>
+                                                </label>
+                                            </span>
+                                            <!--P2OB-11749 END-->
+                                            
+                                            <!--P2OB-7062 CAS case creation Option START-->
+                                            <span class="slds-radio">
+                                                <input type="radio" id="radio-7" value="CAS" name="options" onclick="{!c.enableNext}" />
+                                                <label class="slds-radio__label" for="radio-7">
+                                                    <span class="slds-radio_faux"></span>
+                                                    <span class="slds-form-element__label"><b>Commercial Advisory Service (CAS) request</b>
+                                                        <br/>
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a request to the Commercial Advisory team for support with customer-provided
+                                                        <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; contracts  on Standard opportunities in Develop or beyond.</p></span>
+                                                </label>
+                                            </span>
+                                            <!--P2OB-7062 END-->
+                                            <span class="slds-radio">
+                                                <input type="radio" id="radio-6" value="createCPECase" name="options" onclick="{!c.enableNext}" />
+                                                <label class="slds-radio__label" for="radio-6">
+                                                    <span class="slds-radio_faux"></span>
+                                                    <span class="slds-form-element__label">
+                                                        <b>CPE request</b><br/>
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a request for a CPE hardware or services quote, or to raise a CPE  hardware 
+                                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or services order.</p>
+                                                    </span>
+                                                </label>
+                                            </span>
+                                            <div style ="font-size: 18px;line-height: 21px;text-align: left;">  <b>Ordering Support</b></div>
+                                            <br></br>
+                                        </aura:if>
+                                        <span class="slds-radio">
+                                            <input type="radio" id="radio-3" value="soc" name="options"  onclick="{!c.enableNext}" />
+                                            <label class="slds-radio__label" for="radio-3">
+                                                <span class="slds-radio_faux"></span>
+                                                <span class="slds-form-element__label"><b>Sales facilitation and design (SFD) request</b><br/>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a request for order enrichment and submission. Before you begin , the<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; opportunity must have</p>
+                                                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1) A synced product basket </p>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2) The basket should have at least one Data and IP, UC, MDN or Security product.
+                                                </span>                                                    
+                                            </label>
+                                        </span>
+                                        <br></br>
+                                        <!--<span class="slds-radio">
+                                            <input type="radio" id="radio-4" value="socsupport" name="options" onclick="{!c.enableNext}" />
+                                            <label class="slds-radio__label" for="radio-4">
+                                                <span class="slds-radio_faux"></span>
+                                                <span class="slds-form-element__label"><b>Sales facilitation and design (SFD) support request</b>
+                                                    <br/> 
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When you require early engagement with the SFD team, or have any other queries
+                                                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; relating to a SFD request.</p>
+                                                </span>
+                                            </label>
+                                        </span>-->
+                                        
+                                    </div>
+                                </fieldset>
+                                <hr style="height:2px; margin-top: 5px;border-width:0;color:gray;background-color:#DDDBDA"> </hr>
+                                
+                                <div class="slds-float_right">
+                                    <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.closeModal }"/>
+                                    <lightning:button variant="brand"  aura:id="nextBtn" disabled="true" label="Next" title="Next" onclick="{! c.next }"/>       
+                                    
+                                    
+                                </div>
+                                
+                                <!--<aura:set attribute="else">
+                                    <aura:if isTrue="{!v.hasOppLineItemsNotPresent}">
+                                        <div class="slds-text-heading_small slds-text-align_center" style="padding-top: 8%;">                                    	
+                                            Please create and sync a product basket to the opportunity before creating a SFD case.
+                                        </div>
+                                    </aura:if>
+                                </aura:set>-->
+                            </aura:if>
+                        </aura:set>                        
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+        </aura:if>
+        <lightning:flow aura:id="flowData" onstatuschange = "{!c.handleStatusChange}"/>
+    </div>
+    <!--Your request is being processed. Please wait!-->
+    <aura:if isTrue="{!v.showSpinner}" >
+        <c:soc_Spinner />
+    </aura:if>    
+</aura:component>

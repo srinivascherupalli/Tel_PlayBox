@@ -1,0 +1,25 @@
+.THIS phoneSize{
+    width:50px;
+}
+.THIS .toggle {
+   display: none;
+ }
+
+.THIS .inputSize {
+    width:140px;
+}
+
+.THIS .inputbtnSize {
+    width:94px;
+}
+
+.THIS .inputDeletebtnSize {
+    width:97.28px;
+}
+
+.THIS .redOnYellow1 { 
+    background-color:blue;
+   
+   
+}
+.THIS .tooltip { pointer-events: none; }

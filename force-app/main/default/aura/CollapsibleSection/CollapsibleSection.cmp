@@ -1,0 +1,152 @@
+<!--
+//EDGE -66472/84934/66471
+Description: Display map values
+Author:Ila/Mahima/Kalashree
+-->
+<aura:component
+                controller="AppointmentBOMBaseCtrl"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"  >
+    <aura:attribute type="String" name="header" />
+    <aura:attribute name="body" type="Aura.Component[]" />
+    <aura:attribute name="displayName" type="String" />
+    <aura:attribute name="availableSlots" type="Integer" />  
+    <aura:attribute name="totalAppt" type="Integer" />
+    <aura:attribute name="appNotReq"  type="Boolean" default="false" />
+    <aura:attribute name="subID" type="String" />
+    <aura:attribute name="orderId" type="String" />
+    <aura:attribute name="reservedAppt" type="Integer" />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="actionName" type="String" default="" />
+    <aura:attribute name="collpaseText" type="String" default="" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <!-- <div>
+      <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+    </div>-->
+        
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand slds-spinner_medium">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </aura:if>
+    <div class="slds-section slds-is-open">
+        <h3 class="slds-section__title slds-border_top slds-border_bottom slds-border_right slds-border_left">
+            <button
+                    aria-expanded="true"
+                    class="slds-button slds-section__title-action"
+                    onclick="{!c.ToggleCollapse}"
+                    style="background-color : white"
+                    >
+                <table class=" tablecollapse slds-table slds-table_cell-buffer " >
+                    
+                    <tbody>
+                        <tr class="slds-hint-parent ">
+                            <aura:if isTrue="{!if(v.actionName=='search',true,false)}">
+                                
+                                <td  style="width:60%" data-label="Site Name">
+                                    <div title="{!v.displayName}" style="margin:0px;padding:0px;" ><p class="sitename" >{!v.displayName} 
+                                        </p>
+                                    </div>
+                                </td>  
+                                <aura:if isTrue="{!if(v.totalAppt>0,true,false)}">
+                                    <td style="width:40%" data-label="ScheduleDetail">
+                                        <div class=" slds-float_right" title="ScheduleDetail">
+                                            <lightning:progressBar value="{!(v.reservedAppt/v.totalAppt)*100}" size="small" /> {!v.reservedAppt}/{!v.totalAppt}
+                                            Appointments scheduled
+                                        </div>                                    
+                                    </td>
+                                </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!if(v.actionName=='reserve',true,false)}">
+                                <td data-label="Site Name">
+                                    <div title="SiteName" style="margin:0px;padding:0px;" >{!v.displayName}  
+                                    </div>
+                                </td>
+                                <td data-label="SlotDetail">
+                                    <div class=" slds-float_right" title="SlotDetail">
+                                        {!v.availableSlots} slot(s) available  
+                                    </div>
+                                </td>
+                            </aura:if>      
+                            <td>
+                                <aura:if isTrue="{!if(v.appNotReq,true,false)}">                        
+                                    <div>
+                                        <h2  style="float:right">  No Appointments Required  </h2> 
+                                    </div>    
+                                </aura:if>
+                            </td>                                  
+                            <td>
+                                <aura:if isTrue="{!if(v.totalAppt==0,true,false)}">
+                                    <aura:if isTrue="{!if(v.appNotReq == false,true,false)}">              
+                                        <div class=" slds-float_middle" title="Check Appointment">
+                                            <lightning:helptext style="float:right"
+                                                                content="No response from BOM from previous callout. Click this Button to retrigger for appointments for this Site"
+                                                                />    
+                                            <button class="slds-button  slds-button_brand" onclick="{!c.generateAppErrorScen}" style="float:right"> Check Appointment </button>
+                                        </div>    
+                                    </aura:if>
+                                </aura:if>
+                                
+                            </td>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                        </tr>                        
+                    </tbody>
+                </table>
+                <!--span class="slds-truncate" title="Section Title">{!v.header}test</span-->
+                <lightning:icon
+                                class="{!v.collpaseText == 'Show' ? 'slds-hide' : 'slds-show'}"
+                                aura:id="articleOne"
+                                iconName="utility:chevrondown"
+                                size="x-small"
+                                alternativeText="Indicates add"
+                                />
+                <lightning:icon
+                                class="{!v.collpaseText == 'Show' ? 'slds-show' : 'slds-hide'}"
+                                aura:id="articleOne"
+                                iconName="utility:chevronup"
+                                size="x-small"
+                                alternativeText="Indicates dash"
+                                />
+            </button>
+            
+            <!--<aura:if isTrue="{!if(v.totalAppt==0,true,false)}">
+                
+                <div class=" slds-float_middle" title="Schedulebutton">
+                    <lightning:helptext
+                                        content="No response from BOM from previous callout. Click this Button to retrigger for appointments for this Site"
+                                        />    
+                    <button class="slds-button  slds-button_brand" onclick="{!c.generateAppErrorScen}"> Check Appointment Button </button>
+                </div>    
+            </aura:if>-->
+            
+        </h3>
+        <div
+             class="{!v.collpaseText == 'Show' ? 'slds-show slds-p-around--xxx-small' : 'slds-hide slds-p-around--medium'}"
+             aura:id="articleOne"
+             >
+            {!v.body}
+        </div>
+    </div>
+</aura:component>

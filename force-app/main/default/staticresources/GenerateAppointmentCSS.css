@@ -1,0 +1,230 @@
+  
+        .unstyled::-webkit-inner-spin-button,.unstyled::-webkit-calendar-picker-indicator {
+                      -webkit-appearance: none;
+        }
+        .squeeze {
+        overflow-y: scroll;
+        height: 300px;
+        }
+        .slds-datepickercustom{
+        width: 160px;
+        }
+        .submitbtn{
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        text-decoration: none;
+        margin: 0 15px;
+        border:1px solid rgb(221, 219, 218);
+        padding-left: 1rem;
+        padding-right: 1rem;
+        }
+        .shape{
+        text-align:center;
+        width:160px;
+        height:40px;
+        line-height:40px;
+        float: left;
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        }
+        
+        .submitButton{  
+        height: 30px;
+        width: 100px;
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        text-decoration: none;
+        margin: 0 15px !important;
+        border:1px solid rgb(221, 219, 218) !important;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        }
+        .submitButtonDisabled{
+        height: 30px;
+        width: 100px;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: rgb(196, 196, 196) !important;
+        text-decoration: none;
+        margin: 0 15px !important;
+        cursor: not-allowed !important;
+        background: #e8e8e9 !important;
+        }
+         .posearch{
+            position: relative;
+            top: -33px;
+            float: right;
+            right: 25%;
+        }
+        
+        
+        .hsonuc{
+        width:400px;
+        top:350px;
+        right:50%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        }
+        
+        .hsbtn{
+        width:100px;
+        top:400px;
+        right:50%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        }      
+        
+        .hstimer{
+        width:400px;
+        top:250px;
+        right:60%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        } 
+        .timeoutError{
+        color:red;
+        }
+        
+        .hsip{
+        top:170px;
+        right:73%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        }
+        
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        
+        /* Modal Content */
+        .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 3px solid #888;
+        width: 80%;
+        }
+        
+        .disabledButton{
+        cursor: not-allowed !important;
+        background : #e8e8e9 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        }
+        .disableConfirmButton{
+        display:none !important;
+        background : #e8e8e9 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        }
+        ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          color: #aaa !important;
+        }
+        .messageTable > tbody > tr > td:first-child {
+            width:40px !important;
+        }
+        .messageCell{
+            width:825px !important;
+        }
+        .errorM3{
+            margin-left: 2px;
+            width: 841px;
+        }
+        .modalOkButton{
+            width:35px !important;
+        }
+        .bPageBlock{
+            border : none !important;
+            background-color : white !important;
+        }
+        .pbBody{
+            margin-left:0px !important;
+            margin-right:0px !important;
+        }
+        .indicatorMessage {
+            display: block;
+            height: auto;
+            position: absolute;
+            top: calc(50% + -15px);
+            left: 60%;
+            transform: rotate(270deg);
+            background-color: transparent;
+            color: #333;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        .help-icon{
+            display: inline-block;
+            position: relative;
+            margin-left: .3rem;
+            cursor: pointer;
+            font-family: 'Times New Roman', serif !important;
+            text-align: center;
+            height: 1rem;
+            width: 1rem;
+            background-color: #54698d;
+            color: #fff;
+            border-radius: 50%;
+            font-size: .8rem;
+            line-height: 1rem;
+            opacity: 0.85;
+        }
+        .help-popup{
+            display: none;
+            position: absolute;
+            border-radius: .25rem;
+            background-color: #54698d;
+            bottom: 1.5rem;
+            left: -1rem;
+            color: #fff;
+            padding: .5rem;
+            font-family: 'Salesforce Sans' !important;
+            text-align: left;
+            width: auto;
+            z-index:1 !important;
+        }
+        .help-icon:hover .help-popup{
+            display: block;
+            
+        }
+        .help-icon .help-popup p {
+            margin: 0;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .help-icon .help-popup:before {
+            width: 1rem;
+            height: 1rem;
+            position: absolute;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            content: '';
+            background-color: #54698d;
+            bottom: -.2rem;
+            left: .95rem;
+            z-index:0 !important;
+            box-sizing: border-box;
+        }
+        .customDatePickerSldsAdjust{
+            width: 160px !important;
+            height: 29px !important;
+            position: relative !important;
+            left:0px !important;
+        }
+        .apptDetailBlock{
+            background-color: #f8f8f8 !important;
+            border: 1px solid #eaeaea !important;
+        }
+        .apptOperationTitleStyle{
+            height: 20px;
+            width: 850px;
+            margin-top: 10px;
+            margin-bottom: 2px;
+            font-weight: bold;
+        }

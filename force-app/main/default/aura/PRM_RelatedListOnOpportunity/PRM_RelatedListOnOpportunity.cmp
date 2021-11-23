@@ -1,0 +1,47 @@
+<aura:component controller="PRM_RelatedListOnOpportunityController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    <c:SalesforceInterface aura:id="UtilityService" />
+    <aura:attribute name="title" Default="Product Basket" type="String" />
+    <aura:attribute name="childRelationship" type="String" default="cscfga__Product_Basket__c"/>
+    <aura:attribute name="parentField" type="String" default="cscfga__Opportunity__c"/>
+    <aura:attribute name="FieldsToBeDisplayed" type="String" default="Description__c,csordtelcoa__Basket_Stage__c,csordtelcoa__Synchronised_with_Opportunity__c,Primary_Basket__c"/>
+    <aura:attribute name="size" type="Integer" default="2"/>
+    <aura:attribute name="fieldColumns" type="List" />
+    <aura:attribute name="dataList" type="List" />
+    <aura:attribute name="displayDataList" type="List" />
+    <aura:attribute name="isEdit" type="Boolean" default="true"/>
+    <aura:attribute name="isViewVisible" type="Boolean" default="false"/>
+    <aura:attribute name="isLessRequired" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:buttonStateful labelWhenOff="{! v.title }"
+                                      labelWhenOn="{! v.title }"
+                                      iconNameWhenOff="utility:chevrondown"
+                                      iconNameWhenOn="utility:chevronright"
+                                      class="slds-section__title-action" />
+    
+     <aura:html tag="style">
+         .productBasketDisabled {
+          pointer-events: none;
+          cursor: default;
+          text-decoration: none;
+          color : #000000 !important;
+        }
+    </aura:html>
+     <!--<aura:if isTrue="{!v.isInit}">-->
+     <lightning:datatable data="{! v.displayDataList }" 
+                         columns="{! v.fieldColumns }" 
+                         keyField="Id"
+                         hideCheckboxColumn="true"/>
+    <div align="right">
+        <aura:if isTrue="{!v.isViewVisible}">
+    		<lightning:button  label="View All" onclick="{!c.viewAll}"  />
+             <aura:set attribute="else">
+              <aura:if isTrue="{!v.isLessRequired}">
+              <lightning:button aura:id="showItemButton" label="Show N items" onclick="{!c.lessRecords}"  />
+                 </aura:if>
+            </aura:set>
+        </aura:if>
+    </div>
+    <br/>
+     <!-- </aura:if> -->
+</aura:component>

@@ -1,0 +1,21 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" extensible="true" controller="ChatTranscript_CCD_Sharing">
+	<aura:attribute name="record" type="Object"
+                    description="The record object to be displayed"/>
+    <aura:attribute name="transcriptRecord" type="Object"
+                    description="A simplified view record object to be displayed"/>
+    <aura:attribute name="recordError" type="String"
+                    description="An error message bound to force:recordData"/>
+    
+    <force:recordData aura:id="record"
+                      layoutType="FULL"
+                      recordId="{!v.recordId}"
+                      targetError="{!v.recordError}"
+                      targetRecord="{!v.record}"
+                      targetFields="{!v.transcriptRecord }"
+                      fields="Chat_Channel__c, Button_Name__c"
+                      mode="VIEW"/>
+    <aura:if isTrue="{!empty(v.transcriptRecord.Chat_Channel__c)}">
+
+    </aura:if>
+         <aura:handler event="lightning:conversationChatEnded" action="{!c.onTabClosed}" />
+</aura:component>

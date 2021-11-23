@@ -1,0 +1,50 @@
+<template>
+	<template if:true={onceRun}>
+		<div class="slds-section__title-action" style="padding: 6px" onclick={sectionOrderDetails}>
+			<section class="slds-text-align--left">
+				<div class="slds-float--left">
+					<lightning-icon class={rightChevron} icon-name="utility:chevronright" size="x-small"></lightning-icon>
+					<lightning-icon class={downChevron} icon-name="utility:chevrondown" size="x-small"></lightning-icon>
+				</div>
+				<div if:true={hasErrorMessage}>
+					<lightning-icon class="iconColorChange" icon-name="utility:warning" size="small"></lightning-icon>
+					<b style="color: red">{errorMessage} </b>
+				</div>
+				<div if:false={hasErrorMessage}>
+					<div class="slds-m-left--large slds-text-heading_small">FeaturePack Details</div>
+				</div>
+			</section>
+		</div>
+		<div if:false={hasErrorMessage} class={downChevron}>
+			<div class="slds-card slds-grid slds-wrap">
+				<div class="slds-size_1-of-2" style="padding-left: 25px">
+					<lightning-input
+						class="slds-m-around_x-small underLineLength"
+						read-only="true"
+						label="Telstra Reference - Order Number"
+						value={orderNumber}
+					></lightning-input>
+					<div style="border-width: thin" class="slds-border_top"></div>
+				</div>
+				<div class="slds-size_1-of-2" style="padding-left: 25px">
+					<lightning-input
+						class="slds-m-around_x-small underLineLength"
+						read-only="true"
+						label="Service Id"
+						value={serviceId}
+					></lightning-input>
+					<div style="border-width: thin" class="slds-border_top"></div>
+				</div>
+				<div class="slds-size_1-of-2" style="padding-left: 25px">
+					<lightning-input
+						class="slds-m-around_x-small underLineLength"
+						read-only="true"
+						label="Unit Rate"
+						value={unitRate}
+					></lightning-input>
+					<div style="border-width: thin" class="slds-border_top"></div>
+				</div>
+			</div>
+		</div>
+	</template>
+</template>

@@ -1,0 +1,61 @@
+<!--
+* @Author   :   Maqsood Alam
+* @Date     :   10 Oct 2018
+* @Desc     :   Component for sObject Lookup result - Lightning Component
+* -->
+<aura:component description="Component used for creating list elements for records">
+     
+    <!--Declare Attributes-->
+     <aura:attribute name="objectAPIName" type="String" required="true"
+                    description="Object API name used for searching records"/>
+    
+    <aura:attribute name="record" type="Object" required="true"
+                    description="Holds the single record instance"/>
+     
+    <aura:attribute name="subHeadingFieldsAPI" type="String[]"
+                    description="Holds the field API names to show as meta entity in list"/>
+     
+    <aura:attribute name="subHeadingFieldValues" type="String"
+                    description="Used to construct the meta entity value. Works as subheading in record option"/>
+     
+    <aura:attribute name="iconCategoryName" type="String"
+                    description="Lightning icon category and icon name to show with each record element"/>
+                    
+    <aura:attribute name="selectedFieldOnClick" type="String"
+                    description="This is used to show the selected record field in search input when click from Dropdown"/>
+
+    <aura:attribute name="selectedRecordIdField" type="String"
+                    description="Id of the field when selected from the Dropdown"/>                    
+    
+    <aura:attribute name="displayRecord" type="String"
+                    description="Show individual record dynamically based on value in selectedFieldOnClick attribute"/>                
+     
+    <!--Declare Events-->
+    <aura:registerEvent name="lookupSelect" type="c:sObjectLookupSelectEvent"
+                        description="Event used to send the selected record Id and Name to Lookup component"/>
+     
+    <!--Declare Handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.getValues}"
+                  description="standard init event to prepare the sub heading mete entity value"/>
+     
+    <!--Component-->
+    <li role="presentation" class="slds-listbox__item" onclick="{!c.handleSelect}">
+        <span class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+              role="option">
+            <!--Lightning Icon-->
+            <span class="slds-media__figure">
+                <lightning:icon iconName="{!v.iconCategoryName}" size="small" alternativeText="{!v.record.Name}"/>
+            </span>
+            <!--Option-->
+            <span class="slds-media__body">
+                <span class="slds-listbox__option-text slds-listbox__option-text_entity">
+                   <!-- {!v.record.Name} {!v.record.Contact_Name__c} --> {!v.displayRecord}
+                </span>
+                <!--Option sub heading-->
+                <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                    {!v.subHeadingFieldValues}
+                </span>
+            </span>
+        </span>
+    </li>
+</aura:component>

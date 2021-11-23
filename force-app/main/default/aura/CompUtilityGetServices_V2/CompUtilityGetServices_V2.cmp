@@ -1,0 +1,215 @@
+<!--NFB-126 : This component is developed to display the legacy services of the user returned from Replicator interface-->
+
+
+<aura:component implements="force:appHostable" controller="CompUtilityReplicatorManager" access="global" >
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="siteCount" type="Integer"/>
+    <aura:attribute name="showPageButton" type="Boolean" default="true"/>
+    <aura:attribute name="sites_new" type="ReplicatorGetServiceDataObject_V2" access="global"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />   
+    <aura:attribute name="adborid" type="String[]" access="global"/>
+    <aura:attribute name="cidn" type="String" access="global"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="selectedOffer" type="String[]" access="global"/>
+    <aura:attribute name="selectedSite" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="selectedSite_V2" type="ReplicatorGetServiceDataObject_V2" access="global"/>
+    <aura:attribute name="ProductList" type="Map" />
+    <aura:attribute name="siteName" type="String" access="global"/>
+    <aura:attribute name="siteNameArray" type="String[]" access="global"/>
+    <aura:attribute name="checkService" type="Boolean" default="false"/>
+    <aura:attribute name="sitesMap" type="Map" />
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <aura:attribute name="SelectedSite_sitesMap" type="Map" default="{}" />
+    <aura:attribute name="sitesValue_V2" type="ReplicatorGetServiceDataObject_V2.SiteDTO_V2" />
+    <aura:attribute name="selectedProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd" type="String[]" access="global"/>
+    <aura:attribute name="selectedProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="basketId" type="String" access="global"/>
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" access="global"/>
+    <aura:attribute name="checkBasketStage" type="Boolean"/>
+    <aura:attribute name="showRecommneded" type="Boolean" default="false"/>
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/> 
+    <aura:registerEvent name="getSelectedProd" type="c:GetSelectedProduct"/>
+    <aura:handler event="c:CallGetSelectedProduct" action="{!c.passSelectedProd}"/>
+    <aura:method name="getGetLegacyServices" access="PUBLIC"/>
+    <aura:method name="displayNone" access="PUBLIC"/>
+    <div aura:id="container"/>
+    <div id="GetServicesCmp" style="display:none">
+        <aura:if isTrue="{!v.loadingSpinner}">
+            <lightning:spinner variant="brand" size="large"/>
+        </aura:if>
+        <br/>
+        <aura:if isTrue="{!v.checkService}">    
+            <div style="width:100%;">
+                <aura:if isTrue="{!v.showPageButton}"> 
+				<div class="slds-grid ">
+                    <div class="slds-col slds-size_1-of-2"><h4 class="blue-text align-left" style = "padding-left: 12px;">There are {!v.siteCount} Legacy Service(s) that are eligible for transition in your active Product Basket.</h4></div>
+                    <div class="slds-col slds-size_1-of-2 align-right">
+                    <lightning:button  class="slds-button slds-button_neutral" label="Transition All Recommended Services" disabled="false" title="Transition All Recommended Services" onclick="{!c.transitionService}"/>
+                    
+                    <c:customHelpText text="This selection will save all Legacy Services recommended for transition, and allow you to submit this order."/>
+                        </div>
+                </div>
+				
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_3-of-4">
+                        <h4 class="align-left" style = "padding-left: 12px;">All eligible Services for the currenlty selected site has been pre-selected for transition.</h4></div>
+                    <div class="slds-col slds-size_1-of-4 align-right">
+                        <lightning:button class="slds-button slds-button_neutral" label="Deselect All" title="Neutral action" onclick="{!c.deSelectAllCheckboxes}"/>
+                        <!--lightning:helptext content="This selection will retain all current Legacy Services for this customer, and you can submit this order. No Legacy Services will be cancelled, and they will continue to be chargeable after this order is provisioned."/-->
+                        <c:customHelpText text="This selection will retain all current Legacy Services for this customer, and you can submit this order. No Legacy Services will be cancelled, and they will continue to be chargeable after this order is provisioned."/>
+                        
+                    </div>
+                </div>
+				</aura:if>
+                &nbsp;&nbsp;<br/>
+                <!--<hr style="margin:0 auto;"/>
+                 
+                    <lightning:helptext content="The tooltip displays on the lower left of the icon or above the icon if space is available. It automatically adjusts its position according to the viewport."/>&nbsp;
+                    <lightning:button label="Transition All Recommended Services" disabled="false" title="Transition All Recommended Services" onclick="{!c.transitionService }"/><br/>
+                 disabled="{!v.checkBasketStage}" -->  
+                <div style="width: 100%;"> <!--class="slds-scrollable_y" style="width: 100%;">-->                    
+                    <div class="slds-tree_container" style="max-width:100%; margin-left: 2%; margin-right: 2%;" role="application">
+                        <h4 class="slds-text-title_caps" id="treeheading">Select services for Transition</h4>
+                        <ul class="slds-tree" role="tree" aria-labelledby="treeheading">
+                            <hr style="margin:0 auto;"/>
+                            <li role="treeitem" aria-level="1" aria-expanded="false" Id ="Products" aria-label="Products">
+                                <div class="slds-tree__item">
+                                    
+                                    <button class="slds-button slds-button_icon slds-button_icon slds-m-right_x-small"  tabindex="-1" name="Products" onclick="{!c.expandDetails}">
+                                        <lightning:icon class="slds-show" aura:id="iconChevron" iconName="utility:chevronright" size="x-small" alternativeText="Products"/>
+                                    </button>
+                                    <span class="slds-size_1-of-1">
+                                        <span class="slds-tree__item-label slds-truncate staticTextColor" >&nbsp;&nbsp;PRODUCTS</span>
+                                    </span>
+                                </div>
+                                <ul role="group">
+                                    
+                                    <aura:iteration items="{!v.sitesValue_V2.productList}" var="p" indexVar="idx">
+                                        <hr style="margin:0 auto;"/>
+                                        <li role="treeitem" aria-level="2" aria-expanded="false" Id ="{!p.Product_Type}" aria-label="{!p.Product_Type}">
+                                            <div class="slds-tree__item" >
+                                                <span data-value="{!p.Product_Type}" data-record="{!idx}" >
+                                                    
+                                                    <ui:inputCheckbox class="slds-checkbox" aura:id="DependentCheckbox" value="{!p.checkValue}"  text="{!v.sitesValue_V2.ADBOR_Id + '-' + p.Product_Type}" change="{!c.onCheckBoxClick}"/>
+                                                    
+                                                </span>
+                                                <li role="none" aria-level="1">
+                                                    <button class="slds-button slds-button_icon slds-button_icon slds-m-right_x-small" aria-hidden="true" tabindex="-1" name="{!p.Product_Type}" onclick="{!c.expandDetails}">
+                                                        <lightning:icon class="slds-show" aura:id="iconChevron" iconName="utility:chevronright" size="x-small" alternativeText="{!p.Product_Type}"/>
+                                                    </button></li>												
+                                                &nbsp;&nbsp;<p class="slds-tree__item-label slds-truncate dataTextColor; blue-text" style="text-transform:uppercase;">{!p.Product_Type}</p>                                               
+                                            </div>
+                                            <ul role="group">
+                                                <hr style="margin:0 auto;"/>
+                                                <li role="treeitem" aria-level="3" aria-expanded="false" aria-label="Tree Branch" id="{!p.Product_Type + 'Services'}">
+                                                    <div class="slds-tree__item">
+                                                        
+                                                        <button class="slds-button slds-button_icon slds-button_icon slds-m-right_x-small" aria-hidden="true" tabindex="-1" name="{!p.Product_Type + 'Services'}" onclick="{!c.expandDetails}">
+                                                            <lightning:icon class="slds-show" aura:id="iconChevron" iconName="utility:chevronright" size="x-small" alternativeText="{!p.Product_Type + 'Services'}"/>
+                                                        </button>
+                                                        <span class="slds-size_1-of-1">
+                                                            <span class="slds-tree__item-label slds-truncate staticTextColor" >&nbsp;&nbsp;SERVICES</span>
+                                                        </span>
+                                                    </div>
+                                                    <ul role="group">
+                                                        <aura:iteration items="{!p.serviceList}" var="ser" indexVar="idx">
+                                                            <hr style="margin:0 auto;"/>
+                                                            <li role="treeitem" aria-level="4" aria-expanded="false" aria-label="Tree Branch" id="{!p.Product_Type + ser.Service_Type}">
+                                                                <div class="slds-tree__item">
+                                                                    
+                                                                    <button class="slds-button slds-button_icon slds-button_icon slds-m-right_x-small" aria-hidden="true" tabindex="-1" name="{!p.Product_Type + ser.Service_Type}" onclick="{!c.expandDetails}">
+                                                                        <lightning:icon class="slds-show" aura:id="iconChevron" iconName="utility:chevronright" size="x-small" alternativeText="{!p.Product_Type + ser.Service_Type}"/>
+                                                                    </button>
+                                                                    
+                                                                    &nbsp;&nbsp;<p class="slds-tree__item-label slds-truncate dataTextColor; blue-text" style="text-transform:uppercase;">{!ser.Service_Type}</p>
+                                                                    
+                                                                </div>
+                                                                <ul role="group">
+                                                                    <hr style="margin:0 auto;"/>
+                                                                    <li role="treeitem" aria-level="5" aria-expanded="false" aria-label="Tree Branch" id="{!p.Product_Type +'ServiceIDs'}">
+                                                                        <div class="slds-tree__item">
+                                                                            
+                                                                            <button class="slds-button slds-button_icon slds-button_icon slds-m-right_x-small" aria-hidden="true" tabindex="-1" name="{!p.Product_Type +'ServiceIDs'}" onclick="{!c.expandDetails}">
+                                                                                <lightning:icon class="slds-show" aura:id="iconChevron" iconName="utility:chevronright" size="x-small" alternativeText="{!p.Product_Type +'ServiceIDs'}"/>
+                                                                            </button>
+                                                                            <span class="slds-size_1-of-1">
+                                                                                <span class="slds-tree__item-label slds-truncate staticTextColor" >&nbsp;&nbsp;SERVICE FNNs</span>
+                                                                            </span>
+                                                                        </div>
+                                                                        <ul role="group">
+                                                                            <aura:iteration items="{!ser.service}" var="serv" indexVar="idx">
+                                                                                <hr style="margin:0 auto;"/>
+                                                                                <li role="treeitem" aria-level="6" aria-expanded="true" aria-label="Tree Branch" id="{!p.Product_Type + serv.Service_Id}">
+                                                                                    <div class="slds-tree__item">
+                                                                                        &nbsp;&nbsp;<p class="slds-tree__item-label slds-truncate dataTextColor; blue-text" style="text-transform:uppercase;">{!serv.Association_Role}</p>
+                                                                                    </div>
+                                                                                    <div class="slds-tree__item">
+                                                                                        
+                                                                                        &nbsp;&nbsp;<p class="slds-tree__item-label slds-truncate dataTextColor; blue-text" style="text-transform:uppercase;">{!serv.Service_Id}&nbsp;&nbsp;
+                                                                                        <aura:if isTrue="{!serv.In_Flight_Flag=='Y'}">
+                                                                                            <lightning:icon iconName="utility:clock" size="xx-small"/>
+                                                                                        </aura:if>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <ul role="group">
+                                                                                        <hr style="margin:0 auto;"/>
+                                                                                        <aura:iteration items="{!serv.serviceExtension}" var="se" indexVar="idx">
+                                                                                            <hr style="margin:0 auto;"/>
+                                                                                            <li role="none" aria-level="7" aria-expanded="true" aria-label="Tree Branch" id="{!p.Product_Type +ser.Service_Type + serv.Service_Id+ 'ServiceExtention'}">
+                                                                                                <div class="slds-tree__item"> 
+                                                                                                    <span class="slds-size_1-of-1">
+                                                                                                        <span class="slds-tree__item-label slds-truncate dataTextColor" title="">&nbsp;&nbsp;Service Extension: {!se.Services_From} - {!se.Services_To}</span>
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </li>
+                                                                                        </aura:iteration>
+                                                                                    </ul>
+                                                                                </li>
+                                                                            </aura:iteration>
+                                                                        </ul>
+                                                                    </li>
+                                                                </ul>
+                                                            </li>
+                                                        </aura:iteration>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </aura:iteration>
+                                </ul>
+                            </li>
+                        </ul>
+                        <hr style="margin-top:0;"/>
+                    </div>
+                </div>
+				<aura:if isTrue="{!v.showPageButton}"> 
+                 <div class="slds-grid">
+                        <div class="slds-col">
+                            <p class="slds-text-body_small" style="margin-left: 3px" >Transition the Legacy Services selected for this Product Basket Item. </p>
+                        </div>
+						<aura:if isTrue="{!v.showRecommneded}">
+							<div class="slds-col">
+                            <c:customHelpText text="Save any changes and close Checkpoint and revert to last saved."/>&nbsp;
+                            <!--lightning:helptext content="Save any changes and close Checkpoint, or Cancel to discard changes and revert to last saved."/-->
+							
+                            <lightning:button label="Revert to Recommended" title="Revert to Recommended" onclick="{! c.checkAllCheckBoxes }"/>
+                        </div>
+						</aura:if>
+                        
+                    </div>
+					</aura:if>
+                <hr/>
+            </div>
+            <br/>
+            <aura:set attribute="else">
+                <p class="box-property">This site does not have legacy services.</p>
+            </aura:set>
+            
+        </aura:if>
+        
+    </div>
+</aura:component>

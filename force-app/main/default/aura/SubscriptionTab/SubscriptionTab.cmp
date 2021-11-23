@@ -1,0 +1,28 @@
+<!--//EDGE -115888
+Name: SubscriptionTab
+Description: Display Subscription Number As a link on Number
+Author:Syed -->
+<aura:component controller="SubscriptionController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="subsValue" type="String"/>
+    <aura:attribute name="link" type="String"/>
+    <aura:attribute name="showErrors" type="boolean"/>
+    <aura:attribute name="errorMessage" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:card>
+      <lightning:layout>
+            <lightning:layoutItem padding="horizontal-medium" size="3">
+                <div class="header-column">
+                      <aura:if isTrue="{!not(empty(v.subsValue))}">
+                    <p class="field-title" title="Subscription Number">Subscription Number</p>
+                    <lightning:formattedUrl value="{!v.link}" target="_blank" label="{!v.subsValue}" />
+                          <aura:set attribute="else">
+                           <p>{!$Label.c.Subscription_is_not_available_for_Service_number}</p>
+                              </aura:set>
+                          </aura:if>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+</aura:component>

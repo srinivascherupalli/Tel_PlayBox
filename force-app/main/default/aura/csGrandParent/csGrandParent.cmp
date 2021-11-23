@@ -1,0 +1,18 @@
+<!--Author: Nilima Borse, Team: Jaipur, P2OB-11451
+ Date: 12/02/2021 ,
+
+ Description:Parent Lightning Web Component to enable all screens
+Author : Vivian Charlie, Team : Hawaii, P2OB-13751
+-->
+
+<aura:component controller="salesup_ThankYouScreenController" implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable">
+	<aura:attribute name="recordId" type="String" default=""/>
+    <aura:attribute name="currentUser" type="Object"/> 
+	<aura:attribute name="userType" type="String"/> 
+    <aura:dependency resource="markup://c:csParentCaseScreen" />
+
+    <!--<force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}" fields="UserType" targetFields="{!v.currentUser}"/> P2OB-13751--> 
+
+	<lightning:overlayLibrary aura:id="overlayLib"/>
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+</aura:component>

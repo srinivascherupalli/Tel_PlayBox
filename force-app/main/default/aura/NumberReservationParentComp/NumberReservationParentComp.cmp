@@ -1,0 +1,174 @@
+<aura:component controller="NumberReservationController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <!--added to call vf method poc --> 
+    <aura:attribute name='Value' type="object" />
+      <aura:attribute name="callVF" type="boolean" default= "false"/>
+	<!--added to call vf method poc-->
+	<!--<aura:registerEvent name="callevent" type="c:PocEvent" />-->
+    <aura:attribute name="isShowSearch" type="boolean" />
+    <aura:attribute name="isPopup" type="boolean" />
+    <aura:attribute name="isngEMPresent" type="boolean" default="false"/>
+    <aura:attribute name="isShowPortin" type="boolean" default="false"/>
+    <aura:attribute name="isShowTransition" type="boolean" default="false"/>
+    <aura:attribute name="isShowManage" type="boolean" default="false"/>
+    <aura:attribute name="isShowPortOutReversal" type="boolean" default="false"/>
+    <aura:attribute name="isShowReactiveServices" type="boolean" default="false"/>
+    <aura:attribute name="isReactiveServices" type="boolean" default="false"/>
+    <aura:attribute name="numberReserve" type="object"/>
+    <aura:attribute name="simDetails" type="object" />
+    <aura:attribute name="selectedradio" type="String" />
+    <aura:attribute name="searchResult" type="List"/>
+    <aura:attribute name="objproductconfig" type="object"/>
+    <aura:attribute name="reservedata" type="object" />
+    <aura:attribute name="isSearchresult" type="boolean" />  
+    <aura:attribute name="reserveselectedRows" type="List" /> 
+    <aura:attribute name="selectedpclist" type="List" /> 
+    <aura:attribute name="selectedTab" type="string" default="Mobile"/>
+    <aura:attribute type="List" name="pcListManage" />
+    <aura:attribute type="String" name="searchmsg" />
+    <aura:attribute name="showSearchTab" type="boolean" default="true"/><!--EDGE-144140. Kalashree. Conditionaly render of search tab -->
+    <!--aura:handler name="NumberFinish" event="c:NumberFinishevt" action="{!c.handleFinishbutton}"/-->
+    <aura:handler name="NumberReservevt" event="c:NumberReservationTab" action="{!c.handleActiveTab}"/>
+    <aura:handler name="searchresultevt" event="c:NumberReserveSearchEvent" action="{!c.handleSearchresult}"/>
+    <aura:handler name="NumberReservoptionevt" event="c:NumberReservationSelectOptionevt" action="{!c.handleSearchOption}"/>
+    <aura:handler name="removeassignedNumber" event="c:RemoveAssignedNumberevent" action="{!c.removeNumberFromPool}"/>
+    <aura:handler name="assignedNumber" event="c:AssignedNumberevent" action="{!c.assigneNumbers}"/>
+    <aura:handler event="c:setAttributesonParentNMCMP" action="{!c.setAttributeonParent}"/>
+    <aura:handler name="resetNumbermgmtForm" event="c:ResetNumberManagementForm" action="{!c.handleresetNumbermgmt}"/>
+    <aura:handler name="refreshviewEvent" event="c:refreshviewAfterReserve" action="{!c.handlerefreshview}"/>
+    <aura:handler name="refreshTab" event="c:refreshtabChanged" action="{!c.refreshdataTabChanged}"/>
+    <aura:handler name="refreshProductConfigEvent" event="c:refreshProductConfigEvent" action="{!c.refreshProductConfig}"/>
+  
+    
+    <aura:handler event="c:UpdateConfigurationAtt" action="{!c.UpdateConfigAttdetail}" /><!-- EDGE-174218-->
+    <aura:handler event="c:updatePortOutattributes" action="{!c.UpdatePortOutAttdetail}" /> <!-- EDGE-174219-->
+    <aura:handler name="countdownevent" event="c:CountdownTimerafterFinish" action="{!c.handlerefreshview}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="String" name="basket_id" />
+    <aura:attribute type="String" name="solutionname" />
+    <aura:attribute type="Boolean" name="showErrorForTransition" default="false"/>
+      <aura:attribute type="String" name="unassignedCountForTransition"/>
+    <aura:attribute type="String" name="assignedCountForTransition"/>
+    <aura:attribute type="string" name="contractStage" />
+    <div aura:id="container"/> 
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <div class="slds-grid slds-grid_vertical">
+        <aura:if isTrue="{!v.loadingSpinner}"> 
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </aura:if>
+        <div class="slds-col" >
+            <c:NumberReservationHeader />
+        </div>        
+        <div class="slds-col" style="margin: 2rem;margin-top: -0.5rem;">
+            <aura:IF isTrue="{!v.selectedTab != null}">
+                <c:NumberReservationSelectOption selectedTab="{!v.selectedTab}" basketId="{!v.basket_id}"/>
+            </aura:IF>
+        </div>        
+        <aura:IF isTrue="{!v.isShowSearch}">
+            <div class="slds-col" style="margin: 2rem;margin-top: -0.5rem;">
+                <c:NumberReservationSearch numberReserve="{!v.numberReserve}" 
+                                           selectedTab="{!v.selectedTab}" basket_id="{!v.basket_id}"/>
+            </div>
+            
+        </aura:IF>
+        <aura:IF isTrue="{!v.isShowTransition}">
+            <div class="slds-col" style="margin: 2rem;margin-top: -0.5rem;">
+                <c:TransitionComponent basketId="{!v.basket_id}" selectedTab="{!v.selectedTab}" isngEMPresent="{!v.isngEMPresent}"/> <!--EDGE-148075 - Added to pass tab selection-->      
+      
+            </div>
+        </aura:IF>
+        <aura:IF isTrue="{!v.isShowPortin}">
+            <div class="slds-col" style="margin: 2rem;margin-top: -0.5rem;">
+                <aura:if isTrue="{!v.selectedTab== 'Fixed'}">
+                    Please click on <b><a onclick="{!c.fixedPortInScreen}" >
+                    Fixed Port-In  
+                    </a></b>link to redirect to Fixed Port-In screen.
+                    <aura:set attribute="else">
+                        <div >
+                            <c:PortinComponent basketId="{!v.basket_id}" />
+                        </div>
+                    </aura:set>
+                </aura:if>  
+            </div>
+        </aura:IF>
+        <!--EDGE-165481,171843. Kalashree Borgaonkar. Show Port Out Reversal screen-->
+        <aura:IF isTrue="{!v.isShowPortOutReversal}">
+            <div class="slds-col" style="margin: 2rem;margin-top: -0.5rem;">
+                <c:PortOutReversalComp basket_id="{!v.basket_id}" solutionname="{!v.solutionname}"/>
+            </div>
+        </aura:IF>
+        <aura:IF isTrue="{!v.selectedradio == 'New'}">
+        <div class="slds-col slds-size_1-of-1" style="margin-left: 2rem;">
+            <aura:if isTrue="{!v.searchResult.length>0}">
+                <c:CountdownTimer pretimerText="You have " durationTime="5" posttimerText=" remaining to make your reservation!"/> 
+            </aura:if>
+        </div>
+       </aura:IF>
+        <aura:IF isTrue="{!!v.isShowPortOutReversal}"> <!--EDGE-165481,171843 Do not retrieve for Port out Reversal-->
+            <div class="slds-col" style="margin-top: -2.75rem;">
+                <!--EDGE-144140. Kalashree. Added showSearchTab -->
+                
+                <c:NumberReservationSearchResult aura:id="resultcomp" reserveselectedRows="{!v.reserveselectedRows}" 
+                                                 searchResult="{!v.searchResult}" reservedata = "{!v.reservedata}" 
+                                                 searchmsg= "{!v.searchmsg}"
+                                                 basket_id="{!v.basket_id}" selectedtab="{!v.selectedTab}"
+                                                 productconflist = "{!v.objproductconfig}" 
+                                                 isShowManage="{!v.isShowManage}"
+                                                 showSearchTab="{!v.showSearchTab}"
+                                                 simDetails = "{!v.simDetails}"
+                                                 selectedradio = "{!v.selectedradio}"
+                                                 isngEMPresent = "{!v.isngEMPresent}"
+                                                 isShowTransition = "{!v.isShowTransition}"/>
+            </div>
+        </aura:IF>
+   
+        <aura:if isTrue="{!v.isPopup}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__content slds-p-around_medium slds-border--top slds-border--right slds-border--left" id="modal-content-id-1">
+                        <p>
+                            {!$Label.c.NumberReservationPoppupMessage}
+                        </p>
+                    </div>
+                    
+                    <footer class="slds-modal__footer slds-border--top slds-border--right slds-border--left">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.cancelPopup }"/>
+                        <lightning:button variant="brand" 
+                                          label="OK"
+                                          title="OK"
+                                          onclick="{!c.okPopup}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if> 
+    <aura:if isTrue="{!v.showErrorForTransition}">
+            <p style="color:black;">{!v.assignedCountForTransition} Services transitioned successfully</p>
+            <p style="color:red;">{!v.unassignedCountForTransition} Legacy services could not be mapped to the new Digital services. Please see Reservation pool for unmapped services</p>
+        </aura:if>        
+        <!-- ============================-->
+        <aura:IF isTrue="{!!v.isShowPortOutReversal}"> <!--EDGE-165481,171843 Do not retrieve for Port out Reversal-->
+            <div class="slds-col slds-size_2-of-2" style="background:white;height: 3.5rem;">
+                <div class="slds-page-header slds-page-header_related-list">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title" style="text-align: center;">
+                            
+                        </div>
+                        <div class="slds-page-header__col-actions">
+                            <div class="slds-page-header__controls">
+                                <div class="slds-page-header__control">
+                                    <button
+                                            class="slds-button  slds-button_brand"
+                                            onclick="{!c.handleFinishbutton}"
+                                            label="Finish">Finish</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:IF> 
+    </div> 
+</aura:component>

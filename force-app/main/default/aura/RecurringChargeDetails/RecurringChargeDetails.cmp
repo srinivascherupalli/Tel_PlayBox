@@ -1,0 +1,95 @@
+<!-- 
+Name : RecurringChargeDetails
+Description : Get the Order details for paticulate invoice and corresponding Line Item 
+Author: Pradeep Bhumi
+Story: EDGE-163364
+******************
+History                                                            
+*************************************************                                                  
+VERSION     AUTHOR             DETAIL                   
+
+1.1			Anand Shekhar 	DPG(2912,2914,2939)
+1.2			Shresth Dixit   DPG-3572
+1.3			Arunkumar		EDGE-201373 adding nick name field
+-->
+
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="UsageSummaryHandler">
+    <aura:attribute type="String" name="orderNumber"/>
+    <aura:attribute type="String" name="serviceId"/>
+    <aura:attribute type="String" name="basePlan"/>
+    <aura:attribute type="String" name="unitPrice"/>
+    <aura:attribute type="String" name="errorMessage"/>
+    <aura:attribute type="String" name="serviceDetailsTableName"/>
+    <aura:attribute type="List" name="fetchRecord"/>
+    <aura:attribute type="String" name="recordId"/>
+    <aura:attribute name="LineItemRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+	<aura:attribute type="String" name="nickName"/>
+
+    
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="Charge_Id__c,Invoice_Line_Number__c,Invoice_Transaction_ID__c,Invoice__r.Name,Date_Calculated__c,Tenancy_Id__c"
+                      targetFields="{!v.LineItemRecord}"
+                      targetError="{!v.recordLoadError}"
+                      recordUpdated="{!c.getRecurringData}"
+                      />
+    
+    
+    <div class="slds-section__title-action" style="padding:6px;" onclick="{!c.sectionRecurring}" data-value="section">
+        <section class=" slds-text-align--left">
+            <div class="slds-float--left ">
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevronright" size="x-small"/>
+                <lightning:icon class="slds-show" aura:id="section" iconName="utility:chevrondown" size="x-small"/>
+            </div>
+            <div class="slds-m-left--large slds-text-heading_small "> Recurring Charge  <aura:if isTrue="{!v.errorMessage!=null}">
+                <lightning:icon class="iconColorChange"  iconName="utility:warning" size="x-small"/>
+                <b style="color:red;">{!v.errorMessage}</b> 
+                </aura:if>
+            </div>
+        </section>
+    </div>
+    
+    <div class="slds-grid slds-wrap " aura:id="section">
+        <div class="slds-size_1-of-2" style="padding-left:25px;">
+            <lightning:input  class="slds-m-around_x-small underLineLength" style="text-decoration:underline;"  readonly="true" label="Telstra Referrence - Order Number" value="{!v.orderNumber}" />
+        </div>
+        <div class="slds-size_1-of-2">
+            <lightning:input class="slds-m-around_x-small underLineLength"  style="text-decoration:underline;" readonly="true" label="Service ID" value="{!v.serviceId}"/>
+            
+        </div>
+        <div class="slds-size_1-of-2" style="padding-left:25px;">
+            <lightning:input  class="slds-m-around_x-small underLineLength" style="text-decoration:underline;"  readonly="true" label="Base Plan" value="{!v.basePlan}" />
+        </div>
+        <div class="slds-size_1-of-2">
+            <lightning:input class="slds-m-around_x-small underLineLength"  style="text-decoration:underline;" readonly="true" label="Unit Rate (Ex. GST)" value="{!v.unitPrice}"/>
+            
+        </div>
+		<div class="slds-size_1-of-2" style="padding-left:25px;">
+			<lightning:input  class="slds-m-around_x-small underLineLength" style="text-decoration:underline;"  readonly="true" label="Nickname" value="{!v.nickName}" />
+		</div>
+    </div>
+    <aura:if isTrue="{!v.fetchRecord.length>0}">
+        <div class="slds-section__title-action" style="padding:6px;" onclick="{!c.sectionRecurring}" data-value="sectionTable">
+            <section class=" slds-text-align--left">
+                <div class="slds-float--left ">
+                    <lightning:icon class="slds-hide" aura:id="sectionTable" iconName="utility:chevronright" size="x-small"/>
+                    <lightning:icon class="slds-show" aura:id="sectionTable" iconName="utility:chevrondown" size="x-small"/>
+                </div>
+                <div class="slds-m-left--large slds-text-heading_small "> Service Details  
+                    <aura:if isTrue="{!v.errorMessage!=null}">
+                        <lightning:icon class="iconColorChange"  iconName="utility:warning" size="x-small"/>
+                        <b style="color:red;">{!v.errorMessage}</b> 
+                    </aura:if>
+                </div>
+            </section>
+        </div>
+        <div aura:id="sectionTable">
+        <c:inlineEditDataTable aura:id= "inlineEditDataTable" tableName="{!v.serviceDetailsTableName}" 
+                               tableData="{!v.fetchRecord}" />
+        </div>
+        
+        
+    </aura:if>
+</aura:component>

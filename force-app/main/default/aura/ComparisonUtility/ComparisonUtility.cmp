@@ -1,0 +1,44 @@
+<aura:component controller="CompUtilityReplicatorManager" implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="sitesMap" type="Map" />
+    <aura:attribute name="siteDTOMap" type="Map" />
+    <aura:attribute name="basketId" type="String" access="global"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c"/>
+    <aura:attribute name="mapProdIds" type="Map" />
+    <aura:attribute name="selectedProd" type="String[]" access="global"/>
+    <aura:attribute name="selectedProdFinal" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd" type="String[]" access="global"/>
+    <aura:attribute name="displayTransBtn" type="Boolean" default="false"/>
+    <aura:attribute name="selectedSite" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:registerEvent name="callSelectedProduct" type="c:CallGetSelectedProduct"/>
+    <aura:handler event="c:GetSelectedProduct" action="{!c.handleGetSelectedProduct}"/>
+    <aura:handler name="getTabName" event="c:CompUtilityGetTab" action="{!c.handleSaveButtonOnTabClick}"/>
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+    
+    <div style="background-color: white">
+        <br/>
+        <center><span style="font-size:x-large">Comparison Utility</span></center>
+        <hr/>
+        <div class="slds slds-grid">
+            <div class="slds-col slds-size_3-of-8 boxBorder" style="background-color: white; margin-left: 4%; margin-right: 2.5%; padding-right:0.01%; padding-bottom:0.01%">
+                <c:CompUtilityProdBasket siteDTOMap="{!v.siteDTOMap}" ProdBasket="{!v.ProdBasket}" aura:id="GetSiteComp"/>
+            </div>
+            <div class="slds-col slds-size_4-of-8 boxBorder" style="background-color: white; margin-left: 2%; margin-right: 4%;">
+                <c:ComparisonUtilityDetails sites="{!v.sites}" sitesMap="{!v.sitesMap}" basketId="{!v.basketId}" selectedProd="{!v.selectedProd}" readOnlyProd="{!v.readOnlyProd}" readOnlySelectedProd="{!v.readOnlySelectedProd}" ProdBasket="{!v.ProdBasket}"/>
+            </div>
+        </div>
+        <hr/>
+        <div align="right" style="margin-right: 2%;">
+            <ui:button class="slds-button" label="Cancel" press="{!c.cancelTransition}"/>
+            <aura:if isTrue="{!v.displayTransBtn}">
+                <ui:button class="slds-button" aura:id="transitionbutton" label="Save" press="{!c.processTransition}" disabled="false"/>
+            </aura:if>
+        </div>
+        <br/>
+    </div>
+</aura:component>

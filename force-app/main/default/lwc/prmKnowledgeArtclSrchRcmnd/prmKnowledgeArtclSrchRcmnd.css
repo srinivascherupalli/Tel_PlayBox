@@ -1,0 +1,218 @@
+.search-result__listing {
+    position: relative;
+
+}
+
+.search-result__listing .prev {
+    width: auto;margin: auto;position: absolute;top: 0;bottom: 0;right: auto;left: 0;height: 50px;color:#626262;
+}
+
+.search-result__listing a.next {
+    width: auto;margin: auto;position: absolute;top: 0;left: auto;bottom: 0;right: 0px;height: 50px;color:#626262;
+}
+
+.helpNtraining-result .sortArticle > lightning-combobox.slds-form-element {
+    display: flex;
+}
+
+.helpNtraining-result .sortArticle > lightning-combobox div.slds-form-element__control {
+    flex: 1 1 auto;
+}
+
+div.singleTile .search-result__listing {
+    grid-template-columns: unset;
+    grid-column-gap: unset;
+    grid-row-gap: unset;
+}
+
+div.singleTile .search-result__listing .slds-box{
+    padding:0;
+}
+
+div.helpNtraining-result.singleTile .search-result__img {
+    margin-bottom: 0;
+}
+
+div.helpNtraining-result.singleTile .search-result__item--title {
+    height: unset;
+    display: block;
+    font-size: 1.75rem;
+}
+
+div.helpNtraining-result.singleTile .search-result__item--desc {
+    height: unset;
+    display: block;
+}
+
+div.helpNtraining-result.singleTile .search-result__cat {
+    height: unset;
+    color: rgb(51, 51, 51);
+    font-size: 1.25rem;
+    padding-bottom: 0.5rem;
+}
+
+div.helpNtraining-result.singleTile .articleInfo{
+    width : 725px;
+}
+
+div.helpNtraining-result h2.title { flex-grow: 1;-webkit-line-clamp: 1; width:50%;}
+
+div.helpNtraining-result .search-result__listing .next span.iconTelstra,
+div.helpNtraining-result .search-result__listing .prev span.iconTelstra{
+    background: rgb(254, 254, 254, 0.9);font-size: 1.5rem;height: 50px;width: 40px;display: inline-block;border: 15px solid rgb(254, 254, 254, 0.3);text-align: center;vertical-align: middle;box-shadow: 1px 1px 5px 1px #cecece;
+}
+
+div.helpNtraining-result .search-result__listing a:focus,
+div.helpNtraining-result .search-result__listing a:hover{
+    text-decoration: none;
+}
+
+.carousel-recommendation{
+    position: relative;
+}
+.carousel-recommendation .singleTile .search-result__listing .search-result__img{
+    height: 245px;
+    width: 460px;
+    margin: 0 1.5rem 0 0 !important;
+}
+.carousel-recommendation .singleTile .search-result__listing .search-result__img img{
+    width: 550px;
+    object-fit: cover;
+    max-height: 100%;
+    max-width: 100%;
+    height: 365px;
+}
+.carousel-recommendation .carousel-arrow{
+    top: 6.5rem;
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+}
+.carousel-recommendation .carousel-prev{
+    float: left;
+    left: 1px;
+    position: relative;
+    font-size: 1.2rem;
+    background-color: #ececec;
+    padding-right: 0.7rem;
+    padding-left: 0.7rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.2rem;
+    color: #6b6b6b;
+}
+.carousel-recommendation .carousel-next{
+    float: right;
+    right: 1px;
+    position: relative;
+    font-size: 1.2rem;
+    background-color: #ececec;
+    padding-right: 0.7rem;
+    padding-left: 0.7rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.2rem;
+    color: #6b6b6b;
+}
+.carousel-recommendation .singleTile .search-result__listing .search-result__cat{
+    display: none;
+}
+.carousel-recommendation .singleTile .search-result__listing .search-result__item--title{
+    line-height: 1.25;
+    font-size: 1.5rem;
+    padding-top: 1.0rem;
+    overflow: hidden;
+    padding-left: 0;
+    width: 435px;
+}
+.carousel-recommendation .singleTile .search-result__listing .search-result__item--desc{
+    font-size: 1rem;
+    line-height: var(--lwc-lineHeightText,1.5);
+    font-family: var(--lwc-fontFamily,akkuratLight);
+    text-align: left;
+    width: 70%;
+    white-space: normal;
+    padding-left: 0;
+    max-height: 86px;
+    height: 86px;
+    -webkit-line-clamp: 3!important;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    padding-top: 1.0rem;
+}
+.carousel-recommendation .singleTile .search-result__listing .search-result__readMore{
+    padding-left: 0;
+    display: flex;
+    margin-top: 1.0rem;
+}
+.carousel-recommendation .singleTile .search-result__listing .search-result__readMore a{
+    font-size: 1rem;
+}
+.carousel-recommendation .singleTile{
+    border: 1px solid #d0d0d0;
+}
+.carousel-recommendation .singleTile .search-result__listing .slds-box{
+    border: 0px;
+}
+.carousel-recommendation .singleTile .search-result__listing .slds-box .articleInfo{
+    width: 75%;
+}
+.carousel-recommendation .visualIndicator{
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+.carousel-recommendation .visualIndicator li{
+    list-style: none;
+}
+.carousel-recommendation li.dot-indicator {
+    width: 22px;
+    height: 2px;
+    padding: 0px;
+    background-color: #bcbcbc;
+    display: inline-block;
+    margin: 0 0.5rem;
+}
+.carousel-recommendation li.tab-selected{
+    width: 22px;
+    height: 2px;
+    padding: 0px;
+    background-color: #5185b5;
+    display: inline-block;
+    margin: 0 0.5rem;
+}
+@media screen and (max-width: 911px){
+    .carousel-recommendation .singleTile .search-result__listing .search-result__img{
+        height: 245px;
+        width: 280px;
+        margin: 0 0.7rem 0 0 !important;
+    }
+    .carousel-recommendation .singleTile .search-result__listing .search-result__item--desc{
+        max-height: 84px;
+        height: 84px;
+    }
+}
+@media screen and (max-width: 767px){
+    .carousel-recommendation .singleTile .search-result__listing .slds-box{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .carousel-recommendation .singleTile .search-result__listing .search-result__img{
+        height: 225px;
+        width: 100%;
+        margin: 0 0 0 0!important;
+    }
+    .carousel-recommendation .singleTile .search-result__listing .slds-box .articleInfo{
+        width: 100%;
+        padding: 0 1rem 0 1rem;
+    }
+    .carousel-recommendation .singleTile .search-result__listing .search-result__item--title{
+        width: 100%;
+    }
+    .carousel-recommendation .singleTile .search-result__listing .search-result__item--desc{
+        width: 100%;
+    }
+    .carousel-recommendation .singleTile .search-result__listing .search-result__readMore{
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}

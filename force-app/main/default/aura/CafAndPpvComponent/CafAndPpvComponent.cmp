@@ -1,0 +1,428 @@
+<!--
+EDGE		-144140
+Description	-capture CAF and PPV details for Mobile Portin
+Author		-Kalashree
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                controller="MobilePortinController">
+    <aura:attribute name="loadingSpinner" 
+                    type="Boolean" default="false" />
+    <aura:attribute name="isResendDisabled" 
+                    type="Boolean" default="false" />
+    <aura:attribute name="isSaveDisabled" 
+                    type="Boolean" default="true" />
+    <aura:attribute name="showFirstLast" 
+                    type="Boolean" default="true" />
+    <aura:attribute name="collpaseText" 
+                    type="String" default="" />
+    <aura:attribute name="basket_Id" 
+                    type="String" default="" />
+    <aura:attribute name="columns" 
+                    type="List"/>
+    <aura:attribute name="qualifiedNumberList" 
+                    type="List" />
+    <aura:attribute name = "searchCustContact" 
+                    type="String"/>
+    <aura:attribute name = "searchCustContactid" 
+                    type="String"/>
+    <aura:attribute name = "searchContactid" 
+                    type="String"/>
+    <aura:attribute name = "searchPortNum" 
+                    type="String"/>
+    <aura:attribute name = "searchContact" 
+                    type="String"/>
+    <aura:attribute name="listOfCustContactRecords" 
+                    type="List" />
+    <aura:attribute name="listOfContactRecords" 
+                    type="List" />
+    <aura:attribute name="listOfContact" 
+                    type="List" />
+    <aura:attribute name="rowsSelected" 
+                    type="List" 
+                    />
+    <aura:attribute name="listOfPortNumbers" 
+                    type="List" />
+    <aura:attribute name="detailWrapper" 
+                    type="MobilePortinController.BasketDetailsWrapper" 
+                    />
+    <aura:attribute name="selectedRows" 
+                    type="List" 
+                    />
+    <aura:attribute name="input" type="MobilePortinController.InputWrapper"/>
+    <aura:attribute name="isRegenerateCAForm" 
+                    type="Boolean" default="false" />
+    <!--DIGI-778:  Start Added Attributes to disable the Send SMS and Verify OTP button-->
+    <aura:method name="handleSendSMSEvent" action="{!c.handleSendSMSButtonLogic}"
+    description="Sample method with parameters">
+     <aura:attribute name="isCafActive" type="Boolean" />
+	</aura:method>
+    <aura:attribute name="isVerifyOTPdisable" type="Boolean" default="false" />
+    <aura:attribute name="isCAExpired" type="Boolean" />
+    <aura:attribute name="isDisableInitiatePPV" type="Boolean" default="false" />
+    <aura:attribute name="noOfAttempts" type="Integer" default="0" />
+    <aura:attribute name="sendsmsclickcount" type="Integer" default="0" />
+    <aura:attribute name="isdisableInitiateCA" type="Boolean" default="false" />
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name = "OTPNumber" type="String"/>
+    <aura:attribute name="isOTPDisbled" type="Boolean" default="true"/>
+    <aura:attribute name="opp_Id" type="String" default="" />
+    <aura:attribute name="csvFileTitle" type="String" default=""/>
+    
+
+    <!--DIGI-778: End Added Attributes to disable the Send SMS and Verify OTP button-->
+    <aura:handler name="tableevent" event="c:DynamicDataTableEvent" action="{!c.handleSelectedrecords}"/>
+    
+    <aura:handler name="init" 
+                  value="{!this}" 
+                  action="{!c.doInit}" />
+    <aura:handler name="oSelectedContactEvent" 
+                  event="c:selectedContactEvent" 
+                  action="{!c.handleContactEvent}" />
+     <!--EDGE-201557 START --> 
+     <aura:handler name="oSelectedPPAContactEvent" 
+                  event="c:selectedPPAContactEvent" 
+                  action="{!c.handlePPAContactEvent}" />
+     <!--EDGE-201557 END -->
+    <aura:handler name="oSelectedPortEvent" 
+                  event="c:selectedPortEvent" 
+                  action="{!c.handlePortEvent}" />
+    
+    <aura:method name="handleRefresh" action="{!c.handleCAFRefresh}" 
+                 description="Sample method with parameters">    
+    </aura:method>
+    <aura:if isTrue="{!v.loadingSpinner}"> 
+        <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+    </aura:if>
+    <div aura:id="showToastMessage"/>
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-border_bottom slds-border_right slds-border_left"> 
+            <c:SectionCollapse displayName="Customer Authorisation (CA) and Pre-Port Verification (PPV)">
+                <div style="margin:15px;margin-top:8px;">
+                    <br/>
+                    <aura:If isTrue="{!v.isRegenerateCAForm !=true}" >
+                        <p><b>Customer Authorisation Pool</b></p>
+                        <p><b>Select numbers to be included in Customer Authorisation form</b></p>
+                        
+                        <aura:If isTrue="{!v.qualifiedNumberList.length > 0}" >
+                            
+                            <div >
+                                <c:DynamicDataTable showFirstLast="true" sortBy="isIncluded" tableId = "qualifiedNumbers"  columns="{!v.columns}" data="{!v.qualifiedNumberList}"/>                    
+                            </div>
+                        </aura:If>
+                        <aura:If isTrue="{!v.qualifiedNumberList.length == 0}">
+                            <p style="color:red;">There are no numbers in CA pool.</p> 
+                        </aura:If>
+                    </aura:If>
+                </div>
+                <div class="slds-box slds-theme_shade" style="margin:15px;margin-top:8px;">  
+                    <div class="slds-grid slds-gutters" >
+                        <div class="slds-col slds-size--1-of-2">
+                            <span><lightning:layout >
+                                <lightning:layoutItem size="6" >
+                                    <div class="header-column" >
+                                        <p class="field-title" ><b>Customer Authorisation</b></p>
+                                    </div>
+                                    <br/>
+                                </lightning:layoutItem>
+                                </lightning:layout></span>
+                            <span><lightning:layout >
+                                <lightning:layoutItem size="6" >
+                                    <div class="header-column" >
+                                        <label class="slds-form-element__label " for="text-input-id-1">
+                                            Account Name
+                                        </label>
+                                        <br /> {!v.detailWrapper.accountName}
+                                    </div>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="6" >
+                                    <div class="header-column" >
+                                        <label class="slds-form-element__label " for="text-input-id-1">
+                                            Basket 
+                                        </label>
+                                        <br /> {!v.detailWrapper.basketNumber}
+                                    </div>
+                                </lightning:layoutItem>
+                                </lightning:layout>
+                            </span>
+                            <br/>
+                            <span><lightning:layout >
+                                <lightning:layoutItem size="12" >
+                                    <div  aura:id="searchRes2"  class=" slds-p-right_x-small slds-size_1-of-1 slds-lookup slds-is-close">
+                                        <div  onkeyup="{! c.getContactsForCAFInput }" style="width:80%"> 
+                                            <label style="color:DarkRed">*</label>
+                                            <label class="slds-form-element__label" for="text-input-id-1"> 
+                                                Customer Authority Form Signatory
+                                            </label>
+                                            <lightning:helptext content="{!$Label.c.PpvApproverHelpText}" />
+                                            <lightning:input
+                                                             type="search"
+                                                             aura:id="searchContact1"
+                                                             class="slds-p-around--none lookupWidth hideLabel"
+                                                             value="{!v.searchCustContact}"
+                                                             onchange="{!c.handleOnchange}"
+                                                             name="test1"
+                                                             placeholder="Search Authorised Contacts..."
+                                                             /> 
+                                        </div>
+                                        <div class="slds-lookup__menu slds lookupWidth" aura:id="cuslookupContact" style="width:79%">
+                                            <ul class="slds-lookup__list" role="listbox">
+                                                <aura:iteration items="{!v.listOfCustContactRecords}" var="singleRec">
+                                                    <!-- EDGE-201557 modified attribute from oAContact to oPPAContact and isSignatory to isPPASignatory-->
+                                                    <c:customLookupResult oPPAContact="{!singleRec}" isPPASignatory="true"/> 
+                                                </aura:iteration>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </lightning:layoutItem>
+                                </lightning:layout>
+                                <br/>
+                            </span>
+                            <span><lightning:layout >
+                                <lightning:layoutItem size="12" >
+                                    <div class="header-column" >
+                                        <b>Can't see the contact you are looking for?</b>
+                                        <br/>From the <a href="{!'/one/one.app?#/sObject/'+ v.detailWrapper.accountid + '/view'}" target="_blank">Account</a> screen, add contact with authority as "Full Authority"
+                                    </div>
+                                    <br/>
+                                </lightning:layoutItem>
+                                </lightning:layout></span>     
+                        </div>
+                        
+                    </div> 
+                    <!--DIGI-778: Renamed  this button-->
+                    <div style="margin-right:8px;" class="slds-clearfix">
+                            <lightning:button class="slds-float_right"
+                                              variant="brand"
+                                              label="Initiate CA"
+                                              onclick="{!c.saveDetails}"
+                                              disabled="{!v.isdisableInitiateCA}"
+                                              />
+                                           
+                    </div>     
+                </div>
+                <!--DIGI-778: Start New Section added and  will be visible on Contract Accepted-->
+                <aura:if isTrue="{!or(v.detailWrapper.basketStatus == 'Contract Accepted',
+                                 v.detailWrapper.basketStatus == 'Enriched',
+                                 v.detailWrapper.basketStatus == 'Submitted')}">
+                    <div class="slds-box slds-theme_shade" style="margin:15px;margin-top:8px;">
+                        <div class="slds-grid slds-gutters" >
+                            <div class="slds-col slds-size--1-of-2">
+                                <span><lightning:layout multipleRows="true">
+                                    <lightning:layoutItem size="6">
+                                        <div class="header-column">
+                                            <p class="field-title" ><b>Customer Pre-Port Verification</b></p>
+                                        </div>
+                                        <br/>
+                                    </lightning:layoutItem>
+                                    </lightning:layout></span>
+                                <span><lightning:layout >
+                                    <lightning:layoutItem size="12" >
+                                        <div  aura:id="searchRes3"  class=" slds-p-right_x-small slds-size_1-of-1 slds-lookup slds-is-close">
+                                            <div  onkeyup="{! c.getContactsForInput }" style="width:80%"> 
+                                                <label style="color:DarkRed">*</label>
+                                                <label class="slds-form-element__label" for="text-input-id-1"> 
+                                                    Customer PPV approver 
+                                                </label>
+                                                <lightning:helptext content="{!$Label.c.PpvApproverHelpText}" />  
+                                                <lightning:input
+                                                                 type="search"
+                                                                 aura:id="searchContact"
+                                                                 class="slds-p-around--none lookupWidth hideLabel"
+                                                                 value="{!v.searchContact}"
+                                                                 onchange="{!c.handleOnchange}"
+                                                                 name="test"
+                                                                 placeholder="Search Authorised Contacts..."/> 
+                                            </div>
+                                            <div class="slds-lookup__menu slds lookupWidth" aura:id="lookupContact" style="width:77%">
+                                                <ul class="slds-lookup__list" role="listbox">
+                                                    <aura:iteration items="{!v.listOfContactRecords}" var="singleRec">
+                                                        <c:customLookupResult oPPAContact="{!singleRec}"  isPPASignatory="false"/> 
+                                                    </aura:iteration>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </lightning:layoutItem>
+                                    </lightning:layout></span>
+                                <br/>           
+                                <span>
+                                    <lightning:layout >
+                                        <lightning:layoutItem size="9" >
+                                            <div class="slds-p-right_x-small " >
+                                                <lightning:input name="OTP" value="{!v.OTPNumber}" disabled="{!v.isOTPDisbled}" label="Enter OTP" />   
+                                            </div>
+                                            <label class="slds-form-element__label" for="text-input-id-1"> 
+                                                &nbsp;No of Attempts :
+                                            </label>{!v.noOfAttempts}
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                </span> 
+                            </div>
+                            <div class="slds-col slds-size--2-of-2">
+                                <span><lightning:layout multipleRows="true">
+                                    </lightning:layout></span> <br/>
+                                <span>
+                                    <lightning:layout >
+                                        <lightning:layoutItem size="10" >
+                                            <div aura:id="searchRes4" class="slds-col slds-p-right_x-small slds-size--1-of-2">
+                                                <label style="color:DarkRed">*</label>
+                                                <label class="slds-form-element__label" for="text-input-id-1"> 
+                                                    PPV approver Contact Number
+                                                </label>
+                                                <lightning:helptext content="{!$Label.c.PpvMobileApprover}" />
+                                                <lightning:input type="text" name="PpvMobileApprover" disabled="true" value="{!v.searchPortNum}"/>
+                                            </div>  
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                </span><br/>
+                                
+                            </div>
+                            
+                        </div>
+                        <br/>
+                        <div class="slds-grid" style="margin:7px;">
+                            <div class="slds-col_bump-right">
+                            </div>
+                            <div style="margin-right:8px;">
+                                <lightning:button 
+                                                  variant="brand"
+                                                  label="Send SMS"
+                                                  onclick="{!c.SendSMSButton}"
+                                                  disabled="{!v.isDisableInitiatePPV}"
+                                                  />&nbsp; &nbsp;  
+                                <lightning:button
+                                                  variant="brand"
+                                                  label="Verify OTP"
+                                                  onclick="{!c.VerifyOTPButton}"
+                                                  disabled="{!v.isVerifyOTPdisable}"
+                                                  />                 
+                                
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </aura:if>
+                <!--DIGI-778: End New Section added and  will be visible on Contract Accepted-->
+                <br/>
+            </c:SectionCollapse>
+            
+        </div>   
+        <div style="padding-top:15px;padding-bottom:15px;">
+            <p><b>Port In Status</b></p>
+        </div>
+        <div class="slds-box">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <span><lightning:layout >
+                        <lightning:layoutItem size="12" >
+                            <div class="header-column" >
+                                <label class="slds-form-element__label " for="text-input-id-1">
+                                    Customer Authorisation 
+                                </label>
+                                <br /> <a href="{!v.detailWrapper.caStatus.cafidLink}" target="_blank">{!v.detailWrapper.caStatus.cafid}</a>
+                            </div>
+                        </lightning:layoutItem>
+                        </lightning:layout>
+                    </span>
+                </div>
+                <div class="slds-col">
+                    <span><lightning:layout >
+                        <lightning:layoutItem size="12" >
+                            <div class="header-column" >
+                                <label class="slds-form-element__label " for="text-input-id-1">
+                                    Status
+                                </label>
+                                <br /> {!v.detailWrapper.caStatus.status}
+                            </div>
+                        </lightning:layoutItem>
+                        </lightning:layout>
+                    </span>
+                </div>
+                <div class="slds-col">
+                    <span><lightning:layout >
+                        <lightning:layoutItem size="12" >
+                            <div class="header-column" >
+                                <label class="slds-form-element__label " for="text-input-id-1">
+                                    CA Expiration 
+                                </label>
+                                <br /> {!v.detailWrapper.caStatus.ppvExpiration}
+                            </div>
+                        </lightning:layoutItem>
+                        </lightning:layout>
+                    </span>
+                </div>
+                <div class="slds-col">
+                    <span><lightning:layout >
+                        <lightning:layoutItem size="12" >
+                            <div class="header-column" >
+                                <label class="slds-form-element__label " for="text-input-id-1">
+                                    PPV Approver
+                                </label>
+                                <br /> {!v.detailWrapper.caStatus.ppvApprover}
+                            </div>
+                        </lightning:layoutItem>
+                        </lightning:layout>
+                    </span>
+                </div>
+                <div class="slds-col">
+                    <span><lightning:layout >
+                        <lightning:layoutItem size="12" >
+                            <div class="header-column" >
+                                <label class="slds-form-element__label " for="text-input-id-1">
+                                    PPV Mobile 
+                                </label>
+                                <br /> {!v.detailWrapper.caStatus.ppvMobile}
+                            </div>
+                        </lightning:layoutItem>
+                        </lightning:layout>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <!-- Modal/Popup Box After successfull OTP verification-Starts--> 
+    <aura:if isTrue="{!v.isModalOpen}">
+            
+            <!-- Modal/Popup Box starts here--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Pre-Port Verification Check</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>The customer authorised representative has been successfully verified and the Pre-Port Verification process for <b>{!v.searchPortNum}</b> numbers has commenced.
+                            You will be notified via a Chatter post once the Pre-Port Verification is completed.
+                        </p><br/><br/>
+                           <p>
+                            Please note you must check the file <b>'{!v.csvFileTitle}'</b> in the Files section of the Opportunity to view the status of the 
+							Pre-Port Verification check.If there are numbers that fail the Pre-Port Verfication check, you will need to initiate this process again for the
+							failed numbers. </p><br/><br/>
+
+							Once all the numbers are successfully checked you may proceed to <b>number assignment</b>.
+                            
+                       
+                    </div>
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" 
+                                          label="FINISH"
+                                          title="FINISH"
+                                          onclick="{!c.submitDetails}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+
+        <!-- Modal/Popup Box After successfull OTP verification-Ends--> 
+
+</aura:component>

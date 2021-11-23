@@ -1,0 +1,36 @@
+<aura:component implements="forceCommunity:themeLayout" access="global">
+    <aura:attribute name="search" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="profileMenu" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="navBar" type="Aura.Component[]" required="false"/>
+    <aura:attribute name="newFooter" type="Aura.Component[]" required="false"/>
+
+    <div>
+        <header id="prmMainHeader">
+            <div class="header-inner slds-grid slds-grid_align-spread">
+                <div class="slds-col slds-grid slds-no-flex slds-wrap">
+                    <div class="slds-col slds-no-flex slds-p-around_medium">
+                        <a id="prmLogo" onclick="{! c.navHome }">
+                            <span class="assistiveText">Telstra Connect(ed)</span>
+                        </a>
+                        <a id="cdSupportTelstraLogo" onclick="{! c.navHome }">
+                            <span class="cdSupportTelstraLogo"></span>
+                        </a>
+                    </div>
+
+                    <div id="prmMainNavigation" class="slds-col slds-no-flex">
+                        {!v.navBar}
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <div id="prmMainContentArea" class="body-inner">
+            {!v.body}
+        </div>
+
+        <footer>
+            {!v.newFooter}
+        </footer>
+    </div>
+</aura:component>

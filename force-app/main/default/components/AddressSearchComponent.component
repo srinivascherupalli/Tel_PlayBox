@@ -1,0 +1,115 @@
+<apex:component id="AddressSearchComponent" controller="EASTAddressSearchController" allowDML="true" >       
+   <apex:attribute name="oId" description="Reference object Id" type="String" assignTo="{!objId}" required="false"/>
+   <apex:attribute name="oType" description="Reference object type" type="String" assignTo="{!objType}" required="false"/>
+   <!--<apex:attribute name="selectedId" description="Selected Address" type="String" required="false"/> -->
+   <apex:includeLightning />
+   <apex:form >
+ <!--       <style>
+            .activeTab {
+                background-color: #4C31A2; 
+                color:white !important;
+                background-image:none; 
+                font-weight: bold;
+            }
+            
+            .inactiveTab { 
+                background-color: #3854B8; 
+                color:black; 
+                background-image:none; 
+                font-weight: strong;
+            }
+            
+            .disabledTab { 
+                background-color: orange; 
+                color:red; 
+                background-image:none; 
+                font-weight: strong;
+            }
+
+            .integrationError { 
+                color: red; 
+                font-weight: strong;
+            }
+            
+            .bPageTitle {
+                background-color:white !important;
+                font-size: 100%;
+                font-weight: bold;
+            }
+
+            .pageDescription {
+                color: #FFFFFF;
+            }
+
+            .bPageBlock {
+                background-color: #3854B8 !important;
+            }
+            
+            .pbSubheader {
+                background-color: #3854B8 !important;
+            }
+            
+            .mainTitle {
+                color:white !important;
+            }
+
+        </style> -->
+        
+        <script type="text/javascript">
+
+           
+            function getElement(ele) {
+                return document.getElementById(getId(ele));
+            }
+            
+            
+            function setMessage(message){
+                var element = getElement("msg");
+                element.innerHtml= message;
+            }
+            
+            function clearMessage(){
+                var element = getElement("msg");
+                element.innerHtml= '';
+            }
+            
+            function doSearch() {
+                var val = getElementById("searchLine1").value;
+                if(val.length > 5){
+                searchServer(
+                  document.getElementById("searchLine1").value
+                  );
+              } }
+        </script>
+        
+    <apex:pageBlock title="Search Address" id="addrSearchpb">    
+        <apex:actionFunction name="selectAddId" action="{!selectRow}" rerender="addressTable,debug,errors">
+           <apex:param name="selectId" value="" id="si" assignTo="{!selectedId}" />
+            
+        </apex:actionFunction>
+                <!--<input type="text" id="searchLine1" value="searchLine1" label="Enter Address"/>
+        <apex:inputText id="searchLine1" label="Enter Address" onkeyup="doSearch();"/>  -->
+        <apex:inputText id="searchLine1" label="Enter Address" value="{!searchString}"/> 
+        <apex:commandButton action="{!runSearch}" value="Search" reRender="addressTable">
+        </apex:commandButton><br></br>
+        
+        <apex:pageBlockSection title="Addresses Found" id="addressTable">
+            <apex:outputLabel id="message" value="{!pgMessage}" /> <!--  rendered=" if(pgMessage != '') pgMessage"/> -->
+            <br></br>
+            <apex:pageBlockTable value="{!addressList}" var="address" cellpadding="2" cellspacing="2" >
+                <apex:column headerValue="Address Id" value="{!address.addressId}" rendered="true"/>
+                <apex:column headerValue="Address" value="{!address.addressLine}"/>
+                <apex:column headerValue="Locality" value="{!address.locality}"/>
+                <apex:column headerValue="State" value="{!address.state}"/>
+                <apex:column headerValue="Postcode" value="{!address.postcode}"/>
+                <apex:column headerValue="Type" value="{!address.addressType}"/>
+                <apex:column headerValue=" ">
+                    <apex:commandButton value="Select" onclick="selectAddId('{!address.addressId}')" action="{!selectRow}">
+                   <!-- <apex:param name="selectId" value="{!address.addressId}" assignTo="{!selectedId}" />-->
+                    </apex:commandButton>
+                    </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageblockSection>
+      </apex:pageBlock>
+    </apex:form>
+</apex:component>

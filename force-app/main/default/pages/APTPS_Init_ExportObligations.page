@@ -1,0 +1,5 @@
+<apex:page controller="APTPS_ExportObligationsController" cache="true" contentType="text/csv#Export.csv" language="en-US" action="{!generateCSV}">"Obligation ID","Clause Name","Category","Sub-Category","Description","Next Due Date","Obligation Frequency","Comments","Responsible","Accountable","Consulted","Informed","Created By"
+<apex:repeat value="{!obligations}" var="obl">
+{!obl.Obligation_Id},{!obl.Agreement_Clause},{!obl.Category},{!obl.Sub_Category},{!obl.Description},{!obl.Due_Date},{!obl.Obligation_Frequency},{!obl.Comments},{!obl.Responsible},{!obl.Accountable},{!obl.Consulted},{!obl.Informed},{!obl.CreatedBy}
+</apex:repeat>
+</apex:page>

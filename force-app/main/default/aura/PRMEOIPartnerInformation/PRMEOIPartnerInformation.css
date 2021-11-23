@@ -1,0 +1,16 @@
+.THIS .slds-checkbox{
+	display: inline-block !important;
+    width: 50% !important;
+}
+.THIS .slds-helpText {
+    display: inline-block;
+}
+.THIS .slds-helpText .slds-button_icon {
+    height: 0;
+    padding: 0 5px;
+}
+.THIS .slds-helpText .slds-button_icon:focus,
+.THIS .slds-helpText .slds-button_icon:hover {
+    box-shadow: none;
+    border: none;
+}

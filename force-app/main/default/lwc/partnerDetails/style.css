@@ -1,0 +1,6 @@
+.leftPadding{
+    padding-left: 10px;
+}
+.increaseFont > .slds-form-element__label > a{
+    font-size: 14px !important;
+}

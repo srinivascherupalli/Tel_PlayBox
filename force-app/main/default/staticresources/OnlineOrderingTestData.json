@@ -1,0 +1,61 @@
+{
+  "scenarios": [
+    {
+      "api": "AuthorizeContactForAccount",
+      "name": "AuthorizedContact_LegalLessee",
+      "test_data": {
+          "contact": {
+            "lastname": "contact1",
+            "Contact_Status__c": "Active",
+            "Pref_Comm_Method__c": "email",
+            "email": "contact1@team.telstra.com"
+          },
+          "account": {
+            "name": "account1",
+            "CIDN__c": "9436029158"
+          },
+          "account_contact_relation": {
+            "roles": "Legal Lessee"
+          }
+      }
+    },
+    {
+      "api": "AuthorizeContactForAccount",
+      "name": "AuthorizedContact_FullAuthority",
+      "test_data": {
+          "contact": {
+            "lastname": "contact2",
+            "Contact_Status__c": "Active",
+            "Pref_Comm_Method__c": "email",
+            "email": "contact2@team.telstra.com"
+          },
+          "account": {
+            "name": "account2",
+            "CIDN__c": "9338068426"
+          },
+          "account_contact_relation": {
+            "roles": "Full Authority"
+          }
+      }
+    },
+    {
+      "api": "AuthorizeContactForAccount",
+      "name": "Unauthorized",
+      "test_data": {
+          "contact": {
+            "lastname": "contact3",
+            "Contact_Status__c": "Active",
+            "Pref_Comm_Method__c": "email",
+            "email": "contact3@team.telstra.com"
+          },
+          "account": {
+            "name": "account3",
+            "CIDN__c": "8716369819"
+          },
+          "account_contact_relation": {
+            "roles": "Non Authorized"
+          }
+        }
+      }
+    ]
+}

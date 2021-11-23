@@ -1,0 +1,428 @@
+<apex:page showheader="false" standardstylesheets="false" applyhtmltag="false">
+    <html>
+        <head>
+            <title>BCS Form</title>
+        </head> 
+        <body>
+            <h1>Hi Welcome to BCS</h1>
+            
+            <style type='text/css'>
+                
+                
+                .embeddedServiceHelpButton .helpButton {
+                
+                width: auto !important;
+                font-size: 18px !important;
+                }
+                
+                button.startButton.uiButton--default.uiButton.embeddedServiceSidebarButton {
+                font-family: "Arial",sans-serif !important;
+                outline: 2px solid #0264D2;
+                width: 276px;
+                height: 52px;
+                }
+                
+                .embeddedServiceSidebarButton:not(:disabled):focus, .embeddedServiceSidebarButton:not(:disabled):hover {
+                outline: none !important;
+                background: #0264D2 !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatPlaintextMessageDefaultUI.agent.plaintextContent {
+                background: #B2E0FD !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatPlaintextMessageDefaultUI.chasitor.plaintextContent {
+                background: #D2D2D2 !important;
+                color: black !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatAvatar.isLightningOutContext .agentIconColor0 {
+                background-color: #E6E6E6 !important;
+                color: black !important;
+                }
+                
+                .embeddedServiceLiveAgentStateChatInputFooter.dynamicResizeTextOneRow .chasitorText {
+                padding: 15px 8px
+                }
+                .headerTextContent {
+                
+                background-image: url('{!$Label.LogoURL}') !important;
+                background-repeat:no-repeat;
+                background-position-y: center;
+                }
+                
+                #headerTextLabel { 
+                color:#FFF; 
+                padding: 8px 20px 1px;
+                font-weight: bold;
+                }
+                
+                .embeddedServiceSidebarButton.uiButton--inverse .label {
+                color: #0074bd !important;
+                }
+                
+                .embeddedServiceHelpButton .helpButton .uiButton {
+                background-color: #FFFFFF !important;
+                font-family: "Arial", sans-serif;
+                font-weight: bold;
+                color: #0264D2 !important;
+                outline: 2px solid #0264D2 !important;
+                }
+                
+                .embeddedServiceSidebarButton.uiButton--inverse:not(:disabled):focus, .embeddedServiceSidebarButton.uiButton--inverse:not(:disabled):hover {
+                background: #0264D2 !important;
+                text-decoration-color: #0074bd !important;
+                }
+                
+                .embeddedServiceHelpButton .helpButton .uiButton:focus {
+                outline: 1px solid #E11A5C;
+                }
+                .embeddedServiceHelpButton .helpButton .uiButton.helpButtonDisabled { display: none;}
+                
+                .embeddedServiceSidebarFormField .uiInput .uiLabel-left {
+                margin-left: 16px;
+                }
+                
+                .embeddedServiceSidebarForm.buttonWrapper {
+                bottom: 65px;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper2 {
+                bottom: 65px;
+                }
+                .embeddedServiceSidebarForm.buttonWrapper1 {
+                padding-top: 180px;
+                }
+                
+                li.inputSplitName.embeddedServiceSidebarFormField .FirstName {
+                
+                color:#AAA;;
+                background:#F5F5F5;
+                width: 130px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .LastName {
+                
+                color:#AAA;
+                background:#F5F5F5;
+                width: 130px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .Company_Name__c {
+                
+                color:#AAA;
+                width: 130px;
+                margin-left: 10px;
+                }
+                li.inputSplitName.embeddedServiceSidebarFormField .Email {
+                
+                color:#AAA;
+                background:#F5F5F5;
+                width: 130px;
+                margin-left: 10px;
+                }
+                
+                .startButton{
+                background-color: #FFFFFF !important;
+                outline: 2px solid #0064D2;
+                }
+                
+                .dialogButton{
+                background-color: #FFFFFF !important;
+                outline: 2px solid #0064D2 !important;
+                }
+                
+                .dialogButton .label{
+                color: #0064D2 !important;
+                font-size: 15px;
+                }
+                .waitingCancelChat {
+                outline: 2px solid #0064D2;
+                }
+                .startButton .label{
+                color: #0064D2 !important;
+                font-size: 15px !important;
+                overflow: inherit !important;
+                }
+                
+                .message{
+                font-weight:600;
+                }
+                .button:hover{
+                background-color: #FFFFFF;
+                }
+                .embeddedServiceSidebarButton{
+                font-weight:600;
+                }
+                
+                .embeddedServiceSidebarButton:not(:disabled):hover {
+                background: #0064D2 !important;
+                }
+                
+                .startButton .label:hover, .startButton :hover .label {
+                
+                color: #fff !important;
+                }
+                .waitingCancelChat:not(:disabled):hover {
+                background: #871037 !important;
+                }
+                
+                .embeddedServiceSidebarButton .label:hover, .embeddedServiceSidebarButton:focus .label{
+                color: #fff !important;
+                font: 15px;
+                }
+                .embeddedServiceSidebarButton .label:hover, .embeddedServiceSidebarButton:hover .label {
+                color: white !important;
+                }
+                .agentAvatarsContainer .embeddedServiceLiveAgentStateChatAvatar {
+                display:none;
+                }
+                .embeddedServiceSidebarHeader .headerChevron {
+                margin: 1px 0 0 8px;
+                align-self: center;
+                }
+                .embeddedServiceSidebarHeader .headerTextContent {
+                display: inline;
+                padding-top : 4px;
+                }
+                .embeddedServiceSidebarHeader.extended .headerChevron {
+                align-self: center;
+                }
+                .embeddedServiceHelpButton .helpButton .helpButtonEnabled:hover::before, .embeddedServiceHelpButton .helpButton .helpButtonEnabled:focus::before {
+                background-color:grey !important;
+                }
+                .embeddedServiceSidebarMinimizedDefaultUI .messageContent {
+                justify-content: center !important;
+                }
+                .embeddedServiceSidebarMinimizedDefaultUI .minimizedImage img, .embeddedServiceSidebarMinimizedDefaultUI .minimizedImage .uiImage {
+                border-radius: initial !important;
+                width: 21px !important;
+                height: 26px !important;
+                content: url('{!$Label.LogoURL}');
+                }
+                .embeddedServiceLiveAgentStateChatHeaderOption:hover {
+                color:white !important;
+                }
+                .embeddedServiceLiveAgentStatePostchat iframe {
+                height: 100%;
+                width: calc(100% - 8px);
+                border-style: hidden;
+                margin: 4px 4px 0 4px;
+                }
+                
+                @media only screen and (min-device-width: 1024px) and (max-device-height: 1366px) and (-webkit-min-device-pixel-ratio: 2)  and (orientation: portrait) {
+                
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 86% !important;
+                margin: 18% auto !important;
+                left: 0% !important;
+                max-width: 71em !important;
+                }
+                }
+                
+                @media all and (device-width: 1024px) and (device-height: 768px) and (orientation:landscape) {
+                
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 86% !important;
+                margin: 10% auto !important;
+                left: 0% !important;
+                max-width: initial !important;
+                }
+                .helpButtonLabel{
+                display:none;
+                }
+                }
+                
+                @media all and (device-width: 812px) and (device-height: 375px) and (orientation:landscape) {
+                
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 78% !important;
+                margin: 9% auto !important;
+                left: 0% !important;
+                }
+                .helpButtonLabel{
+                display:none;
+                }
+                }
+                
+                @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait) {
+                .embeddedServiceSidebar.layout-docked .dockableContainer {
+                height: 78% !important;
+                margin: 28% auto !important;
+                left: 13% !important;
+                }
+                .helpButtonLabel{
+                display:none;
+                }
+                }
+                
+                @media (min-width: 481px) and (max-width: 767px) {
+                
+                .helpButtonLabel{
+                display:none !important;
+                }
+                .embeddedServiceHelpButton .uiButton{
+                min-width: 0 !important;
+                }
+                .embeddedServiceHelpButton .embeddedServiceIcon {
+                margin-right:auto !important;
+                }
+                .embeddedServiceHelpButton .helpButton .uiButton {
+                outline: none !important;;
+                }
+                .embeddedServiceHelpButton .helpButton {
+                bottom: 5%;
+                }
+                }
+                
+                
+                @media (min-width: 320px) and (max-width: 480px) {
+                
+                .helpButtonLabel{
+                display:none !important;
+                }
+                .embeddedServiceHelpButton .uiButton{
+                min-width: 0 !important;
+                }
+                .embeddedServiceHelpButton .embeddedServiceIcon{
+                margin-right:auto !important;
+                }
+                .embeddedServiceHelpButton .helpButton .uiButton {
+                outline: none !important;;
+                }
+                .embeddedServiceHelpButton .helpButton {
+                bottom: 5%;
+                }
+                }
+            </style>
+            
+            <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+            <script type="text/javascript">
+                var initESW = function(gslbBaseURL) {
+                    embedded_svc.settings.displayHelpButton = true; //Or false
+                    embedded_svc.settings.language = ''; //For example, enter 'en' or 'en-US'
+                    
+                    embedded_svc.settings.defaultMinimizedText = 'Need help? Chat to us'; //(Defaults to Chat with an Expert)
+                    
+                    
+                    embedded_svc.settings.extraPrechatInfo = [{
+                        "entityFieldMaps": [
+                            {
+                                "doCreate":false,
+                                "doFind":true,
+                                "fieldName":"LastName",
+                                "isExactMatch":true,
+                                "label":"Last Name"
+                            }, {
+                                "doCreate":false,
+                                "doFind":true,
+                                "fieldName":"FirstName",
+                                "isExactMatch":true,
+                                "label":"First Name"
+                            }, {
+                                "doCreate":false,
+                                "doFind":true,
+                                "fieldName":"Email",
+                                "isExactMatch":true,
+                                "label":"Email"
+                            }],
+                        "entityName":"Contact"
+                    }];
+                    
+                    
+                    
+                    embedded_svc.addEventHandler("onHelpButtonClick", function(data) {
+                        var a = document.getElementById('FirstName');
+                        if (a) {
+                            a.disabled=false;
+                            document.getElementById('LastName').disabled=false;
+                            document.getElementById('Email').disabled=false;
+                        }
+                        else {
+                            setTimeout(arguments.callee, 10); // call myself again in 10 msecs
+                        }
+                    });
+                    
+                    embedded_svc.settings.extraPrechatFormDetails = [
+                        {  
+                            "label":"Last Name",
+                            "transcriptFields":["PreChat_LastName__c"],
+                            "displayToAgent":false
+                        },
+                        {  
+                            "label":"First Name",
+                            "transcriptFields":["PreChat_FirstName__c"],
+                            "displayToAgent":false
+                        },
+                        {  
+                            "label":"Email",
+                            "transcriptFields":["PreChat_Email__c"],
+                            "displayToAgent":false
+                        },
+                    ];
+                        embedded_svc.settings.autoOpenPostChat = true;
+                        
+                        
+                        
+                        //embedded_svc.settings.defaultMinimizedText = '...'; //(Defaults to Chat with an Expert)
+                        //embedded_svc.settings.disabledMinimizedText = '...'; //(Defaults to Agent Offline)
+                        
+                        //embedded_svc.settings.loadingText = ''; //(Defaults to Loading)
+                        //embedded_svc.settings.storageDomain = 'yourdomain.com'; //(Sets the domain for your deployment so that visitors can navigate subdomains during a chat session)
+                        
+                        // Settings for Chat
+                        //embedded_svc.settings.directToButtonRouting = function(prechatFormData) {
+                        // Dynamically changes the button ID based on what the visitor enters in the pre-chat form.
+                        // Returns a valid button ID.
+                        //};
+                        //embedded_svc.settings.prepopulatedPrechatFields = {}; //Sets the auto-population of pre-chat form fields
+                        //embedded_svc.settings.fallbackRouting = []; //An array of button IDs, user IDs, or userId_buttonId
+                        //embedded_svc.settings.offlineSupportMinimizedText = '...'; //(Defaults to Contact Us)
+                        
+                        embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+                    embedded_svc.settings.entryFeature = 'LiveAgent';
+                    
+                    embedded_svc.init(
+                        '{!$Label.ORGBaseURL}',
+                        '{!$Label.CHATSiteURL}',
+                        gslbBaseURL,
+                        '{!$Label.ORGId}',
+                        'Chat_BCS',
+                        {
+                            baseLiveAgentContentURL: '{!$Label.BaseLiveAgentContentURL}',
+                            deploymentId: '{!$Label.ChatDeploymentID}',
+                            buttonId: '{!$Label.ChatButtonId}',
+                            baseLiveAgentURL: '{!$Label.BaseLiveAgentURL}',
+                            eswLiveAgentDevName: '{!$Label.ESWLiveAgentDevName}',
+                            isOfflineSupportEnabled: false
+                        }
+                    );
+                };
+            
+            /*function initSFDCChat() {
+                
+                if (!window.embedded_svc) {
+                    var s = document.createElement('script');
+                    s.setAttribute('src', 'https://telstrab2b--CopadoJPR5.cs116.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+                    s.onload = function() {
+                        initESW(null);
+                    };
+                    document.body.appendChild(s);
+                } else {
+                    initESW('https://service.force.com');
+                }
+            }*/
+            
+            if (!window.embedded_svc) {
+                var s = document.createElement('script');
+                s.setAttribute('src', '{!$Label.ESWMinJS}');
+                s.onload = function() {
+                    initESW(null);
+                };
+                document.body.appendChild(s);
+            } else {
+                initESW('https://service.force.com');
+            }
+            </script>
+        </body>
+    </html>
+</apex:page>

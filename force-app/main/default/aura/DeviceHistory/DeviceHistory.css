@@ -1,0 +1,12 @@
+.THIS .slds-button_icon-bare{
+    visibility: hidden;
+}
+.THIS .slds-scrollable_x{
+   overflow-x: hidden; 
+}
+.THIS .slds-th__action {
+    background-color:#F6F4F4;
+}
+.THIS .slds-resizable__divider {
+ visibility: hidden;
+}

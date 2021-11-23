@@ -1,0 +1,47 @@
+<!--********************************************************************
+    EDGE        : 115087
+    Component   : OneFundAccrualTransactions
+    Description : Custom buttons on OneFund Balance pop-up
+    Author      : Hari
+    *********************************************************************--> 
+
+<!--******************** EDGE:115087 | START |***********************-->
+
+<aura:component access="global" implements="lightning:availableForFlowScreens">
+    <aura:attribute name="canNext" type="Boolean" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <lightning:navigation aura:id="navigate" />
+    <aura:attribute name="recordId" type="String" access="public" />
+    <!--EDGE-190307 Start-->
+    <aura:attribute name="isCommunityUser" type="boolean" default="true"/>
+     <aura:attribute name="ProfileName" type="String"/>
+    <!--EDGE-219167 Start-->
+      <aura:attribute name="emptyFund" type="Boolean"/>
+     <aura:attribute name="checkFundValue" type="Boolean"/>
+    
+    <!--EDGE-190307 Start end -->
+    <div aura:id="actionButtonBar" class="slds-clearfix slds-p-top_medium">
+    
+        <aura:if isTrue="{!v.isCommunityUser}">
+            <aura:if isTrue="{!v.emptyFund}">
+            <div class="slds-float_left">
+                Click 'Next' to show Fund Transactions Expiring in next 30 days&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                 <!--Updated above element as part of EDGE-199056 Onefund label changes -->
+     
+            </div>
+                </aura:if>
+        </aura:if>
+        <div class="slds-float_right"> 
+            <!-- If Pause, Next, or Finish are available, display to the right -->
+             <aura:if isTrue="{!and(v.canNext,v.isCommunityUser)}">
+              <aura:if isTrue="{!v.checkFundValue}">
+     <lightning:button aura:id="NEXT" label="Next" variant="brand" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+                </aura:if>
+            &nbsp;<lightning:button  label="Cancel" variant="brand" onclick="{!c.navigate}" />
+        </div>
+    </div>
+    
+</aura:component>
+<!--******************** EDGE:115087 | END |***********************-->

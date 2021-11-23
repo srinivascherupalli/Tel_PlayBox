@@ -1,0 +1,43 @@
+<!--
+Name : TransitionSelectBaseComp
+Description : Lightning UI wrapper for transitionSelect LWC and ComparisonUtility_V2
+Author: Kalashree Borgaonkar
+Story: EDGE-194266
+-->
+
+<aura:component controller="CompUtilityReplicatorManager"
+                implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"
+                access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="basketId" type="String" access="global" />
+    <aura:attribute name="isOnScreenRetrieval" type="Boolean" access="global" default="false" />
+    <!-- Start of EDGE-198196- Added selectedCIDN and isCIDNHierarchy which are being fetched from TransitionSelect LWC on the click on Next -->
+    <aura:attribute name="selectedCIDN" type="List" access="global" />
+    <aura:attribute name="isCIDNHierarchy" type="Boolean" access="global" default="false" />
+    <!--<aura:registerEvent name="closeModalEvent" type="c:TransitionModalCloseEvent"  /> -->
+    <!-- End of EDGE-198196- Added selectedCIDN and isCIDNHierarchy which are being fetched from TransitionSelect LWC on the click on Next -->
+    
+    <!--Start of EDGE-209985 by Abhishek(Osaka) for sending Product Family(Selected on-screen) to replicator -->
+    <aura:attribute name="productFamily" type="List" access="global" default="[]"/>
+    <!--End of EDGE-209985 by Abhishek(Osaka) -->
+    
+    <!--Start of DIGI-1741 by Abhishek(Osaka) -->
+    <aura:attribute name="sioConfigMode" type="String" />
+    <!--End of DIGI-1741 by Abhishek(Osaka) -->
+    
+    <div>
+        <aura:if isTrue="{!!v.isOnScreenRetrieval}">
+            <div aura:id="transitionSelect">
+                <c:transitionSelect onhandleNext="{!c.handleNext}" basketid="{!v.basketId}"></c:transitionSelect>
+            </div>
+        </aura:if>  
+         <aura:if isTrue="{!v.isOnScreenRetrieval}">
+            <!--EDGE-209985: Added productFamily to send Product Family(selected on-screen) to replicator -->
+            <!--DIGI-1741: Added sioConfigMode by Abhishek(Osaka) -->
+            <c:ComparisonUtility_V2 selectedCIDN="{!v.selectedCIDN}" isCidnHierarchy="{!v.isCIDNHierarchy}" 
+                                    productFamily = "{!v.productFamily}"
+                                    sioConfigMode = "{!v.sioConfigMode}"></c:ComparisonUtility_V2><!--Added for DIGI-1681-->
+                                    
+        </aura:if> 
+    </div>
+</aura:component>

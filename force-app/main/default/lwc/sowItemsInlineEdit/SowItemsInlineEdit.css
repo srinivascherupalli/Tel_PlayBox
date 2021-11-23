@@ -1,0 +1,38 @@
+th .divCss {
+    text-transform: uppercase;
+}
+.backgroundInverse {
+    position: relative;
+    background-color: #16325c;
+    height: 80px;
+}
+.THIS.slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+    width:100%!important
+  } 
+  .THIS .myCustomClass input { 
+    text-align: right; 
+}
+/*.THIS .myCustomClass22 input[type=checkbox] { 
+    background: lightblue; 
+}
+.THIS .myCustomClass22 input[type=checkbox] :checked{ 
+    background: lightblue; 
+}*/
+/*
+.THIS.myDIVClass { 
+    background: navajowhite!important;
+    width: 100%!important;
+}
+.THIS.myDlClass {
+    background: black!important;
+    border-style: solid!important;
+    border-color: white!important;
+    border-left-color: cornflowerblue!important;    
+}
+.THIS.myDtClass { 
+    background-color: blue!important;
+    width: 20%!important;
+}
+*/

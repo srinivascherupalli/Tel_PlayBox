@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>50.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="accountId" label="Record ID" type="String" role="inputOnly"/>
+            <property name="contactName_Selected" label="Contact Name Selected" type="String" role="outputOnly"/>
+            <property name="contactNumber_Selected" label="Contact Phone Selected" type="String" role="outputOnly"/>
+            <property name="contactAuth_Selected" label="Contact Authority Selected" type="String" role="outputOnly"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,36 @@
+<!-- 
+****************************************************************************
+@Name       :   EditRelatedRecordFromApprovalRequestPage
+@Author     :   Sri (Team SFO)
+@CreateDate :   08/27/2020
+@Description:   Sprint 20.12 ; P2OB-9282, 
+                This componet is to edit the related record from an approval requeest page
+***************************************************************************** -->
+
+<design:component>
+    <design:attribute name="cardHeader" label="Card Header" description="Header to be displayed on component"/>
+    <design:attribute name="objectApiName" label="Target Object Name" description="Object name from which fields need to be load" required="True" />
+    <design:attribute name="fieldsToDisplay" label="Fields to display" description="Comma delimited list of field API's which need to be display" required="True" />
+    <design:attribute name="Mode" label="Mode of Form" description="Enter View/Edit/ReadOnly" required="True" />
+    <design:attribute name="DisableComponent" label="Disable Component" description="Check/Uncheck" />
+    <design:attribute name="No_Of_Columns" label="No Of Columns" description="Columns of Layout"/>
+    <design:attribute name="DisableEAComponent" label="Disable Einstein Component" description="Check/Uncheck" />
+    <design:attribute name="EAcardHeader" label="Card Header" description="Header to be displayed on EA component"/>
+    <design:attribute name="SuccessMessage" label="Success Message" description="Please Enter Success Message"/>
+    <!-- <sfdc:objects>
+        <sfdc:object>ProcessInstanceWorkitem</sfdc:object>
+    </sfdc:objects> -->
+    <!-- Below attributes are related to EA Dashboard-->
+     <design:attribute name="dashboardId" label="Dashboard ID" description="Dashboard ID for the Einstein Analytics Dashboard." />
+    <design:attribute name="type" label="Type" description="Give as Text Case or Account " />
+    <design:attribute name="accountId" label="AccountId" description=" Account ID" />
+    <design:attribute name="filterString" label="Filter String" description="Filter string template to be used to apply to the dashboard. Use #[paramname]# in string." />
+    
+    <design:attribute name="height"  label="Height" default="250" />
+    <design:attribute name="showHeader"  label="Show Header" default="false" />
+    <design:attribute name="showTitle"  label="Show Title" default="false" />
+    <design:attribute name="showSharing"  label="Show Sharing" default="false" />
+    <design:attribute name="openLocation"  label="Open Location" default="HIDE" description="Determines how 'open dashboard' button is presented: OPEN_IN_STUDIO, OPEN_IN_TAB, HIDE" /> 
+    <design:attribute name="openLinksInNewWindow" label="Open Links In New Window" default="false" />
+
+</design:component>

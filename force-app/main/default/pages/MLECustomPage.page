@@ -1,0 +1,195 @@
+<apex:page controller="MLECustomController">
+    <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.angularJS)}"/>
+    <script type="text/javascript" src="{!URLFOR($Resource.cscfga__jQuery_min)}"></script>
+    
+    <script type="text/javascript">
+        var mleCustom = angular.module('MLECustom', []);
+
+        mleCustom.service('MLECustomSrv', function () {
+            this.getBasketData = function (callback, basketId) {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.MLECustomController.getBasketData}'
+                    , basketId, callback,
+                    {escape: false}
+                );
+            };
+		
+            this.readParams = function() {
+                if (location.search) {
+                    var passedParams = location.search.substring(1).split('&');
+                    for (var index = 0; index < passedParams.length; index++) {
+                        var pairs = passedParams[index].split('=');
+                        if(pairs[0] == 'id' || passedParams.length == 1) {
+                            return pairs[1];
+                        }
+                    }
+                }
+            };
+        });
+
+        mleCustom.factory('MLECustomFactory', function($q, $rootScope, MLECustomSrv) {
+            var factory = {};
+            factory.getBasketData = function(basketId) {
+                var deferred = $q.defer();
+                MLECustomSrv.getBasketData(function(result) {
+                    $rootScope.$apply(function() {
+                    	deferred.resolve(result);
+                    });
+                    }, basketId);
+                return deferred.promise;
+            }
+            return factory;
+        });
+
+        mleCustom.controller('MLECustomCtr', function ($scope, $location, MLECustomFactory, MLECustomSrv) {
+            $scope.init = function() {
+                MLECustomFactory.getBasketData(MLECustomSrv.readParams()).then(function(result){
+                    $scope.basketData = JSON.parse(result);
+                    $scope.PDS = [];
+                    $scope.SFS = [];
+                    $scope.PDID = '';
+                    $scope.SFID = '';
+                    
+                    $scope.SFSToBeSelect = [];
+                    if(Object.keys($scope.basketData['PDS']).length > 0) {
+                        for(var pd in $scope.basketData['PDS']) {
+                            var psObj =  {	pdId: pd,
+                                            name: $scope.basketData['PDS'][pd]
+                                         };
+                            $scope.PDS.push(psObj);
+                        }
+                    }
+                    
+                    if(Object.keys($scope.basketData['SFS']).length > 0) {
+                        for(var sfPd in $scope.basketData['SFS']) {
+                            var sf = $scope.basketData['SFS'][sfPd];
+                            var sfObj =  {	pdId: sfPd,
+                                            name: sf[0]['name'],
+                                          	sfId: sf[0]['flowId']
+                                         };
+                            $scope.SFS.push(sfObj);
+                        }
+                    }
+                });
+            };
+
+            $scope.reloadMLE = function () {
+                var mleFrame = jQuery('#mleIframe');
+                var mleBaseUrl = $location.host() + '/apex/csmle1__MultiLineEditor?id=';
+                var mleToOpen = mleBaseUrl + MLECustomSrv.readParams();
+                if($scope.PDID != '') {
+                	mleToOpen = mleToOpen + '&productDefinitionId=' + $scope.PDID;
+                }
+                if($scope.SFID != '') {
+                    mleToOpen = mleToOpen + '&screenFlowId=' + $scope.SFID;
+                }
+                console.log('----MLE URL ' +  mleToOpen);
+                mleFrame.attr('src', mleToOpen);
+                 
+                return true;
+            };
+            
+            $scope.refreshScreenFlow = function (productTypeId) {
+                $scope.SFSToBeSelect = [];
+                for(var ind = 0; ind < $scope.SFS.length; ind++) {
+                    var sf = $scope.SFS[ind];
+                    if(sf.pdId == productTypeId) {
+                        $scope.SFSToBeSelect.push(sf);
+                    }
+                }
+                $scope.PDID = productTypeId;
+                $scope.reloadMLE();
+            };
+            
+            $scope.setScreenFlow = function (screenFlowId) {
+                $scope.SFID = screenFlowId;
+                $scope.reloadMLE();
+            };
+			$scope.closeMLE = function(){
+               console.log(MLECustomSrv.readParams());
+               window.location.pathname = MLECustomSrv.readParams();
+               console.log(window.location.pathname);
+            };
+        });
+
+        mleCustom.filter('loop', function() {
+        return function(input, total) {
+            total = parseInt(total);
+            for (var i=0; i<total; i++) {
+                input.push(i);
+            }
+            return input;
+            };
+        });
+	</script>
+    
+    <apex:form id="pageForm" >
+        <div class="slds" ng-app="MLECustom">
+            <div class="slds-page-header" role="banner">
+                <div class="slds-grid" ng-controller="MLECustomCtr" ng-cloak="true" data-ng-init='init()'>
+                    <div class="slds-col slds-has-flexi-truncate">
+                        
+                        <div class="slds-media">
+                            <div class="slds-media__body" >
+                                <p class="slds-text-heading--label">Bulk Edit Configurations</p>
+                                <div class="slds-m-bottom--x-large"></div>
+                                <h1 class="slds-text-heading--medium slds-m-right--small slds-truncate slds-align-middle" title="Record Title">Edit Options</h1>
+                                    <div class="slds-m-bottom--medium"></div>
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <apex:outputPanel layout="block" styleClass="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2">
+                                                <div class="slds-form-element slds-m-top--small" ng-if='PDS.length > 0'>
+                                                    <label class="slds-form-element__label" for="productType">Select Product Type</label>
+                                                    <div class="slds-form-element__control">
+                                                        <div class="slds-select_container">
+                                                            <select id="select-01" class="slds-select" ng-model="productType" ng-change="refreshScreenFlow(productType)">
+                                                                <option value="{{PDS[n].pdId}}" ng-repeat="n in [] | loop:PDS.length">{{PDS[n].name}}</option>
+                                                            </select>
+                                                        </div>
+                                                            
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                        <div class="slds-col">
+                                            <apex:outputPanel layout="block" styleClass="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2">
+                                                <div class="slds-form-element slds-m-top--small" ng-if='SFSToBeSelect.length > 0'>
+                                                    <label class="slds-form-element__label" for="screenType">Select Screen View</label>
+                                                    <div class="slds-form-element__control">
+                                                        <div class="slds-select_container">
+                                                            <select id="select-01" class="slds-select" ng-model="screenType" ng-change="setScreenFlow(screenType)">
+                                                                <option value='{{SFSToBeSelect[n].sfId}}' ng-repeat="n in [] | loop:SFSToBeSelect.length">{{SFSToBeSelect[n].name}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </div>
+                                
+                                <div class="slds-m-bottom--xx-large"></div>
+                                <div ng-if='PDS.length >= 0'>
+                                	<h1 class="slds-text-heading--medium slds-m-right--small slds-truncate slds-align-middle" title="Record Title">MLE</h1>
+                                    <div class="slds-m-bottom--medium"></div>
+                                    <div class="slds-grid">
+                                        <iframe id="mleIframe" src="https://gb2b--b2bdot--csmle1.cs6.visual.force.com/apex/MultiLineEditor?id=a0WN00000036lHdMAI" width="100%" height="650px"></iframe>
+                                    </div>
+                                </div>
+                                <div class="slds-notify_container" ng-if='PDS.length == 0'>
+                                  <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture" role="alert">
+                                    <span class="slds-assistive-text">Error</span>
+                                    <h2>Selected basket does not have any proudtcs to support the edit.</h2>
+                                  </div>
+                                </div>
+								<div class=".slds-button--brand" ng-click="closeMLE()" align="right" title="Return to Basket">
+                                    <button class="close1"><label>Close and return to Basket</label></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+</apex:page>

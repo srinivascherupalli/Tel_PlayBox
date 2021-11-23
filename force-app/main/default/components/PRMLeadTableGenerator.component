@@ -1,0 +1,23 @@
+<apex:component controller="PRMLeadTableGeneratorController" access="Global" allowDML="true">
+    <apex:attribute name="PartnerAcctId" type="Id" description="Id of the account" assignTo="{!partnerId}"/>
+    <table style="border: 1px solid black; border-collapse: collapse;"> <!--  -->
+        <tr>
+            <th style="border: 1px solid black; border-collapse: collapse;">Account Name</th>
+            <th style="border: 1px solid black; border-collapse: collapse;">Contact Name</th>
+            <th style="border: 1px solid black; border-collapse: collapse;">Shared Date</th>
+            <th style="border: 1px solid black; border-collapse: collapse;">Shared By</th>
+        </tr>
+        <apex:repeat value="{!lstLeads}" var="lead">
+            <tr>
+                <td style="border: 1px solid black; border-collapse: collapse;">{!lead.Customer_Name__r.Name}</td>
+                <td style="border: 1px solid black; border-collapse: collapse;"><a href="{!$Label.CommunityBaseURL}/lead/{!lead.Id}">{!lead.Contact_Name__r.Name}</a></td>
+                <td style="border: 1px solid black; border-collapse: collapse;">
+                    <apex:outputText value="{0, date, dd/MM/yyyy}">
+                        <apex:param value="{!TODAY()}" /> 
+                    </apex:outputText>
+                </td>
+                <td style="border: 1px solid black; border-collapse: collapse;">{!lead.Shared_By__r.Name}</td>
+            </tr>
+        </apex:repeat>
+    </table>
+</apex:component>

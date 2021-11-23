@@ -1,0 +1,5 @@
+<!--c:aeEvent-->
+<aura:event type="APPLICATION">
+    <aura:attribute name="primaryContactbyEvent" type="Contact"/>
+    <aura:attribute name="isAllCon" type="Boolean"/>
+</aura:event>

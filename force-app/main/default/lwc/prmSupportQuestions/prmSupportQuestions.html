@@ -1,0 +1,18 @@
+<!--P20B - 9098 : Change reference to variables to display value on UI-->
+<template>
+  <div class="sectionSupportQuestions">
+    <h2 class="title">Support Questions</h2>
+    <ul class="questionsList">
+      <template for:each={knSupportQuestion} for:item='suportQues'>
+        <li key={suportQues}>
+          <!--P20B - 9098 : Change data id varible value from suportQues.urlName to suportQues.sobjectRecord.UrlName-->
+          <!--P20B - 9098 :Change data id varible value from suportQues.title to suportQues.sobjectRecord.Title-->
+          <a data-id={suportQues.sobjectRecord.UrlName} onclick={handleReadMore}>{suportQues.sobjectRecord.Title}</a>
+        </li>
+      </template>
+      <template if:false={hasRecord}>
+        <div class="alert no-bg">Support Questions Not Available</div>
+      </template>
+    </ul>
+  </div>
+</template>

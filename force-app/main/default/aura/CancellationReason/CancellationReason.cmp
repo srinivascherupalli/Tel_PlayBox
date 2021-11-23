@@ -1,0 +1,86 @@
+<aura:component controller="CancellationReasonController" implements="flexipage:availableForAllPageTypes">
+    <!-- This Component is create as Part of US EDGE-59956 -> To Show Pop up for capturing 
+		Cancellation Reason Cancel Order	 		
+        EDGE-77981 NBN Story - modified for NBN -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="opportunityId" type="Id" />
+	<aura:attribute name="accountId" type="Id" />
+    <aura:attribute name="redirectToBasket" type="Boolean" default="true"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="objContact" type="contact" default="{'sobjectType':'contact'}"/>
+    <aura:attribute name="showSpinner1" type="boolean" default="false"/>
+    <aura:registerEvent name="cancelReasonUpdated" type="c:cancellationReasonUpdate"/>
+    <aura:registerEvent name="modifyReasonUpdated" type="c:modifyReasonUpdate"/>
+    <aura:attribute name="isError" type="boolean" default="false" description="Field to raise Error If contact Role is not Entered"/>
+    <aura:attribute name="isEmpty_CancelReason" type="boolean" default="false" description="Field to raise error if cancellation reason is not entered"/>
+    <aura:attribute name="roleError" type="boolean" default="false" description="Field to raise Error If contact Role If role in Not Legal Lessee or Full Authority" />
+    <aura:attribute name="showToolTipBoolean" type="boolean" default="false" />
+    <aura:attribute name="loaded" type="boolean" default="false" />
+    <aura:attribute name="acc1" type="Account"/>
+    <aura:attribute name="acr" type="AccountContactRelation"/>
+    <aura:attribute name="showOnlyCancelNBN" type="boolean" default="false"/>
+
+    
+    <!--lightning:spinner class="slds-hide" variant="brand" size="medium" aura:id="mySpinner"/-->
+    <aura:if isTrue="{!v.showSpinner1}">
+    	<div class="slds-spinner_container">
+        	<lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+    	</div>
+	</aura:if>
+    <div aura:id="MainDiv" >
+        <aura:if isTrue="{!v.isError}">
+            <c:customToast type="error" message="{!$Label.c.Cancellation_Requester}" title="Cancellation Requestor is mandatory" />
+        </aura:if>
+        <aura:if isTrue="{!v.isEmpty_CancelReason}">
+            <c:customToast type="error" message="{!$Label.c.Cancellation_Reason_Mandatory}" title="Cancellation Reason is mandatory" />
+        </aura:if>
+        <aura:if isTrue="{!v.roleError}">
+            <c:customToast type="error" message="{!$Label.c.User_Not_Authorized}" title="User Not Authorized" />
+        </aura:if>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open overriden-modal">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Cancellation Request Details</h2>
+                    <!--p class="slds-m-top_x-small">{!$Label.c.Cancel_Reason_MAC_Statement}</p-->
+                </header>
+                <div style="background:white" class="slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:recordEditForm onload="{!c.showRequiredFields}"
+                                              aura:id="editForm"
+                                              recordId="{!v.opportunityId}"
+                                              objectApiName="Opportunity"
+                                              onsuccess="{!c.onSuccess}"
+                                              onerror="{!c.onError}">
+                        <!--lightning:messages /-->
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col ">
+                            	<div class="slds-truncate .slds-align_absolute-center ">Cancellation Requestor*  <lightning:helptext content="Select the contact who requested and to approve this order. Only contacts with a ‘Legal Lessee’ or ‘Full Authority’ role on this Account are available for selection."/>
+                                 </div>
+								<aura:if isTrue="{!v.loaded}">
+                               <!-- This component is added as Part of EDGE-> 63041 to Capture Contact Role for Opportunity--> 
+                                    <c:customContactRoleLookup objectAPIName="{!v.accountId}" selectedRecord="{!v.selectedLookUpRecord}" />
+                                </aura:if>
+                                <lightning:inputField fieldName="Competitor__c" />
+                         </div>
+                            <div class="slds-col">
+                                 <aura:if isTrue="{! v.showOnlyCancelNBN != true }">
+                                    <lightning:inputField class="customRequired none" aura:id="Input_Cancellation_Reason__c" fieldName="Cancellation_Reason__c" />
+                                <aura:set attribute="else">
+                                    <lightning:outputField fieldName="Cancellation_Reason__c" />
+                                </aura:set>
+                                </aura:if>
+                                <lightning:inputField fieldName="Details__c" />
+                            </div>
+                     </div>
+                    </lightning:recordEditForm>
+                </div>
+                <footer class="slds-modal__footer">
+                    <!--<lightning:button label="Cancel" iconName="utility:undo" iconPosition="left" onclick="{! c.onCancel }"/> -->
+                    <lightning:button aura:id="submit" label="{!$Label.c.MAC_Update}" iconPosition="left"  variant="brand" onclick="{! c.onSave }"/>
+               
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open overriden-backdrop"></div>
+    </div>
+</aura:component>

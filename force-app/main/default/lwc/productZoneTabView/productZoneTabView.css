@@ -1,0 +1,7 @@
+.customPadding{
+    padding: 0 var(--lwc-spacingSmall,.25rem);
+}
+
+:host { 
+    --sds-c-accordion-summary-color-background: var(--lwc-colorBackground,rgb(243, 242, 242)); 
+}

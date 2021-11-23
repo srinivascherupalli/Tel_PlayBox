@@ -1,0 +1,129 @@
+.THIS {
+}
+.THIS .data-row:hover {
+ background-color:#54698d;
+ color:white;
+ cursor:pointer;
+}
+.THIS .data-row.selectedRow{
+  background-color:#54698d;
+  color:white;
+ }
+.THIS .left-content {
+    padding: 10px 20px;
+    position: relative;    
+    border-top: 1px solid #ddd;
+}
+.THIS .blue-bg {
+    background: #e7f5fe;
+}
+.THIS .theClass {
+    background: #e7f5fe;
+}
+.THIS .display-width {
+    display: inline-block;
+    width: 100%;
+}
+.THIS .left-content-top {
+    position: relative;
+    padding-left: 40px;
+}
+.THIS .left-content:hover{
+    cursor:pointer;
+}
+.THIS .down-arrow {
+    position: absolute;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 20px;
+    color: #aaa;
+    padding-top: 1px;
+}
+.THIS .right-arrow {
+    position: absolute;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 20px;
+    color: #aaa;
+    padding-left: 1px;
+}
+.THIS .top-right > p {
+    margin: 0 0 5px;
+}
+.THIS .blue-text {
+    color: rgb(0, 109, 204);
+}
+.THIS .p-right-name {
+    padding: 0 0 0 28px;
+}
+.THIS .p-right-address {
+    padding: 0 0 0 15px;
+}
+.THIS .p-right-order {
+    padding: 0 0 0 23px;
+}
+.THIS .blue-bg::after {
+    display: none;
+    content: "";
+    position: absolute;
+    border-left: 14px solid #e7f5fe;
+    border-right: 14px solid transparent;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+    right: -29px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 10px;
+}
+.THIS .blue-bg::before {
+     display: none;
+    content: "";
+    position: absolute;
+    border-left: 17px solid #ddd;
+    border-right: 17px solid transparent;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    right: -35px;
+    height: 10px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+.THIS .slds-icon
+{
+    width: 15px;
+    height: 15px;
+}
+.THIS .float-width{
+    float: left;
+    width: 100%;
+}
+.THIS .white-bg {
+    background: #fff;
+}
+.THIS .table-heading, .THIS .table-list-data {
+    border-bottom: 1px solid #ddd;
+    padding: 5px 0;
+}
+.THIS .left-padding
+{
+    padding-right: 5%;
+    padding-left: 5%;
+}
+.THIS .display-none
+{
+    display: none;
+}

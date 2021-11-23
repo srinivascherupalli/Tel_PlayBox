@@ -1,0 +1,31 @@
+.applyBGColor.THIS {
+    background-color: White;
+}
+
+.THIS.applyBGColor {
+    background-color: White;
+}
+
+.descritionHeight.THIS {
+    height:113px;
+}
+
+.backgroundInverse.THIS {
+    background-color:#16325c;
+}
+.THIS.slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+}
+
+.THIS .slds-input[disabled]
+{
+    cursor: auto !important;
+}
+.THIS .slds-textarea[disabled]
+{
+    cursor: auto !important;
+}
+.THIS .iconColor {
+    color:Red;
+}

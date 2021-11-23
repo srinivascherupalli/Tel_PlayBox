@@ -1,0 +1,26 @@
+<!--Created By :  Kamlesh Kumar-->
+<!--EDGE : 189844 This is reusable progressbar indicator-->
+<template>
+        <div class="slds-p-horizontal_medium">
+            <div class="slds-progress slds-progress_vertical">
+            <ol class="slds-progress__list">
+                <template for:each={lstopp} for:item="acc">  
+            <li class="slds-progress__item slds-is-completed" key={acc.Id}>
+            <span class="slds-icon_container slds-icon-utility-success slds-progress__marker slds-progress__marker_icon" title="Complete">
+                   <!--<div class="slds-progress__marker"></div> -->
+                   <lightning-icon icon-name="utility:success" alternative-text="Success!" variant="success"
+title="success variant xx-small" size="xx-small"></lightning-icon>
+                <span class="slds-assistive-text">Complete</span> 
+            </span> 
+            <!-- <lightning-icon icon-name="utility:success" alternative-text="Success!" variant="success"
+            title="success variant xx-small" size="xx-small"></lightning-icon> -->
+                <div class="slds-progress__item_content slds-grid slds-grid_align-spread">{acc.Name}</div>
+            </li>
+        </template>
+            </ol>
+            <div aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" role="progressbar">
+                <span class="slds-assistive-text">Progress: 25%</span>
+            </div>
+            </div>
+        </div> 
+</template>

@@ -1,0 +1,36 @@
+.THIS input[type=checkbox]:checked.green-checkbox{
+    border-color: rgb(0,178,0);
+    box-shadow: 0 0 3px #006A00;
+    background-color: rgb(0,178,0);
+}
+
+.THIS .customRadioCls .slds-form-element__control .slds-radio{
+    display : inline-block;
+}
+
+.THIS .customRadioCls .slds-form-element__control{
+    text-align: left;
+}
+.THIS.img-valign {
+  vertical-align: middle;
+  margin-bottom: 0.01em;
+}
+
+.THIS.textHeaderSize {
+  font-size: 44px;
+}
+.THIS.slds-modal__container{ 
+        margin: auto;
+        width: 100%!important;
+        max-width:75rem;
+        } 
+.THIS.slds-modal__footer{ 
+        margin: auto;
+        min-width: 85%; 
+        }
+.THIS.slds-backdrop_open{
+        opacity:0!important;
+        }
+.THIS.slds-modal__content{
+        heigh:100%;
+}

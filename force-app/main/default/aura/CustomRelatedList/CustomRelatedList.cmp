@@ -1,0 +1,74 @@
+<!--
+****************************************************************************
+@Name: CustomRelatedList
+@Author: Sri Chittoori(Team SFO)
+@CreateDate: 29/05/2019
+@Description: Sprint 19.07 , EDGE-85148 :: This component is to display the ACR record
+*******************************************************************************
+-->
+<aura:component>
+    <aura:attribute name="acr" type="AccountContactRelation"/>   
+    <aura:attribute name="viewVerfRecom" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="Id"/>    
+    
+    <lightning:recordViewForm aura:id="viewForm" recordId="{!v.acr.Id}" objectApiName="AccountContactRelation">
+        <div class=" slds-media">
+            <div class="slds-media__body">
+                <lightning:layout class="slds-hint-parent" >
+                    <lightning:icon iconName="standard:account" size="small"/>
+                    <a onclick="{!c.navToRecord}">
+                        <h3 class="slds-text-heading_small slds-m-bottom_xx-small"> &nbsp;{!v.acr.Account_Name__c}  </h3>
+                    </a>
+                    <br/>
+                </lightning:layout>
+                <lightning:layout  verticalAlign="center" >
+                    <lightning:layoutItem>
+                        <table>
+                            <tr>
+                                <td>Strategic NPS Contact</td>
+                                <td>&ensp; : &ensp;</td>
+                                <td>
+                                    <aura:if isTrue="{!(v.acr.CVA_Contact_Customer_Value_Analysis__c)}">Yes</aura:if>
+                                    <aura:if isTrue="{!not(v.acr.CVA_Contact_Customer_Value_Analysis__c)}">No</aura:if>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Job Title</td>
+                                <td>&ensp; : &ensp;</td>
+                                <td>{!v.acr.Job_Title__c}</td>
+                            </tr>
+                            <tr>
+                                <td>Roles</td>
+                                <td>&ensp; : &ensp;</td>
+                                <td>{!v.acr.Roles}</td>
+                            </tr>
+                            <tr class="slds-hide">
+                                <td>Relationship Verified Date</td>
+                                <td>&ensp; : &ensp;</td>
+                                <td>{!v.acr.Relationship_Verified_Date__c}</td>
+                                <td><lightning:outputField fieldName="Relationship_Verified_Date__c" /></td>
+                            </tr>
+                            <tr>
+                                <td>Relationship Verified Date</td>
+                                <td>&ensp; : &ensp;</td>
+                                <td>
+                                    <lightning:formattedDateTime value="{!v.acr.Relationship_Verified_Date__c}" year="numeric" month="2-digit" day="2-digit" />
+                                </td>
+                            </tr>
+                            <aura:if isTrue="{!v.viewVerfRecom}">
+                            <tr>
+                                <td>Verification Recommended</td>
+                                <td>&ensp; : &ensp;</td>
+                                <td>
+                                    <aura:if isTrue="{!(v.acr.Verification_Recommended)}">Yes</aura:if>
+                                    <aura:if isTrue="{!not(v.acr.Verification_Recommended)}">No</aura:if>
+                                </td>
+                            </tr>
+                            </aura:if>
+                        </table>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+        </div>                            
+    </lightning:recordViewForm>
+</aura:component>

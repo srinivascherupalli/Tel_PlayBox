@@ -1,0 +1,596 @@
+<!-- 
+EDGE-92010
+Name: InvoiceCmp
+Description: Display Invoice details data for given BIlling account and Invoice Number on Invoice Tab of Billing account Page    
+Author:Manjunath Ediga
+======================================================================
+No.  Developer				Story(Sprint)			Description
+1.	 Aman Soni				EDGE-207867(21.06) 		Allow User to add line items to an existing active query/case ID to keep all details of the same query together and correct any missing info.
+2.   Aman Soni              EDGE-207869(21.08)      As a billing user, I need to be able to view the unique identifiers and a sub-total of selected line items when I am raising a billing dispute via Phoenix, so that I can easily determine that I haven't missed a selection
+3.	 Akanksha Jain			EDGE-215753				Added attribs and child LWC
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                controller="InvoiceCmpHandler" access="global">    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global"/>   
+    <aura:attribute name="recordId" type="string" />
+    <aura:attribute name="bcnid" type="String" />  
+    <aura:attribute name="billingAccountId" type="string" />
+    <aura:attribute name="invoiceNumber" type="string" />    
+    <aura:attribute name="invoiceColumn" type ="List"/>
+    <aura:attribute name="invLineItemColoumn" type ="List"/>
+    <!--Pagination attributes START-->
+    <aura:attribute name="paginationList" type="list"/> 
+    <aura:attribute name="CurrentPage" type="integer" default="1"/>
+    <aura:attribute name="selectedCount" type="integer" default="0" description="selected Records Count"/>
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecordsCount" type="Integer"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <!-- <aura:attribute name="currentPage" type="integer" default="1"/>-->
+    <aura:attribute name="paginationMapInt" type="Map" default="{}"/>
+    <aura:attribute name="childPaginationMap" type="Map" default="{}"/>
+    <aura:attribute name="totalPagesCount" type="integer"/>
+    <aura:attribute name="noRowsSelected" type = "Boolean" default="false" />
+	<!--Pagination attributes END-->
+    <aura:attribute name="dispList" type="List" />
+    <aura:attribute name="errorMessage" type="string"/>
+    <aura:attribute name="IsError" type="Boolean"  default="False"/>
+    <aura:attribute name="IsPageLoad" type="Boolean"  default="true"/>
+    <!--aura:registerEvent name="paginationEvent" type="c:paginationEvent"/-->
+    <!-- <aura:handler event="c:paginationEvent" action="{!c.changeData}"/> -->
+    <aura:handler name="UsageInvoice" event="c:UsageSummaryEvent" action="{!c.getUsageSummary}"/>   
+    <aura:attribute name="UsageList" type="List" default="[]"/>
+    <aura:attribute name="ChargeIdMap" type="Map" default="{}"/>
+    <aura:attribute name="mapKey" type="String" />
+    <aura:attribute name="chargeId" type="String" /><!--EDGE-215753-->
+    <aura:attribute name="selectedRowss" type="List" default="[]"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <div aura:id="container" /><!--Added for EDGE-207869 by Aman Soni-->
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <!--code refactoring-->
+    <aura:attribute name="invoiceDetails" type="List" />
+    <aura:attribute name="ServiceSummary" type="Object" />
+    <aura:attribute name="listOfOffers" type="List" />      
+    <aura:attribute name="SelectedRecord" type="String[]"/>  
+    <aura:attribute name="dataTableReturnVal" type="List" />
+    <aura:attribute name="invoiceMapping" type="Map" />
+    <aura:attribute name="isInvoiceLineItem" type="Boolean" default = "false" />
+    <aura:attribute name="invoiceLineItemId" type="String" default = "null" />
+    <aura:attribute name="rowIdToRowMap" type="Map" default="{}"/>
+    <aura:attribute name="invoiceMapDetails" type="Map" default="{}"/>
+    <aura:attribute name="UsagesummaryList" type="List" />
+    <aura:attribute name="columns5" type="List"/>
+    <!--Case Creation-->
+    <aura:attribute name="billingAccId" type="String" />
+    <aura:attribute name="invoiceList" type="String[]" />
+    <aura:attribute name="invoiceMap" type="Map" default="{}"/>
+    <aura:attribute name="hideButton" type="Boolean" default="true"/>
+    <aura:attribute name="newCaseObject" type="Case" default="{'sobjectType': 'Case','Priority': 'Medium','Status': 'New','Origin': 'Assurance Service Agent','Billing_Account__c':'','Line_Item_Category__c': 'Enquire about a billed charge','salesup_Support_Type__c':'Billing Support','srvsup_Categories__c':'Billing'}"/>   
+    <aura:attribute name="newCase" type="Case"/>
+    <aura:attribute name="responseInvObj" type="String" />
+    <aura:attribute name="queryLineItem" type="List" />
+    <aura:attribute name="contacteMail" type="String"/>
+    <aura:attribute name="selectedRows" type="List"/>
+    <aura:attribute name="checkedRows" type="List"/>
+    <aura:attribute name="checkRows" type="List"/>
+    <aura:attribute name="rcChargeIds" type="List"/>
+    <aura:attribute name="returnMap" type="Map" default="{}"/>
+    <aura:attribute name="caseInputMap" type="Map" default="{}"/>
+    <aura:attribute name="CheckFields" type="Boolean" />  
+    <aura:attribute name="errors" type="String" />
+    <aura:attribute name="ContactEmailId" type="String" />
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>    
+    <!-- EDGE-157962 - Component start-->
+    <aura:attribute name="isOpenPreview" type="boolean" default="false"/>	
+    <aura:attribute name="isOpenreview" type="boolean" default="false"/>
+    <aura:attribute name="selectedRecInvoice" type="List"/>	
+    <aura:attribute name="SelectedinvoiceMapDetails" type="Map" default="{}"/>	
+    <aura:attribute name="finalListtoDispaly" type="List"/>	
+    <aura:attribute name="selectedInvoicerecord" type="string"/>	
+    <aura:attribute name="selectAllCheckboxKey" type="List"/>	
+    <aura:attribute name="selectAllCheckRow" type="List"/>	
+    <aura:attribute name="innertableSel" type="List"/>	
+    <aura:attribute name="customerAddress" type="string"/>     
+    <aura:attribute name="usageListdisplay" type="List"/>	
+    <aura:attribute name="nonUsageList" type="List"/>	
+    <aura:attribute name="usagetableDisply" type="boolean" default="true"/>	
+    <aura:attribute name="nonusageTabledisplay" type="boolean" default="true"/>	
+    <aura:attribute name="childTableData" type="List"/>
+    <aura:attribute name="parentPageMapData" type = "Map" default="{}"/><!--EGDGE-215753-->
+    <aura:attribute name="childPageMapDataRows" type = "Map"/><!--EGDGE-215753-->
+    <aura:attribute name="childPageMapData" type = "Map"/><!--EGDGE-215753-->
+    <aura:attribute name="mapOfRowsToChargeId" type = "Map"/><!--EGDGE-215753-->
+    <aura:attribute name="chargeIdFromLWC" type="String"/><!--EGDGE-215753-->
+    <aura:attribute name="badgeValue" type = "String"/><!--EGDGE-215753-->
+    <aura:attribute name="chargeType" type = "String"/><!--EGDGE-215753-->
+    <!-- EDGE-157962 - Component End-->   
+    <!--LDS Pagination Buttons-->
+    <aura:attribute name="deviceModel" type="List" />
+    <aura:attribute name="columns" type="Integer" />
+    <aura:attribute name="TotalPages" type="Integer" default="1" />
+    <aura:attribute type="string" name="componentName" default="InvoiceCmp" />
+    <aura:registerEvent name="paginationEvent" type="c:paginationEvent" />
+    <aura:handler event="c:paginationEvent" action="{!c.changeData}" />   
+    <!-- EDGE-133408 - Component start-->
+    <aura:attribute name="QLIMap" type="Map" default="{}"/>
+ 	<!-- EDGE-133408 - Component End-->
+    <!-- EDGE-139436 - Component Start sending isSelectAll attribute to Usage component to notify primary checkbox selected
+    Summary Key to keep track of map of current page and selcted Chargeid's-->
+    <aura:attribute name="isSelectAll" type="Boolean" default="false"/>
+    <aura:attribute name="summaryKey" type="Map" default="{}"/>
+    <aura:attribute name="isPagination" type="Boolean" default="false"/>
+	<aura:attribute name="disableCaseButton" type="Boolean" default="true"/>	
+    <!-- EDGE-139436 - Component End-->
+    <!-- EDGE-141682 - Component Start-->
+   <aura:attribute name="usageTypeCode" type="String" description="Type code for which usage details are fetched."/>
+   <aura:attribute name="usageTypecodeMap" type="Map" default="{}" description="Map of parent chargeID with usageTypeCode from Invoice callout"/>
+   <aura:attribute name="usageType" type="String" description="Usage type code required to get corresponding Usage labels from meta Data" />
+    <aura:attribute name="drillDownEndPoint" type="String" description="This holds the value of charge type which user is selecting to open drilldown " /><!--EDGE-215753-->
+    <aura:attribute name="offerName" type="String" description=" " /><!--EDGE-215753-->
+    <aura:attribute name="badgeCount" type="String" default="9" /><!--EDGE-215753-->
+    <aura:attribute name="showBadge" type="Boolean" default="false" /><!--EDGE-215753-->
+    <aura:attribute name="reviewTableData" type="List" default="" /><!--EDGE-215753-->
+    <aura:attribute name="enableDrilldown" type="Boolean" default="false"/><!--EDGE-215753-->
+    <aura:attribute name="badgeBody" type="string" default=""/><!--EDGE-215753-->
+    <aura:attribute name="invoiceTransactionIdLWC" type="List" default=""/><!--EDGE-215753-->
+    <aura:attribute name="isPartner" type="Boolean"/>
+    <!-- EDGE-141682 - Component End-->
+
+    <!--Added for EDGE-207869 by Aman Soni || Start-->
+    <aura:attribute name="SharedDisplayMessageCS" type="List" default="{}" />
+    <aura:attribute name="isUsage" type = "Boolean" default="false" />
+    <aura:attribute name="totalQueriedExc" type="Decimal" default="0.00" />
+    <aura:attribute name="totalQueriedInc" type="Decimal" default="0.00" />
+    <aura:attribute name="totalQueriedUsgExc" type="Decimal" default="0.00" />
+    <aura:attribute name="totalQueriedUsgInc" type="Decimal" default="0.00" />
+    <aura:attribute name="prevInvoiceDetails" type="List" />
+    <aura:attribute name="existCaseId" type="String" />
+    <aura:handler name="myEvent" event="c:selectedCaseEvent" action="{!c.GetExistQlIAgainstCaseAndInvoiceCntrl}" />
+    <!--Added for EDGE-207869 by Aman Soni || End-->
+
+    <!--Added for EDGE-207867 by Aman Soni || Start-->
+    <aura:attribute name="caseOptions" type="List" default="[
+    {'label': 'Create New Case', 'value': 'Create New Case'},
+    {'label': 'Add to Existing Case', 'value': 'Add to Existing Case'}
+    ]"/>
+    <aura:attribute name="caseValues" type="String" default=""/>
+    <!-- Added for EDGE-207867 by Aman Soni || End-->
+
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <div>
+            <lightning:spinner class="spin" aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.IsError}">
+        <ui:message title="Error" severity="error" closable="true">
+            {!v.errorMessage}
+        </ui:message>
+    </aura:if>
+    
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-3">
+            <div class="slds-grid slds-float_left">
+                <div class="slds-col">
+                    <div class="row slds-text-align_left slds-float_left" style="padding:20px;width:200px">
+                        <span class = "" > Invoice Number </span>
+                            
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <div class="slds-col slds-text-align_left slds-float_left" style="width:250px" >
+                         <lightning:select name="selectInvoice" aura:id="InvoiceId">
+                            <option value="">Select</option>
+                            <aura:iteration items="{!v.invoiceList}" var="option">
+                                <option text="{!option}" />
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </div>
+                <div class="slds-col slds-float_left slds-size_1-of-3"> <div class="slds-col slds-text-align_left" style="padding:20px;width:250px">
+                    <button
+                            class="slds-button slds-float_left slds-button_brand"
+                            onclick="{!c.getInvoiceNum}"
+                            label="Verify"
+                            >Confirm</button>
+                    </div></div>
+            </div>
+        </div>
+    </div>
+
+    <!--Added for EDGE-207867 by Aman Soni || Start-->
+    <aura:if isTrue="{!v.IsPageLoad}">
+        <lightning:radioGroup 
+        name="casesInRadioGroups"
+        options="{! v.caseOptions}"
+        value="{! v.caseValues}"
+        type="radio"
+        class="customRadioCls"
+        onchange="{!c.clearOnRadioButtonChange}"/>
+    
+        <aura:if isTrue="{!v.caseValues == 'Add to Existing Case'}">
+            <div style="width: 40%;"> 
+                <c:DynamicLookupComponent 
+                selectedRecord="{!v.selectedLookUpRecord}"
+                objectAPIName="Case"
+                inputId= "{!v.billingAccountId}"
+                source='InvoiceCmp'/> 
+            </div>
+        </aura:if>
+    </aura:if>
+    <!--Added for EDGE-207867 by Aman Soni || End-->
+
+    <!--EDGE-125609 Component start : check for correct email validation-->
+    <aura:if isTrue="{!(v.CheckFields)}">
+        <div class="slds-theme_error " style="height: 50px;">
+            <lightning:icon style="padding-top: 10px;  padding-left: 13px;" variant="Warning" iconName="utility:error" size="medium" alternativeText="Please review the errors on this page."/>&nbsp;&nbsp;Please review the errors on this page.
+        </div>
+    </aura:if>
+    
+ 
+	<!--EDGE-125609 Component End -->    
+    <div>
+        <aura:if isTrue="{!v.IsPageLoad}">
+            <aura:if isTrue="{!v.caseValues != ''}"><!--Added aura:if condition for EDGE-207867 by Aman Soni-->
+                <br/>
+                <h3 class="slds-section-title--divider">Enquiry Details</h3>
+                <br/>
+                <!--Start of EDGE-125609 Component start : Made fieds as required and added tool tip -->
+                
+                <div class="slds-grid slds-wrap">
+                     
+                    <div  class="slds-col--padded slds-size--1-of-2 slds-medium-size--1-of-6 slds-large-size--6-of-12">
+                        <abbr class="slds-required" title="required">*</abbr>
+                        <label class="slds-form-element__label" >Subject</label>
+                        <lightning:helptext  iconName="utility:info" content="Please enter a subject for the Case." />
+
+                        <!--Added aura:if/else condition for EDGE-207867 by Aman Soni || Start-->
+                        <aura:if isTrue="{!v.caseValues == 'Add to Existing Case'}">
+                            <lightning:input aura:id="field" disabled="true" label="Subject" variant="label-hidden"  iconName="utility:info" content="Please enter a subject for the Case."   value="{!v.selectedLookUpRecord.Subject}"   >Subject12 </lightning:input>
+                            <aura:set attribute="else">
+                                <lightning:input aura:id="field"  label="Subject" variant="label-hidden"  iconName="utility:info" content="Please enter a subject for the Case."   value="{!v.newCaseObject.Subject}"   >Subject12 </lightning:input>
+                            </aura:set>
+                        </aura:if>
+                        <!--Added aura:if/else condition for EDGE-207867 by Aman Soni || End-->
+
+                        <p><lightning:formattedText aura:id="noSubject" class="error-text" value="Complete this field" /></p>
+                    </div>
+                   <!--Start of EDGE -127943 : Invoking Dynamic component Verify Contact to fetch the Contact list based on billing account -->
+                    <div class="slds-col--padded slds-size--1-of-2 slds-medium-size--1-of-6 slds-large-size--6-of-12">
+                        <!--API name of Name and Email is passed to the reusable component VerifyContact.-->
+
+                        <!--Added aura:if/else condition for EDGE-207867 by Aman Soni || Start-->
+                        <aura:if isTrue="{!v.caseValues == 'Add to Existing Case'}">
+                            <lightning:input aura:id="field" disabled="true" label="Raised by"  value="{!v.selectedLookUpRecord.Contact.Name}" required = "true" fieldLevelHelp="Please provide a valid value"/>
+                            <aura:set attribute="else">
+                                <c:DynamicLookupComponent selectedRecord="{!v.selectedLookUpRecord}" IconName="standard:contact" objectAPIName="Contact" label="Raised by" inputId= "{!v.billingAccountId}" primaryField="Name" secondaryField="Email" IsMandatory ="true" helpText ="Please select a valid value" source='InvoiceCmp'/>
+                            </aura:set>
+                        </aura:if>
+                        <!--Added aura:if/else condition for EDGE-207867 by Aman Soni || End-->
+                       
+                        <p><lightning:formattedText aura:id="noemailTest" class="error-text" value="Complete this field" /></p>
+                    </div>
+                    <!--End of EDGE -127943 -->
+                    <div  class="slds-col--padded slds-size--1-of-1" >
+                        <abbr class="slds-required" title="required">*</abbr>
+                        <label class="slds-form-element__label" >Description</label>
+                        <lightning:helptext iconName="utility:info" content="Please provide a brief description of the scope of this request." />
+
+                        <!--Added aura:if/else condition for EDGE-207867 by Aman Soni || Start-->
+                        <aura:if isTrue="{!v.caseValues == 'Add to Existing Case'}">
+                            <lightning:input aura:id="field" disabled="true" variant="label-hidden" label="Description"  value="{!v.selectedLookUpRecord.Description}"  messageWhenValueMissing="Complete this field" />
+                            <aura:set attribute="else">
+                                <lightning:input aura:id="field" variant="label-hidden" label="Description"  value="{!v.newCaseObject.Description}"  messageWhenValueMissing="Complete this field" />
+                            </aura:set>
+                        </aura:if>
+                        <!--Added aura:if/else condition for EDGE-207867 by Aman Soni || End-->
+
+                        <p><lightning:formattedText aura:id="noDescription" class="error-text" value="Complete this field" /></p>
+                    </div>
+                       
+                    <!--End of EDGE-125609--> 
+                </div>
+            </aura:if><!--Added aura:if condition for EDGE-207867 by Aman Soni-->
+               
+            <br/> 
+            <h3 class="slds-section-title--divider">Invoice Section </h3>
+            <br/>    
+            <div class="slds-col ">
+                <div aura:id="Adjustmentdiv" class="margin10" >
+                    <lightning:datatable
+                                         columns="{!v.invoiceColumn}"
+                                         data="{!v.invoiceDetails}"
+                                         keyField="invoiceNum"          
+                                         hideCheckboxColumn="true" 
+                                         onsort="{!c.updateColumnSorting}"
+                                         sortedBy="{!v.sortedBy}"  
+                                         sortedDirection="{!v.sortedDirection}"
+                                         />
+                    <br/>
+                </div>
+            </div>
+            <!--c:UsageSummary invoiceLineItemId = "{!v.invoiceLineItemId}" invoiceMapping="{!v.invoiceMapping}" planListLong="{!v.planListLong}"  isInvoiceLineItem ="{!v.isInvoiceLineItem}" /--> 
+            <br/>
+            <h3 class="slds-section-title--divider">New Charges</h3>
+            <br/>
+            <c:paginationCmp
+      PageSize="{!v.pageSize}"
+      data="{!v.deviceModel}"
+      columns="{!v.columns}"
+      TotalPages="{!v.TotalPages}"
+      componentName ="{!v.componentName}"
+    />
+             <!--  Pagination Buttons Start -->
+       <!--     <div class="slds-align_absolute-center">         
+                <lightning:button label="Previous"
+                                  disabled="{!v.startPage == 0}"  
+                                  onclick="{!c.navigation}"
+                                  variant="brand"
+                                  iconName="utility:back"
+                                  name="previous"/>
+                
+                <span class="slds-badge slds-badge_lightest"
+                      style="margin-right: 10px;margin-left: 10px;">
+                    Page {!v.currentPage} out of {!v.totalPagesCount}
+                </span>
+                
+                <lightning:button label="Next"
+                                  disabled="{!(v.endPage + 1) >= v.totalRecordsCount}" 
+                                  onclick="{!c.navigation}"
+                                  variant="brand"
+                                  iconName="utility:forward"
+                                  iconPosition="right"
+                                  name="next"/>
+                </div> -->
+            <!--  Pagination Buttons End --> 
+            <div aura:id="Adjustmentdiv1" class="margin10" >
+                <div class="slds-scrollable_x" style="width:2000px" > 
+                    <aura:if isTrue="{!v.isOpen}">  
+                        <!--###### MODAL BOX Start######--> 
+                        <aura:if isTrue="{!v.chargeType == 'UsageCharge'}">
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+                            <div class="slds-modal__container">
+                                <!-- ###### MODAL BOX HEADER Start ######-->
+                                
+                                <header class="slds-modal__header">
+                                    <lightning:buttonIcon iconName="utility:close"
+                                                          onclick="{! c.closeModel }"
+                                                          alternativeText="close"
+                                                          variant="bare-inverse"
+                                                          class="slds-modal__close"/>
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Usage Summary Details</h2>
+                                </header>
+                                <!--###### MODAL BOX BODY Part Start######-->
+                                <!-- -->
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <c:UsageSummary invoiceLineItemId = "{!v.invoiceLineItemId}"
+                                                    invoiceMapping="{!v.invoiceMapDetails}"
+                                                    isInvoiceLineItem ="{!v.isInvoiceLineItem}"
+                                                    ChargeIdMap="{!v.ChargeIdMap}"
+                                                    mapKey="{!v.mapKey}"
+                                                    selReords ="{!v.selectedRowss}"
+                                                    childPaginationMap = "{!v.childPaginationMap}"
+                                                    isSelectAll="{!v.isSelectAll}"
+                                                    usageTypeCode="{!v.usageTypeCode}"
+                                                    usageType="{!v.usageType}"
+                                                   /> 
+                                </div>
+                                <!--###### MODAL BOX FOOTER Part Start ######-->
+                            </div>
+                        </section>
+                                <aura:set attribute="else">
+                                     <c:invoiceDrillDownSummary drillDownEndPoint ="{!v.drillDownEndPoint}" 
+                                                           chargeId="{!v.chargeId}"
+                                                           invoiceNumber= "{!v.invoiceNumber}"
+                                                           offerName ="{!v.offerName}"
+                                                           chargeDescription ="{!v.usageType}"
+                                                           billingAccId = "{!v.billingAccountId}"
+                                                           previousSelectedRows ="{!v.childPageMapData}"
+                                                           previousSelectedRowData="{!v.childPageMapDataRows}"
+                                                           mapOfRowsToChargeId="{!v.mapOfRowsToChargeId}"
+                                                           onclosePopup ="{!c.closeModel}"
+                                                           onnavToInvoice ="{!c.setValueForReviewTable}"/>
+                        </aura:set>
+                        </aura:if>
+                    
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                        <!--###### MODAL BOX Part END Here ######-->
+                    </aura:if>
+                    <!-- Modelpopup to reviewselected Records-->	
+                    <!-- Edge-157962 Starts here--> 
+						<aura:html tag="style">	
+                        .cuf-content {	
+                        padding: 0 0rem !important;	
+                        }	
+                        .slds-p-around--medium {	
+                        padding: 0rem !important;	
+                        }       	
+                        .slds-modal__content{	
+                        overflow-y:hidden !important;	
+                        height:unset !important;	
+                        max-height:unset !important;	
+                        }	
+                    </aura:html>					
+               <div aura:id="Adjustmentdiv1" class="margin10" >	
+                        <div style="width:2000px;">	
+                            <aura:if isTrue="{!v.isOpenreview}">  		
+                                <!--###### MODAL BOX Start######--> 		
+                                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">		
+                                    <div class="slds-modal__container" style="width: 75%;">		
+                                        <!-- ###### MODAL BOX HEADER Start ######-->		
+                                        <header class="slds-modal__header">		
+                                            <lightning:buttonIcon iconName="utility:close"		
+                                                                  onclick="{! c.closeModelnew }"		
+                                                                  alternativeText="close"		
+                                                                  variant="bare-inverse"		
+                                                                  class="slds-modal__close"/>		
+                                            	
+                                            <h2 style="text-align:left; " class="slds-m-left--large slds-text-heading_small "  ><b style="padding-right: 5%;">Invoice Number</b> {!v.selectedInvoicerecord}</h2>		
+                                            <br/>		
+                                            <h2 style="text-align:left; " class="slds-m-left--large slds-text-heading_small " ><b style="padding-right: 6%;">Billing Address</b> {!v.customerAddress}</h2>		
+                                            <br/>		
+                                            	
+                                        </header>		
+                                        <div style="overflow-x:auto;" >	
+                                            <!--###### MODAL BOX BODY Part Start######-->		
+                                            <div style="width:100%;overflow-x:auto;" class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">		
+                                                <aura:if isTrue="{!not(empty(v.finalListtoDispaly))}">
+                                                <table class="slds-table slds-table--bordered slds-table--cell-buffer">		
+                                                    <thead>		
+                                                        <tr class="slds-table slds-table--bordered slds-table--cell-buffer" >		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Offer Name">Offer Name</div>		
+                                                            </th>
+                                                            <!--Added by Aman Soni for EDGE-207869 || Start-->
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Unique ID">Unique ID</div>		
+                                                            </th>
+                                                            <!--Added by Aman Soni for EDGE-207869 || End-->		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Charge Type">Charge Type</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Charge Description">Charge Description</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Quantity">Quantity</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Excluding GST" style="text-align:right">Excluding GST</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Including GST" style="text-align:right">Including GST</div>		
+                                                            </th>		
+                                                        </tr>		
+                                                    </thead>		
+                                                    <tbody>		
+                                                        <aura:iteration items="{!v.finalListtoDispaly}" var="lstRec">		
+                                                            <tr>		
+                                                                <td>{!lstRec.offerName}</td>
+                                                                <td>{!lstRec.uniqueId}</td><!--Added by Aman Soni for EDGE-207869-->		
+                                                                <td>{!lstRec.chargeType}</td>		
+                                                                <td>{!lstRec.chargedescription}</td>		
+                                                                <td>{!lstRec.quantity}</td>		
+                                                                <td style="text-align:right">{!lstRec.excludingGSTcostFmtd}</td>	
+                                                                <td style="text-align:right">{!lstRec.includingGSTcostFmtd}</td>	
+                                                            </tr>	
+                                                        </aura:iteration>		
+                                                    </tbody>		
+                                                </table>
+                                                </aura:if>
+                                                
+                                                <br/>		
+                                                <!-- Table to display usage charge type data-->		
+                                                <aura:if isTrue="{!not(empty(v.childTableData))}">
+                                                <h2 style="text-align:left" class="slds-m-left--large slds-text-heading_small " ><b>Usage Summary</b></h2>		
+                                                
+                                                <table class="slds-table slds-table--bordered slds-table--cell-buffer">		
+                                                    <thead>		
+                                                        <tr class="slds-table slds-table--bordered slds-table--cell-buffer" style="background-color:yellowgreen;">		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Service Id">Service Id</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Date">Date</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Time">Time</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Quantity">Quantity</div>		
+                                                            </th>	
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Excluding GST" style="text-align:right">Excluding GST</div>		
+                                                            </th>		
+                                                            <th scope="col">		
+                                                                <div class="slds-truncate" title="Including GST" style="text-align:right">Including GST</div>		
+                                                            </th>		
+                                                            	
+                                                        </tr>		
+                                                    </thead>	
+                                                    <tbody>		
+                                                        <aura:iteration items="{!v.childTableData}" var="lstRec" >		
+                                                            <tr>		
+                                                                <td>{!lstRec.serviceNumber}</td>		
+                                                                <td>{!lstRec.date}</td>		
+                                                                <td>{!lstRec.time}</td>		
+                                                                <td>{!lstRec.quantityOfTopUps}</td>		
+                                                                <td style="text-align:right">{!lstRec.amountExGSTFmtd}</td>	
+                                                                <td style="text-align:right">{!lstRec.amountIncGSTFmtd}</td>		
+                                                            </tr>		
+                                                        </aura:iteration>		
+                                                    </tbody>	
+                                                </table>		
+                                                </aura:if>
+                                                <!--Added by Aman Soni for EDGE-207869 || Start-->
+                                                <div style="margin-top: 2%;margin-bottom: 1%;">
+                                                    <b style="margin-left: 60%;">Total Queried Amount</b> <b style="margin-left: 7%;">{!v.totalQueriedExc}</b> <b style="margin-left: 8.5%;">{!v.totalQueriedInc}</b> 
+                                                </div>
+                                                <!--Added by Aman Soni for EDGE-207869 || End-->	
+                                            </div>	
+                                        </div>	
+                                        	
+                                        <!--###### MODAL BOX FOOTER Part Start ######-->	
+                                        <footer class="slds-modal__footer">
+                                            <p align="left">† Includes GST-free items</p><!--EDGE-157960-->
+                                            <!--Added/Modified aura:if/else condition for EDGE-207867 by Aman Soni || Start-->
+                                            <aura:if isTrue="{!v.isPartner}">		
+                                                <lightning:button label="Create Case" class="{!if((v.disableCaseButton ==true &amp;&amp; v.hideButton==true),'slds-button slds-button_neutral slds-float_right','slds-button slds-button_brand slds-float_right')}" onclick="{!c.handleCaseCreation}"  disabled ="{!and(v.disableCaseButton, v.hideButton)}"/>		
+                                                <aura:set attribute="else">		
+                                                    <aura:if isTrue="{!v.caseValues == 'Add to Existing Case'}">
+                                                        <lightning:button label="Add to Existing Case" class="space-Button slds-button slds-float_right slds-button_brand space" onclick="{!c.handleCaseCreation}" />               	
+                                                        <lightning:button label="Close" class="space-Button slds-button slds-float_right space"  onclick="{! c.closeModelRev }"/>
+                                                        <aura:set attribute="else">
+                                                            <lightning:button label="Create Case" class="space-Button slds-button slds-float_right slds-button_brand space" onclick="{!c.handleCaseCreation}" />               	
+                                                            <lightning:button label="Close" class="space-Button slds-button slds-float_right space"  onclick="{! c.closeModelRev }"/>
+                                                        </aura:set>
+                                                    </aura:if>             												
+                                                </aura:set>		
+                                            </aura:if> 	
+                                            <!--Added/Modified aura:if/else condition for EDGE-207867 by Aman Soni || End-->	
+                                        </footer>	
+                                        <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/> 		
+                                    </div>		
+                                </section>		
+                                <div class="slds-backdrop slds-backdrop_open"></div>		
+                                <!--###### MODAL BOX Part END Here ######-->		
+                            </aura:if>		
+                        </div>	
+            </div> 		
+      <!-- Edge-157962 Ends here-->   
+
+                    
+                    <lightning:datatable class=" margin10 customBadgeClass" 
+                                         label="offername"
+                                         onchange="{!c.onChange}"
+                                         columns="{!v.invLineItemColoumn}"
+                                         data="{!v.paginationList}"
+                                         keyField="Chargeid"          
+                                         hideCheckboxColumn="false" 
+                                         onsort="{!c.updateColumnSorting}"
+                                         sortedBy="{!v.sortedBy}"  
+                                         sortedDirection="{!v.sortedDirection}"
+                                         minColumnWidth="110"
+                                         onrowaction="{!c.viewRecord}"
+                                         onrowselection="{!c.handleRowAction}"
+                                         selectedRows="{!v.checkedRows}"
+                              			 aura:id="invoiceTable"
+                                         />
+                    <br/>
+                </div>                
+            </div> 
+        </aura:if>                   
+    </div>
+     <aura:if isTrue="{!v.responseInvObj != null}">
+           <!-- <aura:if isTrue="{!v.isPartner}">
+               	 <lightning:button label="Create Case" class="{!if((v.disableCaseButton ==true &amp;&amp; v.hideButton==true),'slds-button slds-button_neutral slds-float_right','slds-button slds-button_brand slds-float_right')}" onclick="{!c.handleCaseCreation}"  disabled ="{!and(v.disableCaseButton, v.hideButton)}"/>
+               <aura:set attribute="else">
+                  <lightning:button label="Create Case" class="slds-button slds-float_right slds-button_brand" disabled ="{!and(v.disableCaseButton, v.hideButton)}" onclick="{!c.handleCaseCreation}" />
+              </aura:set>
+            </aura:if>-->
+         <p>† Includes GST-free items</p><!--EDGE-157960-->
+        <aura:if isTrue="{!v.caseValues != ''}"><!--Added aura:if condition for EDGE-207867 by Aman Soni-->
+            <lightning:button label="Review" class="{!if((v.disableCaseButton ==true &amp;&amp; v.hideButton==true),'slds-button slds-button_neutral slds-float_right','slds-button slds-button_brand slds-float_right')}" onclick="{!c.showReview}"  disabled ="{!and(v.disableCaseButton, v.hideButton)}"/>        <br/>
+        </aura:if>
+		
+    </aura:if>
+</aura:component>

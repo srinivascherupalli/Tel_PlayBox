@@ -1,0 +1,334 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId" access="global" controller="ContactController" >
+	
+<aura:attribute name="expenses" type="ContactObject.Contact[]"/>
+<aura:attribute name="clearflag" type="Boolean" default="false"/>   
+<aura:attribute name="errDivv" type="Boolean" default="true" />  
+<aura:attribute name="checkDate" type="Boolean" default="false" />     
+    
+    
+
+<aura:attribute name="newExpense" type="Contact"
+     default="{ 'sobjectType': 'Contact',
+                    'FirstName': '',
+                    'LastName': '',
+                    'Birthdate': '',
+                    'Email': '',
+              		'uuid':''		}"/>
+<aura:attribute name="view" type="String" />   
+<aura:attribute name="valueid" type="String" /> 
+<aura:attribute name="contactid" type="String" /> 
+<aura:attribute name="flag" type="Boolean" />     
+<aura:attribute name="message" type="String" />
+<aura:attribute name="next" type="boolean" />
+<aura:attribute name="prev" type="boolean" /> 
+<aura:attribute name="myBool" type="boolean"/>
+<aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+<aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>    
+    
+ 
+    <aura:if isTrue="{!v.message.length > 0 }">
+  <div class="slds-notify--toast">
+    <ui:outputText value="{!v.message}"/>   
+ 
+ </div> 
+    </aura:if>
+    <!-- PAGE HEADER -->
+    <div class="slds-page-header" role="banner">
+      <div class="slds-grid">
+        <div class="slds-col">
+          <p class="slds-text-heading--label">Contact Search</p>
+          
+        </div>
+      </div>
+    </div>
+    <!-- / PAGE HEADER -->
+
+    <!-- NEW EXPENSE FORM -->
+    <div class="slds-col slds-col--padded slds-p-top--large">
+
+      
+  <div aria-labelledby="newexpenseform">
+
+  <!-- BOXED AREA -->
+  <fieldset class="slds-box slds-theme--default slds-container--medium">
+
+    <legend id="newexpenseform" class="slds-text-heading--medium 
+      slds-p-vertical--medium">
+      Search Criteria
+    </legend>
+      <!--@EDGE-76 Part US Cancelled<b>Valid search combinations are First Name,Last Name and DOB or First name,Last Name,DOB and Email or Email only</b>-->
+
+    <form class="slds-form--inline">
+
+      <div class="slds-form-element">
+ 		<label class="slds-form-element__label" for="firstname">First Name</label>
+      	<div class="slds-form-element__control" style ="margin-left: 8px;" >
+          <ui:inputText aura:id="firstname" 
+                  class="slds-input"
+                  labelClass="slds-form-element__label"
+             	  value="" blur="{!c.validateStringfname}" />
+          </div>  
+     </div>
+	
+     <div class="slds-form-element">
+         	<label class="slds-form-element__label" style ="margin-left: 3px;" for="Lastname">Last Name</label>
+         <div class="slds-form-element__control" style ="margin-left: 18px;">    
+         <ui:inputText aura:id="Lastname" 
+                  class="slds-input"
+                  labelClass="slds-form-element__label"
+                  value="" blur="{!c.validateString}" />
+         </div>
+   	</div>
+
+      <div class="slds-form-element">
+        	<label class="slds-form-element__label" for="BirthDate">Date of Birth</label>
+          <div class="slds-form-element__control testlabel">  
+          <ui:inputDate aura:id="BirthDate"
+                  class="slds-input"
+                  labelClass="slds-form-element__label"
+                  value=""
+                  displayDatePicker="true" blur="{!c.formatDate}"/>
+          </div>
+          </div>
+      
+
+      <div class="slds-form-element">
+          <label class="slds-form-element__label" for="email">Email Address</label>
+          <div class="slds-form-element__control testlabel">  
+         <ui:inputText aura:id="email" 
+                  class="slds-input"
+                  labelClass="slds-form-element__label"
+                  value=""  blur="{!c.validateEmail}"/>
+          </div>
+		 </div>
+	
+     
+      <div class="buttontestclass">
+          <ui:button label="Search"
+              class="slds-button slds-button--brand"
+              press="{!c.tcmSearch}"/>
+          &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+       
+          <ui:button label="Clear"
+              class="slds-button slds-button--brand"
+              press="{!c.Clear}"/>
+      </div>
+<ui:spinner aura:id="spinner"/>
+    </form>
+  
+  </fieldset>
+
+
+</div>
+    </div>
+    
+    
+    
+        
+  
+        
+
+    
+    <!-- / NEW EXPENSE FORM -->
+    <!--<c:ContactSearchList expenses="{!v.expenses}"/> -->
+	<aura:if isTrue="{!(v.expenses.length > 0) &amp;&amp; (v.message!='This Contact cannot be found in TCM - Follow new Contact Creation process')  &amp;&amp; (v.errDivv!=false) &amp;&amp; (v.clearflag!=true)}">
+    <div class="slds-card slds-p-top--medium">
+        <header class="slds-card__header">
+            <h3 class="slds-text-heading--small">Contacts</h3>
+        </header>
+        
+        <div class="slds-grid slds-grid--align-left"> 
+         <button class="slds-button slds-button--brand" onclick="{!c.importContact}">Import Contact</button>
+        </div>
+        
+        <section class="slds-card__body">
+            
+            <aura:if isTrue="{!v.errDivv}" >
+            <div id="list" class="row">
+			<table class="slds-table slds-table--bordered slds-table--striped">
+			<thead>
+				<tr>
+                    <th style="width:3.25rem;" class="slds-text-align--right">
+                       <div class="slds-form-element">
+                          <div class="slds-form-element__control">
+                             <label class="slds-checkbox">
+                             
+                             </label>
+                          </div>
+                       </div>
+                    </th>
+					<th scope="col"><span class="slds-truncate">First Name</span></th>
+					<th scope="col"><span class="slds-truncate">Last Name</span></th>
+					<th scope="col"><span class="slds-truncate">Middle Name</span></th>
+					<th scope="col"><span class="slds-truncate">Contact Id</span></th>
+                    <aura:if isTrue="{!v.view.length > 0 }"><th scope="col"><span class="slds-truncate" >View</span></th></aura:if>
+				</tr>
+			</thead>
+			<tbody>
+				<aura:iteration items="{!v.expenses}" var="expense">
+					<tr>
+                        <td scope="row" class="slds-text-align--right" style="width:3.25rem;">
+                          <div class="slds-form-element">
+                             <div class="slds-form-element__control">
+                                <label class="slds-checkbox">
+                                  <!-- <ui:inputRadio text="{!expense}" aura:id="boxPack" value="{!v.myBool}" updateOn="keyup"/> -->
+                                 	 <ui:inputCheckbox text="{!expense}" aura:id="boxPack" value="" change="{!c.checkboxSelect}"/>
+                                    <span class="slds-checkbox--faux"></span>
+                                   <span class="slds-form-element__label text"></span>
+                                </label>
+                             </div>
+                          </div>
+                        </td>
+						<td scope="row"><div class="slds-truncate" title="{!expense.firstName}"><a>{!expense.firstName}</a></div></td>
+						<td scope="row"><div class="slds-truncate" title="{!expense.lastName}"><a>{!expense.lastName}</a></div></td>
+						
+                        <td scope="row"><div class="slds-truncate" title="{!expense.middleName}"><a>{!expense.middleName}</a></div></td>
+						
+                        <td scope="row"><div class="slds-truncate" title="{!expense.id}"><a>{!expense.id}</a></div></td>
+                        <aura:if isTrue="{!and(v.view.length > 0 , expense.id == v.contactid)}"><td scope="row"><div class="slds-truncate" title="{!expense.id}"> <a href="{!'/lightning/r/Contact/'+v.valueid+ '/view'}" target="_blank">View</a></div></td></aura:if>
+					</tr>
+				</aura:iteration>
+			</tbody>
+			</table>
+                
+              
+            </div>
+                 </aura:if>
+        </section>
+        
+         
+    </div>
+         <div class="slds-grid slds-grid--align-left"> 
+ <ui:button press="{!c.Next}" disabled="{!v.next}" label="Next" class="slds-button slds-button--brand">
+                           
+        </ui:button> 
+             <ui:button press="{!c.Previous}" disabled="{!v.prev}" label="Previous" class="slds-button slds-button--brand">
+                          
+        </ui:button>
+            
+      </div>
+        
+       &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+            
+          
+	</aura:if>
+</aura:component>

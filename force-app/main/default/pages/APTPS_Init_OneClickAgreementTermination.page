@@ -1,0 +1,27 @@
+<apex:page extensions="APTPS_OneClickAgrmtTerminationController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+   <apex:sectionHeader subtitle="{!agreementName}" ></apex:sectionHeader>
+   <h5> <b>The following schedule agreement will be terminated along with the Head Terms</b></h5>
+   <br/>
+    <apex:form >
+        <apex:pageBlock >           
+            <!-- In our table we are displaying the Agreement records    -->
+            <apex:pageBlockTable value="{!agreements}" var="a" id="table">               
+                <apex:column value="{!a.agreement.Apttus__FF_Agreement_Number__c}" />
+                <apex:column value="{!a.agreement.Name}" />
+                <apex:column value="{!a.relationship}" headerValue="Relationship" />
+                <apex:column value="{!a.agreement.Apttus__Status_Category__c}" />
+                <apex:column value="{!a.agreement.Apttus__Status__c}" />
+                <apex:column value="{!a.agreement.Apttus__Agreement_Category__c}" />
+                <apex:column value="{!a.agreement.APTPS_Agreement_Subcategory__c}" />
+               
+            </apex:pageBlockTable>
+            
+            <div id="outer" style="margin-top:20px;margin-bottom:20px;">
+                <div id="inner" style="margin-left:40%">
+            		<apex:commandButton value="Confirm Termination" action="{!confirmTermination}"  rerender="theMessages" status="status" ></apex:commandButton>
+                    <apex:commandButton value="Cancel" action="{!cancel}" rerender="theMessages" style="margin-left:2%"></apex:commandButton>
+            	</div>
+            </div>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

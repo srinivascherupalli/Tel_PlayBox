@@ -1,0 +1,690 @@
+<!--********************************************************************
+    EDGE        : 114351
+    Component   : DelegatedPricingLightningHome
+    Description : New custom screen to initiate DPR home Page
+    Author      : Deepak Kumar 
+ Last Modified By: Rishabh Dhamu
+    *********************************************************************--> 
+<aura:component implements="lightning:isUrlAddressable,force:lightningQuickAction,lightning:actionOverride,force:hasRecordId,force:hasSObjectName,force:appHostable,flexipage:availableForAllPageTypes" 
+                access="global" controller="DelegatedPricingController" >
+    <aura:attribute name="navigateToHome" type="Boolean" default="false" />
+    <aura:attribute type="String" name="OpportunityId"/>
+    <aura:attribute type="String" name="CaseOpportunityId"/>
+    <aura:attribute type="String" name="DPRId"/>
+    <aura:attribute type="Boolean" name="MarkasVariation" />
+    <aura:attribute type="Boolean" name="disableOthers" default="true" />
+    <aura:attribute type="Boolean" name="disableclone" default="true" />
+    <aura:attribute type="Boolean" name="disable" default="false" />
+    <aura:attribute type="Boolean" name="disableCancel" default="false" />
+    <aura:attribute type="Boolean" name="disableEnableSave" default="true" />
+    <aura:attribute type="Boolean" name="enableEscalate" default="true" />
+    <aura:attribute type="Boolean" name="closeDealApprovalRequest" default="true" />
+    <aura:attribute type="Opportunity" name="opportunityDetails"/>
+    <aura:attribute type="Delegated_Pricing_Request__c" name="DprName" default="{'sObjectType':'Delegated_Pricing_Request__c'}"/>
+    <aura:attribute type="Case" name="CreateNewCase" default="{'sObjectType':'Case'}"/>
+    <aura:attribute type="String" name="currentDelegation"/>
+    <aura:attribute type="String" name="currentLoggedInUser"/>
+    <aura:attribute type="String" name="DealApprover"/>
+    <aura:attribute type="String" name="IsPrimary"/>
+    <aura:attribute type="String" name="FinalDelOutcome"/>
+    <aura:attribute type="String" name="DealStatus"/> 
+     <aura:attribute type="String" name="OpportunityStage" />
+    <aura:attribute type="Delegated_Pricing_Request__c" name="FinalDealStatus"/> 
+    <aura:attribute type="User[]" name="DelOutcomeUser"/>
+    <aura:attribute type="String" name="updatedstatus"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <aura:attribute name="MarketableOffer" type="Marketable_Offer__c[]" />
+    <aura:attribute name="marketableofferId" type="string" />
+    <aura:attribute name="marketableofferRecordId" type="string" />
+    <aura:attribute name="ContractVariation" type="Boolean"/>
+    <aura:attribute name="ContractVariationConfirmation" type="Boolean"/>
+    <aura:attribute name="CheckBoxValue" type="boolean" default="false"/>
+    <aura:attribute name="openEscalateModal" type="boolean" default="false"/> 
+    <aura:attribute name="openCaseModal" type="boolean" default="false"/> 
+    <aura:attribute name="closeCaseModal" type="boolean" default="false"/> 
+    <aura:attribute name="cancel" type="boolean" default="false"/>
+    <aura:attribute name="delete" type="boolean" default="false"/>
+    <aura:attribute name="esclate" type="boolean" default="false"/>
+    <aura:attribute name="caseCheck" type="boolean" default="false"/>
+    <aura:attribute name="disableAssign" type="boolean" default="true"/>
+    <aura:attribute name="closeEsclate" type="boolean" default="false"/>
+    <aura:attribute name="DPROfferid" type="Account[]"/>
+    <aura:attribute name="DPROffer" type="id"/> <!-- added by badri -->
+    <aura:attribute name="editAccId" type="id"/>
+    <aura:attribute name="viewAccId" type="id"/>
+    <aura:attribute name="isEdit" type="boolean"/>
+    <aura:attribute name="isView" type="boolean"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute type="OpportunityContactRole" name="OpportunityContactRolesStatus"/>
+    <aura:attribute name="OpportunityContactRolesStatusModal" type="boolean" default="false"/>
+    <aura:attribute type="String" name="attachmentCount"/>
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="fieldName" type="String" />
+    <aura:attribute name="picklistValuesRequestType" type="Object" />
+    <aura:attribute name="picklistValuesCaseReason" type="Object" />
+    <aura:attribute type="String" name="caseRecordId"/>
+    <aura:attribute type="String" name="ContractJunctionID"/>
+    <aura:attribute type="Integer" name="Counter" default="0"/>
+    <aura:attribute type="boolean" name="toReload" default="false"/>
+    <aura:attribute type="boolean" name="SpinnerCheck" default="false"/>
+    <aura:attribute type="Boolean" name="disableEnableAcceptContract" default="true" />
+    <aura:attribute type="Boolean" name="disableEnableRejectContract" default="true" />
+    <aura:attribute type="boolean" name="CloneDelegatedPricingRequest" default="false"/> 
+    <aura:attribute type="boolean" name="CloneDelegatedPricingRequestInProgress" default="false"/>
+    <aura:attribute type="boolean" name="disableCloneButton" default="false"/>
+    <aura:attribute type="boolean" name="CloneDelegatedPricingRequestStart" default="false"/>
+    <aura:attribute type="boolean" name="CloneDelegatedPricingRequestFinish" default="false"/>
+    <aura:attribute type="boolean" name="dontAllowDPROnClosedOpportunity" default="false" />
+    <aura:attribute type="boolean" name="dontAllowDPROnSentForApproval" default="false" />
+    <aura:attribute type="boolean" name="dontAllowInitiateContract" default="false" />
+    <aura:attribute type="boolean" name="CloneDisable" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+  	<aura:handler name="init" value="{!this}" action="{!c.doOnLoad}"/>
+    <aura:handler name="navigateTo" event="c:NavigateToHomePageEvent" action="{!c.handleReturn}"/>
+    <lightning:buttonIcon iconName="utility:close" size="medium"   variant="bare" onclick="{! c.backToOpportunity }" alternativeText="close" class="slds-float_right" />
+    <lightning:navigation aura:id="navService"/>
+    <div class="slds-show" aura:id="HomePage">
+        <!--******************** EDGE:114351 | Section: Header | START |***********************-->
+        <div class="slds-box" style="background: #F2F3F3;">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2"></div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:buttonGroup class ="slds-float_right">
+                        <lightning:button  
+                                          onclick="{!c.saveDelegatedPricing}" 
+                                          disabled="{!v.disableEnableSave}" 
+                                          label="Save"/>&nbsp;
+                        <lightning:button 
+                                          disabled="{!v.CloneDisable}"
+                                          onclick="{!c.openCloneDelegatedPricing}"
+                                          label="Clone"/>&nbsp;
+                        <lightning:button 
+                                          disabled="{!v.enableEscalate}" 
+                                          onclick="{!c.pickEscalateApprover}" 
+                                          label="Escalate"/>&nbsp;
+                        <!--EDGE-123784-->
+                        <!--generate the pricing contract document after the deal has been approved-->
+                        <lightning:button 
+                                          disabled="{!v.enableInitiateContract}" 
+                                          onclick="{!c.pickInitiateContract}" 
+                                          label="Initiate Contract"/>&nbsp;
+                        
+                        <lightning:button  
+                                          onclick="{!c.getAcceptContract}" 
+                                          disabled="{!v.disableEnableAcceptContract}"
+                                          label="Accept Contract"/> &nbsp;
+                        
+                        <lightning:button  
+                                          onclick="{!c.getRejectContract}" 
+                                          disabled="{!v.disableEnableRejectContract}"
+                                          label="Reject Contract"/> &nbsp;
+                        
+                        <lightning:button 
+                                          disabled="{!v.disableCancel}" 
+                                          onclick="{!c.buttonActionCancel}" 
+                                          label="Cancel"/>
+                    </lightning:buttonGroup>
+                </div>
+            </div>
+        </div>
+        <!--*********************| EDGE:114351 | Section: Header | END |**************************-->
+        
+        
+        
+        <!--********************************************************************
+        EDGE        : 117700
+        Validation  : Cancel function
+        Description : I want to perform Cancel function on DPR screen as per wireframes.
+        Author      : Syeed Azhar Ali
+        *********************************************************************-->
+        <aura:if isTrue="{!v.cancel}"> 
+            <section role="dialog" tabindex="-1" aria-labelledby="Cancel-Modal" aria-modal="true" aria-describedby="Cancel-Modal-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <!--<lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeCancel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>-->
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Cancel Delegated Pricing Request</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p><b>Are you sure you want to Cancel?</b></p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                          label="No"
+                                          title="No" 
+                                          onclick="{!c.closeCancel}"/>
+                        <lightning:button variant="brand"
+                                          label="Yes"
+                                          title="Yes"
+                                          onclick="{!c.submitDetails}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+        <!--*********************| EDGE:117700 | Cancel function | END |**************************-->
+        
+        
+        <!--********************| EDGE:114351 | Section: General | START |***********************-->       
+        <div class="slds-box applyBGColor" style="background: white;">
+            <h3  style="background: #F2F3F3; font:SFFont;font-size:16px" >General</h3>
+            <br></br>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:input name="input1"  
+                                     label="Delegated Pricing Request Name"
+                                     disabled="true" 
+                                     value="{!v.DprName.Name}"/>
+                    <br></br>
+                    <!--<lightning:input name="input1" variant="label-hidden" label="Opportunity" value= "{!v.opportunityDetails.Name}" disabled="true"/>-->
+                    <a><lightning:input 
+                                        Class="" 
+                                        name="Opportunity Record" 
+                                        label="Opportunity" 
+                                        onclick="{!c.backToOpportunity}"
+                                        value= "{!v.DprName.Opportunity__r.Name}"
+                                        disabled ="true"/></a>
+                    <br></br>
+                    <!--<label class="slds-form-element__label slds-text-title_bold Desc" >Description</label>-->
+                    
+                    <lightning:textarea id="textarea-id-01"  
+                                        class="slds-textarea" 
+                                        label="Description" 
+                                        disabled="{!v.disable}" 
+                                        value="{!v.DprName.Description__c}" 
+                                        placeholder="Please enter Description" 
+                                        onchange="{!c.enableSaveButton}"></lightning:textarea>
+                    
+                    <br></br>
+                    <!--********************************************************************
+                    EDGE        : 114333
+                    Validation  : Mark as Contract Variation.
+                    Description : Marking the deal (DPR) variation to the existing deal.
+                    Author      : Syeed Azhar Ali.
+                    *********************************************************************--> 
+                    <label  >Mark as Contract Variation</label> 
+                    <lightning:input type="checkbox" 
+                                     name="FirstCheckBox" 
+                                     aura:id="checkbox" 
+                                     disabled="{!v.disable}"
+                                     onchange="{!c.onClickCheckBox}" 
+                                     checked="{!v.DprName.Mark_as_Variation__c}"/>
+                    <aura:if isTrue="{!v.ContractVariationConfirmation}"> 
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" 
+                                 class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <lightning:buttonIcon iconName="utility:close"
+                                                          onclick="{! c.closeContractConfirmation }"
+                                                          alternativeText="close"
+                                                          variant="bare-inverse"
+                                                          class="slds-modal__close"/>
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Contract variation box</h2>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <p><b>{!$Label.c.DPMarkAsVariation}</b></p>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <lightning:button variant="neutral"
+                                                      label="No"
+                                                      title="No" 
+                                                      onclick="{!c.closeContractConfirmation}"/>
+                                    <lightning:button variant="brand"
+                                                      label="Yes"
+                                                      title="Yes"
+                                                      onclick="{!c.ContractConfirmationSelected}"/>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </aura:if>
+                </div>               
+                <!--*********************| EDGE:114333 | Mark as Contract Variation | END |**************************-->
+                
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:input name="Delegated Pricing Request Stage" 
+                                     label="Delegated Pricing Request Status"  
+                                     value="{!v.DprName.Deal_Status__c}" 
+                                     disabled="true"/>
+                    <br></br>
+                    
+                    <lightning:input name="Customer"  
+                                     label="Customer" 
+                                     value= "{!v.DprName.Opportunity__r.Account.Name}" 
+                                     disabled="true"/>
+                    <br></br>
+                    
+                    <lightning:input name="Deal Total Value"  
+                                     label="Total Deal Value ($)" 
+                                     disabled="true" 
+                                     value="{!v.DprName.TotalContractValue__c}"/>
+                    <br></br>
+                    
+                    <lightning:input name="Parent Delegated Pricing Request"
+                                     messageWhenValueMissing="Parent Delegated Pricing request is mandatory." 
+                                     aura:id="DPRrequest" 
+                                     disabled="{!v.disable}"
+                                     label="Parent Delegated Pricing Request" 
+                                     value="{!v.DprName.Parent_DPR__c}"  
+                                     required="{!v.CheckBoxValue}"
+                                     onchange="{!c.enableSaveButton}"/>
+                </div>
+            </div>
+            <br></br>                     
+            <!--********************************************************************
+            EDGE        : 114462
+            Validation  : Pricing Method and Product Type Validation.
+            Description : Action and validation on 'Delegated Pricing Request' related object on opportunity tab
+            Author      : Deepak Kumar
+            *********************************************************************-->               
+            <div class="slds-hide" aura:id="DelegatedIncompatable">
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"  aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open" >
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <lightning:buttonIcon iconName="utility:close"
+                                                  onclick="{!c.backToOpportunity}"
+                                                  alternativeText="close"
+                                                  variant="bare-inverse"
+                                                  class="slds-modal__close"/>
+                            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate" >Delegated Pricing</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p>{!$Label.c.DPPricingMethodValidation}</p>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral" onclick="{! c.backToOpportunity }" >Back to Opportunity</button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div> 
+            
+            <div class="slds-hide" aura:id="DelegatedIncompatableNonMolular">
+                <section role="dialog"  tabindex="-1"  aria-labelledby="modal-heading-01"  aria-modal="true"  aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <lightning:buttonIcon iconName="utility:close"
+                                                  onclick="{! c.backToOpportunity }"
+                                                  alternativeText="close"
+                                                  variant="bare-inverse"
+                                                  class="slds-modal__close"/>
+                            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate" >Delegated Pricing</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <p>{!$Label.c.DPProductTypeValidation}</p>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral" onclick="{! c.backToOpportunity }" >Back to Opportunity</button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div>
+            <!--********************| EDGE:114462 | Section: Pricing Method and Product Type Validation | END |***********************-->
+            
+            <lightning:button class="slds-float_right" 
+                              
+                              label="Add Product"
+                              disabled="{!v.disable}" 
+                              title="Add Product" 
+                              onclick="{!c.SelectProductComponent}"/>
+            
+            <!--	<lightning:button class="slds-float_right" 
+                              variant="brand" 
+                              label="Test Product"
+                              title="Test Product" 
+                              onclick="{!c.TestProductComponent}"/> -->
+            <br></br>
+            <br></br>
+            <br></br>
+            <!--********************| EDGE:114351 | Section: General | END |***********************-->
+            
+            
+            <!--********************************************************************
+         EDGE        : 116099
+         Validation  : delete function
+         Description : I want to delete offer from the DPR screen
+         Author      : Deepak Kumar.
+       *********************************************************************-->
+            
+            <!--********************| EDGE:114351 | Section: Related Offers | START |***********************-->
+             <h3  style="background: #F2F3F3; font:SFFont; font-size:16px;"  >Related Offers</h3><br/>
+            <center>
+                <table>
+                    <tr style="font:SFFont; font-size:16px;" >
+                        <td>Offer Name</td>
+                       <td>Quantity</td>
+                        <td>Price ($)</td>
+                       <td>Action</td>
+                    </tr>
+                    <aura:iteration items="{!v.DPROfferid}"  var="acc">
+                        <tr>
+                            <td><div class="slds-truncate" title="Offer Name">
+                                <a href="javascript:void(0);" data-recId="{!acc.Id+'|'+acc.Name}" tabindex="-1" onclick="{!c.viewProductComponent}">{!acc.Name}</a>
+                                </div></td>
+                            <td>{!acc.DPR_Offer_Quantity__c}</td>
+                            <td>{!acc.Overridden_Total_Price__c}</td>
+                            <td>
+                                <lightning:buttonIcon disabled="{!v.disable}" 
+                                                      name="{!acc.Id+'|'+acc.Name}" 
+                                                      iconName="utility:edit" 
+                                                      variant="bare" 
+                                                      onclick="{!c.editProductComponent}"/>&nbsp;
+                                <lightning:buttonIcon disabled="{!v.disable}" 
+                                                      iconName="utility:delete" 
+                                                      variant="bare" iconClass="iconColor"
+                                                      onclick="{!c.delete}"/>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </table>
+            </center>
+            <aura:renderIf isTrue="{!v.isView}">
+                <force:recordView aura:id="view" recordId="{!v.viewAccId}"/>
+            </aura:renderIf>
+            <br></br>
+            <br></br>
+        </div>
+    </div>
+    <!--********************| EDGE:114351 | Section: Related Offers | END |***********************--> 
+    
+    <!--********************************************************************
+        EDGE        : 118631
+        Description : Escalate the deal to the next approving authority.
+        Author      : Deepak Kumar.
+     *********************************************************************-->
+    <aura:if isTrue="{!v.esclate}"> 
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Deal Approval Request</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <lightning:select class="slds-size_1-of-1" 
+                                                          name="Select User" 
+                                                          label="Select Approving Authority" 
+                                                          required="true" 
+                                                          value="{!v.DprName.Deal_Approver__c}" 
+                                                          onchange="{!c.EnableEsclateAssign}">
+                                            <option value="">Select User</option>
+                                            <aura:iteration items="{!v.DelOutcomeUser}" 
+                                                            var="item">
+                                                <option value="{!item.Id}" 
+                                                        text="{!item.Name}" />
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </div>                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br></br>
+                    <div>
+                        <lightning:textarea minlength='50'
+                                            messageWhenTooShort="Please populate deal context and customer profile information in the Comments field to ensure Pricing have enough information."
+                                            label="Comments" 
+                                            disabled=""
+                                            required="true"
+                                            value="{!v.DprName.Description__c}"
+                                            placeholder="Please enter your comments">
+                        </lightning:textarea>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.DealApprovalRequest}">Cancel</button>
+                    <button class="slds-button slds-button_brand" disabled="{!v.disableAssign}" onclick="{!c.esclateAssign}" >Assign</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    <!--********************| EDGE:118631 | Section: Escalate the deal | END |***********************--> 
+    
+    <!--********************************************************************
+        EDGE        : 121823
+        Description : Deal Approval Process UI functionality for Pricing Team Approvals.
+        Author      : Deepak Kumar.
+     *********************************************************************-->
+    <aura:attribute name="fields"  
+                    type="String[]" 
+                    default="['CaseNumber', 'Case_Owner__c','soc_Request_Type__c','Reason','Description']"/>
+    
+    <aura:if isTrue="{!v.caseCheck}">
+        
+        
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Case: Pricing Support</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:recordForm aura:id="myRecordForm"
+                                          recordTypeId="{!v.caseRecordId}"
+                                          objectApiName="Case"
+                                          columns="2"
+                                          onsuccess="{!c.handleSuccess}"
+                                          onsubmit="{!c.handleSubmit}"
+                                          oncancel="{!c.onCancel}"
+                                          onerror="{!c.handleError}"
+                                          fields="{!v.fields}">
+                    </lightning:recordForm>
+                    <lightning:notificationsLibrary aura:id="notifLib"/>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    <!--********************| EDGE:121823 | Section: Deal Approval Process | END |***********************-->
+    
+    <!--********************************************************************
+        EDGE        : 
+        Description : Validation: Customer Contact associated with this opportunity.
+        Author      : Deepak Kumar.
+    *********************************************************************-->
+    <aura:if isTrue="{!v.OpportunityContactRolesStatusModal}"> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Status : Error</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p>{!$Label.c.DPCustomerContractValidation}</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_brand" onclick="{!c.OpportunitycontactRoleNoValue}" >OK</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    <!--********************| Section: Validation for  Customer Contact | END |***********************-->
+    
+    <!--********************************************************************
+        EDGE        : 117699
+        Description : As Sales Enterprise B2B user, I want to perform Clone function on DPR screen.
+        Author      : Deepak Kumar.
+    *********************************************************************-->
+    
+    <aura:if isTrue="{!v.CloneDelegatedPricingRequest}"> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate"><b>DPR</b> Clone</h2>
+                    <p class="slds-m-top_x-small"> {!$Label.c.DPCloneCheck} <b>DPR?</b></p>
+                    <p class="slds-m-top_x-small"> {!$Label.c.DPCloneInfo} </p>
+                </header>
+                <footer class="slds-modal__footer" >
+                    <div style="float:centre">
+                        <button onclick="{!c.CancelDelegatedPricingClone}"  class="slds-button slds-button_neutral">Cancel</button>
+                        <button onclick="{!c.cloneDelegatedPricing}" disabled ="{!v.disableCloneButton}" class="slds-button slds-button_brand">Clone</button>
+                    </div>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div> 
+    </aura:if>
+    
+    <aura:if isTrue="{!v.CloneDelegatedPricingRequestInProgress}"> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate"><b>DPR</b> Clone</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="">
+                    <p class="slds-text-align_center">DPR Cloning in Progress.</p>
+                    <br></br>
+                    <aura:if isTrue="{!v.CloneDelegatedPricingRequestStart}"> 
+                        <p>Current job status: In Progress.</p>
+                        <br></br>
+                        <div class="slds-progress-bar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" role="progressbar">
+                            <span class="slds-progress-bar__value" style="width:0%">
+                                <span class="slds-assistive-text">Progress:0%</span>
+                            </span>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.CloneDelegatedPricingRequestFinish}"> 
+                        <p>Current job status: Completed.</p>
+                        <br></br>
+                        <div class="slds-progress-bar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar">
+                            <span class="slds-progress-bar__value" style="width:100%">
+                                <span class="slds-assistive-text">Progress:100%</span>
+                            </span>
+                        </div>
+                    </aura:if>
+                    <br></br>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div> 
+    </aura:if>
+    
+    <!--********************| EDGE:117699 | Section: As Sales Enterprise B2B user, I want to perform Clone function on DPR screen | END |***********************-->
+    
+    <aura:if isTrue="{!v.SpinnerCheck}">
+        <lightning:spinner variant="brand" size="large" class="slds-show slds-spinner--brand  slds-is-relative" role="alert"/>
+    </aura:if>
+    
+    
+    
+    <!--********************************************************************
+EDGE        : 123786
+Description : Restrict users to update DPR when opportunity is closed.
+Author      : Badri
+*********************************************************************-->
+    
+    <aura:if isTrue="{!v.dontAllowDPROnClosedOpportunity}">   
+        <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">Delegated Pricing</h2>
+                </div>
+                <div class="slds-modal__content slds-grid slds-wrap">
+                    <div class="slds-align_absolute-center">    
+                        {!$Label.c.DPClosedOpportunityValidation}                            
+                    </div>
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button label="Back to Opportunity" onclick="{!c.closePopup}" />
+                </div>
+            </div>
+        </div>
+        <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if> 
+ <!--********************************************************************
+EDGE        : 123784
+Validation  : Initiate Contract
+Description : Generate the pricing contract after the deal has been approved. .
+Author      : Hari/Vamshi
+*********************************************************************-->
+    <aura:attribute type="Boolean" name="enableInitiateContract" default="true" />
+    <aura:attribute type="Boolean" name="InitiateContractCase" default="false" />    
+    <aura:attribute name="cfields"  
+                    type="String[]" 
+                    default="['CaseNumber','Case_Owner__c','Description']"/>
+    <aura:attribute type="String" name="caseContractSupportRecordType"/>
+    <aura:if isTrue="{!v.InitiateContractCase}">         
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Case: Pricing Contract</h2>
+                </header>
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:recordForm aura:id="casemyRecordForm"
+                                          objectApiName="Case"
+                                          recordTypeId="{!v.caseContractSupportRecordType}"
+                                          columns="2"
+                                          onsuccess="{!c.initiateContractHandleSuccess}"
+                                          onsubmit="{!c.initiateContractHandleSubmit}"
+                                          oncancel="{!c.initiateContractonCancel}"
+                                          onerror="{!c.initiateContracthandleError}"
+                                          fields="{!v.cfields}">
+                    </lightning:recordForm>
+                    <lightning:notificationsLibrary aura:id="notifLib"/>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>    
+    
+    
+    <!--*********************| EDGE:123784 | Initiate Contract function | END |**************************-->
+    
+     <!--********************************************************************
+EDGE        : 134133
+Description : Not allow new DPR if a DPR already in 'Sent for Approval'
+Author      : Rishabh
+*********************************************************************-->
+    
+    <aura:if isTrue="{!v.dontAllowDPROnSentForApproval}">   
+        <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">Delegated Pricing</h2>
+                </div>
+                <div class="slds-modal__content slds-grid slds-wrap">
+                    <div class="slds-align_absolute-center">    
+                        {!$Label.c.DPNewDPRCheck}                            
+                    </div>
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button label="Back to Opportunity" onclick="{!c.closePopup}" />
+                </div>
+            </div>
+        </div>
+        <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if> 
+    
+    <!--********************************************************************
+EDGE        : 136226
+Description : Restrict users to initiate deal if one deal is already in Contract Initiated state.
+Author      : Rishabh
+*********************************************************************-->
+    
+    <aura:if isTrue="{!v.dontAllowInitiateContract}">   
+        <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">Delegated Pricing</h2>
+                </div>
+                <div class="slds-modal__content slds-grid slds-wrap">
+                    <div class="slds-align_absolute-center">    
+                        {!$Label.c.RestrictAnotherContractInitiation}
+                    </div>
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button label="Close" onclick="{!c.closeICPopup}" />
+                </div>
+            </div>
+        </div>
+        <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if> 
+</aura:component>

@@ -1,0 +1,22 @@
+<!--
+Created By          :   Sravanthi
+Created Date        :   26-August-2021
+Story               :   TEAM SFO Sprint 21.12 DIGI-8926
+Desc                :   This is used for to fetch Account Team details and render Teams Component 
+-->
+<template>
+    <template if:true={isSpinner}>
+        <div class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </template>
+    <template if:false={isSpinner}>
+            <template if:true={teamMemberRolePicklist.data}>
+                <c-teams-component team-member-roleoptions={teamMemberRolePicklist.data.values}
+                    team-list-parent={accTeamExisting}
+                    record-id={accountId} default-team-list-parent={defaultTeam} onsaveteam={SaveTeams}
+                    title={title} is-error-msg={ErrorMsg} def-team-present-error={defTeamalreadypresentError} def-team-absent-error = {defTeamalreadyabsentError} is-non-acc-owner ={isNonAccOwner} sobject-name = 'Account'> </c-teams-component>
+
+            </template>
+    </template>
+</template>

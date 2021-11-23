@@ -1,0 +1,98 @@
+<apex:page extensions="APTPS_MergeAgrmntAttachmentsController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+  <apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+  <apex:includeScript value="{!$Resource.APTPS_Bootstrap_Min_JS}"></apex:includeScript> 
+  <style type="text/css">
+    .rcorners {
+        border: 2px solid #319431;
+    }
+    
+    .sequenceTextBox 
+    {
+        width:50px;
+        text-align:right;
+    }
+ </style>
+    <script>
+       /*
+       */
+        function ShowWrapper()
+        {
+            $('#myWrapper').show();
+            $('#progressBarOuter').show();     
+        }
+        
+        function callCanel(showError)
+        {
+            $('#myWrapper').hide();
+            $('#progressBarOuter').hide();  
+            if(showError == 'false')
+            {
+              CallCancelAction();  
+            }
+        }
+        function checkAll(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+
+      
+     
+
+   </script>
+   <apex:sectionHeader subtitle="{!agreementName}" ></apex:sectionHeader>
+   <h5> <b>Select attachments which needs to be merged</b></h5>
+   <br/>
+    <apex:form >
+        <apex:pageBlock >
+            <apex:actionFunction name="CallCancelAction" action="{!cancel}"></apex:actionFunction>
+            <apex:pageMessages id="theMessages"></apex:pageMessages>
+            
+            <!-- In our table we are displaying the Agreement records    -->
+            <apex:pageBlockTable value="{!attachments}" var="a" id="table">
+                <apex:column >
+                    <apex:facet name="header"> <apex:inputCheckbox onclick="checkAll(this)" />
+                      
+                    </apex:facet>
+
+                    <!-- This is our selected Boolean property in our wrapper class -->
+                    <apex:inputCheckbox value="{!a.selected}" id="checkedone"/>
+                </apex:column>
+                <apex:column value="{!a.attachmentName}" headervalue="Attachment Name"/>
+                <apex:column headervalue="Sequence">
+                    <apex:inputText value="{!a.sequence}" styleClass="sequenceTextBox"></apex:inputText>
+                </apex:column>    
+                <apex:column value="{!a.agreementName}" headervalue="Agreement Name" />
+                <apex:column value="{!a.agreementNumber}" headervalue="Agreement Number"/>
+                <apex:column value="{!a.relationship}" headervalue="Relationship"/>
+                <apex:column value="{!a.status}" headervalue="Status"/>
+                <apex:column value="{!a.statusCategory}" headervalue="Status Category"/>
+            </apex:pageBlockTable>
+            
+            <div id="outer" style="margin-top:20px;margin-bottom:20px;">
+                <div id="inner" style="margin-left:40%">
+            <apex:commandButton value="Merge Documents" action="{!createListofAgreementsToMerge}" onclick="ShowWrapper()" rerender="theMessages" status="status" 
+                    oncomplete="callCanel('{!showError}')"></apex:commandButton>
+            <apex:commandButton value="Cancel" action="{!cancel}" rerender="theMessages" style="margin-left:2%"></apex:commandButton>
+            </div>
+            </div>
+        </apex:pageBlock>
+        
+        
+        <div id="myWrapper" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            </div>
+            <div id= "progressBarOuter" style="display:none; position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 42%;width: 14%;background-color: white;
+             text-align:center; height: 140px; " class="rcorners">
+                
+                <apex:image id="theImage" style="margin-top:20px;margin-bottom:11px;" value="{!$Resource.APTS_WaitImage}" width="77" height="77"/>
+                <div>
+                        <span id="statusSpan" style="margin-top:10px;font-weight:bold; font-size:15px;">Merging Agreement Documents...</span>
+                </div>
+            </div>
+            
+    </apex:form>
+</apex:page>

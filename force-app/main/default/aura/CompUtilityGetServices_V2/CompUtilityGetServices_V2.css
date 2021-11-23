@@ -1,0 +1,78 @@
+.THIS td {
+    padding: 5px;
+}
+.THIS .heading {
+    text-align:center; 
+    vertical-align:middle;
+}
+.THIS .thick{
+    font-weight: bold;
+}
+
+.THIS .thin{
+    font-weight: normal;
+}
+
+.THIS .noborder{
+    border : none;
+}
+
+.THIS .prodborder{
+    background-color: rgb(214, 234, 248); 
+    border-style: solid;
+    border-color : rgb(47, 104, 196);
+    border-width: medium;
+}
+
+.THIS .chkborder {
+    border: 2px solid rgb(80,95,124);
+}
+
+.THIS .headingRow
+{
+    background-color: rgb(214, 234, 248); 
+}
+.THIS .uiInput--checkbox input[type=checkbox][disabled][CHECKED],.THIS input.uiInput--checkbox[type=checkbox][disabled][CHECKED]
+{
+    background-color: rgb(21, 137, 238);
+}
+.THIS .slds-tree, .THIS .slds-button
+{
+    margin-top : 0;
+}
+.THIS .slds-icon
+{
+    width: 15px;
+    height: 15px;
+}
+.THIS .dataTextColor
+{
+    color : rgb(0, 109, 204);
+}
+.THIS .staticTextColor
+{
+    color : rgb(62, 62, 60);
+}
+.THIS .testAlignRight {
+    text-align:right;
+}
+.THIS .container{ width:100%; }
+
+.THIS .align-left{ float: left; }
+.THIS .align-right{ 
+    float: right;
+}
+.THIS .selectColor{
+    cursor: pointer;
+    color: rgb(0, 109, 204);
+}
+.THIS .blue-text {
+    color: rgb(0, 109, 204);
+}
+.THIS .box-property
+{
+    background-color: white;
+    margin : 2%;
+    padding-right:0.01%;
+    padding-bottom:0.01%;
+}

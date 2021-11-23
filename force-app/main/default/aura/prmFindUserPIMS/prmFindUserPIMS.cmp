@@ -1,0 +1,189 @@
+<!--
+*	Child Component for handling findUser and createUser functionality 
+*	1. 12/10/2020 : Team Hawaii :  P2OB-10028 - Child Component used for 'New Partner User' functionality. This component holds logic for findUser in PIMS and then createUser in Phoenix. 
+*   2. 20/12/2020 : P2OB-10468, P2OB-10626, P2OB-10627
+-->
+
+<aura:component controller="ManagePIMSController"
+    implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+    access="global">
+    <aura:html tag="style">       
+        .flowRuntimeV2 {
+        display : none;
+        }
+    </aura:html>
+    <aura:attribute name="wrapperuserdetails" type="WrapperMSPIMSParams.MSResponseFindUserdetails" />
+    <aura:attribute name="parent" type="Aura.Component" />
+    <aura:method name="childmanageUserJS" action="{!c.childmanageUserJS}">
+        <aura:attribute name="eventId" type="String" />
+        <aura:attribute name="contactRecord" type="String" />
+    </aura:method>
+    <aura:attribute name="userRecord" type="Object" />
+    <force:recordData recordId="{!$SObjectType.CurrentUser.Id}" layoutType="FULL" fields="Name,ProfileId,UserType"
+        targetFields="{!v.userRecord}" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="source" type="String" />
+    <aura:attribute name="spinner" type="boolean" default="false" />
+    <aura:attribute name="message" type="String" />
+    <aura:attribute name="instruction" type="String" />
+    <aura:attribute name="isSuccess" type="boolean" default="false" />
+    <aura:attribute name="showMessage" type="Boolean" default="false" />
+    <aura:attribute name="severity" type="String" />
+    <aura:attribute name="showRoles" type="Boolean" default="false" />
+    <aura:attribute name="showusertable" type="boolean" default="false" />
+    <aura:attribute name="partnerRoles" type="Object[]"/>
+	<aura:attribute name="DeactivateReasonOptions" type="List" />
+    <aura:attribute name="roleValidationMessage" type="String" />
+    <aura:attribute name="DeactivatedReasonSelected" type="String" default=""/>
+    <aura:attribute name="DeactivatedCommentsProvided" type="String" default=""/>
+    <aura:attribute name="contactRecord" type="Contact" default="{'sobjectType':'Contact'}"/>
+    <aura:attribute name="isPPC" type="Boolean" default="false" />
+    <aura:attribute name="existingPartnerRoles" type="List"/>
+    
+    <aura:attribute name="recordError" type="String" />
+    <force:recordData aura:id="forceRecordContact" 
+                      recordId="{!v.recordId}"
+                      layoutType="FULL"
+                      fields="Partner_Role__c,Onboarding_Status__c,Deactivate_Reason__c,Deactivate_Comments__c,Account.PartnerPrincipalContact__c"
+                      mode="EDIT"
+                      targetFields="{!v.contactRecord}" 
+                      targetError="{!v.recordError}"
+                      recordUpdated="{!c.reloadData}"
+                      />
+    <c:ContinuationProxy aura:id="proxy" />
+    <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showusertable}">
+        <h6 class="slds-p-bottom_small" style="display: inline-block">Please confirm if the following is a matching
+            user:</h6>
+
+        <lightning:layout horizontalAlign="center">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <h6 class="slds-truncate" title="CONTACT  NAME">CONTACT NAME</h6>
+                        </th>
+                        <th class="" scope="col">
+                            <h6 class="slds-truncate" title="P-ID">P-ID</h6>
+                        </th>
+                        <th class="" scope="col">
+                            <h6 class="slds-truncate" title="EMAIL">EMAIL</h6>
+                        </th>
+                        <th class="" scope="col">
+                            <h6 class="slds-truncate" title="PHONE">PHONE</h6>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="slds-hint-parent">
+                        <th data-label="CONTACT  NAME" scope="row">
+                            <div class="slds-truncate">{!v.wrapperuserdetails.userFirstName} &nbsp;
+                                {!v.wrapperuserdetails.userLastName}</div>
+                        </th>
+                        <td data-label="P-ID">
+                            <div class="slds-truncate">{!v.wrapperuserdetails.userPid}</div>
+                        </td>
+                        <td data-label="EMAIL">
+                            <div class="slds-truncate">{!v.wrapperuserdetails.userEmail}</div>
+                        </td>
+                        <td data-label="PHONE">
+                            <div class="slds-truncate">{!v.wrapperuserdetails.userMobileNumber}</div>
+                        </td>
+                    </tr>
+                    <tr class="slds-hint-parent;slds-align_absolute-right">
+                        <td colspan='4'>
+                            <div class='slds-float_right'>
+                                <lightning:button label="Cancel" class="cancelButton" onclick="{!c.childShowmessage}"
+                                    aura:id="FinduserNo" />
+                                <lightning:button variant="brand" class="submitButton" label="Confirm"
+                                    onclick="{!c.childmanageUserJS}" aura:id="updateTCW" />
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </lightning:layout>
+    </aura:if>
+    <aura:if isTrue="{!v.showMessage}">
+        <div class="{!'slds-box slds-theme--'+v.severity}">
+            <table>
+                <tr>
+                    <aura:if isTrue="{!'error'==  v.severity}">
+                        <td>
+                            <lightning:icon class="slds-float_left" iconName="utility:error" alternativeText="Error!"
+                                variant="inverse" />
+                        </td>
+                    </aura:if>
+                    <aura:if isTrue="{!'success'==  v.severity}">
+                        <td>
+                            <lightning:icon class="slds-float_left" iconName="utility:success"
+                                alternativeText="Success!" variant="inverse" />
+                        </td>
+                    </aura:if>
+                    <aura:if isTrue="{!'warning'==  v.severity}">
+                        <td>
+                            <lightning:icon class="slds-float_left" iconName="utility:warning"
+                                alternativeText="Warning!" variant="inverse" />
+                        </td>
+                    </aura:if>
+                    <td>
+                        <lightning:formattedRichText value="{!v.message}" />
+                        <div class="slds-text-body_small"> {!v.instruction} </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showRoles}">
+        <h2 class="slds-text-heading--medium slds-text-align_left"><b>Select Partner Access</b></h2>
+        <br></br>
+        Please select one or more roles that you would like to assign to this user :
+        <lightning:layout horizontalAlign="space" verticalAlign="center" multipleRows="true">
+            <aura:iteration items="{!v.partnerRoles}" var="item" indexVar="index"> 
+                
+                <lightning:layoutItem flexibility="auto" size="12" smallDeviceSize="6" mediumDeviceSize="6" largeDeviceSize="6"> 
+                        <aura:if isTrue="{!or(index == 7,index == 9)}">
+                            <aura:if isTrue="{!(index == 7)}">
+                            	<hr class="hrclass" style="margin:unset"/>
+                            </aura:if>    
+                    		<lightning:input class="slds-m-around_xx-small" type="checkbox" aura:id="{!item.Partner_Role__c}" disabled="true" label="{!item.Partner_Role__c}" fieldLevelHelp="{!item.Informative_Message__c}" checked="{!item.Mark_Selected__c}" onchange="{!c.selectionUpdated}" />
+                		<aura:set attribute="else">
+                        	<lightning:input class="slds-m-around_xx-small" type="checkbox" aura:id="{!item.Partner_Role__c}" disabled="{!item.ReadOnly__c}" label="{!item.Partner_Role__c}" fieldLevelHelp="{!item.Informative_Message__c}" checked="{!item.Mark_Selected__c}" onchange="{!c.selectionUpdated}" />
+						</aura:set>
+						</aura:if>
+                </lightning:layoutItem>
+                    
+            </aura:iteration>
+        </lightning:layout>
+        <aura:if isTrue="{!v.showDeactivationFields}">
+            <div class="slds-form_horizontal">
+                <br/>Please enter deactivate reason and comments - 
+                <lightning:select label="Deactivate Reason : " required="true"  aura:id="deactivateReason" onchange="{!c.captureReason}">
+                    <aura:iteration items="{!v.DeactivateReasonOptions}" var="item">
+                        <option text="{!item.label}" value="{!item.value}"/>
+                    </aura:iteration>
+                </lightning:select>
+                <lightning:textarea name="deactivateComments" required="true" aura:id="deactivateComments" value="" label="Deactivate Comments" maxlength="140" messageWhenTooLong="A maximum of 140 characters are allowed." messageWhenValueMissing="Please provide deactivate comments." onchange="{!c.captureReason}" />
+                <br/>
+            </div>
+        </aura:if>
+        <br/>
+        <div class='slds-align_absolute-center slds-hidden slds-text-color_error' aura:id="ValidationMessage">{!v.roleValidationMessage}</div>
+        <div class='slds-align_absolute-center'>
+            <!--lightning:button label="Cancel" onclick="{!c.closeInterface}" aura:id="CancelRole" /-->
+            <lightning:button variant="brand" label="Finish" onclick="{!c.callFlow}"  aura:id="SaveRole" disabled="false" />
+        </div>
+    </aura:if>
+    <lightning:flow aura:id="manageUserFlowchild" onstatuschange="{!c.finishFlowChild}"/>
+    <lightning:flow aura:id="updateUserFlowchild" onstatuschange="{!c.finishUserFlowChild}"/>
+</aura:component>

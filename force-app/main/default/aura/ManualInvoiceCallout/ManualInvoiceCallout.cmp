@@ -1,0 +1,21 @@
+<!-- 
+Sr.No.    Developer Name               Date          Story Description
+1.        Vamsi Krishna Vaddipalli    02/06/2021      Edge-219120 When click on Quick action through init handler it will call aura enabled method.
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:isUrlAddressable"
+                access="global"
+                controller="EnqueueCaseQLI" >
+    
+    <aura:attribute name='caseId' type='String'/>
+    <aura:attribute name='isSuccess' type='Boolean' default='false' access='public'/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit }"/>
+    
+    <aura:if isTrue="{!v.isSuccess}">
+       <p>Request initiated successfully and allow 15 minutes for processing to be successful.</p>
+        <aura:set attribute='else'>
+        <p>Request initiated failed beacuse uniqueId's already retrived.</p>
+        </aura:set>
+    </aura:if>
+ 
+	
+</aura:component>

@@ -1,0 +1,81 @@
+<template>
+    <template if:true={isLoaded}>
+        <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+    </template>
+    <c-lwc-custom-toast title={toasttitle} 
+    message={toastmsg}
+    variant={toastvariant} 
+    auto-close="true" >
+</c-lwc-custom-toast>
+
+
+    <div  style="background-color: white;padding:20px;">
+
+
+        <div class="slds-grid slds-gutters">
+            <div  style="background-color: white;width:34%;padding-left:20px;">
+                <c-lwc-lookup lookup-label="Contact Name" make-readonly = "{fieldreadonly}"  object-api-name="Contact" icon-name="standard:Contact"  
+                onrecordselection={onContactSelection} filter-string={contactfilterStr} selected-acc = "{accountRecordId}"></c-lwc-lookup>
+            </div>
+            <div    style="padding-top:25px;padding-right:10px;padding-left:100px;"> Opt In</div>
+            <div     style="padding-top:25px;width:1px;padding-left:0px;padding-right:100px;" >
+               
+                    <lightning-input type="checkbox" 
+                name="Opt In" 
+
+                checked
+                onchange={selectCheckbox}>
+
+           
+
+
+            </lightning-input>
+                
+                
+            </div>
+            <div  style="padding-top:25px;padding-right:0px;padding-left:0px;">Communication Method</div>
+            <div style="padding-top:5px;padding-left:25px;" >
+                
+                <lightning-combobox
+                name="Communication Method"
+                value={commType}
+                options={options}
+                onchange={handleCommchange} >
+            </lightning-combobox>
+
+            </div> 
+            <div class="slds-col_bump-right" style="padding:20px;">
+            </div>
+            <div  style="padding-top:20px;padding-left:20px;">
+                <lightning-button label="Update Notification" 
+                title="UpdateNotification" 
+                variant ="brand"
+                onclick={handleUpdateNotification} 
+                disabled={enableUpdateBtn}
+                class="slds-m-left_x-small"></lightning-button>
+            </div>
+        </div>
+
+
+        <br/>
+
+
+          <div class="slds-grid" style="background-color:white;">
+            <template if:false={isLoaded}>
+                <c-inline-edit-data-table  filterstring = {contactdatafilter} table-name="Notification_Preferences" 
+                table-data={recordsdata}
+                onselectedrowevent={getselectedrowlist}
+                ondatatablesaveevent={updatedata}
+                 ></c-inline-edit-data-table>
+                 
+            </template>
+
+            </div> 
+
+            <br/><br/>
+
+
+    </div>
+    
+    
+</template>

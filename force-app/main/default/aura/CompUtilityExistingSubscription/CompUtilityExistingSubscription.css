@@ -1,0 +1,99 @@
+.THIS {
+}
+.THIS .data-row:hover {
+ background-color:#54698d;
+ color:white;
+ cursor:pointer;
+}
+.THIS .data-row.selectedRow{
+  background-color:#54698d;
+  color:white;
+ }
+.THIS .left-content {
+    padding: 10px 20px;
+    position: relative;    
+    border-top: 1px solid #ddd;
+}
+.THIS .gray-bg {
+    background: #f4f4f4;
+}
+.THIS .display-width {
+    display: inline-block;
+    width: 100%;
+}
+.THIS .left-content-top {
+    position: relative;
+    padding-left: 40px;
+}
+.THIS .left-content:hover{
+    cursor:pointer;
+}
+.THIS .down-arrow {
+    position: absolute;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 20px;
+    color: #aaa;
+    padding-top: 1px;
+}
+.THIS .right-arrow {
+    position: absolute;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 20px;
+    color: #aaa;
+    padding-left: 1px;
+}
+.THIS .top-right > p {
+    margin: 0 0 5px;
+}
+.THIS .blue-text {
+    color: rgb(0, 109, 204);
+}
+.THIS .p-right {
+    padding: 0 0 0 15px;
+}
+.THIS .slds-icon
+{
+    width: 15px;
+    height: 15px;
+}
+.THIS .float-width{
+    float: left;
+    width: 100%;
+}
+.THIS .white-bg {
+    background: #fff;
+}
+.THIS .table-heading, .THIS .table-list-data {
+    border-bottom: 1px solid #ddd;
+    padding: 5px 0;
+}
+.THIS .left-padding
+{
+    padding-right: 5%;
+    padding-left: 5%;
+}
+.THIS .display-none-data
+{
+    display: none;
+}
+.THIS .box-property
+{
+    background-color: white;
+    margin : 2%;
+    padding-right:0.01%;
+    padding-bottom:0.01%;
+}

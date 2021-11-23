@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Event template" >
+    
+ <aura:attribute name="CommercialProduct" type="cspmb__Price_Item__c[]" access="global" />    
+</aura:event>

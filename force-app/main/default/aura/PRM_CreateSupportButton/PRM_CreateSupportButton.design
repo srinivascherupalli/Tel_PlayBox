@@ -1,0 +1,6 @@
+<design:component>
+    <design:attribute name="DisplayedOn" label="Where to Display Component" description="Name the Component Where to be Dispplayed Home/CaseList" />
+    <design:attribute name="ButtonLabel" label="Display Name for the Button" description="Name that appears on the Button"/>
+    <!--P2OB-12617 : Added additional Design parameters for Channel Care flow to be launched-->
+    <design:attribute name="channelCareFlowName" label="Channel Care Flow Name" description="Name of Channel Care flow to be launched"/>
+</design:component>

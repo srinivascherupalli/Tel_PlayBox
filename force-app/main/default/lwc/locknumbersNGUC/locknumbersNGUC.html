@@ -1,0 +1,214 @@
+<template>
+    <!--Spinner starts here-->
+    <template if:true={showSpinner}>
+        <lightning-spinner variant="brand" alternative-text="Loading" size="large"></lightning-spinner>
+    </template>
+
+    <!--Spinner ends here-->
+    <template if:true={visible}>
+        <div class="slds-notify_container">
+            <div class={outerClass} role="status">
+                <span class="slds-assistive-text">{type}</span>
+                <span class={innerClass} title={message}>
+                    <lightning-icon icon-name={getIconName} alternative-text="icon" styleclass="slds-icon slds-icon_small" variant="inverse" size="small"></lightning-icon>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small">{message}</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <lightning-button-icon icon-name="utility:close" size="small" variant="border-filled" class="slds-button slds-button_icon slds-button_icon-inverse" alternative-text="next" onclick={closeModel} ></lightning-button-icon>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!--Selection screen to select Bulk CSV or on screen retrival starts here-->
+    <template if:false={hideSelection}>
+        <div style="padding:20px;background-color:white;">
+            <p style=" font-weight: bold;font-size: large;">
+                {label.MACD_lock_ui_header_msg}
+            </p>
+            <p>
+                {label.MACD_lock_picklist_msg}
+            </p>
+            <p style="width:20%;">
+                <lightning-combobox name="retrievalMethod" onchange={onRetrievalChange} placeholder='Select'
+                    options={options}>
+                </lightning-combobox>
+            </p>
+            <br />
+        </div>
+
+        <template if:true={isUploadCSV}>
+            <br />
+            <p>
+                {label.MACD_Remove_csv_note_msg}
+            </p>
+            <br />
+            <p>
+
+                {label.MACD_Remove_csv_fromat_msg}
+
+            </p>
+            <br />
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item padding="around-small" size="12" style="margin-left:300px;">
+                    <lightning-input label="" name="file uploader" onchange={handleFilesChange} type="file" multiple>
+                    </lightning-input>
+                </lightning-layout-item>
+            </lightning-layout>
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item padding="around-small" size="12" style="margin-left:300px;">
+                    <div class="slds-text-body_small slds-text-color_success">{fileName}</div>
+                </lightning-layout-item>
+            </lightning-layout>
+            <br />
+            <br />
+        </template>
+        <div class="slds-footer">
+            <lightning-button label="Next" onclick={handleNext} variant="brand" class="slds-m-right_x-small"
+                style="float:right;" disabled={disableNext}></lightning-button>
+        </div>
+    </template> 
+    <!--Selection screen ends here-->
+    <!--On screen retrival screen start here-->
+    <template if:true={isOnScreeRetrival}>
+        <div>
+            <lightning-icon class="warning" icon-name="utility:info" alternative-text="Info!" variant="info"
+                size="small"></lightning-icon>
+
+            <lightning-formatted-text value={label.MACD_Remove_onscreen_text_msg}></lightning-formatted-text>
+
+        </div>
+
+        <lightning-layout multiple-rows="true">
+            <lightning-layout-item padding="around-small" size="12">
+
+
+                <lightning-textarea value={numberString} placeholder="Search Numbers Here...."
+                    onchange={storeNumberString} max-length="300"></lightning-textarea>
+            </lightning-layout-item>
+        </lightning-layout>
+        <br />
+        <div class="slds-footer">
+            <lightning-button label="Search" onclick={handleSearchNumber} variant="brand" class="slds-m-right_x-small"
+                style="float:right;"></lightning-button>
+
+        </div>
+    </template>
+    <!--On Screen retrival screen ends here-->
+    <br /><br />
+    <!--Warning and remove buttons starts here-->
+    <template if:true={hideSelection}>
+        <template if:true={isData}>
+
+            <!--<lightning-layout horizontal-align="space" style="background-color:lightgray">
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-icon class="warning" icon-name="utility:warning" alternative-text="Warning!"
+                        variant="warning" size="small"></lightning-icon>
+
+                  
+
+                    <lightning-formatted-text
+                        value={label.MACD_Remove_info_msg}>
+                    </lightning-formatted-text>
+
+                </lightning-layout-item>
+            </lightning-layout>-->
+            <br /><br />
+            <div class="slds-footer"></div>
+            <template if:true={isUploadCSV}>
+
+                <lightning-button label="Add all to Lock list" iconname="utility:chevronright" iconposition="right"
+                    variant="brand" onclick={lockAllNumbers} class="slds-m-right_x-small" style="float:right;">
+                </lightning-button> &nbsp; &nbsp; &nbsp;
+            </template>
+            <lightning-button label="Add selected to Lock list" iconname="utility:chevronright" iconposition="right"
+                variant="brand" onclick={lockNumbers} class="slds-m-right_x-small" style="float:right;"
+                disabled={disableRemove}></lightning-button>
+
+            <!--Warning and remove buttons ends here-->
+
+            <!--Tab for available and removal lists strats here-->
+
+            <lightning-tabset>
+                <lightning-tab label="Available Number List">
+                    <template if:false={noDataAvailable}>
+                    <lightning-layout multiple-rows="true" horizontal-align="center">
+                        <lightning-layout-Item padding="around-small" size="12" style="height:200px;">
+                            <lightning-datatable data-id="datarow" key-field="numberId" data={data} columns={columns}
+                                selected-rows={selection} onrowselection={handleRowAction}   sorted-by={sortBy}
+                                sorted-direction={sortDirection}
+                                onsort={handleSortdata}>
+                            </lightning-datatable>
+                        </lightning-layout-Item>
+                        <template if:true={isUploadCSV}>
+                                <lightning-layout-Item padding="around-small" flexibility="auto">
+                                    <lightning-button label="Prev" icon-name="utility:chevronleft" icon-position="left"
+                                        onclick={handlePrev}></lightning-button>
+                                    <span class="slds-p-horizontal_small">
+                                        Page {pageNumber} | Showing {pageRecordCount} records from {totalRecordCount}
+                                    </span>
+                                    <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right"
+                                        onclick={handleNextButton} disabled={isLastPage}></lightning-button>
+                                </lightning-layout-Item>
+                        </template>
+                    </lightning-layout>
+
+
+                    <template if:true={ineligibleStatus}> <!-- DIGI-4259 change -->
+                    <lightning-layout horizontal-align="space" style="background-color:lightgray">
+                        <lightning-layout-item padding="around-small" flexibility="auto">
+                            <lightning-icon class="warning" icon-name="utility:warning" alternative-text="Warning!"
+                                variant="warning" size="small"></lightning-icon>
+        
+                            <lightning-formatted-text
+                                value={label.MACD_Ineligible_Row_Select_Warning}>
+                            </lightning-formatted-text>
+        
+                        </lightning-layout-item>
+                    </lightning-layout>
+                    </template>
+
+                    
+                    </template>
+                    <template if:true={noDataAvailable}>
+                        <p>{label.MACD_Remove_no_record_msg}</p>
+                    </template>
+                </lightning-tab>
+                <lightning-tab label="Lock Number List">
+                    <lightning-layout multiple-rows="true" horizontal-align="center">
+                        <lightning-layout-Item padding="around-small" size="12" style="height:200px;">
+                            <lightning-datatable data-id="datarowRemove" key-field="Id" data={removedData}
+                                columns={removedColumns} hide-checkbox-column="true">
+                            </lightning-datatable>
+                        </lightning-layout-Item>
+                        <template if:true={isUploadCSV}>
+                            <lightning-layout-Item padding="around-small" flexibility="auto">
+                                <lightning-button label="Prev" icon-name="utility:chevronleft" icon-position="left"
+                                    onclick={handlePrevRemove}></lightning-button>
+                                <span class="slds-p-horizontal_small">
+                                    Page {pageNumberRemove} | Showing {pageRecordCountRemove} records from {totalRecordCountRemove}
+                                </span>
+                                <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right"
+                                    onclick={handleNextButtonRemove} disabled={isLastPage}></lightning-button>
+                            </lightning-layout-Item>
+                            </template>
+
+                    </lightning-layout>
+
+                </lightning-tab>
+            </lightning-tabset>
+            <!--Tab ends here-->
+            <!--Create and submit order buttons strats here-->
+            <div class="slds-footer">
+                <lightning-button label="Confirm Lock" variant="brand" onclick={confirmlocknumber}
+                    class="slds-m-right_x-small" style="float:right;" disabled={disableCreate}></lightning-button>
+
+            </div>
+            <!--Create and submit order buttons ends here-->
+
+
+        </template>
+    </template>
+
+</template>

@@ -1,0 +1,144 @@
+<!-- 
+Name : CustomlookupResult
+Description : Lightning UI for Post verificatio of numbers 
+Author: Kalashree Borgaonkar
+Story: EDGE-90327
+-->
+<aura:component  access="global" >
+    
+    <aura:attribute name="oAccount" type="Account" />
+    <aura:attribute name="IconNameAccount" type="string"  default="standard:account"/> 
+    <aura:attribute name="IconName" type="string"  default="standard:contact"/> 
+    <aura:attribute name="IconNameAddress" type="string"  default="custom:custom24"/> 
+    <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedAccountEvent" type="c:selectedAccountEvent"/>
+    <aura:attribute name="objectLabel" type="String" description="String value that holds the label of the object" access="public"/>
+    <aura:attribute name="overrideNewEvent" type="Boolean" description="Determines whether the standard new event should fire"/>
+	<aura:attribute name="object" type="String" />
+    
+    <!--EDGE-138687 added isSignatory attribute-->
+    <aura:attribute name="isSignatory" type="Boolean" />
+    <aura:attribute name="oContact" type="AccountContactRelation" />
+    
+    <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedContactEvent" type="c:selectedContactEvent"/>
+    
+     <!--EDGE-201557 START-->
+    <aura:attribute name="isPPASignatory" type="Boolean" />
+    <aura:attribute name="oPPAContact" type="Contact" />
+     <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedPPAContactEvent" type="c:selectedPPAContactEvent"/>
+    <!--EDGE-201557 END-->
+    
+    <aura:attribute name="oAddress" type="cscrm__Address__c" />
+    <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedAddressEvent" type="c:selectedAddressEvent"/>
+    <aura:attribute name="oPort" type="Service_Qualification__c" />
+    <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedPortEvent" type="c:selectedPortEvent"/>
+    <aura:attribute name="oRecord" type="List" />
+    <aura:registerEvent name="oSelectedAutoAddressEvent" type="c:addressAutoComplete"/>
+    
+    <aura:attribute name="isSecondComponentCall" type="Boolean" default="false"/>
+    
+    <aura:if isTrue="{!and(v.oAccount != null, v.oAccount != undefined)}">
+        <li role="presentation">
+            <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-350" role="option">
+                <lightning:icon iconName="{!v.IconNameAccount}" class="slds-icon slds-icon_small" size="small" alternativeText="icon" style="margin-right: 6px;"/>
+                
+                <div class="slds-media__body">
+                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                        <!--<c:svg class="slds-input__icon" xlinkHref="{!$Resource.slds + '/assets/icons/standard-sprite/svg/symbols.svg#account'}" /> -->                  
+                        <div class="slds-lookup__result-text"><a onclick="{!c.selectAccount}">{!v.oAccount.CIDN__c}&nbsp;&nbsp;{!v.oAccount.Name}</a></div>
+                        
+                    </div>
+                </div>    
+            </span>
+        </li>
+    </aura:if> 
+    
+    <aura:if isTrue="{!and(v.oPort != null, v.oPort != undefined)}">
+        
+        <li role="presentation">
+            <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-350" role="option">
+                <!--lightning:icon iconName="{!v.IconName}" class="slds-icon slds-icon_small" size="small" alternativeText="icon" style="margin-right: 6px;"/-->
+                
+                <div class="slds-media__body">
+                    <div class="slds-input-has-icon slds-input-has-icon--right"  >
+                      
+                        <!--<c:svg class="slds-input__icon" xlinkHref="{!$Resource.slds + '/assets/icons/standard-sprite/svg/symbols.svg#account'}" />-->
+                        <div id= "error-message" class="slds-lookup__result-text"><a onclick="{!c.selectPort}">{!v.oPort.Service_Number__c}&nbsp;&nbsp;</a></div>
+                        <!--<div class="slds-lookup__result-text"><a onclick="{!c.selectPort}">{!v.oContact.Account.Name}&nbsp;&nbsp;</a></div>-->
+                        
+                    </div>
+                </div>    
+            </span>
+        </li>
+    </aura:if>
+    
+    <aura:if isTrue="{!and(v.oContact != null, v.oContact != undefined)}">
+        <li role="presentation">
+            <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-350" role="option">
+                <lightning:icon iconName="{!v.IconName}" class="slds-icon slds-icon_small" size="small" alternativeText="icon" style="margin-right: 6px;"/>
+                
+                <div class="slds-media__body">
+                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                        <!--<c:svg class="slds-input__icon" xlinkHref="{!$Resource.slds + '/assets/icons/standard-sprite/svg/symbols.svg#account'}" />-->
+                        <div class="slds-lookup__result-text"><a onclick="{!c.selectContact}">{!v.oContact.Contact.Name}&nbsp;&nbsp;</a></div>
+                        <!--<div class="slds-lookup__result-text"><a onclick="{!c.selectContact}">{!v.oContact.Account.Name}&nbsp;&nbsp;</a></div>-->
+                        
+                    </div>
+                </div>    
+            </span>
+        </li>
+    </aura:if>
+    
+     <!-- EDGE-201557 START -->
+    <aura:if isTrue="{!and(v.oPPAContact != null, v.oPPAContact != undefined)}">
+        <li role="presentation">
+            <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-350" role="option">
+                <lightning:icon iconName="{!v.IconName}" class="slds-icon slds-icon_small" size="small" alternativeText="icon" style="margin-right: 6px;"/>
+                
+                <div class="slds-media__body">
+                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                        <div class="slds-lookup__result-text"><a onclick="{!c.selectPPAContact}">{!v.oPPAContact.Name}&nbsp;&nbsp;</a></div>                        
+                    </div>
+                </div>    
+            </span>
+        </li>
+    </aura:if>
+     <!-- EDGE-201557 END-->
+    
+    <aura:if isTrue="{!and(v.oAddress != null, v.oAddress != undefined)}">
+        <li role="presentation">
+            <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-350" role="option">
+                <lightning:icon iconName="{!v.IconNameAddress}" class="slds-icon slds-icon_small" size="small" alternativeText="icon" style="margin-right: 6px;"/>
+                
+                <div class="slds-media__body">
+                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                        <!-- <c:svg class="slds-input__icon" xlinkHref="{!$Resource.slds + '/assets/icons/standard-sprite/svg/symbols.svg#account'}" />
+              -->
+                        <div class="slds-lookup__result-text"><a onclick="{!c.selectAddress}">{!v.oAddress.Name}</a></div>
+                        
+                    </div>
+                </div>    
+            </span>
+        </li>
+    </aura:if>
+    
+    <aura:if isTrue="{!and(v.oRecord != null, v.oRecord != undefined)}">
+        <li role="presentation">
+            <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-350" role="option">
+                
+                <div class="slds-media__body">
+                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                        <!-- <c:svg class="slds-input__icon" xlinkHref="{!$Resource.slds + '/assets/icons/standard-sprite/svg/symbols.svg#account'}" />
+              -->
+                        <div class="slds-lookup__result-text"><a onclick="{!c.selectAutoAddress}">{!v.oRecord}</a></div>
+                        
+                    </div>
+                </div>    
+            </span>
+        </li>
+    </aura:if>
+</aura:component>

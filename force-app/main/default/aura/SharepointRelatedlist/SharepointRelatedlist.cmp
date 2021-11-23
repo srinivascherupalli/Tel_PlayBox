@@ -1,0 +1,32 @@
+<aura:component controller="SharepointRelatedlistController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <aura:attribute name="recordId" type="Id" />
+    <aura:handler name="init"  action="{!c.getOppRecord}" value="{!this}" />
+    <aura:handler name="init"  action="{!c.getuserdetail}" value="{!this}" />
+    <aura:attribute name="OppRec" type="Object" />
+    <aura:attribute name="userInfo" type="user"/>
+    <aura:attribute name="successHandler" type="Object" />
+    <aura:attribute name="headerTitle" type="Aura.Component[]">
+        <h2>
+            <b>SharePoint Opportunity Folder</b>
+        </h2>
+    </aura:attribute>
+    <!--P2OB-2726 :Adding border to the related list-->
+    <lightning:card class="slds-card_boundary related_list_themed_border_top" variant="Narrow" title="{!v.headerTitle}" iconName="standard:file" >
+        <aura:set attribute="actions">            
+            <lightning:buttonMenu iconSize="small" menuAlignment="right" onselect="{!c.createEventSync}"> 
+                <lightning:menuItem label="Request SharePoint Sync" value="Open"  onfocus="{!c.getOppRecord}"/>    
+                <!--<lightning:menuItem label="Request SharePoint Access" value="RequestSharepointAccess"  onfocus="{!c.getOppRecord}"/>-->
+            </lightning:buttonMenu>            
+        </aura:set>
+        
+        <p class="slds-p-horizontal_small">
+            {!$Label.c.SharePointMessage }<br></br><br></br>
+        </p>
+        
+        <p class="slds-p-horizontal_small">
+            <lightning:formattedUrl  value="{!v.OppRec.SharePoint_Folder_Link__c}" /> <br></br>
+        </p>
+        
+    </lightning:card>
+</aura:component>

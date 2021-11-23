@@ -1,0 +1,9 @@
+<aura:event type="APPLICATION"  >
+
+ <aura:attribute name="filteredData" type="List"/>
+    <aura:attribute name="accountId" type="Id"/>
+    <aura:attribute name="selectedRecordSub" type="List"/>
+    <aura:attribute name="actTypeSelected" type="string"/>
+    <aura:attribute name="tNowCaseRef" type="string"/><!--EDGE-132715-->
+	<!--<aura:attribute name="reason" type="string"/>--><!--DPG-4542(Commented)-->
+</aura:event>

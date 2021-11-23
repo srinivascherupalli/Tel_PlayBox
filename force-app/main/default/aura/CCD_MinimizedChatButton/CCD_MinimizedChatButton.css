@@ -1,0 +1,98 @@
+.THIS {
+    position: fixed;
+    background-color: #FFFFFF !important;
+    font-family: "TelstraAkkurat" !important;
+    font-weight: bold !important;
+    color: #0064D2 !important;
+    outline: 2px solid #70b5de !important;
+    width: 700px !important;
+    border-radius: 8px 8px 0 0 !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    height: 46px !important;
+    box-shadow: 0 0 12px 0 rgba(0,0,0,0.5) !important;
+    font-size: .910em !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+    align-items: center !important;
+    display: flex !important;
+    min-width: 12em !important;
+    max-width: 14.5em !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    border: 0 !important;
+    border-color: #ffffff;
+    left: auto;
+    bottom: 0;
+    right: 25px;
+    flex-direction: center;
+    justify-content: center;
+    pointer-events: all;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.THIS.minimizedContainer:focus::before,
+.THIS.minimizedContainer:hover::before {
+    text-decoration: underline;
+    background-color:grey !important;
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: .2;
+    pointer-events: none;
+    
+}
+.THIS .messageContent {
+    display: flex !important;
+    padding: 0 8px;
+    height: 100%;
+    position: relative;
+    margin: 4px;
+    flex-grow: 1;
+    align-items: inherit;
+    min-width: 0;
+    max-width: 100%;
+    justify-content: center !important;    
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: "Telstra Akkurat" !important;
+    height: 19px;
+    width: 158.5px;
+    color: #0064D2;
+    font-size: 17px;
+    letter-spacing: -0.5px;
+    line-height: 19px;
+    display: inline-block;
+}
+.THIS .messageContentInside {
+    display: flex;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-self: stretch;
+    margin: 4px;
+    flex-grow: 1;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    justify-content: center !important;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: "Telstra Akkurat" !important;
+    height: 19px;
+    width: 158.5px;
+    color: #0064D2;
+    font-size: 18px;
+    line-height: 19px;
+    display: inline-block;
+}
+.THIS .newMessage {
+    background-color: #b3e0fd;
+}

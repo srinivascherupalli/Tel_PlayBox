@@ -1,0 +1,18 @@
+<!-- 
+Story(Sprint) :	EDGE-207867(21.06)
+Name		  : DynamicLookupComponentChild
+Description	  : Handler Results of Lookup field and fire event
+Author		  : Aman Soni	 
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+	<aura:attribute name="cas" type="Case[]" />
+	<!--Registration of event to pass the selected result back to Parent component-->
+	<aura:registerEvent name="myEvent" type="c:selectedCaseEvent" />
+
+	<!--Table showing searched result -->
+	<tr class="slds-truncate" onclick="{!c.selectCase}">
+		<td class="slds-truncate" title="{!v.cas.CaseNumber}">{!v.cas.CaseNumber}</td>
+		<td class="slds-truncate" title="{!v.cas.Subject}">{!v.cas.Subject}</td>
+		<td class="slds-truncate" title="{!v.cas.Contact.Name}">{!v.cas.Contact.Name}</td>
+	</tr>	
+</aura:component>

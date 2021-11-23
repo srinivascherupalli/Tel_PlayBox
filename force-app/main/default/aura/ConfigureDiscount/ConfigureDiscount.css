@@ -1,0 +1,59 @@
+/*********************************************************************
+    EDGE        : 119320,114435,114434
+    Component   : Configure Discount
+    Description : Configure Discount based on Selected Offer
+    Author      : T Badri Narayan Subudhi
+    Last Modified by : Rishabh Dhamu
+    **********************************************************************/
+
+.THIS .slds-accordion__summary-action{
+    background: rgb(243,242,242);
+    height : 150%;
+    padding : 0.5rem;
+    line-height: 1.374rem;
+}
+.THIS input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+.THIS input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+.THIS.grey {
+    background-color: rgb(243,242,242);
+    padding-left: 50rem;
+}
+.THIS .iconColor {
+    color:Red;
+}
+.THIS .LabelColor{
+    color: black;
+}
+.THIS .FixedWidth{
+    width:140px;
+    -ms-box-sizing:content-box;
+    -moz-box-sizing:content-box;
+   -webkit-box-sizing:content-box; 
+}
+.THIS .FixedPicklistWidth{
+    width:237px !important;
+    -ms-box-sizing:content-box;
+    -moz-box-sizing:content-box;
+   -webkit-box-sizing:content-box; 
+}
+.THIS .FixedWidthMMC{
+    width:80px;
+    -ms-box-sizing:content-box;
+    -moz-box-sizing:content-box;
+   -webkit-box-sizing:content-box; 
+}
+.THIS .slds-modal__content{ 
+     overflow: hidden; 
+   }

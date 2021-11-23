@@ -1,0 +1,479 @@
+<!--*******************************************************************
+    EDGE        : 114139, 114433
+    Component   : DelegatedPricingSelectProduct & Hardware Options
+    Description : Delegated Pricing select Product component.
+    Author      : T Badri Narayan Subudhi
+ Last Modified By : Manish Berad
+    **********************************************************************-->
+<aura:component controller="DelegatedPricingController" 
+                implements="lightning:isUrlAddressable,force:lightningQuickAction,lightning:actionOverride,force:hasRecordId,force:hasSObjectName,force:appHostable,flexipage:availableForAllPageTypes" 
+                access="global" >
+    
+    <!-- EDGE-118371:EMP API component -->
+    <lightning:empApi aura:id="empApi" />
+    <aura:attribute type="Boolean" name="offerOptionSelected"/>
+    <aura:attribute type="String" name="discount"/>
+    <aura:attribute type="String" name="DprOfferId" default=""/>
+    <aura:attribute type="Boolean" name="ActivationNRecontractionSIOValidation" />
+    <aura:attribute type="String" name="OpportunityId"/>
+    <aura:attribute type="Boolean" name="enableGetDealButton"/>
+    <aura:attribute type="Boolean" name="enableSaveButton" default="true"/>
+    <aura:attribute type="String" name="tempPlanType"/>
+    <aura:attribute name="picklistValues" type="Object" />
+    <aura:attribute name="listOfPlanSectData" type="List" default="[]" />
+    <aura:attribute name="setValueInRecon" type="Boolean" />
+    <aura:attribute name="MarketableOffer" type="Marketable_Offer__c[]" />
+    <aura:attribute name="AddOfferValidation" type="List" />
+    <aura:attribute name="SelectedProduct" type="String" default=""/>
+    <aura:attribute name="SelectedProductId" type="String" default=""/>
+    <aura:attribute name="storedPlan" type="List" default=""/>
+    <aura:attribute name="navigateToHome" type="Boolean" default="false" />
+    <aura:attribute name="SelectedOfferType" type="String" default=""/>
+    <aura:attribute name="hardwareOpt" type="String" />
+    <aura:attribute name="hardwareOptSelected" type="boolean" default="false" />
+    <aura:attribute name="OfferType" type="List" />
+    <aura:attribute name="offerSelected" type="Boolean" default="false" />
+    <aura:attribute name="planTypeValues" type="List" />
+    <aura:attribute name="boolean" type="boolean" default="false"/>
+    <aura:attribute name="openDelePricComp" type="boolean" default="true"/>   
+    <aura:registerEvent name="NavigateTo" type="c:NavigateToHomePageEvent"/>
+    <aura:attribute name="iterateOffer" type="List" default="[{}]"/>
+    <aura:attribute name="CommittedDataPlan" type="boolean" default="false" />
+    <aura:registerEvent type="c:ErrorHandlingEvent" name="ErrorEvent" />
+    
+    <lightning:navigation aura:id="navigationService" />
+    <lightning:navigation aura:id="navService" /> 
+    <aura:registerEvent name="hardwareOptchangeEvent" type="c:changeInHardwareOpt"/>
+    <aura:attribute type="String" name="DPRId"/>
+    <aura:attribute name="MMCvalue" type="Integer"/>
+    <aura:attribute name="addOnValue" type="String" />
+    <aura:attribute name="SelectedPlanType" type="String"/> 
+    <aura:attribute name="dprOffers" type="Map"/> 
+    <aura:attribute name="Plan" type="String"/>     
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="marketableOfferId" type="List" />
+    <aura:attribute name="Iddvalue" type="Integer"/>
+    <aura:attribute name="MroBnCredAmt" type="Integer"/>
+    <aura:attribute name="ErrorCheck" type="Boolean"/>
+    <aura:handler event="c:addOnTypeEvent" action="{!c.addOnTypeEvent}"/>
+    
+    <aura:attribute name="activationIso" type="Integer" />
+    <aura:attribute name="recontractingIso" type="Integer" />
+    <aura:attribute name="MMC" type="Integer" />
+    <aura:attribute name="NationalBYODiscount" type="Integer" />
+    <aura:attribute name="activationCreditmnths" type="Integer" />
+    <aura:attribute name="recontractingCreditmnths" type="Integer" />
+    <aura:attribute name="pickfield" type="String" />
+    <aura:attribute name="getcommitteddata" type="cspmb__Price_Item__c[]"/>
+    <aura:attribute name="Selectedcommitteddata" type="String" default=""/>
+    <aura:attribute name="DatapackplanRecordId" type="String" />
+    <aura:attribute type="Boolean" name="ShowGrossValue" default="false"/>
+    <aura:attribute type="Boolean" name="ShowNetValue" default="false"/>
+    <aura:attribute type="String" name="ErrorMsg"/>
+    <aura:handler event="c:Plan" action="{!c.handleAppEvntPlnMMC}"/>
+    <aura:handler event="c:pickfieldEvent" action="{!c.pickfieldEvent}"/>
+    <aura:handler event="c:MroBnCredAmtEvent" action="{!c.MroBnCredAmt}"/>
+    
+    <aura:attribute name="lstSelectedOfferType" type="List" default="[]" />
+    
+    <!--<aura:handler name="SelectedOfferModified" event="c:SelectedOfferModified" action="{!c.handleComponentEvent}"/> -->
+    
+    <!-- **********************Rishabh Attributes start***************************** -->
+    <!-- Holds the streaming event subscription -->
+    <aura:attribute name="subscription" type="Map" />
+    <!-- Holds the GBB Scale values for DPR Offer -->
+    <aura:attribute name="GBBList" type="Object" />
+    <!-- Aura if variable -->
+    <aura:attribute name="DelegaionOutcomeButton" type="Boolean" default="False"/>
+    <aura:attribute name="DelegationOutcomeTable" type="Boolean" default="False"/>
+    <aura:attribute name="Green" type="Boolean" default="False"/>
+    <aura:attribute name="Table" type="Boolean" default="False"/>
+    <aura:attribute name="GBBScale" type="Boolean" default="False"/>
+    <aura:attribute name="GBBErrorComp" type="Boolean" default="False"/>
+    <aura:attribute name="dontAllowSameOfferToBeAddedTwice" type="Boolean" default="False"/>
+    <!-- Holds the Final Delegation Outcome value for Delegated Pricing Request -->
+    <aura:attribute name="FinalDelegationOutcome" type="String" default="Test"/>
+    <!-- Holds the Colour for Delegation Outcome display button -->
+    <aura:attribute name="Colour" type="String" default="success"/>
+    <!-- Holds the rows for Mobile voice delegation popup table -->
+    <aura:attribute name="DelegationOutcomeList" type="List"/>
+    <!-- Holds the correlation Id -->
+    <aura:attribute name="CorrelationId" type="String"/>
+    <!-- Holds the New create Plan Id -->
+    <aura:attribute name="DPRPlanId" type="String"/>
+    <!-- Holds the List of New create Plan Id -->
+    <aura:attribute name="DPRPlanIdList" type="List"/>
+    <!--Event to render Plan Level GBB Scale-->
+    <aura:registerEvent name="renderPlanGbbScale" type="c:PLanLevelGbbRender"/>  
+    <!-- **************************Rishabh Attributes end****************************** -->
+    
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>-->
+    <!--#Manish Event handler for Add and Delete Row Event which is fire from Child Component-->    
+    <aura:handler name="DeleteRowEvt" event="c:DeleteRowEvt" action="{!c.removeDeletedRow}"/>
+    <aura:handler name="AddRowEvt" event="c:AddNewRowEvt" action="{!c.addNewRow}"/>
+    <aura:handler name="SaveButtonEnableDisable" event="c:DPSaveButtonEnableDisable" action="{!c.SaveCHeck}" />
+    <!--event handler to check dublicates-->
+    <aura:handler name="handlelDublicatEvent" event="c:HandelDublicaeEvt" action="{!c.handelDublicatePlans}"/>
+    <aura:handler event="c:OverlayLibraryModalEvent" action="{!c.confirmDeleteOfferEvent}"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <!--#Manish Aura Attribute for store Contact Object List as Array-->    
+    <aura:attribute name="lstDPROfferLineItemWrapper" type="DelegatedPricingController.PlanAndDiscountWrapper[]"/>
+    <aura:attribute name="lstDPROfferLineItemWrapper2" type="DelegatedPricingController.PlanAndDiscountWrapper[]"/>
+    <aura:attribute type="String" name="DPROffer"/>
+    <aura:attribute type="Boolean" name="Mode" default="false"/>
+    <aura:attribute type="Boolean" name="View" default="false"/>
+    <aura:attribute type="Boolean" name="SuccessLoading" default="false"/>
+    <aura:attribute name="mapOfOfferTypeVsProduct" type="Map" default="{}" />
+    <aura:attribute name="mapOfCmdPlanVsOffer" type="Map" default="{}" />
+    <aura:attribute name="mapOfPlanTypeVsOffer" type="Map" default="{}" />
+    <aura:attribute name="mapOfcmdPlanVsPtype" type="Map" default="{}" />
+    <aura:attribute name="mapOfAddOn" type="Map" default="{}" />
+    <aura:attribute name="mapOfMinMaxDiscountValues" type="Map" default="{}" />
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+    
+    <!--EDGE-145563 : Added for committed data plan charge -->
+     <aura:attribute name="dataPlanCharge" type="Decimal" />
+    <!--EDGE:114434 : Added for selecting Product -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    
+    
+    
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="demo-only" >
+            <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand ">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.openDelePricComp}">
+        <lightning:buttonIcon iconName="utility:close" size="medium"   variant="bare" onclick="{! c.navigateHome }" alternativeText="close" class="slds-float_right" />
+        <div class="slds-box applyBGColor" style="background: white;">
+            <div class="slds-page-header" style= "background: #F7F9FB;">
+                <div class="slds-page-header__row"  >
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <lightning:select disabled="{!v.View}" name="Select Product" label="Product" aura:id="test" required="true" value="{!v.SelectedProduct}" onchange="{!c.SelectProduct}">
+                                            <aura:if isTrue ="{!v.SelectedProduct == 'Select Product'}">
+                                            <option value="{!v.SelectedProduct}">{!v.SelectedProduct}</option>
+                                                </aura:if>
+                                            <aura:iteration items="{!v.MarketableOffer}" var="item">
+                                                <option value="{!item.Name}" text="{!item.Name}" />
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </div>                                
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="slds-page-header__col-actions">
+                        <div class="slds-page-header__controls">
+                            <div class="slds-page-header__control">
+                                <ul class="slds-button-group-list"> 
+                                    <lightning:button  label="Get Deal Score" disabled="{!v.enableGetDealButton}" onclick="{!c.getDealScoreFromPRE}"/>
+                                    <!--EDGE:117703 created Save button to insert the details-->
+                                    <lightning:button  label="Save" disabled="{!v.enableSaveButton}" onclick="{!c.upsertplanAndDiscount}"/>
+                                <!--    <button class="slds-button " onclick="{!c.upsertplanAndDiscount}" disabled="{!v.enableSaveButton}">Save</button> -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            
+            <div class="slds-border_bottom"></div>
+           
+            
+            <!-- code added by deepak -->
+            <aura:if isTrue="{!v.showScale}">
+                <!-- <c:GBBScaleInfo showScale="{!v.showScale}" />  -->
+            </aura:if>
+            
+            <aura:if isTrue="{!v.boolean}"> <!--added by badri-->
+                <div class="slds-page-header" style= "background: #F7F9FB;" >
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title">
+                            <div class="slds-media">
+                                <div class="slds-media__body">
+                                    <div class="slds-page-header__name">
+                                        <!-- Please Show Selected Product-->
+                                        <h1 class="slds-text-body--regular slds-text-title_bold " style="font-size: 150%;" > {!v.SelectedProduct}          </h1>
+                                        <!-- Added by Rishabh start -->        
+                                        <!-- EDGE:118371 - GBBScale start -->
+                                        <div class="slds-p-top_medium" style="padding-left: 8rem;">
+                                            <aura:if isTrue="{!v.GBBScale}">
+                                                <canvas aura:id="GBBScale" width="540" height="97" onmousemove="{!c.hoverFunction}"></canvas>
+                                            </aura:if> 
+                                        </div> 
+                                        <!-- GBBScale end -->
+                                        <!-- EDGE:114439 - Delegation Outcome display button start-->
+                                        <div>
+                                            <aura:if isTrue="{!v.DelegaionOutcomeButton}">
+                                                <div class="slds-align_absolute-center slds-text-body_small slds-p-bottom_x-small slds-p-top_medium">Delegation Outcome</div>
+                                                <div class="slds-align_absolute-center">
+                                                    <lightning:button variant="{!v.Colour}"
+                                                                      label="{!v.FinalDelegationOutcome}"
+                                                                      onclick="{!c.OpenChildComponent}"/>
+                                                </div>
+                                                <div class="slds-align_absolute-center slds-text-body_small slds-p-top_x-small">{!$Label.c.DPDelegationMesage}</div>
+                                            </aura:if>
+                                        </div>    
+                                        <!-- Delegation Outcome display button end-->
+                                        <!-- Added by Rishabh end -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <br></br>
+                <!-- EDGE 114433 : Added for selecting Hardware Option -->       
+                 <h3  style="background: #F2F3F3; font:SFFont;font-size:16px" >{!$Label.c.DPHardwareOption}</h3>
+                <lightning:select disabled="{!v.View}" class="slds-size_1-of-3 FixedWidth" name="Select Hardware Options" aura:id="hardware" label="Hardware Options" onchange="{!c.selectedHardwareOpt}">
+                    <option value="">Select Hardware Options</option>
+                    <option value="MRO/BYO">MRO/BYO</option>
+                    <!--   <option value="One Fund">One Fund</option>--><!--modified by Nagamani-->
+                </lightning:select>
+                <br></br>
+                
+                <!--EDGE:114435 : Added for selecting offer type values -->
+                <aura:if isTrue="{!v.hardwareOptSelected}">
+                      <h3  style="background: #F2F3F3; font:SFFont;font-size:16px" >{!$Label.c.DPPlansAndDiscounts}</h3>
+                    <div class="slds-grid slds-gutters ">
+                        <div class="slds-col slds-size_1-of-4"><!--slds-size_2-of-3 slds-size_1-of-3 -->
+                            <lightning:select disabled="{!v.View}" name="select1" class="FixedWidth" label="Offer Type" aura:id="offer" required="true" value="{!v.SelectedOfferType}">
+                               <aura:if isTrue ="{!v.SelectedOfferType == 'Select Offer Type'}">
+                                <option value="{!v.SelectedOfferType}">{!v.SelectedOfferType}</option>
+                                </aura:if>
+                                <aura:iteration items="{!v.OfferType}" var="item">
+                                    <option value="{!item}" text="{!item}" />
+                                </aura:iteration>
+                            </lightning:select>
+                        </div>
+                        <!--EDGE:122835: Created to allow user to add offer & delete offer --> 
+                        <div class="slds-col" style="margin-top: 25px;">
+                            <lightning:buttonIcon disabled="{!v.View}" title="Add Offer" onclick="{!c.AddOffer}" iconName="utility:add"/>
+                            <lightning:buttonIcon disabled="{!v.View}" title="Delete Offer" onclick="{!c.confirmDeleteOffer}" iconName="utility:delete"/> <!--deleteOffer-->
+                        </div>
+                    </div> 
+                </aura:if>
+                <br></br>           
+                <aura:if isTrue="{!v.offerSelected}">
+                    <!--Table Part-->           
+                    <table > 
+                        <tbody>
+                            <!--EDGE:117701 : Instantiating child component to display Committed Discounts -->
+                            <aura:if isTrue="{!v.lstDPROfferLineItemWrapper.length > 0}">
+                                <br/>
+                                <h3 class="slds-text-body_regular" style="font:SFFont;font-size:16px" >Offer Type : {!$Label.c.DPCommittedData}</h3>
+                                <!--EDGE-145563 : Added for committed data plan charge new field -->
+                                <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-6">
+                                    <!--EDGE:117701 : Added for getting discounts for committed offer type -->
+                                    <aura:if isTrue="{!v.CommittedDataPlan}">
+                                        <lightning:select disabled="{!v.View}" name="select2" class="FixedWidth" label="Committed Data Plan"  aura:id="Committed" onchange="{!c.Selectedcommitteddata}" required="true">    
+                                     <!--     <aura:if isTrue ="{!v.Selectedcommitteddata == 'Select committed data'}"> -->
+                                            <option value="{!v.Selectedcommitteddata}">{!v.Selectedcommitteddata}</option>
+                                     <!--       </aura:if> -->
+                                               <aura:iteration items="{!v.getcommitteddata}" var="item">
+                                               <option value="{!item}">{!item}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </aura:if>
+                                </div>
+                                    <div>
+                                        <lightning:input type="text"  name="input" aura:id="DataPlanCharge"  label="Committed Data Plan Charge ($)" fieldLevelHelp= "{!$Label.c.DataPriceHelpText}" disabled="true" value="{!v.dataPlanCharge}"/> 
+                                    </div>
+                                </div>    
+
+                                <!-- EDGE-148325 Defect - fix to populate field value after save  button is clicked --> 
+                                <aura:iteration items="{!v.lstDPROfferLineItemWrapper}" var="item" indexVar="index">
+                                    <c:ConfigureDiscount DPROfferLineItemWrapper="{!item}" rowIndex="{!index}" 
+                                                         aura:id="CommittedDataIterateId"            
+                                                         DprOfferId="{!v.DprOfferId}" hardwareOpt="{!v.hardwareOpt}" 
+                                                         SelectedProduct="{!v.SelectedProduct}" OfferType="Committed Data"
+                                                         getcommitteddata="{!v.getcommitteddata}"
+                                                         Selectedcommitteddata="{!v.Selectedcommitteddata}"
+                                                         View="{!v.View}" Mode="{!v.Mode}"
+                                                         dataPlanCharge="{!v.dataPlanCharge}"
+                                                         mapOfPlanTypeVsOffer="{!v.mapOfPlanTypeVsOffer}" mapOfcmdPlanVsPtype="{!v.mapOfcmdPlanVsPtype}"
+                                                         mapOfAddOn="{!v.mapOfAddOn}" mapOfMinMaxDiscountValues="{!v.mapOfMinMaxDiscountValues}"
+                                                         DelegaionOutcomeButton="{!V.DelegaionOutcomeButton}"
+                                                         />
+                                </aura:iteration>
+                                <!--EDGE:114435 : Instantiating child component to display Fairplay Discounts -->
+                            </aura:if>
+                            <aura:if isTrue="{!v.lstDPROfferLineItemWrapper2.length > 0}">
+                                <br/>
+                                <h3 class="slds-text-body_regular" style="font:SFFont;font-size:16px;" >Offer Type : {!$Label.c.DPFairplayData}</h3>
+                                <aura:iteration items="{!v.lstDPROfferLineItemWrapper2}" var="item" indexVar="index">
+                                    <c:ConfigureDiscount DPROfferLineItemWrapper="{!item}" rowIndex="{!index}" 
+                                                         aura:id="FairplayDataIterateId"            
+                                                         DprOfferId="{!v.DprOfferId}" hardwareOpt="{!v.hardwareOpt}" 
+                                                         SelectedProduct="{!v.SelectedProduct}" OfferType="FairPlay Data"
+                                                         getcommitteddata="{!v.getcommitteddata}"
+                                                         View="{!v.View}" Mode="{!v.Mode}"
+                                                         dataPlanCharge="{!v.dataPlanCharge}"
+                                                         mapOfPlanTypeVsOffer="{!v.mapOfPlanTypeVsOffer}" mapOfcmdPlanVsPtype="{!v.mapOfcmdPlanVsPtype}"
+                                                         mapOfAddOn="{!v.mapOfAddOn}" mapOfMinMaxDiscountValues="{!v.mapOfMinMaxDiscountValues}"
+                                                         DelegaionOutcomeButton="{!V.DelegaionOutcomeButton}"
+                                                         />
+                                </aura:iteration>
+                            </aura:if>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <!--manish changes End-->     
+                    
+                    
+                </aura:if>
+                <!--<div class="slds-hide" aura:id="PlanAndOfferPageID">
+             <c:ConfigurePlanAndOffers/>
+            </div> -->
+            </aura:if>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.navigateToHome}">
+        <c:DelegatedPricingLightningHome OpportunityId="{!v.OpportunityId}" navigateToHome="{!v.navigateToHome}" DPRId="{!v.DPRId}"/>
+    </aura:if>
+    
+    <!-- Added by Rishabh start -->
+    <!-- EDGE-114439:Delegation Outcome Table start-->
+    <aura:if isTrue="{!v.DelegationOutcomeTable}">   
+        <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">Mobile Voice Delegations</h2>
+                </div>
+                <div class="slds-modal__content slds-grid slds-wrap">
+                    <aura:if isTrue="{!v.Green}">
+                        <div class="slds-align_absolute-center">    
+                            {!$Label.c.DPOfferwithinDelegation}                          
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.Table}">
+                        <!--********************Popup Table start*************************-->
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Category">Category</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Label">Label</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="MyValue">My Value</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="MyLimit">My Limit</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="RequiredDelegation">Required Delegation</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.DelegationOutcomeList}" var="dol" indexVar="index">
+                                    <tr>
+                                        <td>
+                                            <div class="slds-truncate">{!dol.Category__c}</div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-truncate">{!dol.Label_Name__c}</div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-truncate">{!dol.Actual_Display__c}</div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-truncate">{!dol.AE_Expected_Display__c}</div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-truncate">{!dol.Delegation_Required__c}</div>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                        <!--********************Popup Table end***************************-->
+                    </aura:if>
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button  label="Close" onclick="{!c.CloseChildComponent}" />
+                </div>
+            </div>
+        </div>
+        <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+    <!-- Delegation Outcome Table end -->
+    <!-- Added by Rishabh end -->
+    
+    
+    
+    <!-- Added by Megha start -->
+    <!-- <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>-->
+    
+    
+    <!--loading spinner start... style=Brand Medium (blue dots)-->
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- Added by Megha end -->
+    
+    <!-- Added by Rishabh start -->
+    <!-- EDGE-118371:GBB Error pop up Component start-->
+    <aura:if isTrue="{!v.GBBErrorComp}">   
+        <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">ERROR</h2>
+                </div>
+                <div class="slds-modal__content slds-grid slds-wrap">
+                    <div class="slds-align_absolute-center">    
+                        {!v.ErrorMsg}                            
+                    </div>
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button  label="Close" onclick="{!c.CloseGBBErrorComponent}" />
+                </div>
+            </div>
+        </div>
+        <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>    
+    <aura:if isTrue="{!v.dontAllowSameOfferToBeAddedTwice}">   
+        <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">WARNING</h2>
+                </div>
+                <div class="slds-modal__content slds-grid slds-wrap">
+                    <div class="slds-align_absolute-center">    
+                        {!$Label.c.DPCMPOfferCheck}                           
+                    </div>
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button  label="Close" onclick="{!c.closeNoMultipleOffer}" />
+                </div>
+            </div>
+        </div>
+        <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if> 
+    <!-- GBB Error pop up Component end-->
+    <!-- Added by Rishabh end -->  
+</aura:component>

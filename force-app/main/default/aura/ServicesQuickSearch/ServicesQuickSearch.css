@@ -1,0 +1,35 @@
+.THIS {
+    position: relative;
+    overflow: hidden;
+    background-color: #fff;
+}
+.THIS.small {
+    height: 20rem;
+}
+.THIS.medium {
+    height: 40rem;
+}
+.THIS.large {
+    height: 60rem;
+}
+.THIS.autoHeight {
+    min-height: 20vh;
+    height: auto;
+}
+.THIS.small .scroll-container {
+    height: 22rem;
+}
+.THIS.medium .scroll-container {
+    height: 34rem;
+}
+.THIS.large .scroll-container {
+    height: 47rem;
+}
+.THIS .ratingStars {
+    min-width: 25%;
+    max-width: 105px;
+}
+.THIS header {
+    height: 5rem;
+    padding-bottom: .25rem;
+}

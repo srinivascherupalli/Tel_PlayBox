@@ -1,0 +1,42 @@
+<aura:component >
+    <aura:attribute name="selectedtabId" type="String" default="Mobile"/>
+    <!--aura:registerEvent name="NumberFinish" type="c:NumberFinishevt"/-->    
+    <aura:registerEvent name="NumberReservevt" type="c:NumberReservationTab"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-col slds-size_2-of-2" style="background:white;height: 3.5rem;">
+        <div class="slds-page-header slds-page-header_related-list">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title" style="text-align: center;">
+                    <h1>
+                        <span
+                              class="slds-page-header__title slds-truncate"
+                              title="Number Management">Number Management</span>
+                    </h1>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <lightning:buttonIcon iconName="utility:close" 
+                                                  class="closeIcon" 
+                                                  onclick="{!c.closeMainPopup}" 
+                                                  alternativeText="Close window" title="Close window" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="slds-col slds-size_1-of-1">
+        <!--EDGE:59982 Starts-->
+        <lightning:tabset aura:id="tabs"  variant="default" selectedTabId="{!v.selectedtabId}">
+            <!--EDGE-117819  Kalashree Brogaonkar. Added onActive for conditional rendering-->
+            <lightning:tab label="Mobile" id="Mobile" onactive="{!c.handleClickedTab}">                
+            </lightning:tab>
+            <lightning:tab label="Fixed" id="Fixed" onactive="{!c.handleClickedTab}">                
+            </lightning:tab>            
+        </lightning:tabset>
+        <!--EDGE:59982 Ends-->
+    </div>
+</aura:component>

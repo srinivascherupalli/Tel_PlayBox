@@ -1,0 +1,66 @@
+.THIS 
+    .fnn-text-icon-container{
+        display:inline-flex !important;
+    	width: auto;
+    	min-width: 30%;
+}
+.THIS 
+	.fnn-availability-icon{
+        float:left;
+    	margin-left: 10px;
+}
+.THIS 
+    .fnn-text{
+        float:left;
+        width:200px;
+    
+}
+.THIS .fnn-table-row { margin-top: 10px;    display: block;}
+.THIS .fnn-add-button {left: 145px;margin-top: 10px;}
+.THIS .fnn-check-button{left:30%;}
+
+.THIS .fnn-reason{
+    float:left;
+    color:#b11818;
+    text-decoration: underline;
+    text-decoration-color: #b11818;
+    padding-left: 10px;
+    word-wrap: break-word;
+    text-align: left;
+}
+.THIS .slds-icon-action-approval{
+    background-color:#197528;
+}
+.THIS .slds-icon-action-close{
+    background-color:#b11818;
+}
+.THIS .slds-button-check{
+    background-color:#00a1e0;
+}
+.THIS .slds-button-save{
+    background-color:#c1721d;
+    color:white;
+}
+.THIS .slds-button-check span{
+    color:white;
+}
+.THIS .slds-button-save button {
+    color:white;
+}
+.THIS .forceToastMessage.slds-notify--toast{
+    background-color : #407216;
+}
+@media (max-width: 400px) {
+  .THIS .fnn-text{
+        float:left;
+        width:120px;
+    }
+    .THIS .fnn-add-button {
+        left:0px;
+    	margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+@media (max-width: 780px) {
+ .THIS .fnn-check-button{text-align:left;}
+}

@@ -1,0 +1,92 @@
+<!--
+===============================================================================================================================
+Component Name : compUtilityGetServices_new
+Developer Name : Ravi
+COntroller Class : CompUtilityReplicatorManager
+===============================================================================================================================
+Sr.No.    Developer Name       	Modified  Date          Story Description
+1.        Shubhi ,Harsh,Rohit   23/5/2019     			CheckEligibilitySolution (EDGE-66570 ,EDGE-72453,EDGE-73521)
+
+===============================================================================================================================
+-->
+<!--NFB-126 : This component is developed to display the legacy services of the user returned from Replicator interface-->
+
+<aura:component implements="force:appHostable" controller="CompUtilityReplicatorManager" access="global" >
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="siteCount" type="Integer"/>
+    <aura:attribute name="showPageButton" type="Boolean" default="true"/>
+    <aura:attribute name="sites_new" type="ReplicatorGetServiceDataObject_V2" access="global"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doinit}" />   
+    <aura:attribute name="adborid" type="String[]" access="global"/>
+    <aura:attribute name="cidn" type="String" access="global"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="selectedOffer" type="String[]" access="global"/>
+    <aura:attribute name="selectedSite" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="selectedSite_V2" type="ReplicatorGetServiceDataObject_V2" access="global"/>
+    <aura:attribute name="ProductList" type="Map" />
+    <aura:attribute name="siteName" type="String" access="global"/>
+    <aura:attribute name="siteNameArray" type="String[]" access="global"/>
+    <aura:attribute name="checkService" type="Boolean" default="false"/>
+    <aura:attribute name="sitesMap" type="Map" description=""/>
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <aura:attribute name="SelectedSite_sitesMap" type="Map" default="{}" />
+    <aura:attribute name="sitesValue_V2" type="ReplicatorGetServiceDataObject_V2.SiteDTO_V2" />
+    <aura:attribute name="selectedProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd" type="String[]" access="global"/>
+    <aura:attribute name="selectedProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="basketId" type="String" access="global"/>
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" access="global"/>
+    <aura:attribute name="checkBasketStage" type="Boolean"/>
+    <aura:attribute name="reviewConfirmdisabled" type="Boolean" default="false" description="used for handling review confirm button"></aura:attribute>
+    <aura:attribute name="showRecommneded" type="Boolean" default="false"/>
+    <aura:attribute name="hideCheckboxColumn" type="Boolean" default="false" description="To hide checkbox of tree grid added for edge -90448"/>
+    <!--<aura:handler name="render" value="{!this}" action="{!c.onRender}"/>--> 
+    <aura:registerEvent name="getSelectedProd" type="c:GetSelectedProduct"/>
+    <aura:handler event="c:CallGetSelectedProduct" action="{!c.passSelectedProd}"/>
+    <aura:attribute name="gridColumns" type="List" description="Grid for all products data with respective eligilibity and reason."/>
+    <aura:attribute name="gridData" type="Object" description="Data of all products to be captured"/>
+    <aura:attribute name="gridDataMap" type="Map" description="Data of all products to be captured"/>
+    <aura:attribute name="gridExpandedRows" type="List" description="rows to display expanded"/>
+    <aura:attribute name="gridSelectedRows" type="Object" description="rows to display selected by default"/>
+    <aura:attribute name="SelectedProductList" type="List" default="" description="list to store to slected products along with adborid"/>
+    <aura:method name="getGetLegacyServices" access="PUBLIC">
+     <aura:attribute name="selectedRecord" type="ReplicatorGetServiceDataObject_V2" /> 
+    </aura:method>
+    <aura:method name="displayNone" access="PUBLIC"/>
+    <aura:attribute name="iconName" type="String" />
+    <aura:attribute name="allSitesWrapper" type="Map" access="global"/>
+    <div aura:id="container"/>
+    <div id="GetServicesCmp" style="display:none">
+        <aura:if isTrue="{!v.loadingSpinner}">
+            <lightning:spinner variant="brand" size="large"/>
+        </aura:if>
+        <br/>
+        <aura:if isTrue="{!v.checkService}">    
+			<div style="width:100%;">
+                <div style="width: 100%;"> <!--class="slds-scrollable_y" style="width: 100%;">-->                    
+                    <div class="slds-tree_container" style="max-width:100%; margin-left: 2%; margin-right: 2%;" role="application">
+                        <h2>There are {!v.siteCount} Legacy Service(s) eligible for transition at the selected site</h2>
+                        <h4 class="slds-text-title_caps" id="treeheading">Select services for Transition</h4>
+                        <lightning:treeGrid columns="{!v.gridColumns}"
+                        data="{!v.gridData}"
+                        keyField="keyProduct"
+                        onrowselection="{!c.handleRowselection}"                                             
+                        aura:id="transitionserviceTable"
+                        ontoggle="{!c.ontoggleEvent}" 
+                        hideCheckboxColumn="{!v.hideCheckboxColumn}"
+                        />              
+                    </div>
+                </div>
+                <hr/>
+            </div>
+            <br/>
+            <aura:set attribute="else">
+                <p class="box-property">This site does not have legacy services.</p>
+            </aura:set>
+            
+        </aura:if>
+    </div>    
+</aura:component>

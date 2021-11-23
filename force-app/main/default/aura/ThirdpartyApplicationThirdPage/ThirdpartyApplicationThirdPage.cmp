@@ -1,0 +1,131 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"  >
+	<aura:attribute name="recordId" type="String"  default=""/>
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="appDetailsSimple" type="Object"/>
+    <aura:attribute name="appDetails" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="ApplicationBooleanEvent" type="c:ApplicationBooleanEvent"/>  
+    <aura:attribute name="FieldsetName" type="String" default="Application_Litigation_Investigation"/>
+    <aura:attribute name="litigationBoolean" type="String" default=""/>
+   	<aura:registerEvent name="closeModalEvent" type="c:closeModalEvent"/>
+    <aura:attribute name="pickyesno" type="boolean" default="false"/>
+    <aura:attribute name="InvestBoolean" type="boolean" default=""/>
+    <aura:attribute name="InvestagationBoolean" type="boolean" default=""/>
+    <aura:attribute name="onaBoolean" type="boolean" default=""/>
+    <aura:attribute name="susBoolean" type="boolean" default=""/>
+    <aura:attribute name="LitigationYes" type="list" default="[{'label': 'Yes', 'value': 'Yes'},
+                                                          {'label': 'No', 'value': 'No'}]"/>
+    <aura:attribute name="value" type="String" /> 
+    <force:recordData aura:Id="ApplicantThird"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.appDetailsSimple}"
+                      targetFields="{!v.appDetails}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+    
+     <div class="slds-text-heading_large slds-text-align_center">
+        <h1>Third Party Agent Application Form</h1>
+        </div>
+          <div class="slds-text-body_regular slds-text-align_left">
+              <h3>Litigation/Investigation</h3>
+        </div>
+   		 <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+  	  </aura:if>
+        <div area-labelledby="newAppform">
+        <fieldset class="slds-box slds-theme--default">
+        <form class="slds-form--stacked"> 
+        <div class="slds-form-element slds-is-required">
+       		<lightning:radioGroup name="LitigationSelec" label="{!v.queAndAns[0].Question}" options="{!v.LitigationYes}" onchange="{!c.onSelectChange}" aura:Id="criminal"
+       	  	value="{!v.appDetails.Civil_criminal_litigation_charges__c}"  required="true" />
+       		 <br></br>
+        
+     		<aura:if isTrue="{!v.litigationBoolean}">
+            <p>Please provide the following information for any past and pending civil and criminal litigation (including criminal charges) in which applicant (or any principal officers) was or is a defendant or respondent.</p>
+            <br></br>
+   			<p><b>Litigation 1</b></p>	
+           <lightning:input label="{!v.queAndAns[1].Question}"  required="true" Name="litigation_titl1" value="{!v.appDetails.Litigation_Title1__c}" aura:id="expenseform"/>
+           <lightning:input label="{!v.queAndAns[2].Question}"  required="true" Name="litigation_place1" value="{!v.appDetails.Litigation_Place_filed1__c}" aura:id="expenseform"/>
+           <lightning:input type="date" label="{!v.queAndAns[3].Question}"  required="true" Name="litigation_date1" value="{!v.appDetails.Litigation_Date_filed1__c}" aura:id="expenseform"/>
+            <lightning:input label="{!v.queAndAns[4].Question}"  required="true"  Name="litigation_Disp1" value="{!v.appDetails.Litigation_Disposition1__c}" aura:id="expenseform"/>
+            <br></br>
+             
+   			<p><b>Litigation 2 (Optional)</b></p>	
+           <lightning:input label="{!v.queAndAns[1].Question}"   Name="litigation_titl2" value="{!v.appDetails.Litigation_Title2__c}"/>
+           <lightning:input label="{!v.queAndAns[2].Question}"   Name="litigation_place2" value="{!v.appDetails.Litigation_Place_filed2__c}"/>
+            <lightning:input type="date" label="{!v.queAndAns[3].Question}"  Name="litigation_date2" value="{!v.appDetails.Litigation_Date_filed2__c}"/>
+            <lightning:input label="{!v.queAndAns[4].Question}"   Name="litigation_Disp2" value="{!v.appDetails.Litigation_Disposition2__c}"/>
+     		<br></br>
+             
+   			<p><b>Litigation 3 (Optional)</b></p>	
+           <lightning:input label="{!v.queAndAns[1].Question}"   Name="litigation_titl3" value="{!v.appDetails.Litigation_Title3__c}"/>
+           <lightning:input label="{!v.queAndAns[2].Question}"   Name="litigation_place3" value="{!v.appDetails.Litigation_Place_filed3__c}"/>
+            <lightning:input type="date" label="{!v.queAndAns[3].Question}"  Name="litigation_date3" value="{!v.appDetails.Litigation_Date_filed3__c}"/>
+            <lightning:input label="{!v.queAndAns[4].Question}"   Name="litigation_Disp3" value="{!v.appDetails.Litigation_Disposition3__c}"/>
+            	 </aura:if>
+      <!--  </div>-->
+     		<br></br>
+        	<lightning:radioGroup name="InvestiSelec" label="{!v.queAndAns[5].Question}" options="{!v.LitigationYes}" onchange="{!c.onSelectChange}" aura:Id="Investigation"
+        	 value="{!v.appDetails.Pending_government_investigations__c}"  required="true" />
+        	<br></br>
+        	<aura:if isTrue="{!v.InvestBoolean}">
+            <p>List the following information regarding any pending governmental investigations</p>
+            <br></br>
+   			<p><b>Investigation 1</b></p>	
+           	<lightning:input label="{!v.queAndAns[6].Question}"  required="true" Name="Investigation_titl1" value="{!v.appDetails.Investigation_Title1__c}" aura:id="expenseform1"/>
+           	<lightning:input label="{!v.queAndAns[7].Question}"  required="true" Name="Investigation_place1" value="{!v.appDetails.Investigation_Place_filed1__c}" aura:id="expenseform1"/>
+           	<lightning:input type="date" label="{!v.queAndAns[8].Question}"  required="true" Name="Investigation_date1" value="{!v.appDetails.Investigation_Date_filed1__c}" aura:id="expenseform1"/>
+            <lightning:input label="{!v.queAndAns[9].Question}"  required="true"  Name="Investigation_Disp1" value="{!v.appDetails.Investigation_Disposition1__c}" aura:id="expenseform1"/>
+            <br></br>
+            <p><b>Investigation 2(Optional)</b></p>	
+           <lightning:input label="{!v.queAndAns[6].Question}"   Name="Investigation_titl2" value="{!v.appDetails.Investigation_Title2__c}"/>
+           <lightning:input label="{!v.queAndAns[7].Question}"   Name="Investigation_place2" value="{!v.appDetails.Investigation_Place_filed2__c}"/>
+           <lightning:input type="date" label="{!v.queAndAns[8].Question}"   Name="Investigation_date2" value="{!v.appDetails.Investigation_Date_filed2__c}"/>
+            <lightning:input label="{!v.queAndAns[9].Question}"  Name="Investigation_Disp2" value="{!v.appDetails.Investigation_Disposition2__c}"/>
+            <br></br>
+           <p><b>Investigation 3(Optional)</b></p>	
+           <lightning:input label="{!v.queAndAns[6].Question}"   Name="Investigation_titl3" value="{!v.appDetails.Investigation_Title3__c}"/>
+           <lightning:input label="{!v.queAndAns[7].Question}"   Name="Investigation_place3" value="{!v.appDetails.Investigation_Place_filed3__c}"/>
+           <lightning:input type="date"  label="{!v.queAndAns[8].Question}"   Name="Investigation_date3" value="{!v.appDetails.Investigation_Date_filed3__c}"/>
+            <lightning:input label="{!v.queAndAns[9].Question}"  Name="Investigation_Disp3" value="{!v.appDetails.Investigation_Disposition3__c}"/>
+            <br></br>
+            	 <lightning:radioGroup name="LitigationSelec1" label="{!v.queAndAns[10].Question}" options="{!v.LitigationYes}" onchange="{!c.onSelectChange}" aura:Id="Governing"
+        			 value="{!v.appDetails.Violated_rules_govening_bus_practices__c}"  required="true" />
+        		<aura:if isTrue="{!v.InvestagationBoolean}">
+            	 <lightning:textarea label="{!v.queAndAns[11].Question}"  Name="Descviolation" value="{!v.appDetails.Desc_violoation_to_rules_bus_practice__c}" aura:id="Governingform1" required="true"/>
+                </aura:if>
+                 <lightning:radioGroup name="LitigationSelec2" label="{!v.queAndAns[12].Question}" options="{!v.LitigationYes}" onchange="{!c.onSelectChange}" aura:Id="WatchLst"
+        			 value="{!v.appDetails.On_a_govt_or_sanctioned_party_watchlist__c}"  required="true" />   
+                    <aura:if isTrue="{!v.onaBoolean}">
+                    <lightning:textarea label="{!v.queAndAns[13].Question}"  Name="GovtWatach list" value="{!v.appDetails.Name_Govt_sanct_party_watchlist_date_st__c}" aura:id="WatchLstform1" required="true"/>
+                    </aura:if>
+             	    <lightning:radioGroup name="LitigationSelec3" label="{!v.queAndAns[14].Question}" options="{!v.LitigationYes}" onchange="{!c.onSelectChange}" aura:Id="suspension"
+        			 value="{!v.appDetails.Suspended_ineligible_for_govt_contract__c}"  required="true" /> 
+                    <aura:if isTrue="{!v.susBoolean}">
+                    <lightning:textarea label="{!v.queAndAns[15].Question}"  Name="Nameofgovtentity" value="{!v.appDetails.Name_of_govt_entity_how_Telstra_intera__c}" aura:id="suspensionform1" required="true"/>
+        	
+                    </aura:if></aura:if>
+        	<aura:if isTrue="{!not(empty(v.recordError))}">
+       		 <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>		
+        <div>
+     				   	
+               <div class="slds-modal__footer">
+                <lightning:button label="Save" variant="brand" onclick="{!c.handleSaveRecord}" />
+    		<!--	<lightning:button label="Next" variant="brand" onclick="{!c.navigateToMyComponent}" /> -->
+        </div>
+            </div>
+            </div>
+        </form>
+        </fieldset>
+    </div>
+</aura:component>

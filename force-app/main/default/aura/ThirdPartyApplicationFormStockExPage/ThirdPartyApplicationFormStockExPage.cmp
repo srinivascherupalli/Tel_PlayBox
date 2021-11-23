@@ -1,0 +1,155 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"  >
+	<aura:attribute name="recordId" type="String"  default=""/>
+    <aura:attribute name="recordError" type="String"/>
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="appDetailsSimple" type="Object"/>
+    <aura:attribute name="appDetails" type="Object"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="ApplicationBooleanEvent" type="c:ApplicationBooleanEvent"/>  
+    <aura:attribute name="FieldsetName" type="String" default="Application_Stock_Exchange"/>
+    <aura:attribute name="colors" type="String[]" default="Yes,No"/>
+     <aura:attribute name="pickyesno" type="boolean" default="true"/>
+     <aura:attribute name="Investyesno" type="boolean" default="true"/>
+    <aura:registerEvent name="closeModalEvent" type="c:closeModalEvent"/>
+    <aura:attribute name="LitigationYes" type="list" default="[{'label': 'Yes', 'value': 'Yes'},
+                                                          {'label': 'No', 'value': 'No'}]"/>
+    <force:recordData aura:Id="ApplicantThirdExg"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.appDetailsSimple}"
+                      targetFields="{!v.appDetails}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+    
+     <div class="slds-text-heading_large slds-text-align_center">
+        <h1>Third Party Agent Application Form</h1>
+        </div>
+          <div class="slds-text-body_regular slds-text-align_left">
+              <h3>Stock exchange listings</h3>
+        </div>
+    
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+    
+    <div area-labelledby="newAppform">
+    <fieldset class="slds-box slds-theme--default">
+    <form class="slds-form--stacked"> 
+    <div class="slds-form-element slds-is-required">
+  
+     <!--  	<lightning:select required="true" aura:id="a_opt" name="a_opt" label="{!v.queAndAns[0].Question}"  onchange="{!c.onSelectChange}" value="{!v.appDetails.Applicant_listed_on_stock_exchange__c}">
+         <aura:iteration items="{!v.colors}" var="color">
+               <option value="{!color}"  text="{!color}"></option>
+         </aura:iteration>
+     	</lightning:select> -->
+        <lightning:radioGroup name="LitigationSelec" label="{!v.queAndAns[0].Question}" options="{!v.LitigationYes}" aura:Id="stockExchange"
+        onchange="{!c.onSelectChange}" value="{!v.appDetails.Applicant_listed_on_stock_exchange__c}"  required="true" aura:id="expenseform"/>
+        <br></br>
+      
+      	<aura:if isTrue="{!v.pickyesno}">
+            
+              <lightning:input label="{!v.queAndAns[1].Question}"  required="true" Name="Stockdeatails1" aura:id="expenseform" value="{!v.appDetails.Stock_exchange_name__c}"/>
+        
+            <br></br>
+            <p>Please provide the following information about the Applicant</p>
+            <br></br>
+   			<p><b>Owner 1</b></p>	
+           <lightning:input label="{!v.queAndAns[2].Question}" aura:id="expenseform" required="true" Name="Stockownername" value="{!v.appDetails.Owner_of_Applicant_Name1__c}"/>
+           <lightning:input type="number"  aura:id="expenseform" label="{!v.queAndAns[3].Question}"  required="true" Name="Stockownerper" value="{!v.appDetails.Ownership_percent1__c}"/>
+           <br></br>
+           <p><b>Owner 2 (Optional)</b></p>	
+           <lightning:input label="{!v.queAndAns[2].Question}"   Name="Stockownername2" value="{!v.appDetails.Owner_of_Applicant_Name2__c}"/>
+           <lightning:input type="number"  label="{!v.queAndAns[3].Question}"   Name="Stockownerper2" value="{!v.appDetails.Ownership_percent2__c}"/>
+           <br></br> 
+            
+            <p><b>Owner 3 (Optional)</b></p>	
+           <lightning:input label="{!v.queAndAns[2].Question}"   Name="Stockownername3" value="{!v.appDetails.Owner_of_Applicant_Name3__c}"/>
+           <lightning:input label="{!v.queAndAns[3].Question}"   Name="Stockownerper3" value="{!v.appDetails.Ownership_percent3__c}"/>
+           <br></br>
+            
+   			<br></br>
+             <br></br>
+            <p>Indentify all Parent,Subsidery, and affiliated companies</p>
+            <br></br>
+            
+            <p><b>Company 1 </b></p>	
+           <lightning:input label="{!v.queAndAns[4].Question}" aura:id="expenseform" required="true"  Name="Compname" value="{!v.appDetails.Company_name_affiliated1__c}"/>
+           <lightning:input label="{!v.queAndAns[5].Question}" aura:id="expenseform" required="true"  Name="Relationtoapp" value="{!v.appDetails.Relation_to_Applicant1__c}"/>
+           <lightning:input label="{!v.queAndAns[6].Question}" aura:id="expenseform" required="true" Name="Comp_Location" value="{!v.appDetails.Location_of_affiliate1__c}"/>
+           <lightning:input type="date" label="{!v.queAndAns[7].Question}" aura:id="expenseform" required="true"  Name="Comp_DateofEst" value="{!v.appDetails.Date_Established_affilate1__c}"/>
+           <lightning:input label="{!v.queAndAns[8].Question}" aura:id="expenseform" required="true"  Name="Comp_PlaceofEst" value="{!v.appDetails.Place_of_Establishment1__c}"/>
+           <lightning:select required="true" aura:id="a_opt2" name="a_opt2" label="{!v.queAndAns[9].Question}"  onchange="{!c.onSelectChangeinvs}" value="{!v.appDetails.Owned_affiliated1__c}">
+        <aura:iteration items="{!v.colors}" var="color">
+             <!--selected="{!color==v.a_opt2}"-->
+         <option value="{!color}" text="{!color}"></option>
+         </aura:iteration>
+     	</lightning:select> 
+            <br></br>
+            <p><b>Company 2 (Optional) </b></p>	
+           <lightning:input label="{!v.queAndAns[4].Question}"   Name="Compname2" value="{!v.appDetails.Company_name_affiliated2__c}"/>
+           <lightning:input label="{!v.queAndAns[5].Question}"   Name="Relationtoapp2" value="{!v.appDetails.Relation_to_Applicant2__c}"/>
+           <lightning:input label="{!v.queAndAns[6].Question}"  Name="Comp_Location2" value="{!v.appDetails.Location_of_affiliate2__c}"/>
+           <lightning:input type="date" label="{!v.queAndAns[7].Question}"   Name="Comp_DateofEst2" value="{!v.appDetails.Date_Established_affilate2__c}"/>
+           <lightning:input label="{!v.queAndAns[8].Question}"   Name="Comp_PlaceofEst2" value="{!v.appDetails.Place_of_Establishment2__c}"/>
+           <lightning:select required="true" aura:id="a_opt2" name="a_opt2" label="{!v.queAndAns[9].Question}"  onchange="{!c.onSelectChangeinvs}" value="{!v.appDetails.Owned_affiliated2__c}">
+        	 <aura:iteration items="{!v.colors}" var="color">
+             <!--selected="{!color==v.a_opt2}"-->
+        	 <option value="{!color}" text="{!color}"></option>
+         	</aura:iteration>
+     		</lightning:select>
+            <br></br>
+            
+            <p><b>Company 3 (Optional) </b></p>	
+           <lightning:input label="{!v.queAndAns[4].Question}"   Name="Compname2" value="{!v.appDetails.Company_name_affiliated3__c}"/>
+           <lightning:input label="{!v.queAndAns[5].Question}"   Name="Relationtoapp2" value="{!v.appDetails.Relation_to_Applicant3__c}"/>
+           <lightning:input label="{!v.queAndAns[6].Question}"  Name="Comp_Location2" value="{!v.appDetails.Location_of_affiliate3__c}"/>
+           <lightning:input type="date" label="{!v.queAndAns[7].Question}"   Name="Comp_DateofEst2" value="{!v.appDetails.Date_Established_affilate3__c}"/>
+           <lightning:input label="{!v.queAndAns[8].Question}"   Name="Comp_PlaceofEst2" value="{!v.appDetails.Place_of_Establishment3__c}"/>
+           <lightning:select required="true" aura:id="a_opt2" name="a_opt2" label="{!v.queAndAns[9].Question}"  onchange="{!c.onSelectChangeinvs}" value="{!v.appDetails.Owned_affiliated3__c}">
+         <aura:iteration items="{!v.colors}" var="color">
+             <!--selected="{!color==v.a_opt2}"-->
+         <option value="{!color}" text="{!color}"></option>
+         </aura:iteration>
+     	</lightning:select>
+            <br></br>
+            </aura:if>
+         <br></br>
+        <p>Provide the details of the principle officers and these individuals who will be responsible for the relationship with Telstra</p>
+   			<p><b>Person 1</b></p>	
+          	<lightning:input label="{!v.queAndAns[10].Question}" required="true" aura:id="expenseformperson"   Name="Person_Name1" value="{!v.appDetails.Name_Principle_Officer1__c}"/>
+          	<lightning:input label="{!v.queAndAns[11].Question}" required="true" aura:id="expenseformperson"  Name="Person_titl1" value="{!v.appDetails.Title_Principle_Officer1__c}"/>
+            <lightning:input label="{!v.queAndAns[12].Question}" required="true" aura:id="expenseformperson" Name="Person_Years" value="{!v.appDetails.Years_of_Service_Principle_Officer1__c}"/>
+        	<br></br>   	
+        	<p><b>Person 2 (Optional)</b></p>	
+           	<lightning:input label="{!v.queAndAns[10].Question}"   Name="Person_Name1" value="{!v.appDetails.Name_Principle_Officer2__c}"/>
+	       	<lightning:input label="{!v.queAndAns[11].Question}"   Name="Person_titl1" value="{!v.appDetails.Title_Principle_Officer2__c}"/>
+            <lightning:input label="{!v.queAndAns[12].Question}"  Name="Person_Years" value="{!v.appDetails.Years_of_Service_Principle_Officer2__c}"/>
+          
+     		<br></br>
+         	<p><b>Person 3 (Optional)</b></p>	
+           	<lightning:input label="{!v.queAndAns[10].Question}"   Name="Person_Name1" value="{!v.appDetails.Name_Principle_Officer3__c}"/>
+	       	<lightning:input label="{!v.queAndAns[11].Question}"   Name="Person_titl1" value="{!v.appDetails.Title_Principle_Officer3__c}"/>
+            <lightning:input label="{!v.queAndAns[12].Question}"  Name="Person_Years" value="{!v.appDetails.Years_of_Service_Principle_Officer3__c}"/>
+          
+     		<br></br>
+        		<div>
+        		<aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+               <div class="slds-modal__footer">
+                <lightning:button label="Save" variant="brand" onclick="{!c.handleSaveRecord}" />
+    			<lightning:button label="Next" variant="brand" onclick="{!c.navigateToMyComponent}" />
+        </div>
+            </div>
+            </div>
+        </form>
+        </fieldset>
+    </div>
+</aura:component>

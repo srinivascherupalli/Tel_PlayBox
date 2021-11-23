@@ -1,0 +1,56 @@
+<template>
+  <div class="slds-grid">
+    <div class="slds-col slds-size_6-of-12">
+      <template for:each={uiAttributesModel} for:item="attribute">
+        <div
+          class="row meta-data-inputs"
+          key={attribute.id}
+          if:true={attribute.showInUI}
+          data-field-id={attribute.name}
+          onclick={handleOpenPopup}
+        >
+          <c-meta-data-input-renderer
+            attribute={attribute}
+            validation-rules={validationRules}
+            attributes={attributes}
+            onchange={handleInputChange}
+            onblur={handleInputBlur}
+            onfocus={handleFocus}
+            onsearchlookup={handleLookupSearch}
+            is-no-click={isApplyConfig}
+          ></c-meta-data-input-renderer>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- Start inner alert for apply config -->
+  <template if:true={isApplyPopup}>
+    <c-modal
+      title={changedAttribute.label}
+      oncancel={handleApplyConfig}
+      ondone={handleApplyConfig}
+      ontogglechange={handleToggleChange}
+      success-btn-label="Apply"
+      is-loading={isLoading}
+      is-cancel="true"
+      is-apply-toggle="true"
+      apply-label="Apply to all selected configuration"
+      class="inner-alert"
+    >
+      <div class="body" slot="body">
+        <div class="body-wrapper">
+          <c-meta-data-input-renderer
+            attribute={changedAttribute}
+            validation-rules={validationRules}
+            onchange={handleInputChange}
+            onblur={handleInputBlur}
+            onfocus={handleFocus}
+            onsearchlookup={handleLookupSearch}
+          ></c-meta-data-input-renderer>
+        </div>
+      </div>
+    </c-modal>
+  </template>
+  <!-- End inner alert for apply config -->
+</template>

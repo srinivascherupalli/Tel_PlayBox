@@ -1,0 +1,48 @@
+<!-- 
+* @Author : Vasu
+* @Date : 24 Sep 2021
+-->
+<apex:page showHeader="false" sidebar="false">
+  <apex:includeLightning />
+  <div id="LightningComponentid" />
+  <script>
+    var solutionId = "{!JSENCODE($CurrentPage.parameters.solutionId)}";
+    var basketId = "{!JSENCODE($CurrentPage.parameters.basketId)}";
+    var basketName = "{!JSENCODE($CurrentPage.parameters.basketName)}";
+    $Lightning.use("c:OE_MetaData_App", function () {
+      $Lightning.createComponent("c:OE_MetaDataComponent",
+        {
+          'solutionId': solutionId,
+          'basketId': basketId,
+          'basketName': basketName
+        },
+        "LightningComponentid",
+        function (cmp) {
+         console.log('Component Created');
+          $A.eventService.addHandler({ "event": "c:OE_CloseEvent", "handler": oeCloseEvent  });
+        });
+    });
+
+    function oeCloseEvent (event){
+    var payload =
+            {
+                command: 'OEClose',
+                data: 'close',
+                caller: 'OEClose'
+            };
+     window.parent.postMessage(payload, '*');
+      
+     
+    }
+
+    document.addEventListener("closesignal", function (event) {
+      if (event.detail.data == 'navigateToRecord') {
+        window.top.location.href = recordUrl;
+      }
+
+      else if (event.detail.data == 'close') {
+        window.parent.postMessage('closeModals', '*');
+      }
+    });
+  </script>
+</apex:page>

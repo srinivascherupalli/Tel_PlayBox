@@ -1,0 +1,24 @@
+<!--****************************************************************************
+@Author: Nikita Tiwari
+@CreateDate: 18/08/2018
+@Story: EDGE-30168
+@Description: Will show error message also will update Verify relation field on save.
+@TestCoverageClass: AccountContactRelationshipTRGTest.cls
+@ChangeLog: v1: Created
+********************************************************************************-->
+<aura:component controller="AccountContactCheckVerifiedDate" implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId" access="global" >
+ 
+    <div class="slds-modal__container">
+        <div class="slds-modal__content slds-p-around--medium">
+            <div>
+                <p><b><h1 style="color:grey; ">
+                    Please click "Save" to verify the Account and Contact information. The Relationship Verified Date and Relationship Expiry Date will be updated.
+                    </h1> </b></p>
+            </div>
+        </div>
+    </div>
+    <div class="slds-col_bump-left slds-text-align_center">      
+        <lightning:button variant="brand" label="Save" onclick="{! c.saveClick }" />
+        <lightning:button variant="neutral" label="Cancel" onclick="{! c.cancelClick }" />
+    </div> 
+</aura:component>

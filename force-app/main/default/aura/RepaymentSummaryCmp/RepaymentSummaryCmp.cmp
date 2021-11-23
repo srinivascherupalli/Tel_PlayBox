@@ -1,0 +1,78 @@
+<!-- **************************************************************************
+EDGE        -108332
+component   -RepaymentSummaryCmp
+Description -RepaymentSummaryCmp Component is used to show the summary details of RepaymentCharges for the given
+			 Invoice Line Item record.
+Author      -Jawahar M
+Team        -Osaka
+********************************************************************************* -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                controller="RepaymentSummaryHandler">
+    <aura:attribute name="invoiceLineItemId" type="String" />   
+    <aura:attribute name="ChargeId" type="Integer"/>
+    <aura:attribute name="ChargeType" type="String"/>
+    <aura:attribute name="columns" type ="List"/>
+    <aura:attribute name="repaymentSummaryDetails" type="RepaymentSummaryHandler.repaymentDataWrapper[]"/>
+    <aura:attribute name="sortedBy" type="String" default="dateApplied" />
+ 	<aura:attribute name="sortedDirection" type="String" default="desc" />
+    <aura:attribute name="errorMessage" type="string"/>
+    <aura:attribute name="IsError" type="Boolean"  default="False"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global"  />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    
+    <aura:if isTrue="{!v.loadingSpinner}">
+    <div>
+      <lightning:spinner class="spin" aura:id="spinner" variant="brand" size="large" />
+    </div>
+    </aura:if>
+    <aura:if isTrue="{!v.IsError}">
+        <ui:message title="Error" severity="error" closable="true">
+            {!v.errorMessage}
+        </ui:message>
+    </aura:if>
+    <!--<table class="slds-table slds-table_bordered slds-scrollable_x slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+    
+        <thead>
+    <div class="slds-scrollable_x" flexible="auto" style="height: 23rem;  width: 50rem">
+         <tr class="slds-text-heading_label">
+            <aura:iteration items="{!v.columns}" var="flds">
+                <th scope="col"><div class="slds-truncate" title="ID">{!flds.label}</div></th>
+            </aura:iteration>
+        </tr> 
+        
+            </div>
+                 
+        </thead><tbody>
+        <aura:iteration items="{!v.columns}" var="columns">
+        <tr>
+            <aura:iteration items="{!columns.values}" var="flds">
+                <td>{!flds.label}</td>
+            </aura:iteration>
+           
+        </tr> 
+             </aura:iteration>
+        </tbody>
+    </table>
+    
+    <div class="slds-col "> <div class="row" style="padding:20px;">
+                    <button
+                      class="slds-button  slds-button_brand"
+                      onclick="{!c.getSearchData}"
+                      label="Search"
+                      >Search</button>
+    </div></div>-->
+    
+    <div aura:id="Adjustmentdiv" class="margin10" >
+            <div class="slds-scrollable_x" style="height: 8rem;">
+                  <lightning:datatable 
+                  columns="{!v.columns}"
+                  data="{!v.repaymentSummaryDetails}"
+                  keyField="invoiceLineItemId"          
+                  hideCheckboxColumn="true" 
+                  minColumnWidth="140"
+				  />
+                <br/>
+             </div>
+        
+    </div>
+</aura:component>

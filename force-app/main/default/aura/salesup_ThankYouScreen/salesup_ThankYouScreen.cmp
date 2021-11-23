@@ -1,0 +1,85 @@
+<aura:component controller='salesup_ThankYouScreenController' implements="lightning:availableForFlowScreens,force:appHostable,force:hasRecordId,force:lightningQuickAction" 
+                access="global" >
+    <aura:attribute name="isOpen" type="boolean" default="true"/>
+    <aura:registerEvent name = "cmpEvent" type="c:closeEvent"/>
+    <aura:attribute name="communityBaseURL" type="string"/> <!-- default="{!$Label.c.CommunityBaseURL}" -->
+    <aura:attribute name="childCaseList" type="List" />  
+    <aura:attribute name="parentCaseList" type="List" /> 
+    <aura:attribute name="varChildCaseList" type="Case[]" />
+    <aura:attribute name="blnPartner" type="boolean"/>
+    <aura:attribute name="isCallFromCPEFlowComp" type="boolean" default="false"/>
+    <aura:attribute name="opportunityId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:attribute name="varParentIdList" type="String[]" />
+    <aura:registerEvent name="appEvent" type="c:closeParentPopupFromThankYouScreen"/>  
+    <aura:if isTrue="{!v.isOpen}"> 
+        <div class="demo-only" style="height:800px">
+            <section role="dialog" aura:id="modal" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="welcome-mat-415-label" aria-describedby="welcome-mat-415-content" aria-modal="true">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header slds-modal__header_empty">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                    </header>
+                    <div class="slds-modal__content" id="welcome-mat-415-content">
+                        <div class="slds-welcome-mat">
+                            <div class="slds-welcome-mat__content slds-grid">
+                                <div class="slds-welcome-mat__info slds-size_1-of-2">
+                                    <div class="slds-welcome-mat__info-content">
+                                        <h2 class="slds-welcome-mat__info-title" id="welcome-mat-415-label">Thank You!</h2>
+                                        <div class="slds-welcome-mat__info-description slds-text-longform">
+                                            <p>Your Request has been submitted to the concerned support team to be executed. You can continue to track the status of the case by opening the Account, then clicking Related and then selecting the case number from the "Cases" option.</p>
+                                        </div>		
+                                    </div>
+                                </div>
+                                <!--   <aura:iteration items="{!v.parentCaseList}" var="ca" >
+                                    <ul class="slds-welcome-mat__tiles slds-size_1-of-2 slds-welcome-mat__tiles_info-only">
+                                        <li class="slds-welcome-mat__tile slds-welcome-mat__tile_info-only">
+                                            <div class="slds-media">
+                                                <div class="slds-media__body">
+                                                    <div class="slds-welcome-mat__tile-body">
+                                                        <h3 class="slds-welcome-mat__tile-title">Case Number :  <a href="{!'/one/one.app?#/sObject/'+ ca.Id + '/view'}"  target="_blank">{!ca.CaseNumber}</a></h3>
+                                                        <h3 class="slds-welcome-mat__tile-title">Work Required : {!ca.salesup_Work_Required__c}</h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                    </ul>
+                                </aura:iteration>-->
+                                <ul class="slds-welcome-mat__tiles slds-size_1-of-2 slds-welcome-mat__tiles_info-only">
+                                    <li class="slds-welcome-mat__tile slds-welcome-mat__tile_info-only">
+                                        <div class="slds-media">
+                                            <div class="slds-media__body">
+                                                <aura:iteration items="{!v.childCaseList}" var="ca" >
+                                                    <div class="slds-welcome-mat__tile-body">
+                                                        <aura:if isTrue="{!v.blnPartner}">
+                                                            <h3 class="slds-welcome-mat__tile-title">Case Number :  <a href="{!v.communityBaseURL+'/case/'+ ca.Id}"  target="_blank">{!ca.CaseNumber}</a></h3>
+                                                        	<h3 class="slds-welcome-mat__tile-title">{!ca.Category_PRM__c} - {!ca.Work_Required_PRM__c}</h3>
+                                                            <aura:set attribute="else">
+                                                                <h3 class="slds-welcome-mat__tile-title">Case Number :  <a href="{!'/one/one.app?#/sObject/'+ ca.Id + '/view'}"  target="_blank">{!ca.CaseNumber}</a></h3>
+                                                                <!-- Added blank check-->
+                                                                <aura:if isTrue="{!and(not(empty(ca.srvsup_Categories__c)),
+                                                                                 not(empty(ca.salesup_Work_Required__c)))}">
+                                                                    <h3 class="slds-welcome-mat__tile-title">{!ca.srvsup_Categories__c} - {!ca.salesup_Work_Required__c}</h3>
+                                                                </aura:if>
+                                                        	</aura:set>
+														</aura:if>
+                                                    </div>
+                                                </aura:iteration>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div aura:id="backdrop" class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+</aura:component>

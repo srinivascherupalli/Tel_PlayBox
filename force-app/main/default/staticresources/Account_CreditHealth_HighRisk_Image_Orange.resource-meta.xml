@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Private</cacheControl>
+    <contentType>image/svg+xml</contentType>
+    <description>Orange Image for Account Credit Health when High Risk and Override Health Check is True. Created as part of P2OB-5468..Modified as part of P2OB-14463</description>
+</StaticResource>

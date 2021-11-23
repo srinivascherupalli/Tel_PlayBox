@@ -1,0 +1,126 @@
+<aura:component controller="CompUtilityReplicatorManager" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="storedJSON" type="Boolean" default="false" />
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="sites_new" type="ReplicatorGetServiceDataObject_V2" access="global"/>
+    <aura:attribute name="sitesMap" type="Map" />
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <aura:attribute name="siteDTOMap" type="Map" />
+    <aura:attribute name="basketId" type="String" access="global"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c"/>
+    <aura:attribute name="mapProdIds" type="Map" />
+    <aura:attribute name="mapProdIds_V2" type="Map" />
+    <aura:attribute name="selectedProd" type="String[]" access="global"/>
+    <aura:attribute name="selectedProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="selectedProdFinal" type="String[]" access="global"/>
+    <aura:attribute name="selectedProdFinal_V2" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd_V2" type="String[]" access="global"/>
+    <aura:attribute name="displayTransBtn" type="Boolean" default="false"/>
+    <aura:attribute name="selectedSite" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="selectedSite_V2" type="ReplicatorGetServiceDataObject_V2" access="global"/>
+    <aura:registerEvent name="callSelectedProduct" type="c:CallGetSelectedProduct"/>
+    <aura:handler event="c:GetSelectedProduct" action="{!c.handleGetSelectedProduct}"/>
+    <aura:handler name="getTabName" event="c:CompUtilityGetTab" action="{!c.handleSaveButtonOnTabClick}"/>
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+    <div class="slds-page-header">
+        <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+                <div class="slds-media slds-no-space slds-grow">
+                    <div class="slds-media__figure">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="action:goal" size="small" alternativeText="Check Point"/>
+                        </div>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-text-body_small slds-line-height_reset">Check Point</h2>
+                        <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="{!v.ProdBasket.Name}">{!v.ProdBasket.Name}</h1>
+                        
+                    </div>
+                </div>           
+            </div>
+        </div>
+        
+        
+        
+        <ul class="slds-grid slds-page-header__detail-row">
+            <li class="slds-page-header__detail-block">
+                <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Account Name">Account Name</p>
+                <p><a onclick="{!c.gotoAccount}">{!v.ProdBasket.csbb__Account__r.Name}</a></p>
+            </li>
+            <li class="slds-page-header__detail-block">
+                <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Opportunity Name">Opportunity Name</p>
+                <p class="slds-text-body_regular"><a onclick="{!c.gotoOpportunity}">{!v.ProdBasket.cscfga__Opportunity__r.Name}</a></p> 
+            </li>
+            <li class="slds-page-header__detail-block">
+                <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Basket Description">Basket Description</p>
+                <p class="slds-text-body_regular">{!v.ProdBasket.Description__c}</p>
+            </li>
+            <li class="slds-page-header__detail-block">
+                <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Total Contract Value">Total Contract Value</p>
+                <p class="slds-text-body_regular">{!v.ProdBasket.cscfga__total_contract_value__c}</p>
+            </li>
+            <li class="slds-page-header__detail-block">
+                <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Primary Basket">Primary Basket</p>
+                <lightning:input type="checkbox" name="Primary Basket" checked="{!v.ProdBasket.Primary_Basket__c}" disabled="true"/>
+            </li>
+            <li class="slds-page-header__detail-block">
+                <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Synchronized with Opportunity">Synchronized with Opportunity</p>
+                <lightning:input type="checkbox" name="Synchronized with Opportunity" checked="{!v.ProdBasket.csbb__Synchronised_With_Opportunity__c }" disabled="true"/>
+            </li>
+            <li class="slds-page-header__detail-block">
+                <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Created By">Created By</p>
+                <lightning:avatar variant="circle" src="/docs/component-library/app/images/examples/lightning_blue_profile_avatar_96.jpg" initials="" fallbackIconName="standard:person_account" alternativeText="" class="slds-m-right_small"/>
+                <p class="slds-text-body_regular"><a onclick="{!c.gotoUser}">{!v.ProdBasket.Created_By__c}</a></p>
+            </li>
+        </ul>
+        
+    </div>
+    <br/>
+    <lightning:picklistPath aura:id="picklistPath"  recordId="{!v.basketId}" picklistFieldApiName="csordtelcoa__Basket_Stage__c" />
+    
+    <br/>
+    <div class="slds slds-grid">
+        <div class="slds-col slds-size_4-of-8" style="margin-right: 10px;">
+            <c:CompUtilityProdBasket siteDTOMap="{!v.siteDTOMap}" ProdBasket="{!v.ProdBasket}" aura:id="GetSiteComp"/>
+        </div>
+        <div class="slds-col slds-size_4-of-8" style="margin-right: 20px; background-color:white;">
+            <c:ComparisonUtilityDetails_V2 sites="{!v.sites}" sites_new="{!v.sites_new}" sitesMap="{!v.sitesMap}" sitesMap_V2="{!v.sitesMap_V2}" basketId="{!v.basketId}" selectedProd="{!v.selectedProd}" readOnlyProd="{!v.readOnlyProd}" readOnlySelectedProd="{!v.readOnlySelectedProd}" ProdBasket="{!v.ProdBasket}"/>
+        </div>
+    </div>
+    <hr style ="margin-right: 8%; margin-top: 1px; margin-bottom: 1px"/>
+    
+    <div style="margin-right: 0px; background-color:white">
+        <br/>
+        
+        <div align="right" style="margin-right: 2px; background color: white ">
+            Save the selection for Checkpoint? &nbsp; &nbsp;<ui:button class="slds-button" label="Cancel" press="{!c.cancelTransition}"/>
+            <aura:if isTrue="{!v.displayTransBtn}">
+                <ui:button class="slds-button" aura:id="transitionbutton" label="Finish" press="{!c.processTransition}" disabled="false"/>&nbsp;
+                <lightning:helptext content="Save any changes and close Checkpoint, or Cancel to discard changes and revert to last saved."/>
+            </aura:if>
+        </div>
+        <br/>
+    </div>
+    
+    
+    
+    
+    <!-- <hr style = "margin-top: 0px; margin-bottom: 2px"/>
+    <div class="slds slds-grid">
+           <div class="slds-col slds-size_7-of-8 boxBorder" style="background-color: white; margin-left: 0.01%; margin-right: 0.5%; padding-right:0.01%; padding-bottom:0.01%">
+            <ui:button class="slds-button" label="Cancel" press="{!c.cancelTransition}"/>
+            <aura:if isTrue="{!v.displayTransBtn}">
+                <ui:button class="slds-button" aura:id="transitionbutton" label="Save" press="{!c.processTransition}" disabled="false"/>
+            </aura:if>
+           </div>
+        </div>
+ -->
+    
+    
+</aura:component>

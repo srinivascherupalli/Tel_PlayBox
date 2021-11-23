@@ -1,0 +1,94 @@
+<aura:component controller="PRMWebtoLeadContr" >
+    <aura:attribute name="leadRec" type="Lead"/>
+    <aura:attribute name="spinner" type="boolean" default="false" />  
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="PartnercategoriesList" type="List" default="[]"/>
+	<aura:attribute name="SelectedPartnercategoriesList" type="List" default="[]" />
+    <aura:attribute name="TCPProgramoptions" type="List" default="[]" />
+	<aura:attribute name="TCPProgramoptionsselectedVal" type="List" default="[]"/>
+    <!-- Added by Ayush for Story P2OB-7471 -->
+    <aura:attribute name="containsDistributor" type="Boolean" default="false" />
+
+  <div class="slds-text-heading_medium">{!$Label.c.EOI_Partner_Information}</div> 
+    
+     <div>
+         
+       <div class="slds-form-element slds-form-element_horizontal slds-form-element__label ">
+        <abbr class="slds-required" title="required">*</abbr>
+           <span>{!$Label.c.EOI_Domain_Specialisation}</span> 
+           <!-- adding helptext for Story P2OB-7471 by Ayush -->
+           <lightning:helptext iconName="utility:info" class="slds-helpText" content="Tick all options that apply" />
+    	</div>
+          
+     	<lightning:checkboxGroup aura:id="Leadform" name="Please select the product domains your company specialises in"
+                                 variant="label-inline"
+                                 options="{!v.PartnercategoriesList }"
+                                 value="{!v.SelectedPartnercategoriesList}" 
+                                 class="slds-form-element slds-form-element_horizontal"
+                                />
+        
+    </div>
+    
+         <lightning:input aura:id="Leadform" 
+                             name="Comments"
+                             value="{!v.leadRec.Partner_categories_Other_Comments__c}"
+                             class="slds-form-element slds-form-element_horizontal" 
+                          variant="label-inline"
+                          placeholder="If other, please specify"/> 
+    <div>
+       
+       <div class="slds-form-element slds-form-element_horizontal slds-form-element__label ">
+                                                <abbr class="slds-required" title="required">*</abbr>
+           <span>{!$Label.c.EOI_How_did_you_hear}</span>  
+           <!-- Added by Ayush for Story P2OB-7471 -->
+            <lightning:helptext iconName="utility:info" class="slds-helpText" content="Tick all options that apply" />
+    	</div>
+         
+     	<lightning:checkboxGroup aura:id="Leadform" name="How did you hear about the Telstra Channel Partner program?"
+                                 variant="label-inline"
+                                 options="{!v.TCPProgramoptions }"
+                                 value="{!v.TCPProgramoptionsselectedVal}" 
+                                 class="horizontal-align-chechbox slds-form-element  slds-form-element_horizontal"
+                                 onchange="{!c.handlePartnerSource}"/>
+        
+        <!-- adding New field for value - Story P2OB-7471 - By Ayush(Appirio) -->
+       
+        <aura:if isTrue="{!v.containsDistributor}"> 
+            <lightning:input aura:id="Leadform" label=""
+                             variant="label-inline"    
+                             name="Enter Partner/Distributor Name"
+                             value="{!v.leadRec.TPC_Source_Distributor_Name__c}"
+                             class="slds-form-element slds-form-element_horizontal" 
+                             placeholder="Enter Partner/Distributor Name"/> 
+            </aura:if>
+           
+       
+        </div>
+    
+        <lightning:input aura:id="Leadform" label=""
+                         variant="label-inline"    
+                         name="Other comments "
+                             value="{!v.leadRec.Telstra_Channel_Partner_program_Comments__c}"
+                             class="slds-form-element slds-form-element_horizontal" 
+                         	placeholder="If other, please specify"/> 
+        <!--lightning-helptext 
+        content="Tick all options that apply"
+        icon-name="utility:info"
+        class="start-date-help-text">
+    </lightning-helptext-->
+        
+        
+    
+
+    
+ <!--Label changed as part of EDGE-88429  -->
+        <lightning:textarea aura:id="Leadform" label="{!$Label.c.EOI_Description_of_capabilities}"
+                         variant="label-inline"    
+                         name="Description of business capabilities"
+                             value="{!v.leadRec.Lead_Description__c}"
+                             class="slds-form-element slds-form-element_horizontal" 
+                         	 required="true"/> 
+           
+     
+     
+</aura:component>

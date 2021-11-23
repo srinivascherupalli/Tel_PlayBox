@@ -1,0 +1,221 @@
+<aura:component controller="GetDealScoreController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="showOfferLevelGraph" type="Boolean" default="false"/>
+    <aura:handler event="c:PLanLevelGbbRender" action="{!c.getGBBScale}"/>
+    <aura:attribute name="showOfferLineGraph" type="Boolean" default="false"/>
+    <aura:attribute name="PlanId" type="string"/>
+    <aura:attribute name="showScale" type="Boolean" default="false"/>
+    <aura:attribute name="DPRPlan" type="List"/>
+    <aura:attribute name="DprGBBReportDetails" type="List"/>
+    
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+        <div  class="slds-m-top_xx-small slds-p-bottom_x-small">
+            <div class="slds-grid slds-gutters_xx-small slds-wrap slds-p-left_small">
+                <div class="slds-col slds-size_1-of-9">
+                    <div class="slds-m-top_large">
+                            <canvas aura:id="GBBScale" width="300" height="32"></canvas>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-9">
+                    <lightning:button variant="base" label="View Details" title="View Details" onclick="{! c.openGbbScale }"/>
+                </div>
+            </div>
+        </div>
+   <aura:if isTrue="{!v.showScale}">
+        <section role="dialog" tabindex="-1" aria-label="Meaningful description of the modal content" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <!--*****************Main Data Start********************-->
+                    <div  class="slds-align_absolute-center">
+                        <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus slds-p-top_x-large" style="color:#10735b">{!v.DprGBBReportDetails[0].Display_Name__c}</p>
+                    </div>
+                    <div class="slds-p-left_xx-large">
+                        <canvas aura:id="GBBScaleSmallInfo" width="540" height="77"></canvas> 
+                    </div>
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-p-left_xx-large">
+                                <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus slds-p-top_x-large" style="color:#10735b">Gross Revenue</p>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-align_absolute-center">
+                                <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus" style="color:#10735b">Average Annualised</p>
+                            </div>
+                            <div class="slds-align_absolute-center">
+                                <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus" style="color:#10735b">Revenue (AAR)*</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if isTrue="{!item.Impact_Type__c=='Gross Value'}">
+                          <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak">{!item.Label_Name__c}</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 2rem;">{!item.Scenario_Value__c}</dd>
+                                    </dl>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">$</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 1rem;">{!item.Annual_Revenue_Impact__c}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if  isTrue="{!and(item.Sort_Order__c==1, item.Impact_Type__c=='Gross Value')}" >
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                     <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">Gross AAR</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 2rem;"></dd>
+                                    </dl>
+                                   <!-- <dl class="slds-dl_horizontal">    
+                                        <dt class="slds-dl_horizontal__label">Gross AAR</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;"></dd>
+                                    </dl>-->
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">$</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 1rem;">{!item.DPR_Offer_Line_Item__r.Gross_AAR__c}</dd>
+                                    </dl>
+                                  <!--  <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem;">{!item.DPR_Offer_Line_Item__r.Gross_AAR__c}</dd> 
+                                    </dl>-->
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    <br></br> 
+                    
+                    <div class="slds-p-left_xx-large">
+                        <label class="slds-form-element__label slds-text-title_bold $color-text-link-focus" style="color:#10735b">Revenue Impacts</label>
+                    </div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if isTrue="{!item.Impact_Type__c=='Discount Lever'}">
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-cell-wrap slds-p-left_xx-large">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak">{!item.Label_Name__c}</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 2rem;">{!item.Scenario_Value__c}</dd>
+                                    </dl>
+                                    <!--<dl class="slds-dl_horizontal ">
+                                        <dt class="slds-dl_horizontal__label">{!item.Label_Name__c}</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;">{!item.Scenario_Value__c}</dd>
+                                    </dl>-->
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">$</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 1rem; color:#FF0000">{!item.Annual_Revenue_Impact__c}</dd>
+                                    </dl>
+                                  <!--  <dl class="slds-dl_horizontal">
+                                        <br></br>
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem; color:#FF0000">{!item.Annual_Revenue_Impact__c}</dd>
+                                    </dl> -->
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if  isTrue="{!and(item.Sort_Order__c==1, item.Impact_Type__c=='Discount Lever')}" >
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">Total Revenue Impacts</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 2rem;"></dd>
+                                    </dl>
+                                   <!-- <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">Total Revenue Impacts</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;"></dd>
+                                    </dl> -->
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">$</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 1rem; color:#FF0000">{!item.DPR_Offer_Line_Item__r.Total_Revenue_Impacts__c}</dd>
+                                    </dl>
+                                  <!--  <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem; color:#FF0000">{!item.DPR_Offer_Line_Item__r.Total_Revenue_Impacts__c}</dd>
+                                    </dl>-->
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if  isTrue="{!and(item.Sort_Order__c==1, item.Impact_Type__c=='Gross Value')}" >
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">Net AAR</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 2rem;"></dd>
+                                    </dl>
+                                    <!-- <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">Net AAR</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;"></dd>
+                                    </dl> -->
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-list_inline">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate">$</dt>
+                                        <dd class="slds-item_detail slds-truncate" style="padding-left: 1rem;">{!item.DPR_Offer_Line_Item__r.Net_AAR__c}</dd>
+                                    </dl>
+                                    <!-- <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem;">{!item.DPR_Offer_Line_Item__r.Net_AAR__c}</dd>
+                                    </dl> -->
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_3-of-5">
+                        </div>
+                        <div class="slds-col slds-size_2-of-5 slds-p-top_xx-small slds-p-left_x-large">
+                            {!$Label.c.DPiButtonMessage}
+                        </div>
+                    </div>
+                    <!--*****************Main Data End**********************-->
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button variant="brand" label="Close" onclick="{!c.closeModal}" />
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+
+</aura:component>

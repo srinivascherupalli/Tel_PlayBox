@@ -1,0 +1,61 @@
+<template>
+    <template if:true={showSpinner}>
+        <div>
+            <lightning-spinner variant="brand" size="large" alternative-text="loading">
+            </lightning-spinner>
+        </div>
+    </template>
+    <template if:true={visible}>
+        <div class="slds-notify_container">
+            <div class={outerClass} role="status">
+                <span class="slds-assistive-text">{type}</span>
+                <span class={innerClass} title={message}>
+                    <lightning-icon icon-name={getIconName} alternative-text="icon" styleclass="slds-icon slds-icon_small" variant="inverse" size="small"></lightning-icon>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small">{message}</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <lightning-button-icon icon-name="utility:close" size="small" variant="border-filled" class="slds-button slds-button_icon slds-button_icon-inverse" alternative-text="next" onclick={closeModel} ></lightning-button-icon>
+                </div>
+            </div>
+        </div>
+    </template>
+    <c-search-reserved-number selected-tab={selectedTab} oncallsearchnumberresult={passSearchNumberResult}>
+    </c-search-reserved-number>
+    <c-number-reservation-search-result-nguc data-id="reserveNumberResult" search-number-result={searchNumberResult}
+        subscription-id={subscriptionId} total-searched-numbers={totalSearchedNumbers}
+        oncallnumberreserved={numberReserved} onfillsearchnumbers={fillSearchNumbers} search-type={searchedType}
+        subscription-records={subscriptionsList}>
+    </c-number-reservation-search-result-nguc>
+
+    <template if:true={isReserved}>
+        <div class="slds-var-m-around_xx-large">
+            <div class="slds-col slds-size_1-of-1">
+                <div class="slds-box slds-box_small">
+                    <div style="overflow: hidden">
+                        <div style="text-align: right;margin-bottom: 0.5rem;">
+                            <lightning-button label="Remove Assigned Numbers" name="removeassignednumber"
+                                onclick={removeSelectedNumbers}></lightning-button>
+                            <lightning-button label="Assign Numbers" variant="brand" name="assignNumbers"
+                                onclick={assignSelectedNumbers}></lightning-button>
+                        </div><br />
+                        <c-active-subscription-data-table data-id="activeSubscriptions"  records={subscriptionsList} page-size="10" columns={columns}
+                        pagination-by-button="false">
+                    </c-active-subscription-data-table>
+                    <br /> <br />
+                     <!--Added create order button as part of DIGI-28425-->
+                     <div class="slds-footer">
+                        <lightning-button label="Create Order" variant="brand" onclick={createOrder}
+                            class="slds-m-right_x-small" style="float:right;" disabled={disableCreate}></lightning-button>
+                        &nbsp; &nbsp; &nbsp;
+                        <lightning-button label="Submit Order" variant="brand" onclick={submitOrder}
+                            class="slds-m-right_x-small" style="float:right;" disabled={disableSubmit}></lightning-button>
+        
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

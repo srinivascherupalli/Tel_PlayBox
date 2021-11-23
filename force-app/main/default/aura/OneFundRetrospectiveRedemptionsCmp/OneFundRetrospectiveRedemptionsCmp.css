@@ -1,0 +1,29 @@
+.THIS table thead th {
+   color: black;
+   font-weight:bold;
+}
+.THIS .headerColor {
+    color:Grey;
+}
+
+.THIS .margin10 {
+    margin:10px;
+
+}
+
+.THIS .slds-button_icon-bare{
+display: none;
+}
+
+.THIS span.slds-row-number {
+    display:none;
+}
+
+
+.THIS.Searchspinner{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    color: blue;
+}

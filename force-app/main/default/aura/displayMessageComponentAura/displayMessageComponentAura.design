@@ -1,0 +1,4 @@
+<design:component >
+    <!-- To Enable/Disable Dormancy Approach from Lightning App Builder. If set to true Dormancy is disabled-->
+    <design:attribute label="Show Attachment Info" description="Show warning message to end user if Case Attachment size is not aligned as per T-Connect" name="disableDormacy" default="false" />
+</design:component>

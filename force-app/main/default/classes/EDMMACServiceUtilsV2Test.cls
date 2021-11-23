@@ -1,0 +1,66 @@
+/*------------------------------------------------------------ 
+Author: Nikhil Gupta
+Company: Telstra 
+Description: A test class for the EDMMACServiceUtilsV2 methods Test
+Test Class: EDMMACServiceUtilsV2Test 
+History 
+<16/04/2019> <Nikhil Gupta> <Intial version to test class : EDMMACServiceUtilsV2 code coverage> 
+------------------------------------------------------------*/
+
+
+@isTest
+public class EDMMACServiceUtilsV2Test {
+    
+     static testMethod void testparseMethod(){
+        String json = '{"oldServiceId":"oldServiceId_XXX",'+
+                        '"newServiceId":"newServiceId_YYY",'+
+                        '"changed":[{"instanceId":"","guid":"11e37026-f241-4c7b-63ec-b5a29607cec9","changedNonCommercialAttributes":[],"changedAttributes":["parentSpec"]},'+
+                                   '{"instanceId":"","guid":"91147347-6ccb-4e83-54a5-85b5fad77b3e","changedNonCommercialAttributes":[],"changedAttributes":["IPVPNProductInstanceID"]},'+
+                                   '{"instanceId":"","guid":"7c950bdb-3a81-7d3d-3319-82ac11a5b546","changedNonCommercialAttributes":[],"changedAttributes":["IPVASInternetPortProductInstanceID"]}]}';
+        
+        /*String JSONStr = '"oldServiceId":"oldServiceId_XXX",'+ 
+                           '"newServiceId":"newServiceId_YYY",'+ 
+                           '"changed":[{"instanceId":"","guid":"91573e8a-1952-d9c4-83da-9c6f940c3351","changedNonCommercialAttributes":[],"changedAttributes":["Bandwidth","Appointment_EndDateTime","Appointment_StartDateTime","Appointment_ID"]},'+ 
+                                   '{"instanceId":"","guid":"0dc3082a-a09b-7969-386e-a079cd315c5d","changedNonCommercialAttributes":[],"changedAttributes":["UCEnterpriseProductInstanceID","PrimaryAccessProductInstanceID"]},'+ 
+                                   '{"instanceId":"","guid":"6be16f33-edf3-380b-2e9a-5aed4286b7ac","changedNonCommercialAttributes":[],"changedAttributes":["parentSpec"]},'+ 
+                                   '{"instanceId":"","guid":"17159a2f-fade-ecb1-219c-1b862f059889","changedNonCommercialAttributes":[{'+ 
+                                       '"removedNonCommercialProductConfigurations":["a3T2O0000003ZntUAE"],"name":"Voice Numbers","changedNonCommercialProductConfigurations":[],"addedNonCommercialProductConfigurations":[]}],'+ 
+                                       '"changedAttributes":["parentSpec"]},'+ 
+                                   '{"instanceId":"","guid":"08c370d7-75c6-6728-2eca-8ef69553ee6b","changedNonCommercialAttributes":[],"changedAttributes":["IPVPNProductInstanceID"]}]}';*/
+         
+        String JSONStr	= '{"removed":[],"oldServiceId":"a4e2O0000005Jc8QAE","newServiceId":"a4e2O0000005Jc9QAE","changed":[{"status":"Changed","name":"Mobile Access_Fulfilment","instanceId":"","guid":"37e10cfe-29ec-f974-372d-5c8793594df5","description":"","changedNonCommercialAttributes":[],"changedBillingDetails":[],"changedAttributes":[{"originalValue":"","newValue":"61474831854","name":"SERVICEID"}],"changedAdditionalAttributes":[{"originalValue":"2019-02-05T08:00:00","newValue":"2019-02-12T08:00:00","name":"DMCAT_ProductSpecification_000263_CPEDeliveryDate"}]},{"status":"Changed","name":"UC Site_Fulfilment","instanceId":"","guid":"fdfdbe73-e107-7308-2f46-c2e6705ed88d","description":"","changedNonCommercialAttributes":[],"changedBillingDetails":[],"changedAttributes":[],"changedAdditionalAttributes":[{"originalValue":"2019-02-05T08:00:00","newValue":"2019-02-12T08:00:00","name":"DMCAT_ProductSpecification_000322_CPEDeliveryDate"}]},{"status":"Changed","name":"Web and Mail Internet Protection User_Fulfilment","instanceId":"","guid":"f0433f72-6552-9824-2780-2f94f9b40438","description":"","changedNonCommercialAttributes":[],"changedBillingDetails":[],"changedAttributes":[{"originalValue":"3","newValue":"4","name":"Quantity"}],"changedAdditionalAttributes":[]},{"status":"Changed","name":"Incident Management_Assurance","instanceId":"","guid":"e4c4e3f6-11ad-6aad-1bb6-45bf4dfad87c","description":"","changedNonCommercialAttributes":[],"changedBillingDetails":[],"changedAttributes":[{"originalValue":"SLA0010001","newValue":"","name":"ResponseTarget"},{"originalValue":"SLA0010002","newValue":"","name":"RestoreTarget"}],"changedAdditionalAttributes":[]},{"status":"Changed","name":"UC Numbers_Fulfilment","instanceId":"","guid":"12942d2f-3a7d-836d-30cd-cd0eadf0fc88","description":"","changedNonCommercialAttributes":[{"removedAttributes":[],"name":"Number","changedAttributes":[],"addedAttributes":[{"originalValue":"","newValue":"1111111111","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"2222222222","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"3333333333","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345567","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345566","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345568","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345569","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345516","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345526","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345536","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345546","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"ACTIVE","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"1111111111","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"2222222222","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"3333333333","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345567","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345566","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345568","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345569","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345516","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345526","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345536","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"},{"originalValue":"","newValue":"8282345546","name":"FNN"},{"originalValue":"","newValue":null,"name":"rangeFrom"},{"originalValue":"","newValue":null,"name":"rangeTo"},{"originalValue":"","newValue":"RESERVED","name":"status"},{"originalValue":"","newValue":"No Entry Line","name":"listCode"}]}],"changedBillingDetails":[],"changedAttributes":[],"changedAdditionalAttributes":[]}],"added":[]}';
+        
+        EDMMACServiceUtilsV2.serviceSpecDelta srvDelta =  new EDMMACServiceUtilsV2.serviceSpecDelta();
+        srvDelta = EDMMACServiceUtilsV2.parse(JSONStr);
+        
+        System.debug('srvDelta.changed===>'+ srvDelta.changed);
+        System.debug('srvDelta.oldServiceId===>'+ srvDelta.oldServiceId);
+        System.assertEquals('a4e2O0000005Jc8QAE', srvDelta.oldServiceId);
+        System.assertEquals('a4e2O0000005Jc9QAE', srvDelta.newServiceId);
+        System.assertEquals(false, srvDelta.changed.isEmpty() );
+        
+        System.assertEquals('Changed', srvDelta.changed[0].status);
+        System.assertEquals('Mobile Access_Fulfilment', srvDelta.changed[0].name);
+        System.assertEquals('', srvDelta.changed[0].instanceId);
+        System.assertEquals('', srvDelta.changed[0].description);
+        System.assertEquals('37e10cfe-29ec-f974-372d-5c8793594df5', srvDelta.changed[0].guid);
+        
+        System.assertEquals('SERVICEID', srvDelta.changed[0].changedAttributes[0].name);
+        System.assertEquals('61474831854', srvDelta.changed[0].changedAttributes[0].newValue);
+        System.assertEquals('', srvDelta.changed[0].changedAttributes[0].originalValue);
+        
+        System.assertEquals('2019-02-05T08:00:00', srvDelta.changed[0].changedAdditionalAttributes[0].originalValue);
+        
+        System.assertEquals(true, srvDelta.changed[0].changedNonCommercialAttributes.isEmpty());
+        
+        System.assertEquals(false, srvDelta.changed[4].changedNonCommercialAttributes.isEmpty());
+        
+         if(!srvDelta.changed[4].changedNonCommercialAttributes.isEmpty()){
+            System.assertEquals(true, srvDelta.changed[4].changedNonCommercialAttributes[0].changedAttributes.isEmpty());
+            System.assertEquals('Number', srvDelta.changed[4].changedNonCommercialAttributes[0].name);
+            System.assertEquals(true, srvDelta.changed[4].changedNonCommercialAttributes[0].removedAttributes.isEmpty());
+            System.assertEquals(false, srvDelta.changed[4].changedNonCommercialAttributes[0].addedAttributes.isEmpty());
+        }
+    }
+
+}

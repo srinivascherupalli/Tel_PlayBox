@@ -1,0 +1,186 @@
+<apex:page controller="CustomButtonAdditionalOrderInformation" id="myPage" standardStylesheets="false" showHeader="true">         
+
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">   
+    <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+    <apex:pageMessages />
+        
+ <!--customer request date selection - restrict user to select past dates-->
+ <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>    
+<script>
+    var j$ = jQuery.noConflict();    
+    j$(function()
+    {
+     j$("#myPage\\:pageForm\\:addInfoPgBlk\\:addInfoPgBlkPanelSec1\\:addInfoPgBlkPanelSecItem3\\:sDate").datepicker({ minDate: 0,dateFormat: 'dd/mm/yy' });
+     j$("#myPage\\:pageForm\\:addInfoPgBlk\\:addInfoPgBlkPanelSec1\\:addInfoPgBlkPanelSecItem3\\:sDate").datepicker();
+     j$("#myPage\\:pageForm\\:addInfoPgBlk\\:addInfoPgBlkPanelSec1\\:addInfoPgBlkPanelSecItem3\\:sDate").on("change",function()
+     {       
+          j$("#ui-datepicker-div").css({"display": "none"});
+      });
+    });    
+        
+</script>
+<!--customer request date validation ends-->
+ 
+ 
+             
+    <apex:form id="pageForm">    
+        <div class="slds" id="pgDiv">
+            <div class="slds-page-header">
+                <div class="slds-media">                               
+                    <div class="slds-media__body">
+                      <p class="slds-page-header__title slds-truncate"><b>Order Header Information</b></p>                    
+                    </div>
+                </div>                
+            </div>
+          
+            <apex:pageBlock id="addInfoPgBlk" >
+                <apex:outputPanel id="addInfoPgBlkPanel" styleClass="slds-form--inline">
+                    <apex:pageBlockSection id="addInfoPgBlkPanelSec1" >
+                      
+                        <apex:outputPanel styleClass="slds-form-element">
+                            <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem3">
+                                <apex:outputLabel styleClass="slds-form-element__label" value="Customer Request Date" />
+                                <apex:inputField styleClass="slds-input" value="{!basket.Customer_Request_Date__c}" required="true" id="sDate"/>
+                            </apex:pageBlockSectionItem>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="slds-form-element">
+                            <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem4">
+                                <apex:outputLabel styleClass="slds-form-element__label" value="Order Description" />
+                                <apex:inputText styleClass="slds-input" value="{!basket.Order_Description__c}" />
+                            </apex:pageBlockSectionItem>
+                        </apex:outputPanel>   
+                          <apex:outputPanel styleClass="slds-form-element">
+                            <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem1" >
+                                <apex:outputpanel layout="block" styleClass="requiredInput">
+                                    <apex:outputpanel layout="block" styleClass="requiredBlock"></apex:outputpanel>
+                                    <apex:outputLabel styleClass="slds-form-element__label" 
+                                                      value="Maxim Opportunity ID" />
+                                </apex:outputpanel>
+                                    <apex:inputField styleClass="slds-input" value="{!basket.Maxim_Opportunity_ID__c}" />
+                            </apex:pageBlockSectionItem>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="slds-form-element">
+                            <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem2" >
+                                <apex:outputLabel styleClass="slds-form-element__label" value="Maxim Opportunity Name" /> 
+                                <apex:inputField styleClass="slds-input" value="{!basket.Maxim_Opportunity_Name__c}" />
+                            </apex:pageBlockSectionItem>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="slds-form-element slds-form-element__control">
+                            <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem6">
+                                <apex:inputCheckbox styleClass="slds-checkbox" value="{!basket.Special_Deal__c}" />
+                                <apex:outputLabel styleClass="slds-form-element__label" value="Special Deal" />
+                            </apex:pageBlockSectionItem>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="slds-form-element slds-form-element__control">
+                            
+                        </apex:outputPanel>
+                        <apex:actionRegion id="viewHotCutOverActionRegion">
+                            <apex:outputPanel styleClass="slds-form-element">
+                                <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem8">
+                                <apex:inputCheckbox styleClass="slds-checkbox" value="{!basket.Hot_Cutover__c}" >
+                                    <apex:actionSupport event="onchange" action="{!renderHotCutOverAttribute}" 
+                                                        reRender="serNoElement,hotCutOverCommentElement">
+                                     </apex:actionSupport>
+                                </apex:inputCheckbox>
+                                <apex:outputLabel styleClass="slds-form-element__label" value="Hot CutOver" />
+                                </apex:pageBlockSectionItem>
+                            </apex:outputPanel>
+                        </apex:actionRegion> 
+                        <apex:outputPanel styleClass="slds-form-element slds-form-element__control">
+                            
+                        </apex:outputPanel>
+                         <apex:outputPanel styleClass="slds-form-element" id="serNoElement" >
+                            <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem9" rendered="{!basket.Hot_Cutover__c}">
+                                <apex:outputLabel styleClass="slds-form-element__label" value="Hot Cutover Service Number" />
+                                <apex:inputText styleClass="slds-input" value="{!basket.Service_Number__c}" />
+                            </apex:pageBlockSectionItem>
+                        </apex:outputPanel>
+                        <apex:outputPanel styleClass="slds-form-element" id="hotCutOverCommentElement">
+                            <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem10" 
+                                                       rendered="{!basket.Hot_Cutover__c}">                            
+                                <apex:outputLabel styleClass="slds-form-element__label" value="Hot CutOver Comments" />
+                                <apex:inputTextarea styleClass="slds-textarea" value="{!basket.Hot_Cutover_Comments__c}" />
+                            </apex:pageBlockSectionItem>
+                        </apex:outputPanel>
+                       
+                       
+                    </apex:pageBlockSection>                    
+                </apex:outputPanel>
+                <div class="slds-page-header">
+                    <div class="slds-media">                               
+                        <div class="slds-media__body">
+                          <p class="slds-page-header__title slds-truncate"><b>Billing Information</b></p>                    
+                        </div>
+                    </div>                
+                </div>
+
+                <apex:pageBlock id="BillingInfoPgBlk" >
+                    <apex:outputPanel id="billingInfoBlkPanel" styleClass="slds-form--inline">
+                        <apex:pageBlockSection id="billingInfoPgBlkPanelSec1" >                        
+                            <apex:outputPanel styleClass="slds-form-element">
+                                <apex:pageBlockSectionItem id="billingInfoPgBlkPanelSecItem1">
+                                    <apex:outputLabel styleClass="slds-form-element__label" value="Financial CIDN" > 
+                                        <button class="slds-button slds-button slds-button--icon" aria-describedby="help" title="{!$ObjectType.cscfga__Product_Basket__c.Fields.Financial_CIDN__c.inlineHelpText}">
+                                            <svg aria-hidden="true" class="slds-button__icon"> 
+                                                <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#info')}" />
+                                            </svg>
+                                        </button>                                        
+                                    </apex:outputLabel>
+                                    <apex:inputField styleClass="slds-input" value="{!basket.Financial_CIDN__c}"/>
+                                </apex:pageBlockSectionItem>                              
+                            </apex:outputPanel>
+                            <apex:outputPanel styleClass="slds-form-element">
+                                <apex:pageBlockSectionItem id="addInfoPgBlkPanelSecItem7">
+                                    <apex:outputLabel styleClass="slds-form-element__label" value="Customer Purchase Order Number" >
+                                        <button class="slds-button slds-button slds-button--icon" aria-describedby="help" title="{!$ObjectType.cscfga__Product_Basket__c.Fields.Purchase_Order_Number__c.inlineHelpText}">
+                                            <svg aria-hidden="true" class="slds-button__icon"> 
+                                                <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#info')}" />
+                                            </svg>
+                                        </button>
+                                    </apex:outputLabel>
+                                    <apex:inputText styleClass="slds-input" value="{!basket.Purchase_Order_Number__c}" />
+                                </apex:pageBlockSectionItem>                                
+                            </apex:outputPanel>
+                            <apex:outputPanel styleClass="slds-form-element">
+                                <apex:pageBlockSectionItem id="billingInfoPgBlkPanelSecItem2" >
+                                    <apex:outputLabel styleClass="slds-form-element__label" value="Invoice Arrangement ID" >
+                                        <button class="slds-button slds-button slds-button--icon" aria-describedby="help" title="{!$ObjectType.cscfga__Product_Basket__c.Fields.Invoice_Arrangement_ID__c.inlineHelpText}">
+                                            <svg aria-hidden="true" class="slds-button__icon"> 
+                                                <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#info')}" />
+                                            </svg>
+                                        </button>
+                                    </apex:outputLabel> 
+                                    <apex:inputField styleClass="slds-input" value="{!basket.Invoice_Arrangement_ID__c}" />
+                                </apex:pageBlockSectionItem>                                
+                            </apex:outputPanel>
+                            <apex:outputPanel styleClass="slds-form-element">
+                                <apex:pageBlockSectionItem id="billingInfoPgBlkPanelSecItem3" >
+                                    <apex:outputLabel styleClass="slds-form-element__label" value="Aggregator" >
+                                        <button class="slds-button slds-button slds-button--icon" aria-describedby="help" title="{!$ObjectType.cscfga__Product_Basket__c.Fields.Aggregator__c.inlineHelpText}">
+                                            <svg aria-hidden="true" class="slds-button__icon"> 
+                                                <use xlink:href="{!URLFOR($Resource.slds, '/assets/icons/utility-sprite/svg/symbols.svg#info')}" />
+                                            </svg>
+                                        </button>
+                                    </apex:outputLabel> 
+                                    <apex:inputField styleClass="slds-input" value="{!basket.Aggregator__c}" />
+                                </apex:pageBlockSectionItem>                                
+                            </apex:outputPanel>
+
+                           
+                        </apex:pageBlockSection>                    
+                    </apex:outputPanel>
+                </apex:pageBlock>
+                <!--<apex:pageBlockButtons styleClass="slds-docked-form-footer slds-grid--align-center">-->
+                <div align="Center">
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Save" action="{!save}" />
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Cancel" immediate="true" action="{!cancel}" />
+                </div>
+                <!--</apex:pageBlockButtons>-->
+            </apex:pageBlock>            
+        </div>
+    </apex:form>
+    </html>
+</apex:page>

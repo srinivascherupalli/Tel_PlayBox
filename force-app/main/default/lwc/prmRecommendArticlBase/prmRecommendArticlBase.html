@@ -1,0 +1,8 @@
+<template>
+    <div class="helpNtraining-wrapper recommended">
+        <c-Prm-knowledge-artcl-srch-rcmnd title-string='Recommended for you' knowledge-article-list={knowledgeArticleRecord}></c-Prm-knowledge-artcl-srch-rcmnd>
+    </div>
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+</template>

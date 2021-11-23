@@ -1,0 +1,12 @@
+.THIS .mainContainer {
+    background-color: coral;
+}
+.THIS .clearbutton {
+    margin-right: 3rem;
+}
+.THIS .buttonwidth {
+    width: 7rem;
+}
+.THIS .slds-spinner_container {
+    position:fixed;
+}

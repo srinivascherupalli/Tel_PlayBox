@@ -1,0 +1,142 @@
+<!--EDGE-92546
+Name: NumberManagementComp
+Description: Display Manage Number UI for Product Basket 
+Author:Sandip Deshmane 
+History: EDGE-134917 - Updated onclick function on Remove Numbers button 
+         EDGE-142086 - Modified component for UX uplift
+-->
+<aura:component
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+    access="global" controller="NumberManagementHandler">
+    <aura:attribute type="Integer" name="noOfRowsSelected" default="" />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute type="String" name="basket_id" />
+    <aura:attribute name="columnsNum" type="List" />
+    <aura:attribute name="columnsNumPool" type="List" />
+    <aura:attribute type="List" name="selectedPC" default="[]" />
+    <aura:attribute type="List" name="selectedRowsNum" default="[]" />
+    <aura:attribute type="List" name="selectedRowsNumDetails" />
+    <aura:attribute type="NumberManagementHandler.NumberWrapper[]" name="NumberObjList" />
+    <aura:attribute type="NumberManagementHandler.NumberWrapper[]" name="NumberListToPool" />
+    <aura:attribute name="sortedBy" type="String" default="Name" />
+    <aura:attribute name="sortedDirection" type="String" default="asc" />
+    <aura:attribute name="existingNumsortedBy" type="String" default="Name" />
+    <aura:attribute name="existingNumsortedDirection" type="String" default="asc" />
+    <aura:attribute type="String" name="selectedTabId" default="Fixed" />
+    <aura:attribute type="String" name="selectedTab" default="availablenumberstab" />
+	<aura:attribute name="numberFilter" type="String"/>
+    <aura:attribute name="isValidNumberRemoval" type="Boolean" default="false"/>
+    <aura:attribute name="showWarning" type="Boolean" default="true"/>
+	<aura:attribute name="showFinishWarning" type="Boolean" default="false"/>    
+    <aura:handler name="change" value="{!v.selectedPC}" action="{!c.doInit}" />
+
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <div aura:id="manageContainer" />
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showWarning}">
+        <div class="slds-m-around_small">
+            <div class='slds-col slds-size_1-of-1'>
+                <div style="background-color: #f4f6f9;">
+                    <aura:if isTrue="true">
+                    	<lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="Warning" />&nbsp;
+                        <b>{!$Label.c.NumberRemovalInfo}</b>
+                    </aura:if>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showFinishWarning}">
+        <div class="slds-m-around_small">
+            <div class='slds-col slds-size_1-of-1'>
+                <div style="background-color: #f4f6f9;">
+                    <aura:if isTrue="true">
+                    	<lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="Warning" />&nbsp;
+                        <b>{!$Label.c.NumberRemovalFinishMessage}</b>
+                    </aura:if>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <div class="slds-m-around_small">
+        <div class="slds-col slds-size_1-of-1">
+            <lightning:tabset
+                              aura:id="tabs"
+                              variant="default"
+                              selectedTabId="{!v.selectedTab}">
+                <lightning:tab
+                               label="Available Numbers"
+                               id="availablenumberstab">
+                <lightning:layout>
+                    <lightning:layoutItem size="6" padding="around-small">
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="2" padding="around-small">
+                        <div class="header-column">
+                            <lightning:select name="showall">
+        					    <option value="">Show All</option>
+						    </lightning:select>
+                        </div>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="2" padding="around-small">
+                            <div class="header-column">
+                                <lightning:input type="search" aura:id="filterNumber" name="filterNumber" placeholder="Filter this List" maxlength="10" onchange="{!c.onChangeFilterText}" isLoading="{!v.issearching}"/>
+                            </div>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="3" padding="around-small">
+                            <div class="header-column">
+                                <lightning:button label="Add to Removal List"
+                                          		variant="brand"
+                                          		name="addtoremovallist"
+                                          		onclick="{!c.addtoRemovalPool}"/>
+                            </div>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                    <div>
+                        <lightning:datatable 
+                                        	columns="{!v.columnsNum}" 
+                                            data="{!v.NumberObjList}"
+                                        	keyField="numberId" 
+                                            onrowselection="{! c.handleRowSelectionNum}"
+                                        	selectedRows="{!v.selectedRowsNum}" 
+                                            onsort="{!c.existingNumColumnSorting}"
+                                        	sortedBy="{!v.existingNumsortedBy}"
+                                        	sortedDirection="{!v.existingNumsortedDirection}" />
+                    </div>
+                </lightning:tab>
+                <lightning:tab label="Removal list" id="removallist">
+                	<lightning:layout>
+                		<lightning:layoutItem size="4" padding="around-small">
+                        	<div class="header-column">
+                    		    {!v.noOfRowsSelected} numbers Selected 
+                            </div>
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="6" padding="around-small">
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="3" padding="around-small">
+                            <div class="header-column">
+                    		    <lightning:button label="Confirm Removal"
+                                        variant="brand"
+                                        name="confirmremoval"
+                                        onclick="{!c.removeSelected}"/>
+                    		</div>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                    <div>
+                        <lightning:datatable 
+                                            columns="{!v.columnsNum}" 
+                                            data="{!v.NumberListToPool}"
+                                			keyField="numberId" 
+                                            onrowselection="{! c.handleRowSelectionNum}"
+                                			selectedRows="{!v.selectedRowsNum}" 
+                                            onsort="{!c.poolNumColumnSorting}"
+                                			sortedBy="{!v.sortedBy}" 
+                                            sortedDirection="{!v.sortedDirection}" />
+                     </div>
+                </lightning:tab>
+            </lightning:tabset>
+        </div>
+    </div>
+</aura:component>

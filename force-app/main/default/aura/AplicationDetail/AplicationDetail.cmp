@@ -1,0 +1,32 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="sectiontitle" type="String"/>
+    <aura:attribute name="colNum" type="Integer"/>
+    
+    <div class="slds-grid slds-wrap">
+        <aura:if isTrue="{!not(empty(v.sectiontitle))}">
+            <div class="slds-col slds-size_1-of-1">
+                <h3 class="slds-text-heading_small slds-m-bottom_medium">{!v.sectiontitle}</h3>
+            </div> 
+        </aura:if>
+        <aura:iteration items="{!v.queAndAns}" var="item" indexVar="index">
+
+            <div class="{!v.colNum==1? 'slds-col slds-size_1-of-1': 'slds-col slds-size_1-of-2'}">
+                <div class="slds-has-flexi-truncate slds-p-horizontal_x-small full forcePageBlockItem forcePageBlockItemView" >
+                    <div class="test-id__field-label-container" >
+                        <span class="test-id__field-label slds-form-element__label" >
+                        	{!item.Question}
+                        </span>
+                    </div>
+                    <div class="slds-form-element__control slds-grid itemBody" >
+                        <span class="test-id__field-value slds-form-element__static slds-grow slds-form-element_separator" >
+                        <span class="uiOutputText" data-aura-class="uiOutputText">  
+                            {!item.Answer}
+                        </span></span>
+                    </div>
+                </div>
+            </div>
+        </aura:iteration>
+        
+    </div>
+</aura:component>

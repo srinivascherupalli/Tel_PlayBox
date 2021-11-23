@@ -1,0 +1,26 @@
+<aura:component controller="EmailDeliveryStatusController" implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="EmailDeliveryStatus__c" type="List"/>
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+	<aura:if isTrue="{!not(empty(v.EmailDeliveryStatus__c))}">
+        <table class="slds-table slds-table_bordered slds-table_striped slds-table_cell-buffer slds-table_fixed-layout">
+          <thead>
+            <tr class="slds-text-heading_label">
+              <th scope="col"><div class="slds-truncate" title="Email">Email</div></th>
+              <th scope="col"><div class="slds-truncate" title="RecipientEmail">RecipientEmail</div></th>
+              <th scope="col"><div class="slds-truncate" title="Status">Status</div></th>
+                </tr>
+          </thead>
+          <tbody>
+                <!-- Use the Apex model and controller to fetch server side data -->
+            <aura:iteration items="{!v.EmailDeliveryStatus__c}" var="EM" indexVar="index">
+                <tr>
+                    <th scope="row"><div class="slds-truncate" title="{!EM.Name}">{!EM.Name}</div></th>
+                    <td><div class="slds-truncate" title="{!EM.RecipientEmail__c}">{!EM.RecipientEmail__c}</div></td>
+                    <td><div class="slds-truncate" title="{!EM.Status__c}">{!EM.Status__c}</div></td> 
+                     </tr>
+            </aura:iteration>
+          </tbody>
+        </table>
+		</aura:if> 
+</aura:component>

@@ -1,0 +1,33 @@
+<template>
+    <div if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+    </div>
+    <div if:true={isInactivePOR}>
+        <center><h1 style="align-content: center;font-size: large;">New Opportunity</h1></center><br>
+        <lightning-record-edit-form object-api-name="Opportunity" onerror={handleError}
+                                        onsuccess={handleSuccess} onsubmit ={handleSubmit} density="Comfy">
+            <!--<lightning-input-field field-name='Account' value="Test Account 14123"></lightning-input-field>-->
+            <lightning-input-field field-name='AccountId' value={recordId} disabled></lightning-input-field>
+            <lightning-input-field field-name='Name' required></lightning-input-field>
+            <lightning-input-field field-name='Product_Type__c' value="Modular" disabled></lightning-input-field>
+			<lightning-input-field field-name='Type' value="MACs (Moves, Adds & Change)" disabled></lightning-input-field> 
+            <lightning-input-field field-name='Billing_Solution__c' value="In Contract" disabled></lightning-input-field>           
+            <lightning-input-field field-name='In_Contract_MAC__c' value="Yes" disabled></lightning-input-field>
+            <lightning-input-field field-name='StageName' value="Define" disabled></lightning-input-field>
+            <lightning-input-field field-name='Amount' required></lightning-input-field>
+            <lightning-input-field field-name='Product_Domain__c' required></lightning-input-field>
+            <lightning-input-field field-name='CloseDate' required></lightning-input-field>
+            <lightning-input-field field-name='Description__c' required></lightning-input-field>            
+            <!--<lightning-input-field field-name='Probability'></lightning-input-field>                
+            <lightning-input-field field-name='Binding_Confirmation__c'></lightning-input-field>
+            <lightning-input-field field-name='AgreetoTerms__c'></lightning-input-field>-->
+            <lightning-messages>
+            </lightning-messages><br>
+            <lightning-button variant="base" class="slds-m-top_small" onclick={closeQuickAction} label="Cancel">                
+            </lightning-button>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <lightning-button variant="brand" class="slds-m-top_small" type="submit" label="Confirm">
+            </lightning-button>            
+        </lightning-record-edit-form>
+    </div>
+</template>

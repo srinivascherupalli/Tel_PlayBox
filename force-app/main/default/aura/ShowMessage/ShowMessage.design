@@ -1,0 +1,10 @@
+<design:component>
+    <design:attribute name="warnMessage" label="Enter Message" description = "Enter Warning/Success/Error/Info Message"/>
+    <design:attribute name="messageTheme" label="Enter Message Theme" datasource="info,warning,error,success" description = "Enter Message Theme"/>
+    <design:attribute name="LearnMore" label="Enter Url for Learn More" description = "Enter Url for Learn More"/>
+
+    <design:supportedFormFactors>
+            <design:supportedFormFactor type="Large"/>
+            <design:supportedFormFactor type="Small"/>
+    </design:supportedFormFactors>
+</design:component>

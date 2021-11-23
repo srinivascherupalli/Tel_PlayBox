@@ -1,0 +1,98 @@
+<apex:page standardController="cscrm__Address__c" extensions="ValidateAddressExtension" action="{!searchAddress}">
+
+    <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <style>
+        .slds-grid--align-custom {
+            position: relative;
+            left: 12%;
+        }
+    </style>
+    <apex:form id="validateAddForm">
+        <div class="slds">
+            <div class="slds-page-header">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <p class="slds-page-header__title slds-truncate"><b>EAST Search Results</b>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <apex:PageMessage severity="info" strength="1" summary="{!$Label.East_validate_no_address_found}" rendered="{!addressList.size == 0}" />
+            <apex:PageMessage severity="info" strength="1" summary="{!refineSearchMsg}" rendered="{!addressList.size >= adddressListWarningLimit}" />
+
+            <apex:pageBlock id="createAddPgBlk" >
+
+                <apex:pageBlockButtons location="top" styleClass="slds-grid slds-grid--align-custom">
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Cancel" action="{!cancel}" />
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Back" immediate="true" action="{!goBack}" />
+                </apex:pageBlockButtons>
+
+                <apex:pageBlockTable id="eastresult" value="{!addressList}" first="{!offset}" rows="{!paginationSize}" var="address" rendered="{!addressList.size != 0}">
+                    <apex:column headerValue="Address Id">
+                        <apex:outputText value="{!address.addressId}" />
+                    </apex:column>
+                    <apex:column headerValue="Address">
+                        <apex:outputText value="{!address.addressLine}" />
+                    </apex:column>
+                    <apex:column headerValue="Locality">
+                        <apex:outputText value="{!address.locality}" />
+                    </apex:column>
+                    <apex:column headerValue="State">
+                        <apex:outputText value="{!address.state}" />
+                    </apex:column>
+                    <apex:column headerValue="Postcode">
+                        <apex:outputText value="{!address.postcode}" />
+                    </apex:column>
+                    <apex:column headerValue="Status">
+                        <apex:outputText value="{!address.status}" />
+                    </apex:column>
+                     <!--
+        * Start : NFB-2742 - Included changes for displaying NBN Status field based on value of RFS date 
+        * Date : 24-May-17
+        * Owner : Mayuri Gund
+       -->
+                    <apex:column headerValue="NBN Status">
+                         <apex:outputPanel rendered="{!address.nbnStatus == $Label.NBN_Ready_Label}">
+                            <apex:image value="{!$Label.NBN_Status_Image}"/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!NOT(address.nbnStatus == $Label.NBN_Ready_Label)}">
+                        <apex:outputText value="{!address.nbnStatus}"/>    
+                            </apex:outputPanel>
+    					</apex:column>
+                 <!--
+        * End: NFB-2742 - Included changes for displaying NBN Status field based on value of RFS date 
+        -->
+                    <apex:column headerValue="Type">
+                        <apex:outputText value="{!address.addressType}" />
+                    </apex:column>
+                    <apex:column headerValue="Parent ID">
+                        <apex:outputText value="{!address.parentAddressId}" />
+                    </apex:column>
+                    <apex:column headerValue="Action">
+                        <apex:commandButton styleClass="slds-button slds-button--neutral" value="Save" action="{!save}" rerender="hiddenBlock">
+                            <apex:param name="selectedId" value="{!address.addressId}" assignTo="{!selectedId}" />
+                        </apex:commandButton>
+                        <apex:pageBlock id="hiddenBlock" rendered="false"></apex:pageBlock>
+                    </apex:column>
+                </apex:pageBlockTable>
+
+
+                <apex:pageBlockButtons location="bottom" styleClass="slds-docked-form-footer slds-grid--align-center" rendered="{!addressList.size != 0}">
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="|< First" disabled="{!!hasPrevious}" action="{!first}" />
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Previous" disabled="{!!hasPrevious}" action="{!previous}" />
+                    <span>&nbsp;&nbsp;</span>
+                    <span>Page {!pageNumber} of {!totalPages}</span>
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Next" disabled="{!!hasNext}" action="{!next}" />
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Last >|" disabled="{!!hasNext}" action="{!last}" />
+                </apex:pageBlockButtons>
+
+            </apex:pageBlock>
+
+        </div>
+    </apex:form>
+
+</apex:page>

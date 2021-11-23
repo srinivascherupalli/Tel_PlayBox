@@ -1,0 +1,30 @@
+<template>
+        <template if:true={listViewIds}> 
+            <div class='slds-card' style="padding: inherit !important">
+                <div class="customIcon">
+                    <img src={NBALogoUrl} style="width: 100%; height: auto">
+                </div> 
+                <template if:true={listViewIds} for:each={listViewIds} for:item="listView">
+                    <div key={listView.listViewId}>
+                        <template if:true={listView.listViewVisibility}>
+                            <div><br></div>
+                            <lightning-icon icon-name={listView.listViewIcon} size="x-small"
+                                style="margin-right: 1rem; margin-left: 1rem;">
+                            </lightning-icon>
+                            <a key={listView.listViewId} data-item={listView.listViewId} onclick={navigateToListView}>
+                                {listView.listViewName}
+                            </a>
+                        </template>
+                    </div>
+                </template>
+                <div><br></div>
+            </div>
+        </template>
+        <template if:false={listViewIds}>
+        <!--  Below lines are commented out as a Part of user story P2OB-6887 -->
+            <!--<div>
+                <br>
+                <p style="margin-left: 1rem;">Einstein doesn't have any recommendation for you right now.</p>
+            </div> -->
+        </template>
+</template>

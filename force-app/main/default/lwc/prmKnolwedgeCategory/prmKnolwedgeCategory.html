@@ -1,0 +1,29 @@
+<!--P2OB-8030 : Modifed HTML component to show articles based on paramaters-->
+<!--P2OB-12539 : Single tile recommendation functionality-->
+<template>
+    <div class="helpNtraining-wrapper">
+        <!--P20B - 9098 Moved Title to Parent component to fix filter component and search component in one line-->
+        <template if:true={categoryNameAtTop}>
+            <div>
+                <h2 class="title slds-col slds-truncate--text">{categoryLabel}</h2>
+            </div>
+        </template>
+        <!--P2OB-8030 - Conditionally display search component-->
+        <template if:true={isSearchAllowed}>
+            <div class="helpNtraining-search">
+                <div class="helpNtraining-searchForm">
+                    <div>
+                        <lightning-input type="search" name="input1" onchange={handleSearchTermChange} label="Search" variant="label-hidden" placeholder="Search"
+                            class="slds-m-right_x-large" value={searchString}></lightning-input>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <!--P2OB-8030 : Pass Additional component in existing LWC component-->
+        <!--P2OB-12539 : Pass additional field values from parent is-loaded,is-allow-recommendation-->
+        <div>
+            <c-Prm-knowledge-artcl-srch-rcmnd category-from-event={topCategoryFromEvent} is-partner-sales-newsletter={showSingleTile} is-loaded={isLoaded} is-allow-recommendation={recommendationAllowed} onsorting={handleSortArticle} show-category-at-top={categoryNameAtTop} category-name={parentCategory} display-category={displayCategory} knowledge-article-list={knowledgeArticleRecord} clone-knowledge-article-record-from-parent={cloneKnowledgeArticleRecord} number-of-article={numberOfArticles} total-records={totalRecords} total-pages={totalPages} display-view={displayFormatArticle} sort-articles={showSortOptions} navigate-using-view-all={navigateToCategoryLanding} show-filter={showFilterOptions}>
+            </c-Prm-knowledge-artcl-srch-rcmnd>
+        </div>
+    </div>
+</template>

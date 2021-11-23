@@ -1,0 +1,328 @@
+<aura:component controller="PRMSubmitToPartnerRules"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction">
+    
+    <!--created by BRAM 27/02/19 for EDGE-68074 ,
+      this is a reusable LC to dispaly the value of Submit to partner based on the below details
+      -->	
+    <!-- 	<aura:attribute name="recordFormfields" type="String[]" default="['Override_Reason__c','Comment__c','Recommended_Partner__c']" />
+      <aura:attribute name="recordFormfields" type="String[]" default="['Override_Reason__c','Comment__c','Recommended_Partner__c','Associated_Distributor__c']" />
+      -->
+    <!--,'Comment__c','Recommended_Partner__c'-->
+    <!-- v1.2 Team Hawaii [Vivian Charlie] updates to incubembency as per P2OB-2448 -->
+    <!-- v1.3 Team Hawaii [Vivian Charlie] Opportunity optimization updates P2OB-4628 and P2OB-4670 -->
+    <!-- v1.4 Team Hawaii [Vivian Charlie] Display error if Partner Principal Contact User is not created P2OB-4988 and P2OB-4868 -->
+    <!-- v1.5 Team Hawaii [Vivian Charlie] Show updated success message P2OB-5227 -->
+    <!-- v1.6 Team Hawaii [Vivian Charlie] P2OB-7041 adding recordtype value for recordeditform -->
+    <aura:attribute name="appDetailsSimple" type="Object" default="Opportunity"/>
+    <aura:attribute name="IsCotinue" type="boolean"/>
+    <aura:attribute name="OpportunityId" type="String"/>
+    <aura:attribute name="OverideIncumbent" type="boolean" default="false"/>
+    <aura:attribute name="IsOverrideINC" type="boolean" default="false"/> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:handler event="c:SubmitToPartnerEvent" action="{!c.handleApplicationEvent1}"/>
+    <aura:attribute name="IsContinuePartner" type="boolean" default="false"/>
+    <aura:attribute name="recordFormfieldsg" type="String[]" default="['Override_Reason__c','Comment__c']" />
+    <aura:attribute name="columns" type="list"
+        default="[{ label: 'Recommended Partner', fieldName: 'Recommended_Partner__c', type: 'text'},{ label: 'Partner Account', fieldName: 'PartnerAccountId', type: 'text'},{ label: 'Override Reason', fieldName: 'Override_Reason__c', type: 'text'}]" />
+    <!--<aura:attribute name="columnData" type="list" default="[{ 'Id':'qwdwq','Name': 'Test', 'Accreditation': 'Gold','OptySuccessRate':'20'},{ 'Id':'qasswwq','Name': 'Test', 'Accreditation': 'Gold','OptySuccessRate':'20'},{ 'Id':'qwssdwq','Name': 'Test', 'Accreditation': 'Gold','OptySuccessRate':'20'}]"/>-->
+    <aura:attribute name="PartnerAccId" type="String"/>
+    <aura:attribute name="RecomondedAccId" type="String" />
+    <aura:attribute name="OverideReason" type="String"/>
+    <aura:attribute name="OverideComments" type="String" />
+    <aura:attribute name="ShowMessageLC" type="boolean" default="false"/>
+    <aura:attribute name="messageType" type="String" default="info"/>
+    <aura:attribute name="message" type="String" default="Override Reason and Comments are Required" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="disabled" type="Boolean" default="false" /> 
+    <aura:attribute name="fields" type="String[]" default="Override_Reason__c,Comment__c"/>
+    <aura:attribute name="spinner" type="boolean" default="false" />
+     <aura:attribute name="OverideRecomm" type="boolean" default="false"/>
+
+     <aura:attribute name="PartnerResults" type="PartnerResults[]" /><!-- P2OB-6781 incumbeny/recommendation optimization, replacing PRMSubmittoPartnerRules.PartnerResults[]-->
+
+    <aura:attribute name="valPrimaryDistributor" type="String"/><!-- v1.2 -->
+    <aura:attribute name="valPrimaryDistributorName" type="String" default=""/><!-- v1.2 -->
+    <aura:attribute name="blnOpportunityOptimization" type="boolean"/><!-- v1.3 -->
+    <aura:attribute name="blnActivePartner" type="boolean" />
+    <!-- v1.3 ths is not being referred, verify and remove in future deployment-->
+    <aura:attribute name="objDistributorModel" type="PRMSubmitToPartnerRules.DistributorModelSettingWrapper" />
+    <!-- v1.3 -->
+    <!-- P2OB-4628 - custom setting issue fix-->
+    <aura:attribute name="objPartnerAutoTagging"
+        type="PRMSubmitToPartnerRules.PRMOpportunityPartnerAutoTaggingWrapper" /><!-- v1.3 -->
+    <!-- P2OB-4628 - custom setting issue fix-->
+    <aura:attribute name="OppOptimizationMessage" type="String"/><!-- v1.3 -->
+    <aura:attribute name="blnOptOptimizationMessage" type="boolean" default="false"/><!-- v1.3 -->
+    <aura:attribute name="saveDisabled" type="Boolean" default="false" /><!-- v1.3 -->
+    <aura:attribute name="blnNonOnbordedPartnerSuccessMessage" type="boolean" default="false"/><!-- v1.5 -->
+    <aura:attribute name="recTypeId" type="string"/><!-- v1.6 -->
+    <aura:if isTrue="{!v.spinner}">
+        <!-- <lightning:spinner variant="brand"  size="large" /> -->
+        <!--  <div class="{!v.spinner==true? 'slds-show': 'slds-hide'}"> -->
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+        <!--</div>-->
+    </aura:if>
+    <div>
+        <!--      <force:recordData aura:id="forceRecordCmp"
+         recordId="{!v.OpportunityId}"
+         fields="{!v.newContact}"
+         targetRecord="{!v.newStudent}"
+         targetFields="{!v.simpleNewContact}"
+         targetError="{!v.error}" 
+         mode="EDIT"
+         recordUpdated="{!c.handleRecordUpdated}" 
+         /> 
+         <aura:if  isTrue="{!v.IsOverrideINC}">
+         <lightning:input  fieldName="Override_Reason__c" aura:id="Override_Reason" value="{!v.simpleNewContact.FirstName}" required="true"/>  
+         <lightning:input  fieldName="Comment__c" aura:id="Override_Comment" required="true" />  
+         <lightning:input class="slds-hide" fieldName="Recommended_Partner__c" aura:id="RecomandedPartnerAcc"/>
+         
+         </aura:if>
+         -->
+        <!--   <lightning:card iconName="standard:user" title="Submit To Partner">-->
+        <lightning:notificationsLibrary aura:id="notificationsLibrary"/>
+        <lightning:recordEditForm recordId="{!v.recordId}" aura:id="form" objectApiName="Opportunity"
+            onsubmit="{!c.handleOnSubmit}" onsuccess="{!c.handleOnSuccess}" onerror="{!c.handleOnonerror}"
+            onload="{!c.handleOnload}" recordTypeId="{!v.recTypeId}">
+            <!-- v1.6 -->
+            <lightning:messages/>
+            <div class="{!v.ShowMessageLC==true? 'slds-show': 'slds-hide'}">
+                <c:MessageComponent message="{!v.message}" type="{!v.messageType}" ></c:MessageComponent>
+            </div>
+            <!-- ***To show Account on ContinuePartner-->
+            <aura:if  isTrue="{!or(v.IsContinuePartner,and(v.OverideRecomm,!v.IsOverrideINC))}">
+                <div class="slds-grid_vertical slds-modal__content slds-grid slds-is-relative" aura:id="modalbody"
+                    id="modalbody">
+                    <div class="slds-p-vertical_medium slds-col">
+                        <label class="slds-form-element__label" for="PartnerAccountId">Partner Name</label>
+                        <!-- displaying custom label instead of standard Partner Account Id v1.4 -->
+                        <lightning:inputField fieldName="PartnerAccountId" aura:id="PartnerAcc" disabled="{!v.disabled}"
+                            onchange="{!c.checkPartnerActive}" variant="label-hidden" />
+                        <!-- hiding standard field label v1.4 -->
+                        <!-- v1.3 -->
+                        <!--<aura:if isTrue="{!v.blnOptOptimizationMessage}">-->
+                            <aura:if isTrue="{!v.OppOptimizationMessage}">
+                                <br/>
+                            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning"
+                                role="alert">
+                                    <span class="slds-assistive-text">Info</span>
+                                    <h2>{!v.OppOptimizationMessage}</h2>
+                                </div>
+                            </aura:if>
+                            <!-- removing section v1.4
+                            <aura:set attribute="else">
+                                <aura:if isTrue="{!v.valPrimaryDistributorName}">
+                                	<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+                                        <span class="slds-assistive-text">Info</span>
+                                        <h2>{!$Label.c.NonOnboardedNominateMessage}&nbsp;{!v.valPrimaryDistributorName}</h2>
+                                    </div>
+                                </aura:if>
+                            </aura:set>
+                            -->
+                        <!--</aura:if>-->
+                        <!-- end of v1.3-->
+                    </div>
+                    <!--
+                    <div class="slds-p-vertical_medium slds-col">
+                        <lightning:inputField fieldName="AddtoOptyTeam__c" aura:id="RetainAccess" default="false" />
+                    </div>
+                    -->
+                    <div class="slds-col">
+                        <lightning:inputField class="slds-hide" fieldName="Recommended_Partner__c"
+                            aura:id="RecomandedPartnerAcc" />
+                    </div>
+                    
+                </div>
+                <div class="modal-footer slds-modal__footer slds-m-top_medium">
+                    <div class="slds-grid slds-grid_align-end">
+                        <div class="slds-col">
+                            <lightning:button label="Cancel" class="slds-button slds-button_neutral"
+                                onclick="{!c.handleOverideinccancel}" />
+                        </div>
+                        <div class="slds-col">
+                            <lightning:button type="submit" disabled="{!v.saveDisabled}"
+                                class="slds-button slds-button_brand" label="Save" /><!-- v1.3 -->
+                        </div>
+                    </div>
+                </div>
+            </aura:if>
+            <!-- ***To show Account on ContinuePartner To Select Account-->
+            <aura:if  isTrue="{!v.OverideIncumbent}">
+                <div class="slds-modal__content slds-grid_vertical slds-grid slds-is-relative slds-m-horizontal_medium slds-m-top_small"
+                    aura:id="modalbody" id="modalbody">
+                    <div class="slds-col">
+                        <label class="slds-form-element__label" for="PartnerAccountId">Partner Name</label>
+                        <!-- displaying custom label instead of standard Partner Account Id v1.4 -->
+                        <lightning:inputField class="customRequired" fieldName="PartnerAccountId" aura:id="PartnerAcc1"
+                            onchange="{!c.checkPartnerActive}" variant="label-hidden" />
+                        <!-- hiding standard field label v1.4 -->
+                    </div>
+                    <!-- v1.3 -->
+                    <aura:if isTrue="{!v.OppOptimizationMessage}">
+                        <br/>
+                        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning"
+                            role="alert">
+                            <span class="slds-assistive-text">Info</span>
+                            <h2>{!v.OppOptimizationMessage}</h2>
+                        </div>
+                        <!--<div class="errPanel">{!v.OppOptimizationMessage}</div>-->
+                    </aura:if>
+                    <!--
+                    <div class="slds-col">
+                        <lightning:inputField fieldName="AddtoOptyTeam__c" aura:id="RetainAccess" default="false" />
+                    </div>
+                    -->
+                    <div class="slds-col">
+                        <lightning:inputField class="slds-hide" fieldName="Recommended_Partner__c"
+                            aura:id="RecomandedPartnerAcc" />
+                    </div>
+                    
+                </div>
+                <div class="modal-footer slds-modal__footer slds-m-top_medium">
+                    <div class="slds-grid slds-grid_align-end">
+                    
+                    <div class="slds-col">
+                            <lightning:button label="Cancel" class="slds-button slds-button_neutral"
+                                onclick="{!c.handleOverideinccancel}" />
+                    </div>
+                    <div class="slds-col">
+                            <lightning:button type="submit" disabled="{!v.saveDisabled}"
+                                class="slds-button slds-button_brand" label="Save" /><!-- v1.3 -->
+                    </div>
+                        </div>
+                </div>
+            </aura:if>
+            <!-- ***To show show overide Incumbent with Override Reason/Comments***-->
+            <aura:if  isTrue="{!v.IsOverrideINC}">
+                <!--    <lightning:recordForm aura:id="OpptyForm"
+                  recordId="{!v.recordId}"
+                  objectApiName="Opportunity"
+                  fields="{!v.recordFormfieldsg}"
+                  mode="edit"
+                  onsubmit="{!c.handleSubmitIncOveride}"/>
+                  <lightning:button label="Cancel" variant="brand" onclick="{!c.handleCancel}" />  
+                  -->   
+                <div class="slds-modal__content slds-grid_vertical slds-grid slds-is-relative colOverrideReason_Comment slds-m-horizontal_medium slds-m-top_small"
+                    aura:id="modalbody" id="modalbody">
+                    <div class="slds-col">
+                        <lightning:inputField class="customRequired" fieldName="Override_Reason__c"
+                            aura:id="Override_Reason" required="true" />
+                    </div>
+                    <div class="slds-col">
+                        <lightning:inputField class="customRequired" fieldName="Comment__c" aura:id="Override_Comment"
+                            required="true" />
+                    </div>
+                    <div class="slds-col">
+                        <lightning:inputField class="slds-hide" fieldName="Recommended_Partner__c"
+                            aura:id="RecomandedPartnerAcc" />
+                    </div>
+                    
+                </div>
+                <!-- <lightning:inputField fieldName="Name" aura:id="Name"  />  
+                  <aura:set attribute="else">
+                     <lightning:inputField fieldName="Partner_Account__c" aura:id="PartnerAcc"/>  
+                  <lightning:inputField fieldName="AddtoOptyTeam__c" aura:id="RetainAccess" default="false" />  
+                  </aura:set>-->
+            </aura:if>
+            <!--  <lightning:inputField class="slds-hide" fieldName="Partner_Account__c" aura:id="PartnerAcc"/> -->
+            <lightning:inputField class="slds-hide" fieldName="Recommended_Partner__c" aura:id="RecomandedPartnerAcc"/>
+            <!--<lightning:inputField class="slds-hide" fieldName="Comment__c" aura:id="Overridecomment"/>
+               <lightning:inputField class="slds-hide" fieldName="Override_Reason__c" aura:id="Overdereason"   />-->
+            <!--   <aura:if  isTrue="{!v.OverideIncumbent}">
+               <aura:set attribute="else">
+               </aura:set>
+               </aura:if>-->
+            <aura:if  isTrue="{!v.IsOverrideINC}"> 
+                <div class="modal-footer slds-modal__footer slds-m-top_medium">
+                    <div class="slds-grid slds-size_1-of-1">
+                        <div class="slds-grid slds-size_1-of-2">
+                            <div class="slds-col">
+                                <lightning:button label="Back" class="slds-float_left slds-button slds-button_neutral"
+                                    onclick="{!c.handleOverideIncback}" />
+                            </div>
+                        </div>
+                            <div class="slds-grid slds-size_1-of-2 slds-grid_align-end">
+                                <div class="slds-col">
+                                <lightning:button label="Cancel" class="slds-button slds-button_neutral"
+                                    onclick="{!c.handleOverideinccancel}" />
+                                </div>
+                                <div class="slds-col">
+                                <lightning:button label="Save" disabled="{!v.saveDisabled}" variant="brand"
+                                    class="slds-button slds-button_brand" onclick="{!c.handleOverideIncSave}" />
+                                <!-- v1.3 -->
+                                </div>
+                            </div>
+                    </div>
+                    
+                </div>
+            </aura:if>
+            <!--<lightning:inputField fieldName="Id" value="0062O000002OLB1" class="slds-hide" /> -->
+            <!--<lightning:inputField fieldName="RecordTypeId" value="012330000009nD4AAI" class="slds-hide" />  -->
+        </lightning:recordEditForm>
+        <!--
+         value="{!v.Partner_AccountName}
+         value="{!v.Partner_AccountName1}"
+         <lightning:recordForm aura:id="OpptyForm"
+                                      recordId="{!v.recordId}"
+                                      objectApiName="Opportunity"
+                                      fields="{!v.recordFormfields}"
+                                      columns="1"
+                                      mode="View"/>
+            
+                    
+                    
+                   <lightning:datatable data="{! v.columnData}" 
+                               columns="{! v.columns}" 
+                               keyField="Id"
+                               Id="PRMSubmitToPartner"
+                               selectedRows="{!v.selectedRows}"
+                               maxRowSelection="{! v.maxRowSelection }"
+                      onrowselection="{! c.updateSelectedText }"/>-->
+        <!--   <div class="slds-p-left_large slds-p-right_medium">
+         <lightning:recordForm aura:id="OpptyForm"
+                             recordId="{!v.recordId}"
+                             objectApiName="Opportunity"
+                             fields="{!v.recordFormfields}"
+                             columns="1"
+                             mode="View"/>
+         </div>
+         <force:recordData aura:Id="ApplicantThird"
+                   recordId="{!v.OpportunityId}"
+                   targetRecord="{!v.appDetailsSimple}"
+                   targetFields="{!v.recordFormfields}"
+                   layoutType="FULL"
+                   mode="EDIT"></force:recordData>-->
+        <!--         <lightning:button label="Save" variant="brand" onclick="{!c.handleSave}" />-->
+        <!--</lightning:card>-->
+        <!--<lightning:input label="Override Reason"  required="true" Name="Override_Reason" value="{!v.recordFormfields.Override_Reason__c}" aura:id="expenseform"/>-->
+    </div>
+    <!--<div class="slds-modal__footer">
+      <lightning:button label="Cancel" variant="brand" onclick="{!c.handleSaveRecord}" />
+      <lightning:button label="Overide" variant="brand" onclick="{!c.handleSaveRecord}" />
+      <lightning:button label="Continue" variant="brand" onclick="{!c.handleContinue}" />
+       </div>-->
+    <!-- <div>
+      <lightning:recordForm aura:id="OpptyForm"
+                                     recordId="0062O000002j6GEQAY"
+                                     objectApiName="Opportunity"
+                                     fields="{!v.recordFormfields}"
+                                     columns="1"
+                                     mode="Edit"/>
+         <lightning:card iconName="standard:user" title="Submit To Partner">
+             <div class="slds-p-left_large slds-p-right_medium">
+                 <lightning:recordForm aura:id="OpptyForm"
+                                     recordId="0062O000002j6GEQAY"
+                                     objectApiName="Opportunity"
+                                     fields="{!v.recordFormfields}"
+                                     columns="1"
+                                     mode="View"/>
+             </div>
+         </lightning:card>
+      </div>-->
+</aura:component>

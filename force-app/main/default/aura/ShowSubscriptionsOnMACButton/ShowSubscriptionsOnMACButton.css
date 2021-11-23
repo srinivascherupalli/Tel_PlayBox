@@ -1,0 +1,41 @@
+.THIS .chevronFloat {
+    float: right;
+}
+.THIS .inlineText {
+    display:inline-block;
+}
+.THIS .slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+}
+/*adjusting help text position*/
+.THIS .customIcon div{
+    vertical-align: top !important;
+}
+.THIS .customRequired{
+    font-weight: 400; } .THIS .customRequired:before{
+    content: "*";
+    margin: 0 0.125rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; 
+}
+.THIS .none{
+    display:none; 
+}
+.THIS .incidentsIconconColor svg{
+    fill : rgb(0, 109, 204) !important;
+    padding-bottom: 20%;
+}
+
+@font-face {
+    font-family: 'akkuratLight';
+    src: url('/sfsites/c/resource/EDGEfontAkkurat/Telstra-AAkkurat/TelstraAkkurat-Light.woff') format('woff');
+}
+@font-face {
+    font-family: 'akkuratReg';
+    src: url('/sfsites/c/resource/EDGEfontAkkurat/Telstra-AAkkurat/TelstraAkkurat-Regular.woff') format('woff');
+}
+@font-face {
+    font-family: 'akkuratBold';
+    src: url('/sfsites/c/resource/EDGEfontAkkurat/Telstra-AAkkurat/TelstraAkkurat-Bold.woff') format('woff');
+}

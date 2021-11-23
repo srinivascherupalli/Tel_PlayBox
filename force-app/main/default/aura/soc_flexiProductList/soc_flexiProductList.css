@@ -1,0 +1,14 @@
+.THIS .setTop{
+    
+     top: -10px;
+    
+}
+
+.THIS .slds-rich-text-area__content {
+    overflow-y: auto;
+     min-height: 6rem; 
+     max-height: 15rem; 
+     padding: 1rem; 
+    border-radius: .25rem;
+    background-color: rgba(255, 255, 255, 0.42);
+}

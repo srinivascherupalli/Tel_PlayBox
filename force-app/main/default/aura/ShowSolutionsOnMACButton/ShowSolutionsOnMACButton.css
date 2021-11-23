@@ -1,0 +1,18 @@
+.THIS .chevronFloat {
+    float: right;
+}
+.THIS .inlineText {
+    display:inline-block;
+}
+.THIS .slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+}
+.THIS .spins::after {
+    position: absolute;
+    content: 'Please wait! Adding selected solution to basket...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}

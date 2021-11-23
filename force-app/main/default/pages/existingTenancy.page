@@ -1,0 +1,122 @@
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:slds />
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+      <apex:includeLightning />
+      <script>
+
+       var basketId = "{!JSENCODE($CurrentPage.parameters.basketId) }";
+      var accountId = "{!JSENCODE($CurrentPage.parameters.accountId) }";
+      var filterByTenancyType="{!JSENCODE($CurrentPage.parameters.filterByTenancyType) }";
+      var tenancyTypeProdIdList="{!JSENCODE($CurrentPage.parameters.tenancyTypeProdIdList) }";
+      var selectedTenancyIds="{!JSENCODE($CurrentPage.parameters.selectedTenancyIds)}";
+      var isTenancySelectionAfterApproval ="{!JSENCODE($CurrentPage.parameters.isTenancySelectionAfterApproval)}"; 
+      if( isTenancySelectionAfterApproval == null || isTenancySelectionAfterApproval == '' || isTenancySelectionAfterApproval === undefined){
+         isTenancySelectionAfterApproval  = "false";
+      } 
+      var TenancyIds=[];
+      console.log("basketId--->"+basketId);
+      console.log("accountId---->"+accountId);
+      console.log("filterByTenancyType---->"+filterByTenancyType);
+      console.log("tenancyTypeProdIdList---->"+tenancyTypeProdIdList);
+      console.log("selectedTenancyIds---->"+selectedTenancyIds);
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+          $Lightning.createComponent(
+            "c:CustomerExistingTenancy",
+              {"basketId": basketId,
+
+               "accountId": accountId,
+               "filterByTenancyType":filterByTenancyType,
+               "tenancyTypeProdIdList":tenancyTypeProdIdList,
+               "selectedTenancyIds":selectedTenancyIds,
+               "isTenancySelectionAfterApproval" : isTenancySelectionAfterApproval
+              },
+              "lightning",
+              function(cmp){
+                console.log("Component created!");
+                  //$A.eventService.addHandler({ "event": "C:CustomerExistingTenancyEvent", "handler" : VFEventHandler});
+                  $A.eventService.addHandler({
+                        event: 'c:CustomerExistingTenancyEvent',
+                       handler: function (event){
+                           console.log('event is handled by VF page function');
+                           
+                            var closeStatus = event.getParam("close");
+                           if (closeStatus =="true"){
+                               console.log('value passed from component closeStatus;',closeStatus);
+                           	   window.parent.postMessage("close", '*') ;
+                               sessionStorage.setItem("close", "close");
+                               }
+                           else
+                            {
+                           var myEventData = event.getParam("selectedTenancyIds");
+                           // vivek : start EDGE -206232   
+                           var actualTenancyId;
+                           if (  event.getParam("actualTenancyId") ){
+                             actualTenancyId = event.getParam("actualTenancyId");
+                           }
+
+                           var callerName = event.getParam("callerName");
+
+                           console.log('value passed from component actualTenancyId ;', actualTenancyId);
+                           // vivek : end EDGE -206232   
+                           console.log('value passed from component;',myEventData);
+                           console.log('value passed from callerName;',callerName);
+                           var payload =
+                                {
+                                    command: 'TenancyIds',
+                                    data: myEventData,
+                                    actualTenancyId : actualTenancyId,
+                                    caller: callerName
+                                };
+                            window.parent.postMessage(payload, '*') ;
+                           //window.parent.postMessage("close", '*') ;
+                             console.log('payload Is --->',payload);
+                            sessionStorage.setItem("payload", JSON.stringify(payload));
+                            //sessionStorage.setItem("close", "close");
+                            console.log('payload1cIs --->',payload);
+                                }
+    					}
+                    });
+            });
+        });
+      
+      /*var lexOrigin = window.location.origin;
+      console.log('lexOrigin------>'+lexOrigin);
+    window.addEventListener("message", function(event) {
+        if (event.origin !== lexOrigin) {
+            // Not the expected origin: reject message!
+            return;
+        }
+        // Handle message
+        console.log(event.data);
+        var payload =
+            {
+                command: 'TenancyIds',
+                data: event.data,
+                caller: 'Managed Services'
+            };
+        window.parent.postMessage(payload, '*') ;
+        window.parent.postMessage("close", '*') ;
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+       	sessionStorage.setItem("close", "close");
+        
+
+    }, false);*/
+      /*function VFEventHandler(event){
+        console.log('event is handled by VF page function');
+        var myEventData = event.getParam("selectedTenancyID");
+    	console.log('value passed from component;'+myEventData);
+		var payload =
+            {
+                command: 'ADDRESS',
+                data: siteData,
+                caller: caller
+            };
+		window.parent.postMessage(payload, '*') ;
+		window.parent.postMessage("close", '*') ;
+    
+		sessionStorage.setItem("payload", JSON.stringify(payload));
+		sessionStorage.setItem("close", "close");
+    }*/
+      </script>
+      <div id="lightning" ></div>
+</apex:page>

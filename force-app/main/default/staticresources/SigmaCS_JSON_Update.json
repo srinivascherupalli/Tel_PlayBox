@@ -1,0 +1,1292 @@
+{
+  "package": {
+    "name": "Connected Workplace",
+    "externalId": "85776ed4-e9eb-49d3-8af5-4fbdda0df6e9",
+    "specId": "OF_000021",
+    "products": [
+      {
+        "name": "Connected Workplace Product",
+        "type": "Default_Product_Specification",
+        "action": "New",
+        "externalId": "931e7c04-7568-4bdb-99cb-d65a141da925",
+        "specId": "PS_000055",
+        "startDate": "2017-12-21T13:00:00.000Z",
+        "endDate": "2099-12-30T13:00:00.000Z",
+        "associationStartDate": "2017-12-21T13:00:00.000Z",
+        "associationEndDate": "2099-12-30T13:00:00.000Z",
+        "productStaticCharacteristics": [
+          {
+            "name": "Provisionable",
+            "value": "TRUE"
+          },
+          {
+            "name": "Appointment_required",
+            "value": "false"
+          }
+        ],
+        "products": [
+          {
+            "name": "IP Site",
+            "type": "Default_Product_Specification",
+            "action": "New",
+            "externalId": "00d686c2-6da9-4c48-8e88-cb2d66dbda63",
+            "specId": "PS_000049",
+            "startDate": "2017-12-21T13:00:00.000Z",
+            "endDate": "2099-12-30T13:00:00.000Z",
+            "associationStartDate": "2017-12-21T13:00:00.000Z",
+            "associationEndDate": "2099-12-30T13:00:00.000Z",
+            "productStaticCharacteristics": [
+              {
+                "name": "Provisionable",
+                "value": "TRUE"
+              },
+              {
+                "name": "Appointment_required",
+                "value": "false"
+              }
+            ],
+            "attributes": [
+              {
+                "name": "IP Site Offer Type",
+                "interfaceName": "IP Site Offer Type",
+                "cpqDisplayName": "",
+                "type": "ui",
+                "values": [
+                  "Connected Workplace"
+                ],
+                "default": "Connected Workplace"
+              },
+              {
+                "name": "Contract Term",
+                "interfaceName": "Contract Term",
+                "cpqDisplayName": "",
+                "type": "uiLOV",
+                "values": [
+                  "30",
+                  "10",
+                  "20"
+                ],
+                "default": "30"
+              },
+              {
+                "name": "Zone",
+                "interfaceName": "Zone",
+                "cpqDisplayName": "",
+                "type": "uiLOV",
+                "values": [
+                  "4",
+                  "1",
+                  "3",
+                  "2"
+                ],
+                "default": ""
+              },
+              {
+                "name": "Contract Start Date",
+                "interfaceName": "Contract Start Date",
+                "cpqDisplayName": "",
+                "type": "ui",
+                "default": ""
+              }
+            ],
+            "products": [
+              {
+                "name": "IP VPN Port",
+                "type": "Default_Product_Specification",
+                "action": "New",
+                "externalId": "95f3f970-3828-4bae-b219-b8b2089ddf02",
+                "specId": "PS_000030",
+                "startDate": "2017-12-21T13:00:00.000Z",
+                "endDate": "2099-12-30T13:00:00.000Z",
+                "associationStartDate": "2017-12-21T13:00:00.000Z",
+                "associationEndDate": "2099-12-30T13:00:00.000Z",
+                "productStaticCharacteristics": [
+                  {
+                    "name": "Provisionable",
+                    "value": "TRUE"
+                  },
+                  {
+                    "name": "Appointment_required",
+                    "value": "false"
+                  }
+                ],
+                "attributes": [
+                  {
+                    "name": "Bandwidth",
+                    "interfaceName": "Bandwidth",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "4 Gbps",
+                      "90 Mbps",
+                      "70 Mbps",
+                      "6 Mbps",
+                      "1000 Mbps",
+                      "100 Mbps",
+                      "50M/20M",
+                      "40 Mbps",
+                      "500 Mbps",
+                      "250M/100M",
+                      "2 Gbps",
+                      "5 Gbps",
+                      "6 Gbps",
+                      "40M/40M",
+                      "8 Gbps",
+                      "25M/5M",
+                      "100M/40M",
+                      "400 Mbps",
+                      "9 Gbps",
+                      "150 Mbps",
+                      "3 Gbps",
+                      "4 Mbps",
+                      "20 Mbps",
+                      "2M/1M",
+                      "500M/200M",
+                      "512k/512k",
+                      "20M/20M",
+                      "25M/10M",
+                      "14 Mbps",
+                      "2 Mbps",
+                      "8 Mbps",
+                      "800 Mbps",
+                      "600 Mbps",
+                      "128k/128k",
+                      "10M/10M",
+                      "300 Mbps",
+                      "30M/30M",
+                      "10 Gbps",
+                      "60 Mbps",
+                      "12 Mbps",
+                      "30 Mbps",
+                      "1000M/400M",
+                      "7 Gbps",
+                      "80 Mbps",
+                      "1M/1M",
+                      "50 Mbps",
+                      "12M/1M",
+                      "200 Mbps",
+                      "16 Mbps",
+                      "5M/5M",
+                      "10 Mbps",
+                      "2M/2M"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "Technology Type",
+                    "interfaceName": "Technology Type",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "Fibre to the Building",
+                      "Fixed Wireless",
+                      "Fibre to the Prem",
+                      "Fibre to the Node",
+                      "HFC",
+                      "Fibre to the Curb"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "Class of Service",
+                    "interfaceName": "Class of Service",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "Data Transfer",
+                      "DCOS",
+                      "RFC 6CoS"
+                    ],
+                    "default": "DCOS"
+                  },
+                  {
+                    "name": "Traffic Class",
+                    "interfaceName": "Traffic Class",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "TC2",
+                      "TC4"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "Port Role",
+                    "interfaceName": "Port Role",
+                    "cpqDisplayName": "Role",
+                    "type": "uiLOV",
+                    "values": [
+                      "Primary",
+                      "Back-up"
+                    ],
+                    "default": "Primary"
+                  },
+                  {
+                    "name": "Multicast Enabled",
+                    "interfaceName": "Multicast Enabled",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "FALSE",
+                      "TRUE"
+                    ],
+                    "default": "FALSE"
+                  },
+                  {
+                    "name": "TC1 NBN Orderable Speed",
+                    "interfaceName": "TC1 NBN Orderable Speed",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "values": [
+                      "0"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "TC2 NBN Orderable Speed",
+                    "interfaceName": "TC2 NBN Orderable Speed",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "500M/200M",
+                      "12M/1M",
+                      "25M/5M",
+                      "2M/1M",
+                      "25M/10M",
+                      "50M/20M",
+                      "100M/40M",
+                      "250M/100M",
+                      "1000M/400M"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "TC4 NBN Orderable Speed",
+                    "interfaceName": "TC4 NBN Orderable Speed",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "2M/2M",
+                      "512k/512k",
+                      "10M/10M",
+                      "40M/40M",
+                      "1M/1M",
+                      "128k/128k",
+                      "5M/5M",
+                      "30M/30M",
+                      "20M/20M"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "Access Technology",
+                    "interfaceName": "Access Technology",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "Telstra Fibre",
+                      "NBN Access"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer Facing Service Id",
+                    "interfaceName": "Customer Facing Service Id",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer Preferred Name",
+                    "interfaceName": "Customer Preferred Name",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "IP VPN Product Instance ID",
+                    "interfaceName": "IP VPN Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  }
+                ]
+              },
+              {
+                "name": "Managed Router",
+                "type": "Default_Product_Specification",
+                "action": "New",
+                "externalId": "e242acd2-e15c-4aaf-83d2-5a7a2fa883ff",
+                "specId": "PS_000073",
+                "startDate": "2017-12-21T13:00:00.000Z",
+                "endDate": "2099-12-30T13:00:00.000Z",
+                "associationStartDate": "2017-12-21T13:00:00.000Z",
+                "associationEndDate": "2099-12-30T13:00:00.000Z",
+                "productStaticCharacteristics": [
+                  {
+                    "name": "Provisionable",
+                    "value": "TRUE"
+                  },
+                  {
+                    "name": "Appointment_required",
+                    "value": "true"
+                  }
+                ],
+                "attributes": [
+                  {
+                    "name": "Vendor",
+                    "interfaceName": "Vendor",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "CISCO",
+                      "MERAKI",
+                      "Juniper"
+                    ],
+                    "default": "CISCO"
+                  },
+                  {
+                    "name": "Mobile Backup Enabled",
+                    "interfaceName": "Mobile Backup Enabled",
+                    "cpqDisplayName": "Mobile Back-up Enabled",
+                    "type": "uiLOV",
+                    "values": [
+                      "FALSE",
+                      "TRUE"
+                    ],
+                    "default": "FALSE"
+                  },
+                  {
+                    "name": "Size",
+                    "interfaceName": "Size",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "Small",
+                      "Large"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "Equipment Ownership Code",
+                    "interfaceName": "Equipment Ownership Code",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "Customer",
+                      "Telstra"
+                    ],
+                    "default": "Telstra"
+                  },
+                  {
+                    "name": "Country",
+                    "interfaceName": "Country",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "values": [
+                      "Australia"
+                    ],
+                    "default": "Australia"
+                  },
+                  {
+                    "name": "Router Model",
+                    "interfaceName": "Router Model",
+                    "cpqDisplayName": "Model",
+                    "type": "uiLOV",
+                    "values": [
+                      "1117",
+                      "SRX320-V"
+                    ],
+                    "default": ""
+                  },
+                  {
+                    "name": "Contract Type",
+                    "interfaceName": "Contract Type",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "Rental",
+                      "Purchase",
+                      "Hardware Repayment"
+                    ],
+                    "default": "Rental"
+                  },
+                  {
+                    "name": "Contract Term",
+                    "interfaceName": "Contract Term",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "30",
+                      "10",
+                      "20"
+                    ],
+                    "default": "30"
+                  },
+                  {
+                    "name": "Customer Facing Service Id",
+                    "interfaceName": "Customer Facing Service Id",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer Preferred Name",
+                    "interfaceName": "Customer Preferred Name",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Bill of Material ID",
+                    "interfaceName": "Bill of Material ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Primary Access Product Instance ID",
+                    "interfaceName": "Primary Access Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Redundant Access Product Instance ID",
+                    "interfaceName": "Redundant Access Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer LAN IP Address Subnet Mask",
+                    "interfaceName": "Customer LAN IP Address Subnet Mask",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  }
+                ],
+                "charges": [
+                  {
+                    "type": "RC",
+                    "currency": "AUD",
+                    "frequency": "Monthly",
+                    "billingSpecId": "BSBLT001_CB",
+                    "billInAdvance": "false",
+                    "prorate": "false",
+                    "prices": [
+                      {
+                        "startdate": "2018-01-09T13:00:00.000Z",
+                        "enddate": "2099-12-30T13:00:00.000Z",
+                        "term": "",
+                        "externalId": "ac9eefd1-0003-4850-b906-a7798f99f2bf",
+                        "rateExcludeGST": "0.00",
+                        "billDescription": "Device Monthly Charge"
+                      }
+                    ]
+                  }
+                ],
+                "products": [
+                  {
+                    "name": "Maintenance",
+                    "type": "Default_Product_Specification",
+                    "action": "New",
+                    "externalId": "7e667b64-485d-4b20-a715-93bd1770c123",
+                    "specId": "PS_000076",
+                    "startDate": "2017-12-21T13:00:00.000Z",
+                    "endDate": "2099-12-30T13:00:00.000Z",
+                    "associationStartDate": "2017-12-21T13:00:00.000Z",
+                    "associationEndDate": "2099-12-30T13:00:00.000Z",
+                    "productStaticCharacteristics": [
+                      {
+                        "name": "Provisionable",
+                        "value": "TRUE"
+                      },
+                      {
+                        "name": "Appointment_required",
+                        "value": "false"
+                      }
+                    ],
+                    "attributes": [
+                      {
+                        "name": "Vendor Support OnSite",
+                        "interfaceName": "Vendor Support OnSite",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "FALSE",
+                          "TRUE"
+                        ],
+                        "default": ""
+                      },
+                      {
+                        "name": "Maintenance Coverage Hours",
+                        "interfaceName": "Maintenance Coverage Hours",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "8x5x4",
+                          "24x7x24",
+                          "12x5xNBD",
+                          "24x7x12",
+                          "8x5xNBD",
+                          "24x7x6",
+                          "7x24x2",
+                          "Best Effort",
+                          "24x7x10",
+                          "24x7x4"
+                        ],
+                        "default": "8x5xNBD"
+                      },
+                      {
+                        "name": "Hardware Replacement Provider",
+                        "interfaceName": "Hardware Replacement Provider",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "CISCO",
+                          "MERAKI",
+                          "Juniper"
+                        ],
+                        "default": "CISCO"
+                      },
+                      {
+                        "name": "Maintainer OnSite",
+                        "interfaceName": "Maintainer OnSite",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "Juniper",
+                          "Riverbed",
+                          "Telstra",
+                          "CISCO",
+                          "MERAKI"
+                        ],
+                        "default": "Telstra"
+                      },
+                      {
+                        "name": "Bill of Material ID",
+                        "interfaceName": "Bill of Material ID",
+                        "cpqDisplayName": "",
+                        "type": "ui",
+                        "default": ""
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Device Management",
+                    "type": "Default_Product_Specification",
+                    "action": "New",
+                    "externalId": "eea28b0a-b41c-4b56-919a-679923e96d10",
+                    "specId": "PS_000077",
+                    "startDate": "2017-12-21T13:00:00.000Z",
+                    "endDate": "2099-12-30T13:00:00.000Z",
+                    "associationStartDate": "2017-12-21T13:00:00.000Z",
+                    "associationEndDate": "2099-12-30T13:00:00.000Z",
+                    "productStaticCharacteristics": [
+                      {
+                        "name": "Provisionable",
+                        "value": "TRUE"
+                      },
+                      {
+                        "name": "Appointment_required",
+                        "value": "false"
+                      }
+                    ],
+                    "attributes": [
+                      {
+                        "name": "Management Type",
+                        "interfaceName": "Management Type",
+                        "cpqDisplayName": "Type",
+                        "type": "uiLOV",
+                        "values": [
+                          "Proactive",
+                          "None",
+                          "Reactive",
+                          "Basic"
+                        ],
+                        "default": "Proactive"
+                      },
+                      {
+                        "name": "Management Service Hours",
+                        "interfaceName": "Management Service Hours",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "None",
+                          "SBH",
+                          "Custom",
+                          "EBH7",
+                          "7x24",
+                          "24x7"
+                        ],
+                        "default": "24x7"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Access",
+                "type": "Default_Product_Group",
+                "action": "New",
+                "externalId": "c00bb65b-8d84-4cbd-8cf8-53a6a3e85826",
+                "specId": "PG_000037",
+                "startDate": "2017-12-21T13:00:00.000Z",
+                "endDate": "2099-12-30T13:00:00.000Z",
+                "associationStartDate": "2018-01-09T13:00:00.000Z",
+                "associationEndDate": "2099-12-30T13:00:00.000Z",
+                "productStaticCharacteristics": [
+                  {
+                    "name": "Provisionable",
+                    "value": "TRUE"
+                  },
+                  {
+                    "name": "Appointment_required",
+                    "value": "false"
+                  }
+                ],
+                "products": [
+                  {
+                    "name": "Telstra Fibre Access",
+                    "type": "Default_Product_Specification",
+                    "action": "New",
+                    "externalId": "07cbfa3f-f93a-4962-83fb-c2c41b156cd4",
+                    "specId": "PS_000027",
+                    "startDate": "2017-12-21T13:00:00.000Z",
+                    "endDate": "2099-12-30T13:00:00.000Z",
+                    "associationStartDate": "2017-12-21T13:00:00.000Z",
+                    "associationEndDate": "2099-12-30T13:00:00.000Z",
+                    "productStaticCharacteristics": [
+                      {
+                        "name": "Provisionable",
+                        "value": "TRUE"
+                      },
+                      {
+                        "name": "Appointment_required",
+                        "value": "false"
+                      }
+                    ],
+                    "attributes": [
+                      {
+                        "name": "IP Access Configuration",
+                        "interfaceName": "IP Access Configuration",
+                        "cpqDisplayName": "Configuration",
+                        "type": "uiLOV",
+                        "values": [
+                          "Single Uplink",
+                          "Dual Site Diverse Access",
+                          "Dual Access",
+                          "Fully Redundant"
+                        ],
+                        "default": "Single Uplink"
+                      },
+                      {
+                        "name": "Access Role",
+                        "interfaceName": "Access Role",
+                        "cpqDisplayName": "Role",
+                        "type": "ui",
+                        "values": [
+                          "Primary"
+                        ],
+                        "default": "Primary"
+                      },
+                      {
+                        "name": "Class of Service",
+                        "interfaceName": "Class of Service",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "Data Transfer",
+                          "DCOS",
+                          "RFC 6CoS"
+                        ],
+                        "default": "DCOS"
+                      },
+                      {
+                        "name": "Multicast Enabled",
+                        "interfaceName": "Multicast Enabled",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "FALSE",
+                          "TRUE"
+                        ],
+                        "default": "FALSE"
+                      },
+                      {
+                        "name": "Bandwidth",
+                        "interfaceName": "Bandwidth",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "4 Gbps",
+                          "90 Mbps",
+                          "70 Mbps",
+                          "6 Mbps",
+                          "1000 Mbps",
+                          "100 Mbps",
+                          "40 Mbps",
+                          "500 Mbps",
+                          "2 Gbps",
+                          "5 Gbps",
+                          "6 Gbps",
+                          "8 Gbps",
+                          "400 Mbps",
+                          "9 Gbps",
+                          "150 Mbps",
+                          "3 Gbps",
+                          "4 Mbps",
+                          "20 Mbps",
+                          "14 Mbps",
+                          "2 Mbps",
+                          "8 Mbps",
+                          "800 Mbps",
+                          "600 Mbps",
+                          "300 Mbps",
+                          "10 Gbps",
+                          "60 Mbps",
+                          "12 Mbps",
+                          "30 Mbps",
+                          "7 Gbps",
+                          "80 Mbps",
+                          "50 Mbps",
+                          "200 Mbps",
+                          "16 Mbps",
+                          "10 Mbps"
+                        ],
+                        "default": ""
+                      },
+                      {
+                        "name": "Customer Facing Service Id",
+                        "interfaceName": "Customer Facing Service Id",
+                        "cpqDisplayName": "",
+                        "type": "ui",
+                        "default": ""
+                      },
+                      {
+                        "name": "Customer Preferred Name",
+                        "interfaceName": "Customer Preferred Name",
+                        "cpqDisplayName": "",
+                        "type": "ui",
+                        "default": ""
+                      },
+                      {
+                        "name": "IP VPN Port Product Instance ID",
+                        "interfaceName": "IP VPN Port Product Instance ID",
+                        "cpqDisplayName": "",
+                        "type": "ui",
+                        "default": ""
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Unified Communication Site",
+                "type": "Default_Product_Specification",
+                "action": "New",
+                "externalId": "49640508-2e0c-457b-9b0d-4a8eca97748d",
+                "specId": "PS_000104",
+                "startDate": "2018-02-06T13:00:00.000Z",
+                "endDate": "2099-12-30T13:00:00.000Z",
+                "associationStartDate": "2018-02-07T13:00:00.000Z",
+                "associationEndDate": "2099-12-30T13:00:00.000Z",
+                "productStaticCharacteristics": [
+                  {
+                    "name": "Provisionable",
+                    "value": "TRUE"
+                  },
+                  {
+                    "name": "Appointment_required",
+                    "value": "false"
+                  }
+                ],
+                "attributes": [
+                  {
+                    "name": "Customer Facing Service Id",
+                    "interfaceName": "Customer Facing Service Id",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer Preferred Name",
+                    "interfaceName": "Customer Preferred Name",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Primary Access Product Instance ID",
+                    "interfaceName": "Primary Access Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Redundant Access Product Instance ID",
+                    "interfaceName": "Redundant Access Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "UC Enterprise Product Instance ID",
+                    "interfaceName": "UC Enterprise Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  }
+                ],
+                "products": [
+                  {
+                    "name": "User",
+                    "type": "Default_Product_Specification",
+                    "action": "New",
+                    "externalId": "f2e195ae-049a-4c3f-bb08-eed2cba1ff89",
+                    "specId": "PS_000074",
+                    "startDate": "2017-12-21T13:00:00.000Z",
+                    "endDate": "2099-12-30T13:00:00.000Z",
+                    "associationStartDate": "2018-02-06T13:00:00.000Z",
+                    "associationEndDate": "2099-12-30T13:00:00.000Z",
+                    "productStaticCharacteristics": [
+                      {
+                        "name": "Provisionable",
+                        "value": "TRUE"
+                      },
+                      {
+                        "name": "Appointment_required",
+                        "value": "false"
+                      }
+                    ],
+                    "attributes": [
+                      {
+                        "name": "Zone",
+                        "interfaceName": "Zone",
+                        "cpqDisplayName": "Zone",
+                        "type": "uiLOV",
+                        "values": [
+                          "4",
+                          "1",
+                          "3",
+                          "2"
+                        ],
+                        "default": ""
+                      },
+                      {
+                        "name": "User Type",
+                        "interfaceName": "User Type",
+                        "cpqDisplayName": "Type",
+                        "type": "uiLOV",
+                        "values": [
+                          "Fax Line",
+                          "Fixed Seat"
+                        ],
+                        "default": "Fixed Seat"
+                      },
+                      {
+                        "name": "Quantity",
+                        "interfaceName": "Quantity",
+                        "cpqDisplayName": "",
+                        "type": "ui",
+                        "default": ""
+                      }
+                    ],
+                    "charges": [
+                      {
+                        "type": "RC",
+                        "currency": "AUD",
+                        "frequency": "Monthly",
+                        "billingSpecId": "BSRC001_CB",
+                        "billInAdvance": "false",
+                        "prorate": "false",
+                        "prices": [
+                          {
+                            "startdate": "2017-11-23T13:00:00.000Z",
+                            "enddate": "2099-12-30T13:00:00.000Z",
+                            "term": "",
+                            "externalId": "2359abc9-8088-4e56-a5c0-19de77555527",
+                            "rateExcludeGST": "150",
+                            "billDescription": "Seat Charge for Zone 2",
+                            "attributes": [
+                              {
+                                "name": "Zone",
+                                "value": "2"
+                              },
+                              {
+                                "name": "Type",
+                                "value": "Fixed Seat"
+                              }
+                            ]
+                          },
+                          {
+                            "startdate": "2017-11-23T13:00:00.000Z",
+                            "enddate": "2099-12-30T13:00:00.000Z",
+                            "term": "",
+                            "externalId": "e758b74e-0514-411f-9f7e-6a2e58ebfa78",
+                            "rateExcludeGST": "250",
+                            "billDescription": "Seat Charge for Zone 4",
+                            "attributes": [
+                              {
+                                "name": "Zone",
+                                "value": "4"
+                              },
+                              {
+                                "name": "Type",
+                                "value": "Fixed Seat"
+                              }
+                            ]
+                          },
+                          {
+                            "startdate": "2017-11-23T13:00:00.000Z",
+                            "enddate": "2099-12-30T13:00:00.000Z",
+                            "term": "",
+                            "externalId": "846e795f-f43b-4992-9f09-c3641ad11c8f",
+                            "rateExcludeGST": "150",
+                            "billDescription": "Seat Charge for Zone 1",
+                            "attributes": [
+                              {
+                                "name": "Zone",
+                                "value": "5"
+                              },
+                              {
+                                "name": "Type",
+                                "value": "Fax Line"
+                              }
+                            ]
+                          },
+                          {
+                            "startdate": "2017-11-23T13:00:00.000Z",
+                            "enddate": "2099-12-30T13:00:00.000Z",
+                            "term": "",
+                            "externalId": "158b0886-564e-401f-9a18-d7e11f37c150",
+                            "rateExcludeGST": "200",
+                            "billDescription": "Seat Charge for Zone 3",
+                            "attributes": [
+                              {
+                                "name": "Zone",
+                                "value": "3"
+                              },
+                              {
+                                "name": "Type",
+                                "value": "Fixed Seat"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Voice Numbers",
+                    "type": "Default_Product_Specification",
+                    "action": "New",
+                    "externalId": "0687bbbd-60a9-4711-a031-216ff9e19d27",
+                    "specId": "PS_000109",
+                    "startDate": "2018-02-06T13:00:00.000Z",
+                    "endDate": "2099-12-30T13:00:00.000Z",
+                    "associationStartDate": "2018-02-07T13:00:00.000Z",
+                    "associationEndDate": "2099-12-30T13:00:00.000Z",
+                    "productStaticCharacteristics": [
+                      {
+                        "name": "Provisionable",
+                        "value": "TRUE"
+                      },
+                      {
+                        "name": "Appointment_required",
+                        "value": "false"
+                      }
+                    ],
+                    "attributes": [
+                      {
+                        "name": "Voice Plan",
+                        "interfaceName": "Voice Plan",
+                        "cpqDisplayName": "Plan",
+                        "type": "ui",
+                        "values": [
+                          "Complete Premium"
+                        ],
+                        "default": "Complete Premium"
+                      },
+                      {
+                        "name": "Migrated",
+                        "interfaceName": "Migrated",
+                        "cpqDisplayName": "",
+                        "type": "uiLOV",
+                        "values": [
+                          "TRUE",
+                          "FALSE"
+                        ],
+                        "default": ""
+                      },
+                      {
+                        "name": "To",
+                        "interfaceName": "To",
+                        "cpqDisplayName": "",
+                        "type": "ui",
+                        "default": ""
+                      },
+                      {
+                        "name": "From",
+                        "interfaceName": "From",
+                        "cpqDisplayName": "",
+                        "type": "ui",
+                        "default": ""
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Unified Communication Enterprise",
+            "type": "Default_Product_Specification",
+            "action": "New",
+            "externalId": "2712ddc7-3cb8-435a-8668-b90a0ba634f0",
+            "specId": "PS_000087",
+            "startDate": "2017-12-20T13:00:00.000Z",
+            "endDate": "2099-12-30T13:00:00.000Z",
+            "associationStartDate": "2018-02-08T13:00:00.000Z",
+            "associationEndDate": "2099-12-30T13:00:00.000Z",
+            "productStaticCharacteristics": [
+              {
+                "name": "Provisionable",
+                "value": "TRUE"
+              },
+              {
+                "name": "Appointment_required",
+                "value": "false"
+              }
+            ],
+            "attributes": [
+              {
+                "name": "Enterprise Extension Dialling",
+                "interfaceName": "Enterprise Extension Dialling",
+                "cpqDisplayName": "",
+                "type": "uiLOV",
+                "values": [
+                  "FALSE",
+                  "TRUE"
+                ],
+                "default": "TRUE"
+              },
+              {
+                "name": "Customer Facing Service Id",
+                "interfaceName": "Customer Facing Service Id",
+                "cpqDisplayName": "",
+                "type": "ui",
+                "default": ""
+              },
+              {
+                "name": "Customer Preferred Name",
+                "interfaceName": "Customer Preferred Name",
+                "cpqDisplayName": "",
+                "type": "ui",
+                "default": ""
+              },
+              {
+                "name": "Overview of Proposed Solution",
+                "interfaceName": "Overview of Proposed Solution",
+                "cpqDisplayName": "",
+                "type": "ui",
+                "default": ""
+              },
+              {
+                "name": "Domain Name",
+                "interfaceName": "Domain Name",
+                "cpqDisplayName": "",
+                "type": "ui",
+                "default": ""
+              }
+            ]
+          },
+          {
+            "name": "IP Network",
+            "type": "Default_Product_Specification",
+            "action": "New",
+            "externalId": "7fe8582c-6802-404d-9689-e291c96d49b5",
+            "specId": "PS_000115",
+            "startDate": "2017-12-21T13:00:00.000Z",
+            "endDate": "2099-12-30T13:00:00.000Z",
+            "associationStartDate": "2017-12-21T13:00:00.000Z",
+            "associationEndDate": "2099-12-30T13:00:00.000Z",
+            "productStaticCharacteristics": [
+              {
+                "name": "Provisionable",
+                "value": "TRUE"
+              },
+              {
+                "name": "Appointment_required",
+                "value": "false"
+              }
+            ],
+            "products": [
+              {
+                "name": "IP VPN",
+                "type": "Default_Product_Specification",
+                "action": "New",
+                "externalId": "d8ad2efe-981f-4076-a82f-608228b0986a",
+                "specId": "PS_000028",
+                "startDate": "2017-12-21T13:00:00.000Z",
+                "endDate": "2099-12-30T13:00:00.000Z",
+                "associationStartDate": "2017-12-21T13:00:00.000Z",
+                "associationEndDate": "2099-12-30T13:00:00.000Z",
+                "productStaticCharacteristics": [
+                  {
+                    "name": "Provisionable",
+                    "value": "TRUE"
+                  },
+                  {
+                    "name": "Appointment_required",
+                    "value": "false"
+                  }
+                ],
+                "attributes": [
+                  {
+                    "name": "Multicast Enabled",
+                    "interfaceName": "Multicast Enabled",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "FALSE",
+                      "TRUE"
+                    ],
+                    "default": "FALSE"
+                  },
+                  {
+                    "name": "Customer Facing Service Id",
+                    "interfaceName": "Customer Facing Service Id",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer Preferred Name",
+                    "interfaceName": "Customer Preferred Name",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  }
+                ]
+              },
+              {
+                "name": "IP VAS Internet Port",
+                "type": "Default_Product_Specification",
+                "action": "New",
+                "externalId": "825d1875-561e-4e86-9a69-ece6577e388f",
+                "specId": "PS_000106",
+                "startDate": "2018-02-05T13:00:00.000Z",
+                "endDate": "2099-12-30T13:00:00.000Z",
+                "associationStartDate": "2018-02-05T13:00:00.000Z",
+                "associationEndDate": "2099-12-30T13:00:00.000Z",
+                "productStaticCharacteristics": [
+                  {
+                    "name": "Provisionable",
+                    "value": "TRUE"
+                  },
+                  {
+                    "name": "Appointment_required",
+                    "value": "false"
+                  }
+                ],
+                "attributes": [
+                  {
+                    "name": "Internet Package",
+                    "interfaceName": "Internet Package",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "values": [
+                      "Basic"
+                    ],
+                    "default": "Basic"
+                  },
+                  {
+                    "name": "Bandwidth",
+                    "interfaceName": "Bandwidth",
+                    "cpqDisplayName": "",
+                    "type": "uiLOV",
+                    "values": [
+                      "50M",
+                      "100M"
+                    ],
+                    "default": "50M"
+                  },
+                  {
+                    "name": "IP VPN Product Instance ID",
+                    "interfaceName": "IP VPN Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer Facing Service Id",
+                    "interfaceName": "Customer Facing Service Id",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  }
+                ]
+              },
+              {
+                "name": "Enterprise Internet",
+                "type": "Default_Product_Specification",
+                "action": "New",
+                "externalId": "76fcefe1-4eaa-4bc0-b893-3692c0d3daac",
+                "specId": "PS_000114",
+                "startDate": "2018-02-08T13:00:00.000Z",
+                "endDate": "2099-12-30T13:00:00.000Z",
+                "associationStartDate": "2018-02-08T13:00:00.000Z",
+                "associationEndDate": "2099-12-30T13:00:00.000Z",
+                "productStaticCharacteristics": [
+                  {
+                    "name": "Provisionable",
+                    "value": "TRUE"
+                  },
+                  {
+                    "name": "Appointment_required",
+                    "value": "false"
+                  }
+                ],
+                "attributes": [
+                  {
+                    "name": "Enterprise Internet Plan",
+                    "interfaceName": "Enterprise Internet Plan",
+                    "cpqDisplayName": "Plan",
+                    "type": "ui",
+                    "values": [
+                      "Unlimited"
+                    ],
+                    "default": "Unlimited"
+                  },
+                  {
+                    "name": "Customer Facing Service Id",
+                    "interfaceName": "Customer Facing Service Id",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "Customer Preferred Name",
+                    "interfaceName": "Customer Preferred Name",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  },
+                  {
+                    "name": "IP VAS Internet Port Product Instance ID",
+                    "interfaceName": "IP VAS Internet Port Product Instance ID",
+                    "cpqDisplayName": "",
+                    "type": "ui",
+                    "default": ""
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

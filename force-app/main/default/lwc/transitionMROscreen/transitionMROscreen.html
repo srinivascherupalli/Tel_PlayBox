@@ -1,0 +1,67 @@
+<template>
+    <lightning-card> 
+        <div slot ="actions">   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; showme</div>
+       <div slot="title"> 
+        <div  slot="title" class ="slds-grid slds-form_horizantal slds-form">
+              <lightning-button class="slds-button" label="Expand All" onclick={expendAll}  slot="title"></lightning-button>
+               <lightning-button class="slds-button" label="Collapse All" onclick={collapseAll}  slot="title"></lightning-button>  
+           </div>
+       </div>
+       <div slot = "actions">
+           <div slot="actions" class ="slds-grid slds-form_horizantal slds-form">
+            <span onkeypress = {handleChange}>
+            <lightning-input name="search" value={searchValue} placeholder="Search list" onchange={handleChange} slot="actions">
+            </lightning-input> 
+            </span>
+            <lightning-combobox          
+                   name="payments"             	
+                   slot =  "actions"                 
+
+                   value= {value}
+                   onchange = {handleSelect}     
+
+                   options={paymentOptions}>        
+                   </lightning-combobox>
+                   <div style="padding-left:30px;">
+                   <lightning-button icon-name="utility:download" 
+                   slot =  "actions"  
+                   label="Download CSV copy" 
+                   title="Download CSV File"
+                   icon-position="right"
+                   onclick={downloadCsvFile} variant="Neutral">
+                   </lightning-button>
+                </div>
+               </div>
+           </div>              
+   <div>
+
+       <template if:false = {searchFlag}>
+        <lightning-accordion allow-multiple-sections-open="true" active-section-name={activeSections}>
+            <template for:each={mapkeyvaluestore} for:item="mapKey"> 
+                <c-transition-service-filter key={mapKey.serviceStr} map-key={mapKey} table-name={tableName} mro-data={mapKey.mrowrapperList} aro-data={mapKey.arowrapperList} payment-type={value}></c-transition-service-filter>
+           </template> 
+         </lightning-accordion>  
+        </template>
+
+
+		<template if:true = {searchFlag}> 
+       <template if:true = {newMROValue.length}> 
+    <lightning-accordion allow-multiple-sections-open="true" active-section-name={activeSections}>
+
+        <template for:each={newMROValue} for:item="mapKey">
+            <c-transition-service-filter key={mapKey.serviceStr} map-key={mapKey} table-name={tableName} mro-data={mapKey.mrowrapperList} aro-data={mapKey.arowrapperList} payment-type={value}></c-transition-service-filter>
+       </template> 
+
+     </lightning-accordion>  
+    </template>
+	
+	<template if:false = {newMROValue.length}> 
+	
+	</template>
+	</template>
+
+    
+  
+   </div>
+    </lightning-card>
+</template>

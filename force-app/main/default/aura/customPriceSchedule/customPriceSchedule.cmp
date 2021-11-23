@@ -1,0 +1,193 @@
+<!--
+* @Author : Gnana/Rohit
+* @Date : 26 Nov 2019
+* @Desc : Discount DTO
+* @Jira : Edge-120132
+* @Jira :Laxmi - EDGE-139308 Corrected Spelling of Currently in the messge and used Custom label to display this message 
+* @Jira :Aman - EDGE-148661 || FDR || MMC discount duration showing blank in Promotion and discount link
+ -->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="customPriceScheduleController">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="configId" type="String" />
+    <aura:attribute name="solutionName" type="String" />
+    <aura:attribute name="planName" type="String" />
+    <aura:attribute name="unitPrice" type="String" />
+    <aura:attribute name="contractTerm" type="String" />
+    <aura:attribute name="addOnPlanName" type="String" />
+    <aura:attribute name="addOnUnitPrice" type="String" />
+    <aura:attribute name="addOnContractTerm" type="String" />
+    <aura:attribute name="lstActivity" type="list" />
+    <aura:attribute name="noPlan" type="boolean" default="false"/>
+    <aura:attribute name="noAddon" type="boolean" default="false"/>
+    <aura:attribute name="noDevice" type="boolean" default="false"/><!--Added by Ankit Goswami as a part of EDGE-123593-->
+    <aura:attribute name="BussinessId_Addon" type="String" />
+    <aura:attribute name="BussinessId_PI" type="String" />
+    <aura:attribute name="pricingDetails" type="list" />
+    <aura:attribute name="addOnDetails" type="list" />
+    <aura:attribute name="changeFlag" type="Boolean"  default="false"/><!--Added by Ankit Goswami as a part of EDGE-123593-->
+	<!--Added by Aman Soni as a part of EDGE-123593 || Start-->
+    <aura:attribute name="changeType" type="string"/>
+	<aura:attribute name="oldPlanName" type="string"/>
+	<aura:attribute name="oldIddName" type="string"/>
+	<aura:attribute name="initialDate" type="string"/>
+    <aura:attribute name="today" type="string"/>
+    <aura:attribute name="responsePayDTOTypeCmp" type="boolean" default="false"/>
+    <!--Added by Aman Soni as a part of EDGE-123593 || End-->
+    <div style="border-bottom: 2px solid lightgrey">
+        <span style="font-size:large">Price Schedule</span><br/><br/>
+    </div>
+    <lightning:tabset selectedTabId="priceschedule">
+	<!--Added by Aman Soni/Ankit Goswami as a part of EDGE-123593 || Start-->
+	<aura:if isTrue="{!v.changeType == 'Modify'}">
+		<div class="slds-float_right">
+			<aura:if isTrue="{!v.changeFlag}">
+				<lightning:button variant="base" class="buttonsize" label="View Updated Schedule" title="View Updated Schedule" onclick="{!c.doInit}"/>
+				<aura:set attribute="else">
+					<lightning:button variant="base" class="buttonsize" label="View Current Schedule" title="View Current Schedule" onclick="{!c.doClick}"/>
+				</aura:set>
+			</aura:if>
+		</div>
+	</aura:if>
+	<br/>
+	<!--Added by Aman Soni/Ankit Goswami as a part of EDGE-123593 || End-->
+        <lightning:tab label="Plan" id="priceschedule">  
+            <aura:if isTrue="{!v.noPlan}">
+                 <span>
+                    <center>
+                          <!--EDGE-139308 Used system label with the correct message -->
+						<aura:if isTrue="{!v.changeType == 'Modify'}">
+                        <b style="margin-left: 167px">No Discounts.</b><br/>{!$Label.c.no_applicable_discounts_common}<br/><!--Modified by Aman Soni as a part of EDGE-148661-->
+						</aura:if>
+						<aura:if isTrue="{!v.changeType == 'New'}">
+                        <b>No Discounts.</b><br/>{!$Label.c.no_applicable_discounts_common}<br/><!--Modified by Aman Soni as a part of EDGE-148661-->
+						</aura:if>
+                    </center> 
+                </span>
+                <aura:set attribute="else">
+                    <article class="slds-border_bottom slds-timeline__item_details">                        
+                        <ul class="slds-timeline">        
+                            <!--iterate all activity records in child component-->
+                            <article class="slds-border_bottom slds-border_top slds-timeline__item_details slds-theme_shade slds-m-top_x-small">
+                            <!--Added by Aman Soni as a part of EDGE-123593 || Start-->    
+							<aura:if isTrue="{!v.changeType == 'Modify'}">
+								<aura:if isTrue="{!v.changeFlag}">
+                                <span style="font-size:large">{!v.oldPlanName}</span>
+								<aura:set attribute="else">
+									<span style="font-size:large">{!v.planName}</span>
+								</aura:set>
+								</aura:if>  
+							</aura:if>
+                            <aura:if isTrue="{!v.changeType == 'New'}">
+                                <span style="font-size:large">{!v.planName}</span>
+                            </aura:if>
+                            <!--Added by Aman Soni as a part of EDGE-123593 || End--> 
+                                <div class="slds-float_right">
+                                    <span style="font-size:large">Unit Price: ${!v.unitPrice} Per month</span> <br/>
+                                     <span style="font-size:medium">Offer defined or customer negotiated price</span>
+                                </div>
+                                <br/>
+                                <span style="font-size:medium">Term: {!v.contractTerm} Months</span> <br/>
+                            </article>
+                            <br/>
+                            <article class="slds-border_bottom slds-border_top slds-timeline__item_details slds-theme_shade slds_box">
+                                <aura:iteration items="{!v.pricingDetails}" var="task">
+                                    <c:customPriceScheduleChild activity="{!task}" responsePayDTOType="{!v.responsePayDTOTypeCmp}"/> <!--Modified by Aman Soni as a part of EDGE-123593-->  
+                                </aura:iteration>
+                            </article>
+                        </ul>
+						<div style="position: relative !important">
+                        <div class="slds-docked-form-footer slds-float_left footerHeight">
+                        <aura:if isTrue="{!v.changeType == 'New'}">
+                            <span style="font-size: small;margin-bottom: 40px">Price Schedule generated on {!v.today}</span>
+                        </aura:if>
+                        <aura:if isTrue="{!v.changeType == 'Modify'}">
+								<aura:if isTrue="{!v.changeFlag}">
+                                <span style="font-size: small;margin-bottom: 40px">Price Schedule generated on {!v.initialDate}</span>
+									<aura:set attribute="else">
+										<span style="font-size: small;margin-bottom: 40px">Price Schedule generated on {!v.today}</span>
+									</aura:set>
+								</aura:if>  
+						</aura:if>
+                        </div>
+                        <div class="slds-docked-form-footer slds-float_left footerHeight">
+                            <span style="font-size:small">Price Schedule may change if Plan and Add-Ons are modified.</span>
+                        </div>
+						</div>
+                    </article>
+                </aura:set>
+            </aura:if>
+        </lightning:tab>
+        <lightning:tab label="Addons" id="addons"> 
+            <aura:if isTrue="{!v.noAddon}">
+                <span>
+                    <center>
+                        <!--EDGE-139308 Changed the Spelling of Currently in the below line -  -->
+                        <aura:if isTrue="{!v.changeType == 'Modify'}">
+                        <b style="margin-left: 167px">No Discounts.</b><br/>{!$Label.c.no_applicable_discounts_common}<br/><!--Modified by Aman Soni as a part of EDGE-148661-->
+						</aura:if>
+						<aura:if isTrue="{!v.changeType == 'New'}">
+                        <b>No Discounts.</b><br/>{!$Label.c.no_applicable_discounts_common}<br/><!--Modified by Aman Soni as a part of EDGE-148661-->
+						</aura:if>
+                    </center> 
+                </span>
+                <aura:set attribute="else">
+                    <article class="slds-border_bottom slds-timeline__item_details">
+                        <!--<div >
+                            <span style="font-size:large">AddOn</span>
+                        </div>-->
+                        
+                        <ul class="slds-timeline">        
+                            <!--iterate all activity records in child component-->
+                            <article class="slds-border_bottom slds-border_top slds-timeline__item_details slds-theme_shade slds-m-top_x-small">
+                            <aura:if isTrue="{!v.changeType == 'Modify'}">
+								<aura:if isTrue="{!v.changeFlag}">
+                                  <span style="font-size:large">{!v.oldIddName}</span>
+								  <aura:set attribute="else">
+									 <span style="font-size:large">{!v.addOnPlanName}</span>
+								  </aura:set>
+								</aura:if>
+							</aura:if>
+                            <aura:if isTrue="{!v.changeType == 'New'}">
+                                <span style="font-size:large">{!v.addOnPlanName}</span>
+                            </aura:if>
+                                <div class="slds-float_right">
+                                    <span style="font-size:large">Unit Price: ${!v.addOnUnitPrice} Per month</span><br></br> 
+                                    <span style="font-size:medium">Offer defined or customer negotiated price</span>
+                                </div>
+                                <br/>
+                                <span style="font-size:medium">Term: {!v.addOnContractTerm} Months</span> 
+                                                 
+                            </article>
+                            <br/>
+                            <article class="slds-border_bottom slds-border_top slds-timeline__item_details slds-theme_shade slds_box">
+                                <aura:iteration items="{!v.addOnDetails}" var="task">
+                                    <c:customPriceScheduleChild activity="{!task}" responsePayDTOType="{!v.responsePayDTOTypeCmp}"/> <!--Modified by Aman Soni as a part of EDGE-123593-->
+                                </aura:iteration>
+                            </article>
+                        </ul>
+                        <div style="position: relative !important">
+                        <div class="slds-docked-form-footer slds-float_left footerHeight">
+                        <aura:if isTrue="{!v.changeType == 'New'}">
+                            <span style="font-size: small;margin-bottom: 40px">Price Schedule generated on {!v.today}</span>
+                        </aura:if>
+                        <aura:if isTrue="{!v.changeType == 'Modify'}">
+								<aura:if isTrue="{!v.changeFlag}">
+                                <span style="font-size: small;margin-bottom: 40px">Price Schedule generated on {!v.initialDate}</span>
+									<aura:set attribute="else">
+										<span style="font-size: small;margin-bottom: 40px">Price Schedule generated on {!v.today}</span>
+									</aura:set>
+								</aura:if>  
+						</aura:if>
+                        </div>
+                        <div class="slds-docked-form-footer slds-float_left footerHeight">
+                            <span style="font-size:small">Price Schedule may change if Plan and Add-Ons are modified.</span>
+                        </div>
+                        </div>
+                    </article>
+                </aura:set>
+            </aura:if>
+        </lightning:tab>
+    </lightning:tabset>
+</aura:component>

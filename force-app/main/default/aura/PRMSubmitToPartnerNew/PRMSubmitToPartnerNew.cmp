@@ -1,0 +1,259 @@
+<aura:component controller="PRMSubmitToPartnerRules"
+    implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes">
+
+    <!--created by BRAM 27/02/19 for EDGE-68074 ,
+ this the main Componnet to Display the Incubence and componets based on the values 
+ is used to display the form for submit to Partner
+ PRMSubmitToPartnerRecordForm to select the submit to Partner-->
+    <!-- <aura:attribute name="OpportunityId" type="String" default="0062O000002OLB1QAO" />-->
+    <!-- v1.2 Team Hawaii [Vivian Charlie] updates to incubembency as per P2OB-2448 -->
+    <!-- v1.3 Team Hawaii [Vivian Charlie] Opportunity optimization updates P2OB-4628 and P2OB-4670 -->
+    <!-- v1.4 Team Hawaii [Vivian Charlie] P2OB-4736 : Do not allow opportunity reshare -->
+    <!-- EDGE-96585 Team Orlando Added Warning message for Closed Won/Closed Lost Opportunity -->
+    <!-- v1.5 Team Hawaii [Vivian Charlie] P2OB-7041 adding recordtype value for recordeditform -->
+    <!-- v1.6 Team Alexandria [RaviTeja] EDGE-151598 adding Partner of record table -->
+    <!-- v1.7 Team Hawaii [Vivian Charlie] P2OB-6722 prevent opportunity share if owner is inactive -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="PartnerResultsInc" type="PartnerResults[]" />
+    <aura:attribute name="PartnerResultsRec" type="PartnerResults[]" />
+    <aura:attribute name="PartnerResultsPOR" type="PartnerResults[]" />
+    <aura:attribute name="IsRecommended" type="boolean" default="true" />
+    <aura:attribute name="IsIncumbent" type="boolean" default="true" />
+    <aura:attribute name="IsIncumbentBack" type="boolean" default="false" />
+    <aura:attribute name="IsIncumbentSave" type="boolean" default="false" />
+    <aura:attribute name="IsOveride" type="boolean" default="false" />
+    <aura:attribute name="IsCotinue" type="boolean" default="false" />
+    <aura:attribute name="showMessage" type="Boolean" default="false" />
+    <aura:attribute name="IsNoIncumbent" type="Boolean" default="false" />
+    <aura:attribute name="IsNoRecommended" type="Boolean" default="false" />
+    <aura:attribute name="OverideRecomm" type="Boolean" default="false" />
+    <aura:attribute name="valPrimaryDistributor" type="String" /><!-- v1.2 -->
+    <aura:attribute name="valPrimaryDistributorName" type="String" /><!-- v1.2 -->
+    <aura:attribute name="blnOpportunityOptimization" type="boolean" /><!-- v1.3 -->
+    <aura:attribute name="OpportunityOptimizationMsg" type="String" /><!-- v1.3 -->
+    <aura:attribute name="ShowMessageLC" type="boolean" default="false" /><!-- EDGE-96585 -->
+    <aura:attribute name="messageType" type="String" default="warning" /><!-- EDGE-96585 -->
+    <aura:attribute name="message" type="String"
+        default="You cannot make changes to this Opportunity as it is closed." /><!-- EDGE-96585 -->
+
+    <!--<aura:registerEvent name="SubmitToPartnerEvent" type="c:SubmitToPartnerEvent"/>-->
+    <aura:handler event="c:SubmitToPartnerEvent" action="{!c.handleApplicationEvent}" />
+    <aura:attribute name="SelectedJson" type="String" />
+
+    <!-- <aura:attribute name="RecString" type="String" default= "{'Recommended_Partner__c':'001990830333', 'PartnerAccountId':'001990830333','Override_Reason__c':'Others','Id':'OpportunityId'}"/>
+
+   <aura:attribute name="recordFormfields" type="String[]" default="['Override_Reason__c','Comment__c','Recommended_Partner__c']" />
+   ,'Comment__c','Recommended_Partner__c'-->
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="appDetailsSimple" type="Object" default="Opportunity" />
+    <aura:attribute name="displayData" type="Boolean" default="false" />
+    <aura:attribute name="PartnerAccId" type="String" default="" />
+    <aura:attribute name="RecomondedAccId" type="String" default="" />
+    <aura:attribute name="StageNames" type="String" />
+    <!--<aura:attribute name="SubmitToPartnerStatus" type="String"/> v1.4 -->
+    <aura:attribute name="ErrorMessage" type="String" /><!-- v1.4 -->
+    <aura:attribute name="ordRecord" type="Opportunity" />
+    <aura:attribute name="recTypeId" type="String" /><!-- v1.5 -->
+    <!--<aura:if isTrue="{!v.IsRecommended}">-->
+    <aura:html tag="style">
+        .slds-modal__container{
+        max-width: 74% !important;
+        min-width:74% !important;
+        }
+        .slds-modal__container .modal-body.slds-modal__content{
+        height: auto !important;
+        padding: 0 !important;
+        }
+        .cPRMDataTable{
+        padding-right: 1rem;
+        padding-left: 1rem;
+        }
+        .slds-modal__footer.cPRMDataTable{
+        padding-right: 0;
+        padding-left: 0;
+        margin-top: 1rem;
+        }
+    </aura:html>
+    <!-- EDGE-96585 -->
+    <!--
+    <lightning:messages/>
+        <div class="{!v.ShowMessageLC==true? 'slds-show': 'slds-hide'}">
+    <c:MessageComponent message="{!v.message}" type="{!v.messageType}" ></c:MessageComponent>
+            </div>
+            -->
+    <div class="{!v.ShowMessageLC==true? 'slds-show': 'slds-hide'}">
+        <div class="demo-only">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                    <span class="slds-assistive-text">error</span>
+                    <div class="slds-notify__content">
+                        <h2 align="center" class="slds-text-heading_small ">{!v.ErrorMessage}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Dev close v.ShowMessageLC==true -->
+
+    <aura:attribute name="spinner" type="boolean" default="false" />
+    <aura:if isTrue="{!v.spinner}">
+        <!-- <lightning:spinner variant="brand"  size="large" /> -->
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading...</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+
+    <div class="{!v.ShowMessageLC==false? 'slds-show': 'slds-hide'}">
+        <div class="modal-header slds-modal__header slds-size_1-of-1">
+            <h4 class="title slds-text-heading--medium">Share with Partner</h4>
+        </div>
+
+        <!-- MODAL BODY / INPUT FORM -->
+        <div class="slds-modal__content" aura:id="modalbody" id="modalbody">
+            <!--To Show Incumbent LC-->
+
+
+            <aura:if isTrue="{!and(v.displayData,or(not(empty(v.PartnerResultsInc)),not(empty(v.PartnerResultsPOR))))}">
+                <div class="{!v.IsCotinue==false? 'slds-show': 'slds-hide'}">
+                    <div class="{!v.IsIncumbentSave==false? 'slds-show': 'slds-hide'}">
+                        <aura:if isTrue="{!not(empty(v.PartnerResultsPOR))}">
+                            <div class="slds-notify_container slds-is-relative">
+                                <div class="{!'slds-notify slds-notify_toast slds-theme_info errorToastOne'}"
+                                    style="align:center">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <lightning:icon class="slds-float_left" iconName="utility:info"
+                                                    alternativeText="Error!" variant="inverse" />
+                                            </td>
+                                            <td class='slds-p-horizontal_small SalesforceSans_small'>A Partner of Record
+                                                agreement exists with this
+                                                Customer. Select continue to share opportunity with another partner</td>
+                                            <td>
+                                                <lightning:icon class="slds-float_right" iconName="utility:close"
+                                                    alternativeText="Close!" variant="inverse"
+                                                    onclick="{!c.closeToast}" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </aura:if>
+
+                        <c:PRMIncumbentPartners PartnerResults="{!v.PartnerResultsInc}"
+                            PartnerOfRecords="{!v.PartnerResultsPOR}" OpportunityId="{!v.recordId}">
+                        </c:PRMIncumbentPartners>
+                        <!--EDGE-151598 Passing addtional attribute for POR-->
+                    </div>
+                </div>
+            </aura:if>
+            <!--To Show Recomanded LC-->
+            <!--  <aura:if isTrue="{!or((and(v.displayData,empty(v.PartnerResultsInc))),(and(v.displayData,not(empty(v.PartnerResultsRec)))))}">
+          <aura:if isTrue="{!and(v.displayData,empty(v.PartnerResultsInc),not(empty(v.PartnerResultsRec)))}">
+         -->
+            <aura:if isTrue="{!or(and(v.displayData,not(empty(v.PartnerResultsRec))),empty(v.PartnerResultsInc))}">
+                <!-- <div class="{!v.IsCotinue==false? 'slds-show': 'slds-hide'}">-->
+                <div class="{!v.IsIncumbentSave==true? 'slds-show': 'slds-hide'}">
+                    <aura:if isTrue="{!and(empty(v.PartnerResultsInc),empty(v.PartnerResultsPOR))}">
+                        <!--EDGE-151598 POR List added-->
+                        <div class="{!v.showMessage==true? 'slds-show': 'slds-hide'}">
+                            <div class="slds-notify_container slds-is-relative">
+                                <div class="{!'slds-notify slds-notify_toast slds-theme_info errorToastTwo'}"
+                                    style="align:center">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <lightning:icon class="slds-float_left" iconName="utility:info"
+                                                    alternativeText="Error!" variant="inverse" />
+                                            </td>
+                                            <td class='slds-p-horizontal_small SalesforceSansfont'>
+                                                {!$Label.c.PRM_Submit_To_Partner_NoIncom}</td>
+                                            <td>
+                                                <lightning:icon class="slds-float_right" iconName="utility:close"
+                                                    alternativeText="Close!" variant="inverse"
+                                                    onclick="{!c.closeToast}" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:if>
+
+                    <c:PRMRecommendedPartners PartnerResults="{!v.PartnerResultsRec}" OpportunityId="{!v.recordId}">
+                    </c:PRMRecommendedPartners>
+
+                    <!--  </div>-->
+                </div>
+            </aura:if>
+            <!---When All are null-->
+            <aura:if isTrue="{!and(empty(v.PartnerResultsRec),empty(v.PartnerResultsInc))}">
+                <aura:if isTrue="{!empty(v.PartnerResultsPOR)}">
+                    <div class="{!v.showMessage==true? 'slds-show': 'slds-hide'}">
+                        <div class="slds-notify_container slds-is-relative">
+                            <div class="{!'slds-notify slds-notify_toast slds-theme_info errorToastThree'}"
+                                style="align:center">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <lightning:icon class="slds-float_left" iconName="utility:info"
+                                                alternativeText="Error!" variant="inverse" />
+                                        </td>
+                                        <td class='slds-p-horizontal_small SalesforceSansfont'>
+                                            {!$Label.c.PRM_SubmitToPartner_NoIncom_Recom}</td>
+                                        <td>
+                                            <lightning:icon class="slds-float_right" iconName="utility:close"
+                                                alternativeText="Close!" variant="inverse" onclick="{!c.closeToast}" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <c:PRMSubmitToPartnerRecordForm recordId="{!v.recordId}" OverideIncumbent="true"
+                        recTypeId="{!v.recTypeId}">
+                    </c:PRMSubmitToPartnerRecordForm> <!-- v1.5 -->
+                </aura:if>
+            </aura:if>
+
+        </div> <!-- End of Modal Content -->
+
+        <div class="{!v.IsCotinue==true? 'slds-show': 'slds-hide'}">
+            <div
+                class="{!and(v.showMessage==true, and(v.IsNoRecommended,v.IsIncumbentSave))? 'slds-show': 'slds-hide'}">
+                <div class="slds-notify_container slds-is-relative">
+                    <div class="{!'slds-notify slds-notify_toast slds-theme_info errorToastFour'}" style="align:center">
+                        <table>
+                            <tr>
+                                <td>
+                                    <lightning:icon class="slds-float_left" iconName="utility:info"
+                                        alternativeText="Error!" variant="inverse" />
+                                </td>
+                                <td class='slds-p-horizontal_small SalesforceSansfont'>
+                                    {!$Label.c.PRM_Submit_To_Partner_Norecom}</td>
+                                <td>
+                                    <lightning:icon class="slds-float_right" iconName="utility:close"
+                                        alternativeText="Close!" variant="inverse" onclick="{!c.closeToast}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <c:PRMSubmitToPartnerRecordForm PartnerResults="{!v.PartnerResultsInc}" recordId="{!v.recordId}"
+                RecomondedAccId="{!v.RecomondedAccId}" OverideRecomm="{!v.OverideRecomm}"
+                valPrimaryDistributor="{!v.valPrimaryDistributor}"
+                valPrimaryDistributorName="{!v.valPrimaryDistributorName}"
+                OppOptimizationMessage="{!v.OpportunityOptimizationMsg}"
+                blnOptOptimizationMessage="{!v.blnOpportunityOptimization}" recTypeId="{!v.recTypeId}">
+            </c:PRMSubmitToPartnerRecordForm><!-- v1.3 -->
+            <!-- v1.5 -->
+        </div>
+    </div>
+</aura:component>

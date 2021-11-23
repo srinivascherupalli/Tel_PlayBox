@@ -1,0 +1,7 @@
+<!--Mofit Pathan, Team Jaipur, DIGI-27861
+ Date: 08/10/2021,
+ Description:Application Event published from salesup_CertitudeLookupContainer component-->
+<aura:event type="APPLICATION" description="Event template">
+<aura:attribute name="accountIdRecord" type="String" />
+<aura:attribute name="sourceValue" type="string"/>    
+</aura:event>

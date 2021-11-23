@@ -1,0 +1,290 @@
+<aura:component controller="ReplicatorGetServiceManager">
+        <!-- <ltng:require   scripts="/resource/SweetAlert2/sweetalert2.min.js"
+                      styles="/resource/SweetAlert2/sweetalert2.min.css" /> -->
+        <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c"/>
+        <aura:attribute name="tooltip" type="boolean" default="false" />
+        <aura:attribute name="mobilityData" type="Object" />
+        <aura:attribute name="mobilityColumns" type="List" />
+        <aura:attribute name="checkService" type="Boolean" default="false" />
+        <aura:attribute name="loadingSpinner" type="Boolean" default="true" />
+        <aura:attribute name="selectedRows" type="List" />
+        <aura:attribute name="selectedRowsNgUC" type="List" />
+        <aura:attribute name="NoMobileData" type="Boolean" default="false" />
+        <aura:attribute name="NoNgUcData" type="Boolean" default="false" />
+        <aura:attribute name="hideCheckboxColumn" type="Boolean" default="false" description="To hide checkbox of table" />
+        <!--EDGE-148736 changes by Manuga from team Amsterdam to dynamically calculate the count-->
+         <aura:attribute name="totalRecordsCount" type="Integer" default="0" access="global" />
+        <!--EDGE-164031 changes by Rahul to dynamically calculate the count-->
+          <aura:attribute name="totalRecordsCountNguc" type="Integer" access="global" />
+        <!--EDGE-145811: Provide an In line Search option for Sales user to filter services eligible and Ineligible services for Transition on Checkpoint UI for EM -->
+        <aura:attribute name="bskId" type="String" access="global" />
+        <aura:attribute name="mobileResTableBeforeSearch" type="List" access="global" />
+        <aura:attribute name="mobileResponseFmReplicator" type="TransitionDataDTO" access="global" />
+        <aura:attribute name="mobileResponseTable" type="List" access="global" />
+        <aura:attribute name="mobileResponseFmReplicatorState" type="TransitionDataDTO" access="global" />
+        <aura:attribute name="selectedMobileRecrodState" type="List" access="global" />
+        <aura:attribute name="selectedMobileRecrodTemp" type="List" access="global" />
+        <aura:attribute name="ngUcResponseFmReplicator" type="TransitionDataDTO" access="global" />
+        <aura:attribute name="selectedNgUcRecrodTemp" type="List" access="global" />
+        <aura:attribute name="ngUcResponseFmReplicatorState" type="TransitionDataDTO" access="global" />
+        <aura:attribute name="callFor" type="String" access="global" />
+        <aura:attribute name="ngUcResponseTable" type="List" access="global" />
+        <aura:attribute name="loadMoreOffset" type="Integer" default="10" />
+        <aura:attribute name="tooltipError" type="String" default="It appears when hovering and fades into view with a top-down animation style. Developer Aditya Bhandari created this tooltip with the most widely-supported CSS3 properties. It works on any button or link using the class . button and appears with pseudo-classes" />
+        <aura:attribute name="showhide" type="String" access="global" default="none"/>
+        
+        <aura:attribute name="topPosition" type="Integer" access="global" default="2"/>
+        
+        <aura:attribute name="popoverTitle" type="String" access="global" default="Success"/>
+        <aura:attribute name="popoverBody" type="String" access="global" default="Success"/>
+        <aura:attribute name="testPageX" type="String" />
+        <aura:attribute name="testPageY" type="String" />
+        <aura:attribute name="justifycontent" type="String" access="global" default="flex-start"/>
+        <aura:attribute name="readyForAssesment" type="boolean" access="global" default="false"/>
+        <aura:attribute name="colorCode" type="String" access="global" default="green"/>
+        <aura:attribute name="IconStyle" type="String" access="global" default="utility:error"/>
+        <aura:attribute name="csvListNew" type="List" access="global" />
+        <aura:attribute name="selectedCIDN" type="List" access="global"/><!--Added as a part of EDGE-198196-->
+        <aura:attribute name="isCidnHierarchy" type="Boolean" default="false" access="global"/><!--Added as a part of EDGE-198196-->
+        <aura:method name="getSiteAgnosticService" access="PUBLIC" action="{!c.mobileDisplayAction}">
+            <aura:attribute name="CIDNString" type="String" access="global" />
+            <aura:attribute name="basketId" type="String" access="global" />
+            <aura:attribute name="mobileResponseFmReplicatorFM" type="TransitionDataDTO" access="global" />
+            <aura:attribute name="selectedMobileRecrodFM" type="List" access="global" />
+            <aura:attribute name="ngUcResponseFmReplicatorFM" type="TransitionDataDTO" access="global" />
+            <aura:attribute name="selectedngUcRecrodFM" type="List" access="global" />
+            <aura:attribute name="sioConfigMode" type="String" access="global" /><!--Added for DIGI-1681-->
+        </aura:method>
+    <!-- Start of EDGE-198197 and EDGE-211350 by Abhishek(Osaka)-->
+    <aura:attribute name="sioConfigMode" type="String" access="global" /><!--Added for DIGI-1681-->
+    <aura:attribute name="sortedBy" type="String" />
+	<aura:attribute name="sortedDirection" type="String" default="asc"/>
+    <aura:attribute name="gridColumns" type="List" />
+    <aura:attribute name="gridData" type="Object"/>
+    <aura:attribute name="gridResponseTable" type="List" access="global" />
+    <aura:attribute name="selectedRowsGrid" type="List" />
+    <aura:attribute name="currentSelectedDispo" type="List"/>
+    <aura:attribute name="listToggledId" type="List"/>
+    <aura:attribute name="gridExpandedRows" type="List"/>
+    <aura:attribute name="OsakaDormant" type="boolean" access="global" default="false"/>
+     <!-- End of EDGE-198197 and EDGE-211350 by Abhishek(Osaka)-->
+    <!--Start of EDGE-209985 by Abhishek(Osaka) for sending Product Family(Selected on-screen) to replicator -->
+    <aura:attribute name="productFamily" type="List" access="global" default="[]"/>
+    <!--End of EDGE-209985 by Abhishek(Osaka) -->
+       		<aura:html tag="style">
+            .slds-hint-parent .slds-is-selected {
+            background-color: #1E90FF !important;
+            }     
+            .iconCssSuccess {
+            fill: green !important;
+            text-align: left !important;
+            white-space: nowrap !important;
+            }
+            .iconCssError {
+            fill: red !important;
+            text-align: left !important;
+            white-space: nowrap !important;
+            }
+            .iconCssWarning {
+            fill: #ff8e00 !important;
+            text-align: left !important;
+            white-space: nowrap !important;
+            }
+            .slds-popover .slds-nubbin_bottom-right{
+            left: 85% !important;
+            }
+            .slds-popover_warning .slds-popover__header {
+                background-color: {!v.colorCode} !important;
+            }
+            .slds-grid_align-center{
+            justify-content: {!v.justifycontent} !important;
+            }
+            .slds-icon-text-error {
+            fill: rgb(255, 255, 255) !important;
+            }
+        </aura:html>
+      <!--  <section aura:id="popoverDynamic" style="{! 'margin-top : ' + v.topPosition + '% !important; width:33rem;min-height:9rem;max-height:9rem'}" aria-describedby="dialog-body-id-98" aria-labelledby="dialog-heading-id-1" class="slds-popover slds-popover_prompt_top-right slds-popover_error slds-nubbin_bottom-right" role="dialog"> -->
+        <section aura:id="popoverDynamic" style="{! 'top : ' + v.testPageY + 'px !important; width:33rem;min-height:10rem;max-height:10rem'}" aria-describedby="dialog-body-id-98" aria-labelledby="dialog-heading-id-1" class="slds-popover slds-popover_prompt_top-right slds-popover_error slds-nubbin_bottom-right" role="dialog">    
+        <lightning:button onclick="{!c.closePopover}" class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close slds-button_icon-inverse" title="Close dialog">
+                <lightning:icon iconName="utility:close" alternativeText="close" title="close" size="xx-small"/>
+                <span class="slds-assistive-text">Close dialog</span>
+            </lightning:button>
+            <header class="slds-popover__header">
+                <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-utility-error">
+                            <lightning:icon class="iconCssSuccess" iconName="{!v.IconStyle}" alternativeText="error" title="error" variant="error"/>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-truncate slds-text-heading_medium" id="dialog-heading-id-1" title="Resolve error">{!v.popoverTitle}</h2>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-popover__body" id="dialog-body-id-98">
+                <p>
+                    <aura:unescapedHtml value="{!v.popoverBody}"/>
+                </p>
+            </div>
+        </section>
+        <aura:handler name="init" value="{!this}" action="{!c.init}" />
+        <aura:if isTrue="{!v.loadingSpinner}">
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" style="height:13rem" />
+        </aura:if>
+        <div aura:id="container" />
+        <div id="GetServicesCmp" style="display:">
+            <br />
+            <aura:if isTrue="{!v.callFor == 'mobile'}">
+                <aura:if isTrue="{!v.checkService}">
+                    <div style="width:100%;">
+                        <p style="font-weight: bold !important;font-weight: 900;color: blue; padding-left: .5rem;">Product
+                            Basket</p>
+                        <br />
+                        <!--EDGE-185056: Rename order type to Migration for Migration type -->
+                         <aura:if isTrue="{!v.ProdBasket.cscfga__Opportunity__r.Type == 'Migration'}">
+                        <p style="margin-top: -15px; padding-left: .5rem;">All eligible mobile service have been
+                            pre-selected
+                            for migration
+                        </p>
+                              <aura:set attribute="else">
+                                <p style="margin-top: -15px; padding-left: .5rem;">All eligible mobile service have been
+                            pre-selected
+                            for transition
+                        </p>   
+                                  
+                                   </aura:set>
+                            </aura:if>
+                        <br />
+                         <aura:if isTrue="{!v.ProdBasket.cscfga__Opportunity__r.Type == 'Migration'}">
+                        <div style="text-transform: uppercase;padding-left: .5rem;color: #808182"><b>Select Services For
+                            Migration</b></div>
+                         <aura:set attribute="else">
+                        <div style="text-transform: uppercase;padding-left: .5rem;color: #808182"><b>Select Services For
+                            Transition</b></div>
+                                 </aura:set>
+                            </aura:if>
+                        <!--EDGE-148736 changes by Manuga from team Amsterdam to dynamically calculate the count-->
+                        <!-- <div style="padding-left: .5rem;color: #808182"><b> {!v.totalRecordsCount} Selected</b></div>-->
+                        <div style="width: 100%;max-width:100%; margin-left: 2%; ">
+                            <!--class="slds-scrollable_y" style="width: 100%;">-->
+                            <!--EDGE-145811: changes by Manish/Honey from team Amsterdam  Start-->
+                            <!--EDGE-145811: Provide an In line Search option for Sales user to filter services eligible and Ineligible services for Transition on Checkpoint UI for EM -->
+    
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-order_2 slds-large-order_1">
+                                    <span><!--EDGE-148736 changes by Manuga from team Amsterdam to dynamically calculate the count-->
+                                        <div style="padding-left: .5rem;color: #808182"><b> {!v.totalRecordsCount} Selected</b></div></span>
+                                </div>
+                                <div class="slds-col slds-order_2 slds-large-order_2">
+                                    <span><ul class="slds-list_horizontal slds-text-align_right" style="margin-top: -60px; margin-right:-300px" >
+                                        <li> 
+                                            <lightning:input onchange="{!c.searchTableMobile}" type="search" variant="label-hidden" placeholder="Search" aura:id="SearchBox"></lightning:input>                                        
+                                        </li>    												
+                                        <!--EDGE-154658 changes by Manuga from team Amsterdam to align search-box and help text start-->
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__icon slds-align-middle" onmouseover="{!c.display}" onmouseout="{!c.displayOut}">
+                                                <div style="text-align :left; font-size: 10px;">
+                                                    <span class="slds-button slds-button slds-button--icon" style="font-size: 1px;" title="Min 3 and Max 11 numbers without spaces">
+                                                        <lightning:icon iconName="utility:info" size="xx-small" alternativeText="Help"/>
+                                                        <span class="slds-assistive-text">Help</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- EDGE-181293 spacing between Download CSV and Search -->
+                                       <div style="padding-left: 20px;">
+                                            <span> 
+                                                <!--EDGE - 168642 changes by Abhishek from Osaka Team START -->
+                                                <lightning:button label="Download CSV Copy" title="Download CSV Copy"  iconName="utility:download" iconPosition="right" onclick="{!c.downloadCSV }"/>
+                                                <!-- EDGE - 168642 END -->
+                                            </span>
+                                        </div>
+                                        <!--EDGE-154658 changes by Manuga from team Amsterdam to align search-box and help text End-->
+                                        </ul></span>
+                                </div>
+                            </div>
+                          <!--EDGE-145811: End-->
+                            
+                            <aura:if isTrue="{!v.isCidnHierarchy}">
+                                <div>
+                                    <!--c:TreeGridTesting mobileResponseFmReplicator = "{!v.mobileResponseFmReplicator}"
+                                                       mobileResponseFmReplicatorState = "{!v.mobileResponseFmReplicatorState}"
+                                                       basketId = "{!v.bskId}"/-->
+                                <!--Start of EDGE-211350 by Abhishek(Osaka)  -->
+                                    <lightning:treeGrid columns="{!v.gridColumns}"
+                                                        data="{!v.gridData}"
+                                                        keyField="Id"
+                                                        aura:id="gridDataTable"
+                                                        selectedRows="{!v.selectedRowsGrid}"
+                                                        expandedRows="{!v.gridExpandedRows}"
+                                                        onrowselection="{!c.getSelectedProdNamesGrid}" 
+                                                        hideCheckboxColumn="{!v.hideCheckboxColumn}"
+                                                        ontoggle="{!c.onToggleDispo}"
+                                                        minColumnWidth = "120"
+                                                        
+                                                        />
+                                </div>
+                                <!--End of EDGE-211350 by Abhishek(Osaka) -->
+                                <aura:set attribute="else">
+                                    <lightning:datatable data="{!v.mobileResponseTable}" columns="{!v.mobilityColumns}"
+                                                         keyField="Id" aura:id="mobileDataTable" selectedRows="{!v.selectedRows}"
+                                                         onrowselection="{!c.getSelectedProdNames}" 
+                                                         hideCheckboxColumn="{!v.hideCheckboxColumn}" 
+                                                         onsort="{!c.updateColumnSorting}"
+                                                         sortedBy="{!v.sortedBy}"
+                                                         sortedDirection="{!v.sortedDirection}"
+                                                         minColumnWidth = "120"
+                                                         />
+                                </aura:set>
+                            </aura:if> 
+                        </div>
+                        <hr />
+                    </div>
+                    <br />
+                </aura:if>
+                <aura:if isTrue="{!v.NoMobileData}">
+                    <p class="box-property">This product family does not have legacy services.</p>
+                </aura:if>
+            </aura:if>
+            <aura:if isTrue="{!v.callFor == 'ngUC'}">
+                <div style="width:100%;">
+                    <aura:if isTrue="{!v.NoNgUcData}">
+                        <p class="box-property">This product family does not have legacy services.</p>
+                        <aura:set attribute="else">
+                            <p style="font-weight: bold !important;font-weight: 900;color: blue; padding-left: .5rem;">
+                                Product
+                                Basket</p>
+                            <br />
+                            <p style="margin-top: -15px; padding-left: .5rem;">All eligible NGUC service have been
+                                pre-selected
+                                for transition
+                            </p>
+                            <br />
+                           <!--DIGI-1757 changes by Pradeep from Osaka Team START-->
+                          <div class="slds-float--right">
+                            <lightning:button label="Download CSV Copy" title="Download CSV Copy"  iconName="utility:download" iconPosition="right" onclick="{!c.downloadCSVNGUC }"/>
+                            </div>  <br />
+                              <!--DIGI-1757 END -->
+                            <div style="text-transform: uppercase;padding-left: .5rem;color: #808182"><b>Select Services For
+                                Transition</b></div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_8-of-12">
+                                    <span><!--EDGE-148736 changes by Manuga from team Amsterdam to dynamically calculate the count-->
+                                        <!--EDGE-164031 changes by Rahul to dynamically Calculate the count-->
+                                        <div style="padding-left: .5rem;color: #808182"><b>{!v.totalRecordsCountNguc} Selected  </b></div></span>
+                                </div>
+                            <div style="width: 98.2%;max-width:98.2%; margin-left: 1.8%; ">
+                                <!--class="slds-scrollable_y" style="width: 100%;">-->
+                                <lightning:datatable data="{!v.ngUcResponseTable}" columns="{!v.mobilityColumns}"
+                                                     keyField="Id" aura:id="ngUcDataTable" selectedRows="{!v.selectedRowsNgUC}"
+                                                     loadMoreOffset="{! v.loadMoreOffset }" onrowselection="{!c.getSelectedProdNamesNgUc}"
+                                                     hideCheckboxColumn="{!v.hideCheckboxColumn}" onrowaction="{! c.handleRowAction }"
+                                                     minColumnWidth = "200"/>
+                            </div>
+                            <hr />
+                        </aura:set>
+                    </aura:if>
+                </div>
+                <br />
+            </aura:if>
+        </div>
+    </aura:component>

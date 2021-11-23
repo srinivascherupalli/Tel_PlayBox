@@ -1,0 +1,16 @@
+.THIS.toggle {
+    display: none;
+    width: 50%;
+}
+.THIS .outer-div {
+    position: relative;
+}
+.THIS .spinner {
+    position: absolute;
+}
+.THIS .row {
+  display: flex;
+}
+.THIS .column {
+   margin:3px; /* or what ever */
+}

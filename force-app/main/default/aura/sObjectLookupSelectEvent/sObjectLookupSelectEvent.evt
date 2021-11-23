@@ -1,0 +1,9 @@
+<!--
+* @Author   :   Maqsood Alam
+* @Date     :   10 Oct 2018
+* @Desc     :   Component for sObject Lookup result - Lightning Event
+* -->
+<aura:event type="COMPONENT" description="sObjectLookupSelectEvent">
+    <aura:attribute name="recordId" type="String" required="true" description="Used to send selected record Id"/>
+    <aura:attribute name="recordName" type="String" required="true" description="Used to send selected record Name" />
+</aura:event>

@@ -1,0 +1,126 @@
+{
+  "data": {
+    "id": 10000157370,
+    "lastName": "GELLER",
+    "acn": "",
+    "accountStatus": "ACTIVE",
+    "firstName": "",
+    "abn": 10000000000,
+    "contacts": [
+      {
+        "preferredMethod": "SMS",
+        "onlineFlag": "",
+        "customerAccounts": {
+          "lastName": "",
+          "phoneOptIn": "",
+          "faceToFaceOptIn": "",
+          "dataSovereignty": "",
+          "smsOptIn": "",
+          "id": "",
+          "mmsOptIn": "",
+          "businessUnit": "",
+          "emailOptIn": "",
+          "contactRelationship": {
+            "isPrimary": "",
+            "contactUsage": "Business",
+            "contactType": "Asset User",
+            "endDate": ""
+          },
+          "directMailOptIn": "",
+          "customerCode": "",
+          "accountUuid": ""
+        },
+        "workContact": {
+          "faxNumber": "",
+          "phoneNumber": "+610390000000",
+          "emailAddress": "test@bigpond.com.au",
+          "mobileNumber": "+610400000000"
+        },
+        "languagePreference": "",
+        "timeZone": "",
+        "eventAction": "",
+        "jobDescription": "",
+        "id": "1-4JDVS4",
+        "title": "ADMIRAL",
+        "externalSystemId": "",
+        "birthDate": "1973-11-29",
+        "firstName": "NEMROD",
+        "homeContact": {
+          "faxNumber": "",
+          "phoneNumber": "+610390000000",
+          "emailAddress": "",
+          "mobileNumber": "+610438002699"
+        },
+        "jobTitle": "",
+        "middleName": "",
+        "lastName": "MOR",
+        "numberInHousehold": "",
+        "occupation": "",
+        "reviewedFlag": "",
+        "status": "",
+        "lastVerifiedDate": "",
+        "sendDateTime": "",
+        "lastUpdated": "",
+        "contactId": "",
+        "notes": ""
+      },
+      {
+        "preferredMethod": "None",
+        "onlineFlag": "",
+        "customerAccounts": {
+          "lastName": "",
+          "phoneOptIn": "Y",
+          "faceToFaceOptIn": "Y",
+          "dataSovereignty": "",
+          "smsOptIn": "Y",
+          "id": "",
+          "mmsOptIn": "Y",
+          "businessUnit": "",
+          "emailOptIn": "Y",
+          "contactRelationship": {
+            "isPrimary": "",
+            "contactUsage": "Business",
+            "contactType": "Full Authority",
+            "endDate": ""
+          },
+          "directMailOptIn": "Y",
+          "customerCode": "",
+          "accountUuid": ""
+        },
+        "workContact": {
+          "faxNumber": "",
+          "phoneNumber": "+610312569847",
+          "emailAddress": "hdhs.juio@gmail.com",
+          "mobileNumber": ""
+        },
+        "languagePreference": "",
+        "timeZone": "",
+        "eventAction": "",
+        "jobDescription": "",
+        "id": "F66E6A42-4317-4b75-BC06-223DD940B8B2",
+        "title": "DR",
+        "externalSystemId": "",
+        "birthDate": "1991-10-24",
+        "firstName": "JENA",
+        "homeContact": {
+          "faxNumber": "",
+          "phoneNumber": "+610312345698",
+          "emailAddress": "ipsita.jena@team.telstra.com",
+          "mobileNumber": "+610438002699"
+        },
+        "jobTitle": "",
+        "middleName": "",
+        "lastName": "IPSITA",
+        "numberInHousehold": "",
+        "occupation": "",
+        "reviewedFlag": "",
+        "status": "",
+        "lastVerifiedDate": "",
+        "sendDateTime": "",
+        "lastUpdated": "",
+        "contactId": "",
+        "notes": ""
+      }
+    ]
+  }
+}

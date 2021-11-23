@@ -1,0 +1,335 @@
+<!--//EDGE -66472/84934/66471
+Description: Display slot values through map 
+Author:Ila/Mahima/Kalashree -->
+<aura:component
+  implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction"
+  controller="AppointmentBOMBaseCtrl"
+>
+  <aura:attribute type="List" name="options" />
+  <aura:attribute type="List" name="optionsReason" />
+  <aura:attribute type="String" name="OperationName" />
+  <aura:attribute type="String" name="OperationNameLabel" />
+  <aura:attribute type="String" name="SubID" />
+  <aura:attribute type="String" name="Category" />
+  <aura:attribute type="String" name="SiteName" default="Connected Workplace" />
+  <aura:attribute
+    type="String"
+    name="SiteAddress"
+    default="50 Southey Street Alwood, VIC 3008"
+  />
+  <aura:attribute type="String" name="AppID" default="TAPT671354623546" />
+  <aura:attribute type="Date" name="startDate" default="" />
+  <aura:attribute type="Date" name="startDateSelected" default="" />
+  <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+  <aura:attribute type="Date" name="toDate" />
+  <aura:attribute type="String" name="toDatemax" />
+    <!--added for fix of- EDGE-103647-->
+  <aura:attribute type="String" name="startDatemax" />
+  <aura:attribute type="Date" name="slottime" />
+  <aura:attribute type="string" name="SelectedSlot" />
+  <aura:attribute type="string" name="RescheduleInitiator" default="--None--" />
+  <aura:attribute type="string" name="RescheduleReason" default="--None--" />
+  <aura:attribute type="string" name="dateidentifier" />
+  <aura:attribute
+    name="responseWrapper"
+    type="AppointmentBOMBaseCtrl.ConfirmResponseWrapper"
+  />
+  <aura:attribute
+    name="slotWrapList"
+    type="AppointmentBOMBaseCtrl.SlotWrapper[]"
+  />
+  <aura:attribute
+    name="ParentAttribute"
+    type="String"
+    default=""
+  ></aura:attribute>
+    <aura:attribute name="endTime" type="String"/>
+	<aura:attribute name="timeLeft" type="String"/>
+    <aura:attribute name="timerPretext" type="String"/>
+    <aura:attribute name="timerPosttext" type="String"/>
+    
+
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:handler
+    name="searchAppointment"
+    event="c:searchAppointment"
+    action="{!c.handleEvent}"
+  />
+  <aura:handler event="c:ConfirmAppointment" action="{!c.onConfirmComplete}" />
+
+  <aura:if isTrue="{!v.loadingSpinner}">
+   <!-- <div>
+      <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+    </div>-->
+     
+    <div class="demo-only" style="height:6rem">
+  <div class="slds-spinner_container">
+    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand slds-spinner_medium">
+      <span class="slds-assistive-text">Loading</span>
+      <div class="slds-spinner__dot-a"></div>
+      <div class="slds-spinner__dot-b"></div>
+    </div>
+  </div>
+</div>
+    
+ 
+  </aura:if>
+  <div  aura:id="showAvailability"
+    class="slds-border_bottom slds-border_top slds-border_right slds-border_left"
+  >
+    <div class="slds-box headercomp">
+      <div class="slds-truncate slds-float_right">
+          <button class="slds-button slds-button_neutral"                      
+                      onclick="{!c.doCloseOperation}"
+                      >Back</button>
+        <!--<lightning:buttonIcon
+          variant="Inverse"
+          iconName="utility:close"
+          title="Cancel"
+          onclick="{! c.doCloseOperation }"
+        />-->
+      </div>
+      <p><b>{!v.OperationNameLabel} Appointment</b> </p>
+    </div>
+    <div style="background-color: #f4f5f7">
+      <aura:if isTrue="{!(v.OperationName == 'Reschedule') }">
+        <div class="slds-grid" style="border-bottom: 2px solid grey;">
+          <div class="slds-col ">
+            <div class="divpadding" style="padding:20px;">
+              <span><b>Appointment Id</b></span> <div><b> {!v.AppID}</b></div>
+            </div>
+          </div>
+          <div class="slds-col ">
+            <div class="divpadding" style="padding:20px;">
+              <lightning:select
+                required="true"
+                onchange="{!c.onSelection}"
+                value="{v.RescheduleInitiator}"
+                class="inputWidth slds-p-bottom_small"
+                aura:id="selectInitiatedBy"
+                messageWhenValueMissing="Please select a value"
+                label="Initiated By"
+              >
+                <aura:iteration items="{!v.options}" var="item">
+                  <option text="{!item}" value="{!item}"></option>
+                </aura:iteration>
+              </lightning:select>
+            </div>
+          </div>
+          <div class="slds-col ">
+            <div class="divpadding" style="padding:20px;">
+              <lightning:select
+                required="true"
+                onchange="{!c.onReasonChange}"
+                class="inputWidth slds-p-bottom_small"
+                value="{v.RescheduleReason}"
+                aura:id="selectRescReason"
+                messageWhenValueMissing="Please select a reason"
+                label="Reason for rescheduling"
+              >
+                <aura:iteration items="{!v.optionsReason}" var="item">
+                  <option text="{!item}" value="{!item}"></option>
+                </aura:iteration>
+              </lightning:select>
+            </div>
+          </div>
+          <div class="slds-col "> </div> <div class="slds-col "> </div>
+          <div class="slds-col "> </div>
+        </div>
+      </aura:if>
+      <div style="padding-top:10px;">
+        <span style="margin-left:20px"><b> {!v.SiteName}</b></span> <br />
+        <span style="margin-left:20px">{!v.SiteAddress}</span>
+      </div>
+      <div class="slds-grid">
+        <div class="slds-col ">
+          <div class="row" style="padding:20px;">
+            <span style="color: blue;">
+              Show appointment availability between
+            </span>
+          </div>
+        </div>
+        <div class="slds-col ">
+            <!--added max for fix of- EDGE-103647-->
+          <lightning:input
+            type="date"
+            name="startDateP"
+            value="{!v.startDateSelected}"
+            min="{!v.startDate}"
+			max="{!v.startDatemax}"
+          />
+		  
+        </div>
+        <div class="slds-col ">
+          <div class="row" style="padding:20px;">
+            <span style="color: blue;"> and </span>
+          </div>
+        </div>
+        <div class="slds-col ">
+          <lightning:input
+            type="date"
+            name="toDateP"
+            value="{!v.toDate}"
+            min="{!v.startDate}"
+            max="{!v.toDatemax}"
+            id="datepickerId"
+          />
+        </div>
+          
+
+        <div class="slds-col ">
+          <div class="divpadding" style="padding:20px;">
+            <lightning:button
+              variant="brand"
+              label="Show Availability"
+              title="Show Availability"
+              onclick="{!c.handleShowSlots}"
+            />
+          </div>
+        </div>
+        <div class="slds-col "> </div> <div class="slds-col "> </div>
+        <div class="slds-col "> </div>
+      </div>
+    </div>
+     <!--  <div aura:id="expiredMsg" class="slds-show">
+       <lightning:tile  aura:id="expiredMsg1" class="slds-show">
+       Time for reserving the appointment slot has expired. Please search for slots and reserve suitable one. 
+     </lightning:tile >
+        </div> -->
+    
+    <div
+      aura:id="detailsSection"
+      class="slds-hide slds-border_bottom slds-border_top slds-border_right slds-border_left"
+      style="padding:20px;"
+    >
+      <span style="margin-top:20px;"
+        ><b>Choose one of the available slots </b></span
+      >
+	<lightning:tile aura:id="timerBlock"  class="timerblock" >
+       <div style="text-decoration: underline;"><b > {!v.timerPretext} <span style="color:red;" >{!v.timeLeft}</span> {!v.timerPosttext}</b></div> 
+    </lightning:tile>
+   
+      <aura:iteration items="{!v.slotWrapList}" var="slotItem" indexVar="key">
+        <div>
+          <c:CollapsibleSection
+            displayName="{!slotItem.startDate}"
+            actionName="reserve"
+            availableSlots="{!slotItem.availableSlots}"
+          >
+            <div
+              class="slds-border_top slds-border_bottom slds-border_right slds-border_left"
+              style="padding:10px;"
+            >
+              <div class="slds-grid">
+                <aura:iteration items="{!slotItem.keySetList}" var="mapKey">
+                  <div class="slds-col">
+                    <div class="slds-row">
+                      <c:mapEntryChild
+                        map="{!slotItem.slotDetail}"
+                        key="{!mapKey}"
+                        startDateSlot="{!slotItem.startDate}"
+                      />
+                    </div>
+                  </div>
+                </aura:iteration>
+              </div>
+
+              <br />
+              <div class="slds-grid">
+                <div class="{!'slds-col '+ slotItem.startDate}">
+                     <!-- EDGE 87717- increase character limit to 500-->
+                  <textarea
+                    value=""      
+                    class="{!'slds-textarea notes_'+slotItem.startDate}"
+                    label="Notes for the selected slot :"
+                    maxlength="500"
+                    placeholder="Enter up to 500 characters"
+                  />
+                    <!--                    onkeyup="{!c.textCounter}"-->
+                </div>
+                  <!--<div class= "slds-grid" id ="divtime">
+                  Please select a slot within <span id="time">05:00</span> minutes!
+                  </div>
+                  <div id="timeoutMessage">
+                    <span class = "timeoutError">Time for reserving the appointment slot has expired. Please search for slots and reserve suitable one.</span>
+                  </div> -->
+                <div class="slds-col slds-float_right">
+                  <div class="slds-float_right ">
+                    <button
+                      class="{!'slds-button slds-button_brand '+'btn_'+slotItem.startDate}"
+                      disabled="true"
+                      onclick="{!c.handleConfirmAppt}"
+                      >Confirm Appointment</button
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </c:CollapsibleSection>
+        </div>
+      </aura:iteration>
+    </div>
+    
+  </div >
+    <div aura:id="expiredMsg" class="slds-hide">
+       
+      <p style="text-decoration: underline;color:red;"> Time for reserving the appointment slot has expired. Please search for slots and reserve suitable one. </p>
+    
+        </div>
+  <div aura:id="successPopupSection" class="slds-hide">
+    <div
+      class="slds-border_bottom slds-border_top slds-border_right slds-border_left"
+    >
+      <div style="padding:10px;">
+        <p
+          ><lightning:icon
+            iconName="action:approval"
+            size="xx-small"
+            alternativeText="Approved"
+          />&nbsp; <b>Your appointment has been confirmed.</b>
+        </p>
+      </div>
+      <div
+        class="slds-border_bottom slds-border_top slds-border_right slds-border_left"
+        style="margin:20px;"
+      >
+        <div style="padding-top:10px;">
+          <span style="margin-left:20px"
+            ><b>{!v.responseWrapper.subscriptionName}</b></span
+          >
+          <br />
+          <span style="margin-left:20px">{!v.responseWrapper.address}</span>
+        </div>
+        <div class="slds-grid">
+          <div class="slds-col ">
+            <div class="divpadding" style="padding:20px;">
+              <span><b>Appointment Id</b></span>
+              <div><b>{!v.responseWrapper.apptId}</b></div>
+            </div>
+          </div>
+          <div class="slds-col ">
+            <div class="divpadding" style="padding:20px;">
+              <span><b>Date</b></span>
+              <div><b>{!v.responseWrapper.apptDate}</b></div>
+            </div>
+          </div>
+          <div class="slds-col ">
+            <div class="divpadding" style="padding:20px;">
+              <span><b>Time </b></span>
+              <div><b>{!v.responseWrapper.apptTime}</b></div>
+            </div>
+          </div>
+          <div class="slds-col "> </div> <div class="slds-col "> </div>
+          <div class="slds-col "> </div>
+        </div>
+          <br/>
+          <br/>
+           <div class="slds-truncate slds-align_absolute-center">
+          <button class="slds-button slds-button_neutral"                      
+                      onclick="{!c.doCloseOperation}"
+                      >OK</button>        
+      </div>
+      </div>
+    </div>
+  </div>
+</aura:component>

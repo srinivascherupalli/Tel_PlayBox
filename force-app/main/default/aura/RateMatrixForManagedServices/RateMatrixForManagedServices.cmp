@@ -1,0 +1,155 @@
+<!-- @Modified By : Aditya Pareek
+@Sprint : R19.16 - EDGE-123607 
+@Description : Contains the UI for the rate card of T-MDM and Manage Services, Updated the UI for Managed Services
+-->
+
+<aura:component  controller="RateMatrixForManagedServicesController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="String" name="featureLevel" />
+    <aura:attribute type="String" name="techSupport" />
+    <aura:attribute type="String" name="filteredColumn" />
+    <aura:attribute type="String" name="type" />
+      <aura:attribute type="String" name="offerid" />
+      <aura:attribute type="String" name="vendor" />
+    <aura:attribute name="commericalProductData" type="List" />
+    <!-- CHanges by Venkat-->
+ <aura:if isTrue="{!v.offerid == 'DMCAT_Offer_000681'}">  
+<div class="table_Width_Height"> 
+<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style ="border-color: black;">
+<thead >
+<tr class="slds-line-height_reset">
+<th class="" scope="col">
+<div class="slds-truncate" title="Tenancy Rate Card">Telstra Mobile Device Management powered by VMware</div>
+</th>
+<th class="" scope="col">
+    </th>
+    </tr>
+    </thead>
+    </table>
+<table class="slds-table slds-table_cell-buffer ">
+    <thead>
+        <tr class="slds-line-height_reset">
+			<th class="" scope="col">
+				<div class="slds-truncate" title="Vendor">Unit</div>
+			</th>
+            <th class="" scope="col">
+                <div class="slds-truncate" title="Range">Range</div></th>
+            <th class="" scope="col">
+				<div class="slds-truncate" title="Charges">Charges</div>
+			</th>
+			{!v.commericalProductData}
+		</tr>
+
+ </thead>
+<tbody >
+   
+ <aura:iteration  var="commData1" items="{!v.commericalProductData}" indexVar="index">
+<tr class="slds-hint-parent ">
+<td data-label="Vendor" style ="border-color: black;">
+<div class="slds-truncate slds-align_absolute-center" title="Range">Range</div>
+</td> 
+<td data-label="RangeFromTo" style ="border-color: black;">
+<div class="slds-truncate slds-align_absolute-center" title="Range">{!commData1.rangeFrom}- {!commData1.rangeTo}</div>
+</td>       
+   <td data-label="Charges" style ="border-color: black;">
+<div class="slds-truncate slds-align_absolute-center" title="Range">{!commData1.recurringCharge}</div>
+</td> 
+</tr>
+</aura:iteration>
+</tbody>  
+</table>
+</div>
+
+
+    <aura:set attribute="else">
+    <!-- CHanges by Aditya-->
+        <div class="table_Width_Height" style="width:100%; color:black" title="T-MDM Rate Card">Rate Card for T-MDM Platform Management  
+            <br/><br/>
+             <!-- CHanges by Aditya-->
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered" style ="border: 2px ;width:100; border-color: black;">
+				<thead style="background-color: #f3f2f2" >
+					<tr style="background-color: #f3f2f2; border: 1px solid black;">
+						<th class="" scope="col" style ="background-color: #f3f2f2">
+							<div class="slds-truncate" title="T-MDM">Enrolled Device Range</div>
+						</th>
+						<th class="" colspan="2" scope="col" style ="background-color: #f3f2f2">
+							<div class="slds-truncate" title="Feature">Standard</div>
+						</th>
+						<th class="" colspan="2" scope="col" style ="background-color: #f3f2f2">
+							<div class="slds-truncate" title="Feature">Advanced</div>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+                <!-- CHanges by Aditya-->
+					<tr style="background-color: #fafaf9; border: 1px solid black;">
+						<td class="" scope="col" style ="font-weight: bold;text-align: left; "></td>
+						<aura:if isTrue="{!v.filteredColumn == 'StandardBus Hrs'}">
+							<td style ="background-color:#fafaf9"> <br/> Business Hour</td>
+								<aura:set attribute="else" >
+									<td> <br/> Business Hours</td>
+								</aura:set>
+							</aura:if>
+							<aura:if isTrue="{!v.filteredColumn == 'Standard24x7'}">
+								<td style ="background-color: #FAFAF9" ><br/> 24*7</td>
+								<aura:set attribute="else">
+									<td> <br/> 24*7</td>
+								</aura:set>
+							</aura:if>	
+                            <!-- CHanges by Aditya-->						
+							<aura:if isTrue="{!v.filteredColumn == 'AdvancedBus Hrs'}">
+                                <td style ="background-color: #FFFFFF"> <br/> Business Hours</td>
+								<aura:set attribute="else">
+									<td> <br/> Business Hours</td>
+								</aura:set>
+							</aura:if>
+							<aura:if isTrue="{!v.filteredColumn == 'Advanced24x7'}">
+								<td style ="background-color: #FAFAF9" > <br/> 24*7</td>
+								<aura:set attribute="else">
+									<td> <br/> 24*7</td>
+								</aura:set>
+							</aura:if>
+					</tr>
+					<aura:iteration  var="commData" items="{!v.commericalProductData}" indexVar="index">
+						<tr style = "border: 1px solid black;">
+							<td data-label="RangeFromTo" style ="border-color: ">{!commData.rangeFrom}- {!commData.rangeTo}</td>
+							<aura:if isTrue="{!v.filteredColumn == 'StandardBus Hrs'}">
+								<td data-label="rangeSTDBUSCharge "  style ="background-color: #f3f2f2">${!commData.rangeSTDBUSCharge}</td>
+								<aura:set attribute="else" >
+									<td data-label="rangeSTDBUSCharge " >${!commData.rangeSTDBUSCharge}</td>
+								</aura:set>
+							</aura:if>
+							<aura:if isTrue="{!v.filteredColumn == 'Standard24x7'}">
+								<td data-label="rangeSTD24X7Charge "  style ="background-color: #f3f2f2" >${!commData.rangeSTD24X7Charge}</td>
+								<aura:set attribute="else">
+									<td data-label="rangeSTD24X7Charge ">${!commData.rangeSTD24X7Charge}</td>
+								</aura:set>
+							</aura:if>							
+							<aura:if isTrue="{!v.filteredColumn == 'AdvancedBus Hrs'}">
+									<td data-label="rangeADVBUSCharge "  style ="background-color: #f3f2f2">${!commData.rangeADVBUSCharge}</td>
+									<aura:set attribute="else">
+										<td data-label="rangeADVBUSCharge " >${!commData.rangeADVBUSCharge}</td>
+									</aura:set>
+							</aura:if>
+							<aura:if isTrue="{!v.filteredColumn == 'Advanced24x7'}">
+								<td data-label="rangeADV24X7Charge "  style =" background-color:#f3f2f2" >${!commData.rangeADV24X7Charge}</td>
+								<aura:set attribute="else">
+									<td data-label="rangeADV24X7Charge " >${!commData.rangeADV24X7Charge}</td>
+								</aura:set>
+							</aura:if>
+						</tr>
+					</aura:iteration> 
+				</tbody>
+			</table>
+            <!-- CHanges by Aditya-->
+            <br/><br/>
+             <div style="color: black;"> Standard pricing before discounts, execlusive of GST. All prices are per device, per month.
+             <br/>
+                 Minimum charge based on 200 device</div><br/>
+        </div>
+	</aura:set>
+	</aura:if>
+     
+   
+</aura:component>

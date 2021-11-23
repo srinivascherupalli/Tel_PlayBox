@@ -1,0 +1,17 @@
+<apex:page standardController="Contact">
+ <apex:form >
+<apex:pageBlock title="Contact detail">
+<apex:pageBlockSection >
+ <apex:OutputField value="{!Contact.Name}"/>
+ <apex:OutputField value="{!Contact.AssistantPhone}"/>
+ <apex:OutputField value="{!Contact.Birthdate}"/>
+ <apex:OutputField value="{!Contact.Description}"/>
+ <apex:OutputField value="{!Contact.Email}"/> 
+ <apex:OutputField value="{!Contact.Fax}"/>
+ 
+ <apex:OutputField value="{!Contact.Language_Preference__c}"/>
+ <apex:OutputField value="{!Contact.Id}"/> 
+ </apex:pageBlockSection>
+ </apex:pageBlock>
+  </apex:form>
+</apex:page>

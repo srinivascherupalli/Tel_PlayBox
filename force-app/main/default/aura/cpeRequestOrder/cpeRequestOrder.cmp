@@ -1,0 +1,193 @@
+<aura:component implements="lightning:availableForFlowScreens" 
+	controller="cpeRequestOrderCtrl" access="global" >
+	<aura:attribute name="PageHeading" type="String" default="Accept Quote"/>
+    <aura:attribute name="quoteDeatils" type="Object"/>
+    <aura:attribute name="quoteColumns" type="List"/>
+    <aura:attribute name="caseId" type="string"/>
+    <aura:attribute name="isOpenModal" type="Boolean" default="true" />
+    <aura:attribute name="isOnLoad" type="Boolean" default="false" />
+    <aura:attribute name="showFieldsScreen" type="Boolean" default="false" />
+    <aura:attribute name="showConfirmScreen" type="Boolean" default="false" />
+    <aura:attribute name="caseRecord" type="Object"/>
+    <aura:attribute name="quoteQueueId" type="string"/>
+    <aura:attribute name="noOfCLISelected" type="Object" />
+    <aura:attribute name="quoteLineItems" type="Object" />
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:attribute name="showBilledOtherDetails" type="Boolean" default="false" />
+    <aura:attribute name="showMarginDetails" type="Boolean" default="false" />
+    <aura:attribute name="showVariationDetails" type="Boolean" default="false" />
+    <aura:attribute name="selectedRecordId" type="String" default="" description=""/>
+    <aura:attribute name="noOfCaseDocuments" type="Integer" default="0"/>
+    <aura:attribute name="uploadedFilesLength" type="Integer" default="0"/>
+    <aura:attribute name="selectedRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="showIsComplaintDefense" type="Boolean" default="false" />
+    <aura:attribute name="showFileUploadMsg" type="Boolean" default="false" />
+    <aura:attribute name="noOfSite" type="Integer" />
+    <aura:attribute name="shippingOutisde" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <aura:if isTrue="{!v.isOpenModal}"> 
+        <section aura:id="requestOrderModal" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!--MODAL BOX HEADER Start-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                            onclick="{! c.closeModel }"
+                                            alternativeText="close"
+                                            variant="bare-inverse"
+                                            class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Request Order</h2>
+                </header>
+                <!--MODAL BOX BODY Part Start-->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="modal-content-id-1">
+                    <aura:if isTrue="{!v.showSpinner}">
+                        <div class="exampleHolder">
+                            <lightning:spinner alternativeText="Loading" size="medium" variant="brand" />
+                        </div>
+                    </aura:if>
+                    <!-- Table Start -->
+                    <aura:if isTrue="{!v.isOnLoad}">   
+                        <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">      
+                            <thead>  
+                                <tr class="slds-text-title--caps">
+                                    <th scope="col">          
+                                        <div class="slds-truncate" title="Accept Quote">Accept Quote</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Quote Number">Quote Number</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Requote Details">Requote Details</div>
+                                    </th>                                    
+                                </tr>  
+                            </thead>
+                            <tbody>        
+                                <aura:iteration items="{!v.quoteDeatils}" var="con">
+                                    <tr>
+                                        <td>
+                                            <label class="slds-checkbox">
+                                                <ui:inputCheckbox aura:id="checkContact" value="{!con.cpe_Accept_Quote__c}" text="{!con.Id}"/>
+                                                <span class="slds-checkbox--faux" />
+                                                <span class="slds-form-element__label"></span>
+                                            </label>
+                                        </td>
+                                        <td scope="row">
+                                            <div class="slds-truncate" title="{!con.cpe_External_System_Quote_Number__c}">{!con.cpe_External_System_Quote_Number__c}</div>
+                                        </td>
+                                        <td>
+                                            <div class="slds-truncate" title="{!con.cpe_Requote_Details__c}">{!con.cpe_Requote_Details__c}</div>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>                                                
+                    </aura:if>  
+                    <!-- Table ENd -->
+                    <aura:if isTrue="{!v.showFieldsScreen}">
+                         <!-- Record Edi Start -->
+                        <lightning:recordEditForm recordId="{!v.caseRecord.Id}" aura:id="caseUpdateFormSup" objectApiName="Case" onsubmit="{!c.handleOnSubmit}" 
+                                                  onload="{!c.handleLoad}" onsuccess="{!c.handleSuccess}"
+                                                  onerror="{!c.handleError}">
+                           <div class="slds-grid slds-grid_vertical">
+                                <div class="slds-col">
+                                    <lightning:inputField fieldName="cpe_Billing_Requirements__c" aura:id="billingId"  onchange="{!c.handleBillingReqChange}" required="true"/>
+                                </div>
+                                <aura:if isTrue="{!v.showBilledOtherDetails}">
+                                    <div class="slds-col">
+                                        <lightning:inputField fieldName="cpe_Billed_By_Others_Details__c" aura:id="billedById" required="true"/>
+                                    </div>
+                                </aura:if>
+                                <div class="slds-col customInputField">
+                                     <span class="required">*</span>
+                                    <label for="FlexcabId" class="customlabel">Flexcab Account</label>
+                                    <lightning:inputField fieldName="salesup_Billing_Account_Number__c"  variant="label-hidden" aura:id="FlexcabId" class="hideHelpText"/>
+                                </div>	
+                                <div class="slds-col customInputField">
+                                    <span class="required">*</span>
+									<label for="noOFSiteId" class="customlabel">Multi-Site Delivery</label>
+                                    <lightning:inputField fieldName="salesup_No_of_sites_or_services__c" variant="label-hidden" aura:id="noOFSiteId"  class="hideHelpText" onchange="{!c.handleNoOfSite}" />
+                                </div>
+                                <div class="slds-col customInputField">
+                                    <span class="required">*</span>
+                                    <label for="PIAddressbId" class="customlabel">Primary Delivery Or Installation Address</label>
+                                    <lightning:inputField fieldName="salesup_Site_Address__c" variant="label-hidden" aura:id="PIAddressbId" class="hideHelpText" />
+                                </div>
+                                <div class="slds-col">
+                                    <c:salesup_CertitudeLookupContainer accountId="{!v.caseRecord.AccountId}" isFetchAccount="true" selectedRecordId= "{!v.selectedRecordId}" 
+                                    selectedRecord= "{!v.selectedRecord}" objectAPIName="Contact" IconName="standard:contact" helpMessage="Please select site contact" label="Site Contact" isLookUpMandatory="True"/>
+                                </div>
+                               <div class="slds-col">
+                                   <lightning:inputField fieldName="cpe_Is_Shipping_Outside_Of_Australia__c" aura:id="isShippingAusId" required="true" onchange="{!c.handleShippingAusChange}"/>
+                               </div>
+                               <aura:if isTrue="{!v.showIsComplaintDefense}">
+                                    <div class="slds-col">
+                                   		<lightning:inputField fieldName="cpe_Is_Compliant_to_Defence_Export_Ctrls__c" aura:id="isCompliantCtrlId"/>
+                               		</div>
+                              </aura:if>
+                                <span>
+                                    <aura:if isTrue="{!lessthanorequal(v.noOfCaseDocuments, 0)}">
+                                        <span class="required">*</span>
+                                    </aura:if>                                
+                                    <label for="attachmentId" class="slds-form-element__label">Customer authority attachment</label>
+                                    <lightning:helptext class="customIcon" 
+                                        content="Evidence of customer accepting this order such as their Purchase Order, Statement of Work, signed quote etc. to this case to proceed."
+                                    />
+                                </span>
+                                <lightning:fileUpload name="fileUploader"
+                                        multiple="false"
+                                        accept="{!$Label.c.salesup_FlowAttachFileExtensions}"
+                                        recordId="{!v.caseId}"
+                                        title="Evidence of customer accepting this order such as their Purchase Order, Statement of Work, signed quote etc. to this case to proceed"
+                                        onuploadfinished="{!c.handleUploadFinished}" 
+                                        class="attachmentlabel"
+                                        aura:id= "attachmentId"/>
+                               <aura:if isTrue="{!lessthanorequal(v.noOfCaseDocuments, 0)}">
+                                  <aura:if isTrue="{!v.showFileUploadMsg}">
+                                    <label style="font-size: 11px;color:rgb(194, 57, 52);">
+                                    	As you have selected more than one No. of sites and services or international shipping, please upload a file with the Complete Site Address, Site Contact and Product/Service for each site  
+                                    </label>
+                                  </aura:if>
+                               </aura:if> 
+                            </div>
+                            <button aura:Id="submitbtn" id="recordFormBtn" class="slds-button slds-button_brand" onclick="{! c.saveCaseDetailsForm }" style="display:none;">Save &amp; Next</button>
+                        </lightning:recordEditForm>
+                         <!-- Record Edi End -->
+                    </aura:if>   
+                    <aura:if isTrue="{!v.showConfirmScreen}">
+                        <div>
+                                Your case has been updated and sent to our Ordering team. You can track this case with the same Case number
+                
+                                {!v.caseRecord.CaseNumber}
+                        </div>  
+                    </aura:if>           
+                </div>
+                <!--MODAL BOX FOOTER Part Start-->
+                <footer class="modal-footer slds-modal__footer slds-modal__footer_directional footerHight">
+                    <aura:if isTrue="{! or(v.isOnLoad, v.showFieldsScreen)}"> 
+                        <div class="slds-float_left">
+                            <button class="slds-button slds-button_neutral" onclick="{! c.closeModel }">Cancel</button>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.showConfirmScreen}">
+                        <div class="slds-float_right">
+                            <button class="slds-button slds-button_neutral" onclick="{! c.closeModel }">Close</button>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.isOnLoad}"> 
+                        <div class="slds-float_right">
+                            <lightning:button aura:id="onLoadButton" class="slds-button slds-button_brand" onclick="{! c.saveCaseDetails }">Save &amp; Next</lightning:button>
+                        </div>
+                    </aura:if>   
+                    <aura:if isTrue="{!v.showFieldsScreen}">  
+                        <div class="slds-float_right">
+                            <lightning:button aura:id="onFieldScreen" class="slds-button slds-button_brand" onclick="{! c.saveCaseDetails }">Save &amp; Next</lightning:button>
+                        </div>
+                    </aura:if>    
+                </footer> 
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--MODAL BOX Part END Here-->  
+    </aura:if>  
+
+</aura:component>

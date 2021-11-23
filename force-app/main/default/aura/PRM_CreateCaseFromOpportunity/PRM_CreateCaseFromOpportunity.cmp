@@ -1,0 +1,35 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:appHostable"  controller="PRM_CreateCaseFromOpportunityController">
+	<aura:attribute name="recordId" type="String" />
+    <aura:attribute name="showError" type="Boolean" default="false"/>
+    <aura:attribute name="newCaseError" type="String" />
+   <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name="isPilotUser" type="Boolean" default="false"/>
+    <aura:attribute name="isInit" type="Boolean" default="false"/>
+    <aura:handler event="c:closeParentPopupFromThankYouScreen" action="{!c.closeFlow}"/> <!--v1.1 P2OB-4178 autoclose parent popup on thank you screen closure-->
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }     
+        .slds-modal__content{
+        overflow-y:auto !important;
+        height:unset !important;
+        max-height:400px !important;
+        }
+    </aura:html>
+    <!--<aura:if isTrue="{!v.isInitialized}">
+        <c:PRM_CreateCaseViaFlow recordId="{!v.recordId}" isPilotUser="{!v.isPilotUser}" userType="{!v.userType}"/>   
+    </aura:if>-->
+    <aura:if isTrue="{!v.showError}">
+        <p style="color:#C23934">{!v.newCaseError}</p> <!-- </div> -->
+    </aura:if>
+    <aura:if isTrue="{!!v.showError}">
+        <aura:if isTrue="{!v.isInit}">
+            <aura:if isTrue="{!v.isPilotUser}">
+                <lightning:flow aura:id="flowData" />
+                <aura:set attribute="else">
+                    <c:Create_SalesSupportCase recordId="{!v.recordId}"/>
+                </aura:set>
+          	</aura:if>
+        </aura:if>
+    </aura:if>
+</aura:component>

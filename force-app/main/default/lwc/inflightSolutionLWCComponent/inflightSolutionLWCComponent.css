@@ -1,0 +1,45 @@
+.btnIconOverlay {
+    position: absolute;
+    z-index: 1;
+    margin: 0.5% 0 0 92%;
+}
+.THIS .columncss{
+    /*border-radius: 30px;
+    background: #20B2AA;
+    padding: 20px; 
+    width: 35px;
+    height:.1rem;*/
+    font-weight: bold;
+    text-align: centre;
+	color: green;
+}
+.exampleHolder{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.spins::after {
+    position: absolute;
+    content: 'Please wait! Adding selected solution to basket...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}
+.spinsMultiple::after {
+    position: absolute;
+    content: 'Please wait! Adding selected solutions to basket...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}
+.spinss::after {
+    position: absolute;
+    content: 'Processing..';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}

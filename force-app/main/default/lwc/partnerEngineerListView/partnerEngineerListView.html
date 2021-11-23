@@ -1,0 +1,22 @@
+<!--
+   
+   *  Description of the purpose of the method.
+   *  @name PortalEngineerListView
+   *  @description               : This LWC is used to display the Engineering Users
+   *  @param                     : Functional Contact Role Record Id.
+   *  @return 				 	 : - 
+   *  @Jira Story Ref            : EDGE-128108
+   *  @createdBy  				 : Purushottama Sahu, Alexandria
+-->
+<template>
+    <!-- handlers-->
+    <span class={tableDisplay}>
+        <lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle}
+            active-section-name={activeSections}>
+            <lightning-accordion-section name="RelatedListofUsers" label="Related List of Users">
+                <lightning-datatable data={data} columns={columns} key-field=" id" hide-checkbox-column="true">
+                </lightning-datatable>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </span>
+</template>

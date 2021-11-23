@@ -1,0 +1,9 @@
+<apex:page standardController="Apttus__APTS_Agreement__c" extensions="APTPS_CreateVariationController" action="{!createVariation}">
+    <apex:pageMessages />
+    <apex:form >
+        <br/> 
+        <div style="margin-left:2%"><apex:outputText >Click </apex:outputText> <apex:commandLink action="{!Cancel}" value="here" id="theCommandLink"/>  <apex:outputText > to return to the previous page </apex:outputText>  
+        </div>
+    </apex:form>
+    
+</apex:page>

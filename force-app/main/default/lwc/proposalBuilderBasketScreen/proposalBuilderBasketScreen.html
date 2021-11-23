@@ -1,0 +1,16 @@
+<template>
+    <template if:true={displayRecords}>
+        Select a product basket to generate the proposal for it.
+                <lightning-datatable
+                    key-field="Id"
+                    selected-rows={preSelectedRows}
+                    data={availableBaskets}
+                    columns={columns}
+                    onrowselection={rowselection}
+                    max-row-selection=1>
+                </lightning-datatable>
+     </template>
+     <template if:false={displayRecords}>
+        No product baskets are available for Proposal generation.
+     </template>
+</template>

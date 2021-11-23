@@ -1,0 +1,8 @@
+<!--//EDGE -93081
+Name: NumberReservationBaseComp
+Description: Display Number reservation UI on Product Basket 
+Author:Ila/Mahima/Kalashree Borgaonkar
+Change - EDGE-92546 - Added few Attributes, Manage Tab and removed section of code which was commented-->
+<aura:component controller="NumberReservationHandler" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global">
+   
+   </aura:component>

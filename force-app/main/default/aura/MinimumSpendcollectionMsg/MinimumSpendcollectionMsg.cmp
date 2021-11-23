@@ -1,0 +1,14 @@
+<!--*****************************************************************
+@Name: MinimumSpendcollectionMsg
+@Author: Lokesh D 
+@CreateDate: 05/23/2019 
+@Description: Display message on Agreement page regarding Minimum Spend collection (EDGE-81537)
+@UsedBy: Agreement 
+******************************************************************/ -->
+<aura:component  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+
+        <ui:message title="Message" severity="Message" closable="False">
+           {!$Label.c.MinimumSpendMsg}
+        </ui:message>   
+    
+</aura:component>

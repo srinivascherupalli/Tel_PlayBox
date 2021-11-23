@@ -1,0 +1,5 @@
+Name,Type,Customer_Status__c,Business_Unit__c,BillingCity,BillingPostalCode,Market_Segment__c,Managed__c,id
+ACR test,Sole Trader,ACTIVE,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,1
+ACR test 2,Sole Trader,ACTIVE,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,2
+ACR test 3,Residential,ACTIVE,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,3
+ACR test 4,Residential,ACTIVE,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,4

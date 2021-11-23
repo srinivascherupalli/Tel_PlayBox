@@ -1,0 +1,8 @@
+<!-- 
+Story(Sprint) :	EDGE-207867(21.06)
+Name		  : selectedCaseEvent
+Author		  : Aman Soni	 
+-->
+<aura:event type="COMPONENT" description="By this event we are passing the selected case in the parent component">
+    <aura:attribute name="caseByEvent" type="Case"/>
+</aura:event>

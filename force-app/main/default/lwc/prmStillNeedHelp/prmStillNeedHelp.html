@@ -1,0 +1,17 @@
+<template>
+    <div class="sectionNeedHelp">
+      <h2>Still need help?</h2>
+      <div class="helpRow">
+        <div class="helpCol">
+          <div class="helpCatImg"><img src={RaiseCaseImg}></div>
+          <lightning-button label="Raise a case" title="Raise a case" onclick={handleClick} class="btn-primary"></lightning-button>
+          <lightning-button variant="base" label="Get help with an issue" title="Get help with an issue" onclick={handleClick} class="btn-link"></lightning-button>
+        </div>
+        <div class="helpCol">
+          <div class="helpCatImg"><img src={CommunitiesImg}></div>
+          <lightning-button label="Communities" title="Communities" onclick={handleClick} class="btn-primary"></lightning-button>
+          <lightning-button variant="base" label="Get help with an issue" title="Get help with an issue" onclick={handleClick} class="btn-link"></lightning-button>
+        </div>
+      </div>
+    </div>
+</template>

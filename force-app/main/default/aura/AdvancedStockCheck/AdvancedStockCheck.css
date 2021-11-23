@@ -1,0 +1,74 @@
+.THIS .custom-background {
+    background-color: black;
+}
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}
+.THIS .nostocklabel {
+    text-align: center;
+    background-color:red;
+    font-weight:bold;
+    color:white;
+}
+.THIS .slds-modal__container{
+       max-width: 70rem !important;
+       width:70% !important;
+       min-width: 90vw;   
+}
+.THIS .hideInput {
+    display: none;
+    visibility: hidden;
+}
+
+.THIS .custom-box{
+    border-right:hidden;
+}
+ 
+/* CSS to Make lookup field lines lighter */
+.THIS .newbox{
+    border-top: hidden;
+    border-right: hidden;
+    border-left: hidden;
+    border-bottom: groove;
+
+}
+
+.THIS .clearbutton{
+    text-decoration: underline;
+    border: none;
+	box-shadow: none;
+	color: blue;
+	background:none;
+	padding-top:4px;
+    font-size: large;
+}
+
+.THIS .availabilitybutton{
+   color: white;
+    background-color: blue;
+}
+
+.THIS .availabilitybuttonEmpty{
+    pointer-events: none;
+}
+
+.THIS .Availabilityheader{
+   font-size: 1.125rem;
+   font-weight: bolder;
+   color: black;
+}
+
+.THIS .buttoncolor{
+    background: white;
+    color: blue;
+}
+
+.THIS .iconColorChange svg{
+    fill:red;
+    font-weight:bold;
+}
+
+.THIS .noOuterboxTop{
+    border:none;
+}

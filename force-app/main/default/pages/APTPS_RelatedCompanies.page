@@ -1,0 +1,207 @@
+<apex:page standardController="APTPS_Related_Companies__c" extensions="APTPS_RelatedCompaniesController" recordSetVar="relatedComp">
+    <style type="text/css">
+        a.alpha-link {
+           font-weight: normal;
+           font-size: 91%;
+           padding: 0 4px;
+           color: #015BA7 !important;
+        }
+         
+        a.alpha-link+a.alpha-link {
+           border-left: 1px solid #CFCECE;
+        }
+         
+        a.alpha-link:hover {
+           background-color: #e0f5fc !important;
+        }
+         
+        a.alpha-select {
+           font-weight: bold;
+           text-decoration: none;
+           background-color: #C6E1FF;
+           color: #000000 !important;
+        }
+    </style>
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageMessages />
+            <apex:pageBlockSection title="Related Companies" columns="1" id="RCSection" rendered="{!showRelatedCompanies}">                            
+                <Apex:outputPanel > 
+                    <div>
+                        <!-- alphabet selection -->
+                        <span style="float: right; margin: 5px 5px 5px 5px;"> <apex:repeat value="{!AlphaList}" var="a">
+                              <apex:commandLink value="{!a}" action="{!BuildQuery}" rerender="RCSection"
+                                 styleClass="alpha-link{!if(selAlphaRC=a,' alpha-select','')}" status="loadingimageRC">
+                                 <apex:param name="selAlphaRC" value="{!a}" assignTo="{!selAlphaRC}" />
+                              </apex:commandLink>
+                           </apex:repeat>
+                        </span>
+                    </div>
+                     <div style="clear: both;"></div>
+                    <apex:actionStatus id="loadingimageRC">
+                        <apex:facet name="start">
+                            <Center> <img src="/img/loading32.gif" border="0" width="20" height="20"/></Center>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </Apex:outputPanel>  
+                <apex:pageBlockTable value="{!CurrentRCAccountList}" var="relAccList" width="100%" rendered="{!!RCrecordsFound}" id="RCtable"> 
+                    <apex:column >
+                        <apex:facet name="header">
+                        <Apex:inputCheckbox >  
+                            <apex:actionSupport event="onclick" onsubmit="checkAll(this,'RCSection')" rerender="RCtable"/>       
+                        </apex:inputCheckbox>
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!relAccList.isSelected}" id="relCompSection">
+                            <!--<apex:actionSupport event="onclick" rerender="RCSection"/> -->
+                         
+                        </apex:inputCheckbox>
+                    </apex:column>
+                    <apex:column value="{!relAccList.accnt.name}"/>
+                    <apex:column value="{!relAccList.accnt.CIDN__c}"/>
+                    <apex:column value="{!relAccList.accnt.ABN__c}"/> 
+                    <apex:column value="{!relAccList.accnt.BillingStreet}"/>
+                    <apex:column value="{!relAccList.accnt.BillingCity}"/>
+                    <apex:column value="{!relAccList.accnt.BillingState}"/>
+                    <apex:column value="{!relAccList.accnt.BillingCountry}"/>
+                    <apex:column value="{!relAccList.accnt.BillingPostalCode}"/>
+                </apex:pageBlockTable> 
+                <apex:outputText value="No Records found." rendered="{!RCrecordsFound}" />
+                <apex:outputPanel rendered="{!!RCrecordsFound}"> 
+                    <apex:panelGrid columns="3" id="pagenationButtons" width="100%">
+                        <apex:panelGrid columns="3">
+                            <apex:outputText value="Records per page" />
+                            <apex:selectList value="{!RecPerPageRC}" size="1">
+                               <apex:selectOptions value="{!RecPerPageOption}" />
+                               <apex:actionSupport event="onchange" action="{!BuildQuery}" reRender="RCSection" status="loadingimageRC" />
+                            </apex:selectList>    
+                        </apex:panelGrid>                                        
+                        <apex:outputPanel >
+                            <apex:panelGrid columns="4"> 
+                                <apex:panelGrid > 
+                                    <apex:commandLink title="First" value="◄◄" action="{!setConRC.first}" rendered="{!setConRC.hasPrevious}" status="loadingimageRC" reRender="RCSection" style="text-decoration:none"/>
+                                    <apex:outputtext value="◄◄" rendered="{!!setConRC.hasPrevious}" style="font-style:italic;color:grey" />                   
+                                </apex:panelGrid>  
+                                <apex:panelGrid > 
+                                     <apex:commandLink title="Previous" value="◄ Previous"  action="{!setConRC.previous}" rendered="{!setConRC.hasPrevious}" status="loadingimageRC" reRender="RCSection" style="text-decoration:none"/>
+                                     <apex:outputtext value="◄ Previous" rendered="{!!setConRC.hasPrevious}" style="font-style:italic;color:grey" />
+                                </apex:panelGrid>                      
+                                <apex:panelGrid >
+                                    <apex:commandLink title="Next" value="Next ►"  action="{!setConRC.next}"  rendered="{!setConRC.hasNext}" status="loadingimageRC" reRender="RCSection" style="text-decoration:none"/>
+                                    <apex:outputtext value="Next ►" rendered="{!!setConRC.hasNext}" style="font-style:italic;color:grey" /> 
+                                </apex:panelGrid> 
+                                <apex:panelGrid >
+                                    <apex:commandLink title="Last" value="►►"  action="{!setConRC.last}"  rendered="{!setConRC.hasNext}" status="loadingimageRC" reRender="RCSection" style="text-decoration:none"/>
+                                    <apex:outputtext value="►►" rendered="{!!setConRC.hasNext}" style="font-style:italic;color:grey" />  
+                                </apex:panelGrid> 
+                            </apex:panelGrid> 
+                        </apex:outputPanel> 
+                        <apex:panelGrid columns="2">
+                            <apex:outputText >{!(setConRC.pageNumber * RecPerPageRC)+1- RecPerPageRC}-{!IF((setConRC.pageNumber * RecPerPageRC)>noRCRecords, noRCRecords,
+                                (setConRC.pageNumber * RecPerPageRC))} of {!noRCRecords}
+                            </apex:outputText>  
+                        </apex:panelGrid>
+                    </apex:panelGrid>                                               
+                </apex:outputPanel> 
+            </apex:pageBlockSection>
+              
+            <apex:pageBlockSection title="Unrelated Companies" columns="1" id="UCSection" rendered="{!showUnrelatedCompanies}">
+                <Apex:outputPanel > 
+                    <div>
+                        <!-- alphabet selection -->
+                        <span style="float: right; margin: 5px 5px 5px 5px;"> <apex:repeat value="{!AlphaList}" var="a">
+                              <apex:commandLink value="{!a}" action="{!BuildQuery}" rerender="UCSection"
+                                 styleClass="alpha-link{!if(selAlphaUC=a,' alpha-select','')}" status="loadingimageUC">
+                                 <apex:param name="selAlphaUC" value="{!a}" assignTo="{!selAlphaUC}" />
+                              </apex:commandLink>
+                           </apex:repeat>
+                        </span>
+                    </div>
+                     <div style="clear: both;"></div>
+                    <apex:actionStatus id="loadingimageUC">
+                        <apex:facet name="start">
+                            <Center> <img src="/img/loading32.gif" border="0" width="20" height="20"/></Center>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </Apex:outputPanel>
+                <apex:pageBlockTable value="{!CurrentUCAccountList}" var="unRelAccList" width="100%" id="UCtable" rendered="{!!UCRecordsFound}"> 
+                    <apex:column >
+                        <apex:facet name="header">
+                        <Apex:inputCheckbox >  
+                            <apex:actionSupport event="onclick" onsubmit="checkAll(this,'UCSection')" rerender="UCtable"/>       
+                        </apex:inputCheckbox>
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!unRelAccList.isSelected}" id="relCompSection">
+                            <!--<apex:actionSupport event="onclick" rerender="UCSection"/> -->
+                        </apex:inputCheckbox>                    
+                    </apex:column>
+                    <apex:column value="{!unRelAccList.accnt.name}"/>
+                    <apex:column value="{!unRelAccList.accnt.CIDN__c}"/>
+                    <apex:column value="{!unRelAccList.accnt.ABN__c}"/>
+                    <apex:column value="{!unRelAccList.accnt.BillingStreet}"/>
+                    <apex:column value="{!unRelAccList.accnt.BillingCity}"/>
+                    <apex:column value="{!unRelAccList.accnt.BillingState}"/>
+                    <apex:column value="{!unRelAccList.accnt.BillingCountry}"/>
+                    <apex:column value="{!unRelAccList.accnt.BillingPostalCode}"/>
+                </apex:pageBlockTable>
+                <apex:outputText value="No Records found." rendered="{!UCRecordsFound}" /> 
+            <apex:outputPanel rendered="{!!UCRecordsFound}"> 
+                    <apex:panelGrid columns="3" id="pagenationButtons" width="100%">
+                        <apex:panelGrid columns="3">
+                            <apex:outputText value="Records per page" />
+                            <apex:selectList value="{!RecPerPageUC}" size="1">
+                               <apex:selectOptions value="{!RecPerPageOption}" />
+                               <apex:actionSupport event="onchange" action="{!BuildQuery}" reRender="UCSection" status="loadingimageUC" />
+                            </apex:selectList>   
+                        </apex:panelGrid>                                        
+                        <apex:outputPanel >
+                            <apex:panelGrid columns="4"> 
+                                <apex:panelGrid > 
+                                    <apex:commandLink title="First" value="◄◄" action="{!setConUC.first}" rendered="{!setConUC.hasPrevious}" status="loadingimageUC" reRender="UCSection" style="text-decoration:none"/>
+                                    <apex:outputtext value="◄◄" rendered="{!!setConUC.hasPrevious}" style="font-style:italic;color:grey" />                   
+                                </apex:panelGrid>  
+                                <apex:panelGrid > 
+                                     <apex:commandLink title="Previous" value="◄ Previous"  action="{!setConUC.previous}" rendered="{!setConUC.hasPrevious}" status="loadingimageUC" reRender="UCSection" style="text-decoration:none"/>
+                                     <apex:outputtext value="◄ Previous" rendered="{!!setConUC.hasPrevious}" style="font-style:italic;color:grey" />
+                                </apex:panelGrid>                      
+                                <apex:panelGrid >
+                                    <apex:commandLink title="Next" value="Next ►"  action="{!setConUC.next}"  rendered="{!setConUC.hasNext}" status="loadingimageUC" reRender="UCSection" style="text-decoration:none"/>
+                                    <apex:outputtext value="Next ►" rendered="{!!setConUC.hasNext}" style="font-style:italic;color:grey" /> 
+                                </apex:panelGrid> 
+                                <apex:panelGrid >
+                                    <apex:commandLink title="Last" value="►►"  action="{!setConUC.last}"  rendered="{!setConUC.hasNext}" status="loadingimageUC" reRender="UCSection" style="text-decoration:none"/>
+                                    <apex:outputtext value="►►" rendered="{!!setConUC.hasNext}" style="font-style:italic;color:grey" />  
+                                </apex:panelGrid> 
+                            </apex:panelGrid> 
+                        </apex:outputPanel> 
+                        <apex:panelGrid columns="2">
+                            <apex:outputText >{!(setConUC.pageNumber * RecPerPageUC)+1- RecPerPageUC}-{!IF((setConUC.pageNumber * RecPerPageUC)>noUCRecords, noUCRecords,
+                                (setConUC.pageNumber * RecPerPageUC))} of {!noUCRecords}
+                            </apex:outputText> 
+                        </apex:panelGrid>
+                    </apex:panelGrid>                                               
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons location="bottom" rendered="{!!showRelatedCompanies}">
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockButtons location="bottom" rendered="{!showRelatedCompanies}">
+                <apex:commandButton value="Add" action="{!insertRelatedCompanies}" Rendered="{!!AND(UCRecordsFound,emptyUCsection)}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            
+        </apex:pageblock>
+    </apex:form>
+    <script type="text/javascript">
+        function checkAll(cb,section){
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf(section)!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+            BuildQuery();
+        }
+    </script>
+</apex:page>

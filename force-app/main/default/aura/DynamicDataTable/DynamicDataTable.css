@@ -1,0 +1,25 @@
+.THIS .columncsserr{
+    /*border-radius: 30px;
+    background: #20B2AA;
+    padding: 20px; 
+    width: 35px;
+    height:.1rem;*/
+    font-weight: bold;
+    text-align: centre;
+	color: red;
+}
+.THIS .columncss{
+    /*border-radius: 30px;
+    background: #20B2AA;
+    padding: 20px; 
+    width: 35px;
+    height:.1rem;*/
+    font-weight: bold;
+    text-align: centre;
+	color: green;
+}
+.THIS .slds-th__action .slds-th__action-button { display: none; }
+
+.THIS .slds-spinner_container {
+    position:fixed;
+}

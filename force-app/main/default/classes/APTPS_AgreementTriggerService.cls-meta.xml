@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>37.0</apiVersion>
+    <packageVersions>
+        <majorNumber>10</majorNumber>
+        <minorNumber>444</minorNumber>
+        <namespace>Apttus</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>2</majorNumber>
+        <minorNumber>29</minorNumber>
+        <namespace>Apttus_CMDSign</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>4</majorNumber>
+        <minorNumber>82</minorNumber>
+        <namespace>Apttus_DocuApi</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>7</majorNumber>
+        <minorNumber>48</minorNumber>
+        <namespace>Apttus_SRM</namespace>
+    </packageVersions>
+    <status>Active</status>
+</ApexClass>

@@ -1,0 +1,300 @@
+<apex:page standardstylesheets="false" showHeader="false" sidebar="false" controller="PRMWebtoLeadContr">
+    <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8"/>
+ <apex:slds />
+    <head>
+        <style>
+.intl-tel-input{
+    width: 100%;
+}
+    </style>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.telephonejs,'/build/css/intlTelInput.css')}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.telephonejs,'/build/css/demo.css')}" />
+    </head>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="{!URLFOR($Resource.telephonejs,'/build/js/intlTelInput-jquery.js')}" />
+    <script src="{!URLFOR($Resource.telephonejs,'/build/js/intlTelInput.js')}" />
+    <script>
+    window.onload=function(){
+    	document.getElementById("returnURL").value=returnURL;
+    }
+    function timestamp() {
+        var response = document.getElementById("g-recaptcha-response"); 
+        var captcha_settings = document.getElementsByName("captcha_settings")[0].value;
+        if ("" !=captcha_settings && captcha_settings!==null && (response == null || response.value.trim() == "") ){
+            var elems = JSON.parse(captcha_settings);
+            elems["ts"] = JSON.stringify(new Date().getTime());
+            document.getElementsByName("captcha_settings")[0].value = JSON.stringify(elems);
+             }
+    } 
+    setInterval(timestamp, 500);
+    function enableButton() {
+            document.getElementById('submit').disabled = false;
+        }
+    </script>
+    
+    <form id="webToLead" action="{!webtoLeadUrl}" method="POST" target="_top">
+        <div class="slds-form slds-scope slds-form_stacked">
+           
+            <input type="hidden" id="captchaSetting" name='captcha_settings' value='{"keyname":"DomesticEOI","fallback":"true","orgId":"dynamicOrgId","ts":""}'/>     
+           <!-- <input type="hidden" id="orgId" name="oid" value=""/>
+            <input type="hidden" id="recordTypeId" name="recordType" value="{!recordTypeId}"/>
+            <input type="hidden" name="lead_source" value="Telstra.com EoI"/> -->
+            <input type="hidden" id="returnURL" name="retURL" value="{!ThankyouUrl}"/>
+            <!--  ----------------------------------------------------------------------  -->
+            <!--  NOTE: These fields are optional debugging elements. Please uncomment    -->
+            <!--  these lines if you wish to test in debug mode.                          -->
+            <!-- <input type="hidden" name="debug" value="1"/>                         
+             <input type="hidden" name="debugEmail" value="girishchandra.pauriyal@team.telstra.com"/>  -->                           
+            <!--  ----------------------------------------------------------------------  -->
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="first_name">
+                    First Name
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <input class="slds-input" id="first_name" maxlength="40" name="first_name" size="20" type="text" required="true" />
+                    <br/>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="last_name">
+                    Last Name
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <input class="slds-input" id="last_name" maxlength="80" name="last_name" size="20" type="text" required="true" />
+                    <br/>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="company">
+                    Company Name
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <input class="slds-input" id="company" maxlength="40" name="company" size="20" type="text" required="true" />
+                    <br/>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="email">
+                    Email Address
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <input class="slds-input" id="email" maxlength="80" name="email" size="20" type="email" required="true" />
+                    <br/>
+                </div>
+            </div>
+            
+            <div class="phone slds-form-element">
+                Phone Number
+                <label class="slds-form-element__label" for="phone"></label>
+                <div class="slds-form-element__control">
+                    <input class="slds-input" id="phone" maxlength="40" name="phone2" size="20" type="tel" required="true" />
+                    <input class="slds-input" id="phone2" type="hidden" maxlength="40" name="phone" size="20" required="true" />
+                    <div class="hide slds-hide slds-has-error slds-form-element__help" id="error-msg">Please provide valid phone number</div>
+                    <span id="valid-msg" class="hide slds-hide">? Valid</span>
+                    <input id="full_number" type='hidden' class="hide slds-hide"></input>
+<!--                         <span id="error-msg" class="hide"></span>
+ -->                    <br/>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="Preferred_Contact_Method__c" required="true">
+                    Preferred Contact Method
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select class="slds-select" maxlength="40" id="Preferred_Contact_Method__c" name="Preferred_Contact_Method__c" title="Preferred Contact Method" required="true">
+                            <option value="">--Select--</option>
+                            <option value="Phone">Phone</option>
+                            <option value="Email">Email</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="Office_Locations__c" required="true">
+                    Location of your offices
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select class="slds-select" id="Office_Locations__c" multiple="multiple" name="Office_Locations__c" title="Office Locations" required="true">
+                            <option value="">--Select all that apply--</option>
+                            <option value="NSW">NSW</option>
+                            <option value="QLD">QLD</option>
+                            <option value="VIC">VIC</option>
+                            <option value="SA">SA</option>
+                            <option value="WA">WA</option>
+                            <option value="NT">NT</option>
+                            <option value="ACT">ACT</option>
+                            <option value="TAS">TAS</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <br/>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="Customer_Segment__c" required="true">
+                    Type of customers you sell to
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select class="slds-select" id="Customer_Segment__c" multiple="multiple" name="Customer_Segment__c" title="Customer Segment" required="true">
+                            <option value="">--Select all that apply--</option>
+                           <!-- <option value="Consumer">Consumer</option>
+                            <option value="Small Business">Small Business</option>-->
+                            <option value="Enterprise">Enterprise</option>
+                            <option value="Global">Global</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <br/>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="Has_Telstra_Agreement__c" required="true">
+                    Do you have any current agreements with Telstra and/or relevant dealer codes
+                    <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select class="slds-select" maxlength="40" id="Has_Telstra_Agreement__c" name="Has_Telstra_Agreement__c" title="Has Telstra Agreement" required="true">
+                            <option value="">--Select--</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="Lead_Description__c">
+                    Please tell us more about your business. What are you looking for in a partnership with Telstra?
+                </label>
+                <div class="slds-form-element__control">
+                    <textarea class="slds-textarea" name="Lead_Description__c" rows="3" maxlength="255"></textarea>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                Other comments
+                <label class="slds-form-element__label" for="Comments__c"></label>
+                <div class="slds-form-element__control">
+                    <textarea class="slds-textarea" name="Comments__c" maxlength="255"></textarea>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <p class="slds-text-body_regular">The information you provide will be treated in accordance with our Privacy Statement. Please read our
+                    <a href="https://www.telstra.com.au/privacy/privacy-statement" target="_blank">Privacy Statement</a> before submitting this form.</p>
+            </div>
+            <div class="slds-form-element"> 
+                <div id="siteKey" class="g-recaptcha" data-sitekey="6Led_lgUAAAAAPKKcSrEmA0NNdQ9VzencIrbUZuy" data-callback="enableButton"></div>
+                 <button type="button" id="submit" name="submit" onclick="CallToWebToLead();">Submit</button><!-- class="slds-button_brand"-->
+            </div>
+        </div>
+    </form>
+    <script>
+    var isValidNumber=false;
+    // here, the index maps to the error code returned from getValidationError - see readme
+    $(document).ready(function() {
+        var errorMsg = document.querySelector("#error-msg");
+        var validMsg = document.querySelector("#valid-msg");
+        var input = document.querySelector("#phone");
+        var errorMap = ["Please provide valid phone number", "Invalid country code", "Phone number too short", "Phone number too long", "Please provide valid phone number"];
+        // initialise plugin
+        var iti = window.intlTelInput(input, {
+            // dropdownContainer: 'body',
+            // scrollListener: '.input-container',
+            utilsScript: "{!URLFOR($Resource.telephonejs,'/build/js/utils.js')}",
+            separateDialCode: true,
+            placeholderNumberType: "MOBILE",
+            formatOnDisplay: true,
+                    initialCountry: "auto",
+       hiddenInput: "full_number",
+    
+            geoIpLookup: function(callback) {
+                $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                    var countryCode = (resp && resp.country) ? resp.country : "";
+                    callback(countryCode);
+                    console.log(resp);
+                });
+            },
+        });
+        var reset = function() {
+            input.classList.remove("error");
+            errorMsg.innerHTML = "";
+            errorMsg.classList.add("hide");
+            errorMsg.classList.add("slds-hide");
+            validMsg.classList.add("hide");
+            validMsg.classList.add("slds-hide");
+            document.querySelector('.phone').classList.remove('slds-has-error');
+        };
+        // on blur: validate
+        input.addEventListener('blur', function() {
+            reset();
+            if (input.value.trim()) {
+                console.log(iti.isValidNumber);
+                if (iti.isValidNumber()) {
+                    isValidNumber=true;
+                    console.log(iti.getNumber());
+                    $('#phone2').val(iti.getNumber());
+                   // validMsg.classList.remove("hide");
+                    //validMsg.classList.remove("slds-hide");
+                    document.querySelector('.phone').classList.remove('slds-has-error');
+                } else {
+                    isValidNumber=false;
+                    input.classList.add("error");
+                    document.querySelector('.phone').classList.add('slds-has-error');
+                    var errorCode = iti.getValidationError();
+                    console.log(errorCode);
+                    errorMsg.innerHTML = errorMap[errorCode];
+                    errorMsg.classList.remove("hide");
+                    errorMsg.classList.remove("slds-hide");
+                }
+            }
+        });
+        // on keyup / change flag: reset
+        input.addEventListener('change', reset);
+        input.addEventListener('keyup', reset);
+    });
+ 	function CallToWebToLead(){
+        console.log('calling.');
+         var form = $('#webToLead'); 
+         var vparams = form.serialize();  
+         console.log('vparams ====>'+vparams);
+         var a;
+        Visualforce.remoting.Manager.invokeAction(            
+            '{!$RemoteAction.PRMWebtoLeadContr.CallWebToLead}',
+            vparams,            
+            function(result, event){
+                console.log('status ===>'+event.status);
+                console.log(result);
+               if(event.status){                  
+                  window.top.parent.location= result;
+               }else{
+               	 
+               }
+            },
+            {escape: true}
+        );
+     }
+    </script>
+    <!-- End Default Content REMOVE THIS -->
+</apex:page>

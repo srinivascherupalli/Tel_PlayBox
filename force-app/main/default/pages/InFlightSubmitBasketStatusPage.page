@@ -1,0 +1,39 @@
+<!-- 
+* @Author : Kamlesh Kumar
+* @Date : 17 Feb 2021
+*@Edge : 199074
+-->
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning /> 
+    <div  id="LightningComponentid" />    
+    <script>
+    var recordUrl = "{!JSENCODE($CurrentPage.parameters.recordUrl)}";
+    var basketId = "{!JSENCODE($CurrentPage.parameters.basketIds)}";
+    var lastSuccessState = "{!JSENCODE($CurrentPage.parameters.lastSuccessState)}";
+    var basketName = "{!JSENCODE($CurrentPage.parameters.baskeName)}";
+    $Lightning.use("c:SubmitBasketStatusApp", function() {
+        $Lightning.createComponent("c:submitBasketStatusLWC",
+          { 
+            'basketId' : basketId,
+            'basketName' : basketName,
+            'lastSuccessState' : lastSuccessState,
+            'timeTable' : [{ Name: 'OLIs Creation', Id: 'OLIs Creation'},{ Name: 'Opportunity Closure', Id: 'Opportunity Closure'},{ Name: 'Fund Reversal', Id: 'Fund Reversal'},{ Name: 'Order Update And Basket Submission', Id: 'Order Update And Basket Submission'}]
+          },
+          "LightningComponentid",
+          function(cmp) {
+          });
+    });
+    
+    document.addEventListener("closesignal", function(event){
+    if(event.detail.data == 'navigateToRecord') {
+       console.log('navigating to order page');
+       window.top.location.href = recordUrl;
+    }
+    
+    else if(event.detail.data == 'close') {
+        console.log('closing popup');
+        window.parent.postMessage('closeModals', '*');
+    }
+});
+    </script>
+</apex:page>

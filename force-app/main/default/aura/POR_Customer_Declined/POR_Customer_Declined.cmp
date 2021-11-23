@@ -1,0 +1,25 @@
+<aura:component controller="PORCustomerdeclineController"  implements="force:appHostable,force:hasSObjectName,force:LightningQuickAction,force:hasRecordId" access="global">
+    	<aura:handler name="init" value="{! this }" action="{! c.doinit }"/>
+     <aura:attribute name="displaymsg" type="Boolean" default="false" />
+    <aura:attribute name="invalidstatus" type="Boolean" default="false"/>
+    <aura:attribute name="validstatus" type="Boolean" default="true"/>
+    <aura:if isTrue="{!v.displaymsg}">
+        
+        <div class="slds-text-heading_medium slds-theme_shade">
+            <b>This customer is not restricted, Partner of Record agreement will be sent to the customer via DocuSign.</b>
+        </div> 
+     </aura:if>
+    <aura:if isTrue="{!v.invalidstatus}">
+        
+        <div class="slds-text-heading_medium slds-theme_shade">
+ 			<b>Agreement status must be customer review and customer must be docusign restricted to use manual signature process.</b>
+        </div> 
+    </aura:if>
+    <aura:if isTrue="{!v.validstatus}">
+    <div class="slds-card__header slds-grid">
+            Do you want to change status to customer Declined 
+        </div>
+    <lightning:button variant="brand" label="Confirm" title="Brand action" onclick="{!c.changestatus}" />
+    </aura:if>
+	
+</aura:component>

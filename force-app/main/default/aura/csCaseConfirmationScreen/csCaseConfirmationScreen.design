@@ -1,0 +1,11 @@
+<design:component>
+    <design:attribute name="caseNumber" label="caseNumber" />
+    <design:attribute name="caseCategory" label="caseCategory" />
+    <design:attribute name="caseSubCategory" label="caseSubCategory"/>
+    <design:attribute name="linkedCases" label="linkedCases" />
+    <design:attribute name="caseRecordId" label="caseRecordId"/>	
+    <design:attribute name="accountId" label="accountId"/>
+    <design:attribute name="showClickHereLink" label="showClickHereLink"/>
+    <design:attribute name="relatedOpportunityId" label="relatedOpportunityId"/>
+    <design:attribute name="relatedOpportunityNumber" label="relatedOpportunityNumber"/>    
+</design:component>

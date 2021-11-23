@@ -1,0 +1,39 @@
+<aura:component controller="soc_AssignCaseToQueue"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >
+    <aura:attribute name="recordId" type="String" access="global" />
+    <aura:attribute name="errorMessage" type="String" access="global" />
+    <aura:attribute name="showSpinner" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="visible" type="Boolean" access="global" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="isDisabled" type="Boolean" default="false" />
+    
+   
+   
+ 	<aura:if isTrue="{!v.showSpinner}" >
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="large" />
+        </div> 
+    </aura:if>
+    
+    <aura:if isTrue="{!v.visible}">
+        <!-- START Added by Kritika for EDGE-76313 :: 27 March 2019-->
+         <div class="slds-float_left">
+         <c:soc_CancelCase recordId="{!v.recordId}"/>
+    </div>
+         <!-- END-->
+        <div class="slds-clearfix">
+  <div class="slds-clearfix">
+    <div class="slds-float_right">
+      <lightning:button label="Submit Request"                              
+                          iconName="action:change_owner" 
+                          iconPosition="left"
+                          title="Submit Request" 
+                          variant="normal"
+                          onclick="{!c.assignToQueue }" />
+    </div>
+  </div>
+</div>
+    	
+    </aura:if>    
+</aura:component>

@@ -1,0 +1,80 @@
+<!--created as part of EDGE-185011-->
+<template>
+	<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large" style="padding:5px;">
+        <div class="slds-modal__container" style="padding:5px;">
+			<header class="slds-modal__header">
+                <h4 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="color: #7d7d7d; text-align: center; font-size:small; font-weight:bold">
+                    <span>
+                        Reactivate Service
+                    </span>
+                </h4>
+			</header> 
+			<span class="slds-float_left" style="color: #7d7d7d;">{displayMSg}</span><br/>
+			<div class="slds-float_left">
+				<input class="slds-input slds-float_left" type="search" onchange={filterData}  placeholder="Search by Service Number or Subscription Number" style="width:350px; text-align:left"></input>
+				<lightning-button label="Expand All"
+				title="Expand All" 
+				onclick={handleExpandAll} 
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+				<lightning-button label="Collapse All" 
+				title="Collapse All" 
+				onclick={handleCollapseAll} 
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+			</div><br/>
+			<div class="slds-modal__content slds-p-around_medium slds-p-top_x-small" id="modal-content-id-1"  style="padding:0px;">				
+				<div class="slds-float_left" style="border-style: ridge;border-width: thin;">
+					<span class="slds-float_left">Deactivated Services: {selectedRowsCount} of {totalCount} selected</span><br/>
+					<div class="slds-scrollable" style="display: block;overflow-x:scroll">
+						<lightning-tree-grid 
+						class="reactivateService-treegrid"
+						columns = {gridColumns}
+						data = {gridData}
+						key-field = "serviceNumber" 
+						selected-rows={finalselection}
+						onrowselection ={handleRowSelection}
+						>
+						</lightning-tree-grid>
+					</div>
+				</div> 
+			</div>
+			<footer class="slds-modal__footer">
+				<span class="slds-float_left">{pagenumber} of total {totalpages} pages</span>
+				<lightning-button label="Last" 
+				title="Last" 
+				disabled={lastBool}
+				variant="brand"
+				onclick={goLast} 
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+				<lightning-button label="Next" 
+				title="Next" 
+				disabled={nextBool}
+				variant="brand"
+				onclick={goNext} 
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+				<lightning-button label="Previous" 
+				title="Previous" 
+				disabled={prevBool}
+				variant="brand"
+				onclick={goPrevious} 			
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+				<lightning-button label="First" 
+				title="First" 
+				disabled={frstBool}
+				variant="brand"
+				onclick={goFirst} 
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+				<br/><br/>
+				<lightning-button label="Save" 
+				title="Save" 
+				disabled={disabledSave}
+				onclick={handlesave} 
+				variant="brand"
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+				<lightning-button label="Cancel" 
+				title="Finish" 
+				onclick={handleCancel} 
+				class="slds-m-left_x-small slds-float_right"></lightning-button>
+			</footer>
+        </div>
+    </section>
+</template>

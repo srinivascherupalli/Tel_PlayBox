@@ -1,0 +1,6 @@
+<design:component>
+	<design:attribute name="childRelationship" label="Child Relationship" />
+    <design:attribute name="parentField" label="Parent Field" />
+    <design:attribute name="FieldsToBeDisplayed" label="Fields To Be Displayed" />
+    <design:attribute name="size" label="Size" />
+</design:component>

@@ -1,0 +1,47 @@
+<!--
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description
+1.        Shubhi Vijayvergia  21/3/2018     Edge-53882 MAC page for Sim Replacement action in addition to modify and cancel.
+                       				this Component  is for custom lookup result display for delivery contact and address for sim replacement
+===============================================================================================================================
+
+--><aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global">
+    <!-- This Component is create as Part of US EDGE-63041 -> To fetch contact role from Account-->
+	<aura:attribute name="oRecord" type="sObject" />
+    <aura:attribute name="IconName" type="string"/> 
+    <aura:attribute name="isAddress" type="boolean" default="false"/>
+	<aura:attribute name="isContact" type="boolean" default="false"/> 
+ 
+  <!--Register the component level event-->
+    <aura:registerEvent name="oSelectedRecordEvent" type="c:selectedsObjectRecordEvent"/>
+    <aura:if isTrue="{!v.isContact}">
+        <li role="presentation" class="slds-listbox__item" onclick="{!c.selectRecord}">
+        <span id="listbox-option-unique-id-01" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta " role="option" >
+            <span class="slds-media__figure">
+                <span class="slds-icon_container" title="Description of icon when needed">
+                    <lightning:icon iconName="standard:account" class="slds-icon slds-icon_small" size="small" alternativeText="icon"/>
+                    <span class="slds-assistive-text">Description of icon</span>
+                </span>
+            </span>
+            <span class=" slds-col slds-grid slds-grid_align-spread "> 
+                <span >{!v.oRecord.Contact_Name__c}</span>
+            </span>         
+        </span>  
+    </li>
+    </aura:if>
+    <aura:if isTrue="{!v.isAddress}">
+        <li role="presentation" class="slds-listbox__item" onclick="{!c.selectRecord}">
+            <span id="listbox-option-unique-id-01" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta " role="option" >
+                <span class="slds-media__figure">
+                    <span class="slds-icon_container" title="Description of icon when needed">
+                        <lightning:icon iconName="standard:account" class="slds-icon slds-icon_small" size="small" alternativeText="icon"/>
+                        <span class="slds-assistive-text">Description of icon</span>
+                    </span>
+                </span>
+                <span class=" slds-col slds-grid slds-grid_align-spread "> 
+                    <span >{!v.oRecord.Name}</span>             
+                </span>            
+            </span>  
+        </li>
+    </aura:if>
+</aura:component>

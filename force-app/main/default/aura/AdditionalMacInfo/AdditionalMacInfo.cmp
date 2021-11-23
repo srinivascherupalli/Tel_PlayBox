@@ -1,0 +1,60 @@
+<aura:component controller="CancellationReasonController" implements="flexipage:availableForAllPageTypes">
+    <!-- This Component is create as Part of US EDGE-64341 -> To Show Pop up for capturing 
+		Modification Requester for Modify Order	 		-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="opportunityId" type="Id" />
+	<aura:attribute name="accountId" type="Id" />
+    <aura:attribute name="redirectToBasket" type="Boolean" default="true"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="objContact" type="contact" default="{'sobjectType':'contact'}"/>
+    <aura:attribute name="showSpinner1" type="boolean" default="false"/>
+    <aura:registerEvent name="modifyReasonUpdated" type="c:modifyReasonUpdate"/>
+    <aura:attribute name="isError1" type="boolean" default="false" />
+    <aura:attribute name="showToolTipBoolean" type="boolean" default="false" />
+    <aura:attribute name="acc1" type="Account"/>
+    <aura:attribute name="roleError1" type="boolean" default="false" />
+    <!--lightning:spinner class="slds-hide" variant="brand" size="medium" aura:id="mySpinner"/-->
+    <aura:if isTrue="{!v.showSpinner1}">
+    	<div class="slds-spinner_container">
+        	<lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+    	</div>
+	</aura:if>
+    <div aura:id="MainDiv" >
+        <aura:if isTrue="{!v.isError1}">
+            <c:customToast type="error" message="{!$Label.c.Modification_Requester}" title="Modification Requestor is mandatory" />
+        </aura:if>
+        <aura:if isTrue="{!v.roleError1}">
+            <c:customToast type="error" message="{!$Label.c.User_Not_Authorized}" title="User Not Authorized" />
+        </aura:if>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open overriden-modal">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Modification Request Details</h2>
+                    <!--p class="slds-m-top_x-small">{!$Label.c.Cancel_Reason_MAC_Statement}</p-->
+                </header>
+                <div style="background:white" class="slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:recordEditForm aura:id="editForm"
+                                              recordId="{!v.opportunityId}"
+                                              objectApiName="Opportunity"
+                                              onsuccess="{!c.onSuccess}"
+                                              onerror="{!c.onError}">
+                        <!--lightning:messages /-->
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+						<div class="slds-truncate .slds-align_absolute-center ">Modification Requestor*  <lightning:helptext content="Select the contact who requested and to approve this order. Only contacts with a ‘Legal Lessee’ or ‘Full Authority’ role on this Account are available for selection."/>
+                                 </div>
+                                <c:customContactRoleLookup objectAPIName="{!v.accountId}" selectedRecord="{!v.selectedLookUpRecord}" />
+                         </div>
+                     </div>
+                    </lightning:recordEditForm>
+                </div>
+                <footer class="slds-modal__footer">
+                    <!--<lightning:button label="Cancel" iconName="utility:undo" iconPosition="left" onclick="{! c.onCancel }"/> -->
+                    <lightning:button aura:id="submit" label="{!$Label.c.MAC_Update}" iconPosition="left"  variant="brand" onclick="{! c.onSave }"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open overriden-backdrop"></div>
+    </div>
+</aura:component>

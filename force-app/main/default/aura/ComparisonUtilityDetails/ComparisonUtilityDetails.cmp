@@ -1,0 +1,29 @@
+<aura:component controller="CompUtilityReplicatorManager" implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    <aura:attribute name="oldConfigId" type="String" access="global"/>
+    <aura:attribute name="adborid" type="String" access="global"/>
+    <aura:attribute name="siteName" type="String" access="global"/>
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global"/>
+    <aura:attribute name="sitesMap" type="Map" />
+    <aura:attribute name="basketId" type="String" access="global"/>
+    <aura:attribute name="selectedProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlyProd" type="String[]" access="global"/>
+    <aura:attribute name="readOnlySelectedProd" type="String[]" access="global"/>
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" access="global"/>
+    <aura:registerEvent name="getTabName" type="c:CompUtilityGetTab"/>
+    <aura:handler event="c:GetServicesEvent" action="{!c.handleGetServicesEvent}"/> 
+    <div class="slds slds-grid" style="width:100%;padding-right:0px;padding-left:0px;">
+        <div class="slds-col slds-size_1-of-4 tab-background-color tab-padding" onclick="{!c.displayGetService}">
+            <center><span>Legacy Services</span></center>
+        </div>
+        <div class="slds-col slds-size_1-of-4 tab-background-color tab-padding" onclick="{!c.displayExistSub}">
+            <center><span>Existing Subscription</span></center>
+        </div>
+        <div class="slds-col slds-size_2-of-4 tab-background-color">
+            
+        </div>
+    </div>
+    <div>
+        <c:CompUtilityExistingSubscription oldConfigId="{!v.oldConfigId}" aura:id="GetExistingSubscription"/>
+        <c:CompUtilityGetServices sites="{!v.sites}" sitesMap="{!v.sitesMap}" basketId="{!v.basketId}" selectedProd="{!v.selectedProd}" readOnlyProd="{!v.readOnlyProd}" readOnlySelectedProd="{!v.readOnlySelectedProd}" ProdBasket="{!v.ProdBasket}" adborid="{!v.adborid}" siteName="{!v.siteName}" aura:id="GetServiceComp"/>
+    </div>
+</aura:component>

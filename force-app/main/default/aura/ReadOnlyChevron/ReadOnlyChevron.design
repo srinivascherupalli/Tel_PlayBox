@@ -1,0 +1,4 @@
+<design:component >
+	<design:attribute name="fieldName" label="API Name of  Field" 
+                      description="API Name of the field for which Chevron needs to be displayed" />
+</design:component>

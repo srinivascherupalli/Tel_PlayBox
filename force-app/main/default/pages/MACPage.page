@@ -1,0 +1,93 @@
+<apex:page standardController="Account" showHeader="false" sidebar="false">
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <apex:slds />
+     <script>
+        var renderCancelButton = Boolean('{!JSENCODE(IF($Setup.Environment_Configurations__c.Show_MAC_Cancel_Button__c,"true", "false"))}');
+        var basketId = "{! JSENCODE($CurrentPage.parameters.basketID) }";
+        var accountId = "{! JSENCODE($CurrentPage.parameters.accountID) }";
+        var isActivePOR = "{! JSENCODE($CurrentPage.parameters.isActivePOR) }";//EDGE-151597
+        var userTheme="{!$User.UITheme}";
+        var currProfileName = "{!$Profile.Name}";
+        
+        console.log("accountId:" + accountId);
+        console.log("basketId:" + basketId);
+        console.log("renderCancelButton:" + renderCancelButton);
+        if (!accountId && !basketId){
+            accountId = "{! JSENCODE($CurrentPage.parameters.id) }";
+            console.log("FallbackId => accountId:" + accountId);
+        }
+        if(!isActivePOR){
+            isActivePOR = 'Inactive';
+        }
+        
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+            $Lightning.createComponent(
+                "c:ShowSubscriptionsOnMACButton",
+                {"basketId": basketId,
+                 "accountId": accountId,
+                 "loggedinUserProfilename": currProfileName,
+                 "isActivePOR": isActivePOR,
+                 "renderCancelButton": renderCancelButton },
+                "sub",
+                function(cmp) {
+                    console.log("Component created!");
+                    console.log(cmp);
+                    
+                    $A.eventService.addHandler({
+                      event: 'force:navigateToSObject',
+                      handler: function(event) {
+                        console.log('vfp event: ' + event.getParam("recordId"));
+                        console.log('theme'+userTheme);
+                        /*if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+                            // Salesforce app navigation
+                            console.log('inside sf1'));
+                            sforce.one.navigateToSObject(event.getParam("recordId"));
+                        }
+                        else {
+                            // Set the window's URL using a Visualforce expression
+                            console.log('vfp event: ' + event.getParam("recordId"));
+                            let recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }*/
+                        if(userTheme =='Theme4t' ){
+                            // Salesforce app navigation
+                            console.log('inside sf1');
+                            sforce.one.navigateToSObject(event.getParam("recordId"));
+                        }
+                        else if(userTheme =='Theme3' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside prm');
+                            var recordId = event.getParam("recordId");
+                            var url='';
+                            url=JSON.stringify(window.location.href);
+                            //Added Part of defect EDGE-173603 to handle PROD URL format
+                            if(url.includes('partners.enterprise.telstra.com.au')){
+                                 window.top.location.href = '/' + recordId;
+                             }
+                           else if(url.includes('/partners/')){
+                               window.top.location.href = '/partners/' + recordId;
+                             }
+                            else{
+                                window.top.location.href = '/' + recordId;
+                                }
+                        }
+                        else if(userTheme =='Theme4d' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside lightning');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }else{
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside classic');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }
+                        
+                      }
+                    });
+                });
+            });
+    </script>
+    <div id="sub"></div>
+
+</apex:page>

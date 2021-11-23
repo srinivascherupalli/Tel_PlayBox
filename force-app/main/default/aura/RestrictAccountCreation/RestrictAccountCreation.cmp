@@ -1,0 +1,10 @@
+<!--*****************************************************************************
+@Name: RestrictAccountCreation.cmp
+@Author: Sri
+@CreateDate: 08/01/2019
+@Description: P2OB-4278. This component is used for restrict Users to create accounts in Phoenix directly.
+@LastModified:
+*******************************************************************************-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:actionOverride" access="global" controller="RestrictAccountCreationController" >
+    <aura:handler name="init" value="{!this }" action="{!c.init }"/>
+</aura:component>

@@ -1,0 +1,547 @@
+<!--********************************************************************
+    EDGE        : 119320,114435,114434
+    Component   : Configure Discount
+    Description : Configure Discount based on Selected Offer
+    Author      : T Badri Narayan Subudhi
+    Last Modified by : Aditya for:EDGE-128406: Update Deal Management UI to restrict MRO checkbox
+    *********************************************************************--> 
+
+<aura:component access="global" controller="DelegatedPricingController" implements="force:appHostable,flexipage:availableForAllPageTypes">
+    <aura:method name="callPlanFromParent" action="{!c.callPlan}" access="public">
+    </aura:method>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <!--EDGE:118624 - To show plan level Gbb Scale-->
+    <aura:attribute type="Boolean" name="showScale"/>
+    <!--EDGE:118624 - To show GbbReportDetails on i button click-->
+    <aura:attribute type="List" name="DprGBBReportDetails"/>
+    <aura:attribute name="rowIndex" type="String"/>
+    <aura:attribute name="DPROfferLineItemWrapper" type="DelegatedPricingController.PlanAndDiscountWrapper"/>
+    <aura:attribute name="DprOfferId" type="String"/>
+    <aura:attribute type="Boolean" name="showMRO"  />
+    <aura:attribute name="hardwareOpt" type="String" />
+    <aura:attribute name="SelectedProduct" type="String" />
+    <aura:attribute name="OfferType" type="String" />
+    <aura:attribute name="getcommitteddata" type="String" />
+    <aura:attribute name="Selectedcommitteddata" type="String" />
+    <aura:attribute name="PlanTypeData" type="List" />
+    <aura:attribute name="Plan" type="List" />
+    <aura:attribute name="addOnValues" type="List" />
+    <aura:attribute type="Boolean" name="showDiscountSection" default="false" />
+    <aura:attribute name="addOnPicklistValues" type="List"/>
+    <aura:attribute name="showAddOn" type="boolean" default="false"/>
+    <aura:attribute name="ShowSelectAddOn" type="boolean" default="false" />
+    <aura:attribute name="addonselected" type="Boolean" default="true"/>
+    <aura:attribute type="String" name="IDDMin"/>
+    <aura:attribute type="String" name="IDDMax"/>
+    <aura:attribute type="String" name="helpTxtIDD"/>
+    <aura:attribute name="IncrementValue" type="String"/>
+    <aura:attribute name="discountValues" type="List"/>
+    <aura:attribute type="Boolean" name="showDiscountFields" />
+    <aura:attribute name="idToFetchMROAmt" type="String" />
+    <aura:attribute type="String" name="MMCId" />
+    <aura:attribute type="String" name="ReconId" />
+    <aura:attribute type="Boolean" name="showMMCField" />
+    <aura:attribute type="Boolean" name="showReconField" />
+    <aura:attribute type="String" name="ActivId" />
+    <aura:attribute type="Boolean" name="showActivField" />
+    <aura:attribute type="String" name="IDDId" />
+    <aura:attribute type="Boolean" name="showPicklistField"  />
+    <aura:attribute type="Boolean" name="picklistFieldarray"  />
+    <aura:attribute type="Boolean" name="ShowPlan" default="true"/>
+    <aura:attribute name="discountSet" type="Array" />
+    <aura:attribute type="Boolean" name="showIDDCPDiscount"  />
+    <aura:attribute name="discountArray1" type="Array" />
+    <aura:attribute name="discountArray2" type="Array" />
+    <aura:attribute name="discountArray3" type="Array" />
+    <aura:attribute name="MroBnCredAmt" type="String" />
+    <aura:attribute type="String" name="MMCMin" />
+    <aura:attribute type="String" name="MMCMax" />
+    <aura:attribute type="String" name="helpTxtMMC" />
+    <aura:attribute type="String" name="ActivationMin" />
+    <aura:attribute type="String" name="ActivationMax" />
+    <aura:attribute type="String" name="ReconMin" />
+    <aura:attribute type="String" name="ReconMax" />
+    <aura:attribute type="String" name="helpTxtRecon" />
+    <aura:attribute type="String" name="helpTxtActiv" />
+    <aura:attribute type="Boolean" name="mroVal"  />
+    <!--Aditya Changes for:EDGE-128406: Update Deal Management UI to restrict MRO checkbox-->
+    <aura:attribute type="Boolean" name="mroCheckBoxHide"/>
+    <aura:attribute type="Boolean" name="ActivationSIo" default="true" />
+    <aura:attribute type="Boolean" name="mroCheckboxInput"/>
+    <aura:attribute type="Boolean" name="ShowGrossValue" default="true"/>
+    <aura:attribute type="Boolean" name="ShowNetValue" default="true"/>
+    <aura:attribute type="Boolean" name="PlanLevelGBB" default="false"/>
+    <!--EDGE-145558: variable to show IDD Charge -->
+    <aura:attribute type="Decimal" name="dataPlanCharge"/>
+ 
+    <!-- Register 2 Lightning Event for handle add or Delete rows on Parent Component  --> 
+    <aura:registerEvent name="DeleteRowEvt" type="c:DeleteRowEvt"/> 
+    <aura:registerEvent name="AddRowEvt" type="c:AddNewRowEvt"/> 
+    <aura:registerEvent name="handlelDublicatEvent" type="c:HandelDublicaeEvt"/>
+    <aura:registerEvent name="SaveButtonEnableDisable" type="c:DPSaveButtonEnableDisable"/> 
+    <aura:attribute type="Boolean" name="View" default="false"/>
+    <aura:attribute type="Boolean" name="Mode" default="false"/>
+    <aura:attribute name="mapOfPlanTypeVsOffer" type="Map" default="{}" />
+    <aura:attribute name="mapOfcmdPlanVsPtype" type="Map" default="{}" />
+    <aura:attribute name="mapOfAddOn" type="Map" default="{}" />
+    <aura:attribute name="mapOfMinMaxDiscountValues" type="Map" default="{}" />
+    <aura:attribute name="GBBScalePlanLevel" type="Boolean" default="False"/>
+    <aura:attribute name="DelegaionOutcomeButton" type="Boolean" default="False"/>
+    <aura:attribute name="directDial" type="String"/>
+    <aura:attribute type="Decimal" name="dataCharge"/>
+    
+    <!--Added by Rishabh start-->
+    <!--EDGE-118624: variable to show i button-->
+    <aura:attribute name="GBBScaleSmallShow" type="Boolean" default="false" />
+    <!--EDGE-118624: variable to show plan level gbb on i button pop up-->
+    <aura:attribute name="DPRPlan" type="Object" />
+    <!--EDGE-118371: variable to store correlation id to match the event response from MS-->
+    <aura:attribute name="CorrelationId" type="String"/>
+    <!--EDGE-118371: handler to call method to render plan level gbb when offer level gbb is rendered-->
+    <aura:handler event="c:PLanLevelGbbRender" action="{!c.handlePlanLevelGbbRender}"/>
+    <!--Added by Rishabh end-->
+    
+    <div  class="slds-theme_shade slds-border_top slds-m-top_xx-small slds-border_bottom slds-border_left slds-border_right slds-p-bottom_x-small">
+        <div class="slds-grid slds-gutters_xx-small slds-wrap slds-p-left_small">
+            <div class="slds-col slds-size_1-of-9">
+                <ul class="slds-list_horizontal"> 
+                    <li> <lightning:select disabled="{!v.View}" class="slds-truncate LabelColor FixedWidth" name="select1" label="Plan Type" aura:id="planType" value="{!v.DPROfferLineItemWrapper.PlanType}"  onchange="{!c.selectedPlanType}" required="true" >
+                        <aura:if isTrue ="{!v.DPROfferLineItemWrapper.PlanType == 'Select Plan Type'}">
+                        <option  value="{!v.DPROfferLineItemWrapper.PlanType}">{!v.DPROfferLineItemWrapper.PlanType}</option>
+                        </aura:if>
+                            <aura:iteration items="{!v.PlanTypeData}" var="item">
+                            <option value="{!item}" text="{!item}" />
+                        </aura:iteration>
+                        </lightning:select></li>
+                </ul> 
+            </div>
+            <aura:if isTrue="{!v.ShowPlan}">
+                <div class="slds-col slds-size_1-of-9">
+                    <lightning:select disabled="{!v.View}" class="slds-truncate LabelColor FixedWidth" name="select1" aura:id="Qplan" label="Plan" value="{!v.DPROfferLineItemWrapper.Qplan}" onchange="{!c.selectedPlan}" required="true" >
+                        <aura:if isTrue ="{!v.DPROfferLineItemWrapper.Qplan == 'Select Plan'}">
+                        <option  value="{!v.DPROfferLineItemWrapper.Qplan}">{!v.DPROfferLineItemWrapper.Qplan}</option>
+                        </aura:if>
+                            <aura:iteration items="{!v.Plan}" var="item">
+                            <option value="{!item}" text="{!item}" />
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+            </aura:if>
+            <div class="slds-col slds-size_1-of-9">
+                <lightning:input type="text"  class="LabelColor FixedWidthMMC" name="input1" aura:id="mmc"  label="MMC ($)" disabled="true" value="{!v.DPROfferLineItemWrapper.MMC}" />
+            </div>
+            <aura:if isTrue="{!v.ActivationSIo}">
+                <div class="slds-col slds-size_1-of-9">
+                    <ul class="slds-list_horizontal">
+                        <li><lightning:input  disabled="{!v.View}" type="number" aura:id="activ" style="width: 150px !important" class="LabelColor FixedWidth" onchange="{!c.ActivationSio}"
+                                             min="1" max="10000" name="input3" value="{!v.DPROfferLineItemWrapper.ActivatedSIOs}" label="Estimated Activated SIOs" placeholder="type here..." 
+                                             messageWhenRangeOverflow="Enter value from 1 to 10000" 
+                                             messageWhenRangeUnderflow="Enter value from 1 to 10000" 
+                                             messageWhenStepMismatch="Enter value from 1 to 10000"
+                                             />
+                        </li>
+                        <li><lightning:helptext title="Enter value from 1 to 10000."/></li>
+                    </ul>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!v.ActivationSIo}">
+                <div class="slds-col slds-size_1-of-9">
+                    <ul class="slds-list_horizontal">
+                        <li><lightning:input disabled="{!v.View}" type="number" aura:id="activ" style="width: 177px !important" class="LabelColor FixedWidth" onchange="{!c.ActivationSio}"
+                                             min="1" max="10000" name="input3"  label="Estimated Recontracting SIOs" placeholder="type here..."
+                                             messageWhenRangeOverflow="Enter value from 1 to 10000" 
+                                             messageWhenRangeUnderflow="Enter value from 1 to 10000" 
+                                             messageWhenStepMismatch="Enter value from 1 to 10000"
+                                             value="{!v.DPROfferLineItemWrapper.RecontractingSIOs}"
+                                             />
+                        </li>
+                        <li><lightning:helptext title="Enter value from 1 to 10000."/></li>
+                    </ul>
+                </div>
+            </aura:if>
+            <div class="slds-col slds-size_1-of-9">
+                <aura:if isTrue="{!v.showMRO}">
+                    <label class="slds-form-element__label LabelColor">MRO</label>
+                    <!--Aditya Changes for:EDGE-128406: Update Deal Management UI to restrict MRO checkbox-->
+                    <lightning:input type="checkbox" onchange="{!c.onCheck}" aura:id="mroCheckbox" checked="{!v.mroCheckboxInput}" disabled = "{!or(v.mroCheckBoxHide,v.View)}"/>
+                </aura:if> 
+            </div>
+            <div class="slds-col slds-size_1-of-9">
+                <div class="slds-m-top_large">
+                    <ul class="slds-list_horizontal">
+                        <li>
+                            <lightning:button disabled="{!v.View}" title="Add Plan" onclick="{!c.AddNewRow}" label="+" />
+                        </li>
+                        <li>&nbsp;&nbsp;&nbsp;</li>
+                        <li>
+                            <lightning:buttonIcon disabled="{!v.View}" variant="destructive" iconName="utility:delete"
+                                                  alternativeText="Delete Plan" size="x-medium" 
+                                                  onclick="{!c.removeRow}" iconClass="iconColor"/> 
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--EDGE-118371 : GBBScale Start-->
+            
+            <div class="slds-col slds-size_1-of-9">
+                <div class="slds-m-top_large">
+                    <aura:if isTrue="{!v.GBBScalePlanLevel}">
+                        <canvas aura:id="GBBScaleSmall" width="300" height="32"></canvas>
+                    </aura:if>
+                </div>
+            </div>
+            <!--EDGE-118371 : GBBScale end-->
+            <!--EDGE-118624: i button start-->
+            <div class="slds-col slds-size_1-of-10">
+                <div class="slds-m-top_large">
+                    <aura:if isTrue="{!v.GBBScaleSmallShow}">
+                        <lightning:buttonIcon iconName="utility:info" variant="bare" onclick="{!c.openGbbScale}" alternativeText="info"/>
+                    </aura:if>
+                </div>
+            </div>
+            <!--EDGE-118624: i button end-->
+        </div>
+        
+        <aura:if isTrue="{!v.showDiscountSection}">
+            <lightning:accordion allowMultipleSectionsOpen="true" onsectiontoggle="{!c.handleSectionToggle}">
+                <lightning:accordionSection name="A" label="" >
+         <!--       <div class="slds-box">  -->
+                        <div  class="slds-theme_shade slds-m-left_x-large slds-m-right_x-large  slds-p-bottom_small slds-p-top_small"> 
+                            <div class="slds-grid slds-gutters slds-m-left_x-small">
+                                <div class="slds-col slds-size_1-of-4" >
+                                  <ul class="slds-list_horizontal">
+                                    <aura:if isTrue="{!v.showAddOn}"> 
+                                       <!-- EDGE-145558 Field updated to International Direct Dial  -->
+                                        <lightning:select disabled="{!v.View}" name="select1" class="LabelColor FixedPicklistWidth" label="International Direct Dial" title="Place calls to fixed lines and mobile in countries included in your plan" aura:id="addon" value="{!v.DPROfferLineItemWrapper.AddOn}" onchange="{!c.selectedAddOnType}" >
+                                            <aura:if isTrue="{!v.ShowSelectAddOn}">
+                                             <aura:if isTrue ="{!v.DPROfferLineItemWrapper.AddOn == 'Select Add On'}">
+                                                <option value="{!v.DPROfferLineItemWrapper.AddOn}">{!v.DPROfferLineItemWrapper.AddOn}</option>
+                                                </aura:if>
+                                             </aura:if>
+                                            <aura:iteration items="{!v.addOnPicklistValues}" var="item">
+                                                <option value="{!item}" text="{!item}" />
+                                            </aura:iteration>
+                                        </lightning:select> 
+                                      </aura:if></ul>
+                                </div>
+                                 <!--EDGE-145558: New field  International Direct Dial Charge-->
+                                <div class="slds-col slds-size_1-of-4">
+                                     <aura:if isTrue="{!v.showAddOn}"> 
+                                        <lightning:input type="text"  name="input" aura:id="DataPlanCharge"  label="International Direct Dial Charge ($)" fieldLevelHelp= "{!$Label.c.DataPriceHelpText}" disabled="true" value="{!v.dataPlanCharge}"/> 
+                                   </aura:if>
+                                    </div>
+                                
+                                
+                                <!-- <aura:if isTrue="{!v.showDiscountFields}">  -->
+                                <div class="slds-col slds-size_1-of-4" >
+                                   <ul class="slds-list_horizontal">
+                                        <aura:if isTrue="{!v.showIDDCPDiscount}">
+                                            <li> <lightning:input class="slds-size_full LabelColor FixedPicklistWidth" disabled="{!v.addonselected}" type="number" onchange="{!c.ActivationSio}"
+                                                                  value="{!v.DPROfferLineItemWrapper.IDDCallPackDiscount}"
+                                                                  messageWhenRangeOverflow="Refer help text and enter valid value"
+                                                                  messageWhenRangeUnderflow="Refer help text and enter valid value" 
+                                                                  messageWhenStepMismatch="Refer help text and enter valid value"   
+                                                                  min="{!v.IDDMin}" max="{!v.IDDMax}"  name="input3"
+                                                                  aura:id="activ" label="IDD Call Pack Discount (%)" /></li>
+                                            <li><lightning:helptext title="{!v.helpTxtIDD}"/></li> 
+                                        </aura:if> 
+                                    </ul>
+                                </div>
+                                      
+                            </div>
+                            <div class="slds-grid slds-gutters slds-m-left_x-small">
+                                <aura:if isTrue="{!v.showMMCField}">
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <ul class="slds-list_horizontal">
+                                            <li><lightning:input  disabled="{!v.View}" name="input3" type="number" class="LabelColor FixedWidth" aura:id="activ" placeholder="type here..." style="width: 237px !important"
+                                                                 messageWhenRangeOverflow="Refer help text and enter valid value" 
+                                                                 messageWhenRangeUnderflow="Refer help text and enter valid value"
+                                                                 messageWhenStepMismatch="Refer help text and enter valid value" 
+                                                                 min="{!v.MMCMin}" max="{!v.MMCMax}" onchange="{!c.MMCDiscount}"
+                                                                 label="MMC Discount ($) Inc GST" value="{!v.DPROfferLineItemWrapper.MMCDiscount}" />
+                                            </li> 
+                                            <li><lightning:helptext title="{!v.helpTxtMMC}"/></li> 
+                                       </ul> 
+                                     </div>
+                                </aura:if> 
+                                <!-- EDGE:136961: Added to Show MMC Excl. GST Value in UI -->
+                                <aura:if isTrue="{!v.showMMCField}">
+                                   <div class="slds-col slds-size_1-of-4">
+                                <lightning:input type="text"  class="LabelColor FixedWidth" style="width: 237px !important" name="input1"  label="MMC Discount ($) Ex GST" disabled="true" value="{!v.DPROfferLineItemWrapper.MMCDiscountExGST}"/>
+                                    </div>
+                                </aura:if>
+                                <aura:if isTrue="{!v.showActivField}">
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <ul class="slds-list_horizontal">
+                                            <li><lightning:input  disabled="{!v.View}" name="input3" class="LabelColor FixedPicklistWidth" aura:id="activ" type="number" placeholder="type here..."
+                                                                 messageWhenRangeOverflow="Refer help text and enter valid value" 
+                                                                 messageWhenRangeUnderflow="Refer help text and enter valid value" 
+                                                                 messageWhenStepMismatch="Refer help text and enter valid value" 
+                                                                 min="{!v.ActivationMin}" max="{!v.ActivationMax}" label="Activation Credits (Months)" 
+                                                                 value="{!v.DPROfferLineItemWrapper.ActivationCreditsMonthsDiscount}" onchange="{!c.activationCreditmnths}"/>
+                                            </li> 
+                                            <li><lightning:helptext title="{!v.helpTxtActiv}"/></li> 
+                                        </ul>
+                                    </div>
+                                </aura:if>
+                                <aura:if isTrue="{!v.showReconField}">
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <ul class="slds-list_horizontal">
+                                            <li><lightning:input  disabled="{!v.View}" name="input3" class="LabelColor FixedWidth" aura:id="activ" type="number" placeholder="type here..." style="width: 237px !important"
+                                                                 messageWhenRangeOverflow="Refer help text and enter valid value" 
+                                                                 messageWhenRangeUnderflow="Refer help text and enter valid value" 
+                                                                 messageWhenStepMismatch="Refer help text and enter valid value" 
+                                                                 min="{!v.ReconMin}" max="{!v.ReconMax}" value="{!v.DPROfferLineItemWrapper.RecontractingCreditsMonthsDiscount}"
+                                                                 label="Recontracting Credits (Months)" onchange="{!c.recontractingCreditmnths}"/>
+                                            </li> 
+                                            <li><lightning:helptext title="{!v.helpTxtRecon}"/></li> 
+                                        </ul>
+                                    </div>
+                                </aura:if> 
+                            </div>
+                            <div class="slds-grid slds-gutters slds-m-left_x-small">
+                                <aura:if isTrue="{!v.mroVal}">
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <lightning:input  name="input1" class="LabelColor FixedWidth" disabled="true" value="{!v.DPROfferLineItemWrapper.MROBonusCredit}" label="MRO Bonus Credit(Amount)" style="width: 237px !important"/> 
+                                    </div>
+                                </aura:if>
+                                <aura:if isTrue="{!v.showPicklistField}"> 
+                                    <aura:iteration items="{!v.picklistFieldarray}" var="pickfield" >
+                                        <aura:if isTrue="{!pickfield == 'Mobile Workspace Discount 2'}">
+                                            <div class="slds-col slds-size_1-of-4">
+                                                <ul class="slds-list_horizontal">
+                                                    <li><lightning:select disabled="{!v.View}" class="slds-truncate LabelColor FixedPicklistWidth" name="select1" aura:id="pickfield" onchange="{!c.ActivationSio}"
+                                                                          label="{!pickfield}" value="{!v.DPROfferLineItemWrapper.MobileWorkspaceDiscount2}">
+                                                        <option  value="Select Plan">Select Yes/No</option>
+                                                        <option  value="Yes">Yes</option>
+                                                        <option  value="No">No</option>
+                                                        </lightning:select>
+                                                    </li> 
+                                                    <li><lightning:helptext title="Please select Yes/No"/></li> 
+                                                </ul>
+                                            </div>
+                                        </aura:if>
+                                        <aura:if isTrue="{!pickfield == 'Mobile Workspace Discount 1'}">
+                                            <div class="slds-col slds-size_1-of-4">
+                                                <ul class="slds-list_horizontal">
+                                                    <li><lightning:select disabled="{!v.View}" class="slds-truncate LabelColor FixedPicklistWidth" name="select1" aura:id="pickfield" onchange="{!c.ActivationSio}"
+                                                                          label="{!pickfield}"   value="{!v.DPROfferLineItemWrapper.MobileWorkspaceDiscount1}">
+                                                        <option  value="Select Plan">Select Yes/No</option>
+                                                        <option  value="Yes">Yes</option>
+                                                        <option  value="No">No</option>
+                                                        </lightning:select>
+                                                    </li> 
+                                                    <li><lightning:helptext title="Please select Yes/No"/></li> 
+                                                </ul>
+                                            </div>
+                                        </aura:if>
+                                        <aura:if isTrue="{!pickfield == 'Mobile Workspace Discount 3'}">
+                                            <div class="slds-col slds-size_1-of-4">
+                                                <ul class="slds-list_horizontal">
+                                                    <li><lightning:select disabled="{!v.View}" class="slds-truncate LabelColor FixedPicklistWidth" name="select1" aura:id="pickfield"  onchange="{!c.ActivationSio}"
+                                                                          label="{!pickfield}"  value="{!v.DPROfferLineItemWrapper.MobileWorkspaceDiscount3}">
+                                                        <option  value="Select Plan">Select Yes/No</option>
+                                                        <option  value="Yes">Yes</option>
+                                                        <option  value="No">No</option>
+                                                        </lightning:select>
+                                                    </li> 
+                                                    <li><lightning:helptext title="Please select Yes/No"/></li> 
+                                                </ul>
+                                            </div>
+                                        </aura:if>
+                                        <aura:if isTrue="{!pickfield == 'National BYO Discount'}">
+                                            <div class="slds-col slds-size_1-of-4">
+                                                <ul class="slds-list_horizontal">
+                                                    <li><lightning:select disabled="{!v.View}" class="slds-truncate LabelColor FixedPicklistWidth" name="select1" aura:id="pickfield"  onchange="{!c.ActivationSio}"
+                                                                          label="{!pickfield}"   value="{!v.DPROfferLineItemWrapper.NationalBYODiscount}">
+                                                        <option  value="Select Plan">--------Select Yes/No--------</option>
+                                                        <option  value="Yes">Yes</option>
+                                                        <option  value="No">No</option>
+                                                        </lightning:select>
+                                                    </li> 
+                                                    <li><lightning:helptext title="Please select Yes/No"/></li> 
+                                                </ul>
+                                            </div>
+                                        </aura:if>
+                                    </aura:iteration>
+                                </aura:if>
+                                <!-- EDGE: 119988 Dispaly gross val & net val after save-->
+                                <aura:if isTrue="{!v.DPROfferLineItemWrapper.GrossValue != ''}">
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <lightning:input  name="input1" class="LabelColor FixedWidth" disabled="true" value="{!v.DPROfferLineItemWrapper.GrossValue}" label="Gross Value ($)" fieldLevelHelp= "{!$Label.c.DataPriceHelpText}" style="width: 237px !important"/> 
+                                        <!--lightning:helptext iconName="utility:info" content="Monthly $ value" /-->    
+                                    </div>
+                                </aura:if>
+                                <aura:if isTrue="{!v.DPROfferLineItemWrapper.NetValue != ''}">
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <lightning:input  name="input1" class="LabelColor FixedWidth" disabled="true" value="{!v.DPROfferLineItemWrapper.NetValue}" label="Net Value ($)" fieldLevelHelp= "{!$Label.c.DataPriceHelpText}" style="width: 237px !important"/> 
+                                        <!--lightning:helptext iconName="utility:info" content="Monthly $ value" /-->   
+                                    </div>
+                                </aura:if>
+                            </div>
+                       </div>  
+                      <!--   </div>  -->
+
+                </lightning:accordionSection>
+            </lightning:accordion>
+        </aura:if>
+        
+    </div>
+    
+    <!--EDGE-118624: i button pop up start-->
+    <aura:if isTrue="{!v.showScale}">
+        <section role="dialog" tabindex="-1" aria-label="Meaningful description of the modal content" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <!--*****************Main Data Start********************-->
+                    <div  class="slds-align_absolute-center">
+                        <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus slds-p-top_x-large" style="color:#10735b">{!v.DprGBBReportDetails[0].Display_Name__c}</p>
+                    </div>
+                    <div class="slds-p-left_xx-large">
+                        <canvas aura:id="GBBScaleSmallInfo" width="540" height="77"></canvas> 
+                    </div>
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-p-left_xx-large">
+                                <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus slds-p-top_x-large" style="color:#10735b">Gross Revenue</p>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-align_absolute-center">
+                                <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus" style="color:#10735b">Average Annualised</p>
+                            </div>
+                            <div class="slds-align_absolute-center">
+                                <p class="slds-form-element__label slds-text-title_bold $color-text-link-focus" style="color:#10735b">Revenue (AAR)*</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if isTrue="{!item.Impact_Type__c=='Gross Value'}">
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">{!item.Label_Name__c}</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;">{!item.Scenario_Value__c}</dd>
+                                    </dl>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem;">{!item.Annual_Revenue_Impact__c}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if  isTrue="{!and(item.Sort_Order__c==1, item.Impact_Type__c=='Gross Value')}" >
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">Gross AAR</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;"></dd>
+                                    </dl>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem;">{!item.DPR_Offer_Line_Item__r.Gross_AAR__c}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    <br></br> 
+                    
+                    <div class="slds-p-left_xx-large">
+                        <label class="slds-form-element__label slds-text-title_bold $color-text-link-focus" style="color:#10735b">Revenue Impacts</label>
+                    </div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if isTrue="{!item.Impact_Type__c=='Discount Lever'}">
+                            <div class="slds-grid ">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">   
+                                    <dl class="slds-dl_horizontal ">
+                                        <dt class="slds-dl_horizontal__label">{!item.Label_Name__c}</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;">{!item.Scenario_Value__c}</dd>
+                                    </dl>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-dl_horizontal">
+                                        <br></br>
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem; color:#FF0000">{!item.Annual_Revenue_Impact__c}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if  isTrue="{!and(item.Sort_Order__c==1, item.Impact_Type__c=='Discount Lever')}" >
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">Total Revenue Impacts</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;"></dd>
+                                    </dl>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem; color:#FF0000">{!item.DPR_Offer_Line_Item__r.Total_Revenue_Impacts__c}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <aura:iteration items="{!v.DprGBBReportDetails}" var="item">
+                        <aura:if  isTrue="{!and(item.Sort_Order__c==1, item.Impact_Type__c=='Gross Value')}" >
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_2-of-3 slds-p-left_xx-large">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">Net AAR</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 2rem;"></dd>
+                                    </dl>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">$</dt>
+                                        <dd class="slds-dl_horizontal__detail" style="padding-left: 1rem;">{!item.DPR_Offer_Line_Item__r.Net_AAR__c}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:iteration>
+                    
+                    <div style="background:linear-gradient(to right, #ffffff 0%, #ffffff 64%, #a9a9a9 64%, #a9a9a9 90%, #ffffff 90%, #ffffff 100%); height:0.8%;"></div>
+                    
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_3-of-5">
+                        </div>
+                        <div class="slds-col slds-size_2-of-5 slds-p-top_xx-small slds-p-left_x-large">
+                            {!$Label.c.DPiButtonMessage}
+                        </div>
+                    </div>
+                    <!--*****************Main Data End**********************-->
+                </div>
+                <div class="slds-modal__footer">                
+                    <lightning:button variant="brand" label="Close" onclick="{!c.closeModal}" />
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    <!--EDGE-118624: i button pop up end-->
+    
+</aura:component>

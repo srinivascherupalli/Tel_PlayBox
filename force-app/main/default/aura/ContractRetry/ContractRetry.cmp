@@ -1,0 +1,173 @@
+<aura:component controller="ContractRetryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="contractName" type="String" />   
+    <aura:attribute name="contractStatus" type="String" />  
+    <aura:attribute name="contractStatusMsg" type="String" />
+    <aura:attribute name="contractDocumentStatus" type="String" />
+    <aura:attribute name="displayError" type="String" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="aura:waiting" action="{!c.waiting}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"/>
+    <aura:attribute name="HideSpinner" type="Boolean" default="true"/>
+    <aura:attribute name="statusMsgMap" type="Map" />
+    <!--Redirect url to docusign EDGE-187048-->
+    <aura:attribute name="docusignUrl" type="String" /> 
+    <aura:attribute name="docusignUrlShowTrue" type="Boolean" default="false" /> 
+    <aura:attribute name="docusignUrlShow" type="Boolean" default="true" /> 
+    <aura:attribute name="isRestrictCongaFlow" type="Boolean" default="false" /> 
+    <aura:attribute name="isDSAFlag" type="Boolean" default="false" /> 
+    <aura:attribute name="restrictCongaFlow" type="String" /> 
+    <aura:attribute name="docusignUrlDefault" type="String" default="Please wait while fetching data for eSignature"/> 
+    <!--Redirect url to docusign EDGE-187048-->
+    <aura:attribute name="DocuSign_Restricted_Message" type="String" default="{!$Label.c.DocuSign_Restricted_Message}"/>
+    <!-- {!v.contractStatusMsg} - - - {!v.displayError} -->
+    <aura:if isTrue="{!v.displayError=='Failure'}">
+       
+          <aura:if isTrue="{!v.restrictCongaFlow == 'Wait for orderForm'}"> 
+               <aura:if isTrue="{!v.isDSAFlag}"> 
+            <ui:message title="Notice" severity="confirm" closable="False">
+               <!-- <p>{!v.docusignUrlDefault}</p>-->
+                <p>Order Form Generation is failed in the process</p>
+            </ui:message>
+            <aura:set attribute="else">
+                <ui:message title="Error" severity="error" closable="False">
+                    {!$Label.c.Contract_Generation_Falied}
+                </ui:message>   
+               </aura:set>
+        </aura:if>
+            <aura:set attribute="else">
+                <ui:message title="Error" severity="error" closable="False">
+                    {!$Label.c.Contract_Generation_Falied}
+                </ui:message>   
+                <lightning:button variant="brand" disabled="false" label="Regenerate" aura:id="retryButton" onclick="{!c.retryContract}" />
+                
+            </aura:set>
+        </aura:if>
+       </aura:if>
+    <aura:if isTrue="{!v.displayError=='Success'}">
+        <!--Docusign url initiation EDGE-187048-->
+        <aura:if isTrue="{!and(v.restrictCongaFlow == 'Initiate Docusign',v.contractStatus == 'Initiated')}">
+           
+            <aura:if isTrue="{!v.docusignUrlShow}">
+                <ui:message title="Success" severity="confirm" closable="False">
+                    <p>{!v.docusignUrlDefault}</p>
+                </ui:message>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.docusignUrlShowTrue}">
+                        <ui:message title="Action Required" severity="confirm" closable="False">
+                            <p> {!$Label.c.Contract_Initaite_Docusign_Message}</p>
+                            <!-- <p>The Customer account is e-Signature enabled. The following documents have been generated - DSA, PriceSchedule,Order Form. Please review the documents and</p>-->
+                            <p><lightning:formattedUrl value="{!v.docusignUrl}" label="Click on this link to Initiate e-Signature"  target="_blank" /></p>
+                        </ui:message>
+                        
+                        <aura:set attribute="else">
+                            <ui:message title="Notice" severity="confirm" closable="False">
+                                <p>{!v.docusignUrl}</p>
+                            </ui:message>
+                        </aura:set>
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+            
+            <!--Docusign url initiation-->
+           <aura:set attribute="else">
+                <ui:message title="Success" severity="confirm" closable="False">
+                    {!v.contractStatusMsg}
+                    <!-- {!$Label.c.ContractCreationsuccessful} -->
+                </ui:message>
+            </aura:set>
+        </aura:if>
+         
+    </aura:if>
+    
+    <aura:if isTrue="{!and(and(v.displayError =='Docusign Restricted',v.contractStatus == 'Initiated'),v.restrictCongaFlow =='Wet Signatures')}">
+        <ui:message title="Action Required" severity="info" closable="False">
+            {!v.DocuSign_Restricted_Message}
+        </ui:message>
+        <div align="Center">
+            <lightning:helptext content="Please use the buttons to update status of contract as Fully Signed or Signature declined"/>
+            <span><b> Update contract status </b></span>
+            <lightning:button variant="brand" disabled="false" label="Fully Signed" aura:id="UpdateStatusButton" onclick="{!c.updateStatus}"  />
+            <lightning:button variant="brand" disabled="false" label="Signature declined" aura:id="DeclineStatusButton" onclick="{!c.updateStatus}" />    
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!and(v.displayError =='Docusign Restricted',v.contractStatus != 'Initiated')}">
+        <ui:message title="Action Required" severity="info" closable="False">
+            <aura:if isTrue="{!v.contractStatus == 'Initiated'}">
+                Contract document generation is in progress. 
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.contractStatus == 'Pending Approval'}">
+                        {!$Label.c.ContractNotificationMsgDocuSignRestricterd} 
+                        <aura:set attribute="else">
+                            <!-- {!v.contractStatusMsg} -->
+                            <aura:if isTrue="{!v.contractStatus == 'Customer Review'}">
+                                Contract document is with customer for signatures.
+                                <aura:set attribute="else">
+                                    {!v.contractStatusMsg}
+                                </aura:set>
+                            </aura:if> 
+                        </aura:set>
+                    </aura:if>
+                </aura:set>  
+            </aura:if>     
+            
+            <!--  {!v.contractStatusMsg} -->
+        </ui:message>
+    </aura:if>
+    
+    <aura:if isTrue="{!and(and(v.displayError =='Docusign Restricted',v.contractStatus == 'Initiated'),v.restrictCongaFlow =='Raise a Case')}">
+        <ui:message title="Action Required" severity="confirm" closable="False">
+            <p>{!$Label.c.Contract_Case_raise}</p>
+        </ui:message>
+    </aura:if>
+    <div class="slds-card__header slds-is-relative">
+        <aura:if isTrue="{!v.displayError=='InProgress'}">        
+            
+            <ui:message title="Notice" severity="info" closable="False" >
+                {!$Label.c.Contract_AttachmentMsg_Notice}
+                <aura:if isTrue="{!v.HideSpinner}">
+                    <div class="slds-spinner_container" >
+                        <div class="slds-spinner--brand slds-spinner slds-spinner--large" role="alert">
+                            <span class="slds-assistive-text">Loading, Please Wait...</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </aura:if>
+            </ui:message>
+            
+        </aura:if>
+    </div>    
+    
+    <!--Redirect Docusign URL
+    <div aura:id="container">
+        
+        <aura:if isTrue="{!v.docusignUrlshow}">
+  <ui:message title="Call DocuSign" severity="confirm" closable="False">
+           <p>{!v.docusignUrldefault}</p>
+        </ui:message>
+            <aura:set attribute="else">
+              <aura:if isTrue="{!v.docusignUrlshowtrue}">
+                     <ui:message title="Call DocuSign" severity="confirm" closable="False">
+                           <p><lightning:formattedUrl value="{!v.docusignUrl}" label="Click on the link to redirect to DocuSign"  target="_blank" /></p>
+                      </ui:message>
+                
+                 <aura:set attribute="else">
+                     <ui:message title="Call DocuSign" severity="confirm" closable="False">
+                <p>{!v.docusignUrl}</p>
+                     </ui:message>
+                </aura:set>
+                     </aura:if>
+            </aura:set>
+       </aura:if>
+ </div>
+        -->
+    
+    
+    
+    
+    
+    
+    
+    
+</aura:component>

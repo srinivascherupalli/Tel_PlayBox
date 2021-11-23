@@ -1,0 +1,58 @@
+<!--
+   *  Description of the purpose of the method.
+   *  @name PortalEngineerListView MDMPD
+   *  @description               : This LWC is used  to display the MDM and Engineering User FUlfilmem line Items
+    *  @return 				 	         : - 
+   *  @Jira Story Ref            : EDGE-140596
+   *  @createdBy  				       : RaviTeja, Alexandria
+-->
+<template>
+    <template if:true={tableDisplay}>
+      <div class="recordListStandard" data-aura-rendered-by="11:406;a">  
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_3-of-4">
+              <span>
+                  <h2 class="listTitle" data-aura-rendered-by="10:433;a">
+                      {Offer}
+                    </h2>  
+                    <h3 class="listTitle" >
+                      {offerLabel}
+                    </h3>
+                </span>
+            </div>
+            
+          </div>
+  
+   <div class="slds-text-body_regular slds-text-align_left">   {OfferDescription} </div>
+
+   <br/>
+    <!-- lightning:datatable goes here -->
+      <lightning-datatable
+          data={data}
+          columns={columns}
+          key-field="referenceId"
+          hide-checkbox-column="true"
+          wrap-text-max-lines="3"
+          onrowaction={handleRowAction}
+        >
+        </lightning-datatable>
+   
+      </div>
+   
+    <template if:true={emptytable}>
+      <div class="emptyContentInner" tabindex="-1" data-aura-rendered-by="238:202;a">
+          <p data-aura-rendered-by="190:908;a">No items to display.</p>
+      </div>
+    </template>
+    
+      <template if:true={showReassignTask}> 
+            <c-changeownerfli 
+                    fliid={selectedFli}
+                    onclosepopup={Modelclosefunc} 
+                    onownerupdated={handle_toast_Ownerupdated}
+                    source={componentType}>
+            </c-changeownerfli>         
+
+     </template>
+    </template>
+  </template>

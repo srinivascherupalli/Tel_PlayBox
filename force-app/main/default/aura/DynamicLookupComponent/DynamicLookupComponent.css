@@ -1,0 +1,41 @@
+.THIS .noPill .slds-pill__action{
+  border:none;
+  padding-top: 3px;
+}
+
+.THIS .icon-disable{
+  display:none;
+}
+
+
+.THIS .noPillcontainer .slds-pill-container{
+border:none;
+}
+
+.THIS .noouterbox{
+ border:none;
+ background: none;
+ 
+}
+/* Css to remove Search icon in input box upon selection of lookup field and onclick */
+.THIS .noouterbox .slds-input{
+  border:none;
+  padding-left: 0px;
+  box-shadow: none; 
+}
+/* Css to remove Search icon in input box upon selection of lookup field */
+.THIS .noPillcontainer .slds-input__icon .slds-input__icon_left {
+ display: none;
+}
+/* Css to remove Search icon in input box */
+.THIS .noouterbox .slds-input-has-icon .slds-input__icon_left {
+  display:none;
+}
+/* Css to remove Search criteria for input box */
+.THIS .noouterbox.slds-lookup__search-input.slds-input{
+  box-shadow: none;
+}
+/*Added for EDGE-207867 by Aman Soni*/
+.THIS .lookupWidthAfterSelection{
+  width: 35%;
+}

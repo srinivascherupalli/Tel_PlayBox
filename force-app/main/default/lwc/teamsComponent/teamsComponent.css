@@ -1,0 +1,10 @@
+.slds-table--opptyTeamMember .slds-table--cell label.slds-form-element__label {
+    display: none ;
+}
+widthExpanded {
+    width: 100%;
+}
+.THIS .slds-table--opptyTeamMember .slds-table--cell .slds-opportunity--userName {
+    display: inline-block;
+    padding: 0.375rem 0.5rem;
+}

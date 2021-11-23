@@ -1,0 +1,13 @@
+<template>
+    <div style="margin:15px;margin-top:15px;">
+    <b>Upload Port in numbers </b>
+    <lightning-helptext content="Upload CSV file can be used to bulk upload of Port-In numbers for Port in qualification"></lightning-helptext>
+    <lightning-input icon-name="utility:upload" 
+         type="file" 
+         title="Upload CSV File"
+         onchange={handleUploadFinished} 
+         accept = ".csv"
+         multiple="false">
+        </lightning-input>
+    </div>
+</template>

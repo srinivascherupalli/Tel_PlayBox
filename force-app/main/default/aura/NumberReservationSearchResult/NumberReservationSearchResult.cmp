@@ -1,0 +1,333 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 09-29-2020
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+  Modifications Log 
+  Ver   Date         Author                               Modification
+  1.0   09-29-2020   ChangeMeIn@UserSettingsUnder.SFDoc   Initial Version
+-->
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global" controller="NumberReservationController">
+    <aura:attribute name="searchResult" type="List" />
+    <aura:handler name="change" value="{!v.searchResult}" action="{!c.doInit}"/>
+    <aura:attribute name="data" type="List" />
+    <aura:attribute name="productconflist" type="object" />
+    <aura:attribute name="reservedata" type="object" />
+    <aura:attribute name="totalReservedrecord" type="integer" />
+    <aura:attribute name="simDetails" type="object" />
+    <aura:attribute name="isShowManage" type="boolean" />
+    <aura:attribute name="isngEMPresent" type="boolean" />
+    <aura:attribute name="showPCTable" type="boolean" default="true" />
+    
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="productconfcolumns" type="List" />
+    <aura:attribute name="selectedProductconfig" type="List" />
+    <aura:handler name="change" value="{!v.productconflist}" action="{!c.doInit}"/>
+    <aura:attribute name="selectedreservationrec" type="List" />
+    <aura:attribute name="resrvecolumns" type="List" />
+    <aura:attribute name="selectedRows" type="List" />
+    <aura:attribute name="selectedrecords" type="object" />
+    <aura:attribute name="reserveselectedRows" type="List" />
+    <aura:attribute name="isShowreservebtn" type="boolean" default="true"/>
+    <aura:attribute name="selectedCount" type="integer"
+                    default="0" description="selected Records Count" />
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="selectedtab" type="String"  default="Mobile"/>
+    <aura:attribute name="selectedTabId" type="String"/>
+    <aura:attribute type="String" name="basket_id"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="showSearchTab" type="Boolean" default="true" /><!--Kala-->
+    <aura:attribute name="endTime" type="String"/>
+    <aura:attribute type="Integer" name="quantity" default="" />
+    <!--EDGE-126256 added attribute to reset timer-->
+    <aura:attribute name="IntervalId" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="tableevent" event="c:DynamicDataTableEvent" action="{!c.handleSelectedrecords}"/>
+    <aura:registerEvent name="removeassignedNumber" type="c:RemoveAssignedNumberevent"/>
+    <aura:registerEvent name="assignedNumber" type="c:AssignedNumberevent"/>
+    <aura:registerEvent name="setAttribute" type="c:setAttributesonParentNMCMP"/>
+    <aura:registerEvent name="resetNumbermgmtForm" type="c:ResetNumberManagementForm"/>
+    <aura:registerEvent name="refreshviewEvent" type="c:refreshviewAfterReserve"/>
+    <aura:registerEvent name="refreshTab" type="c:refreshtabChanged"/>
+    <aura:registerEvent name="refreshProductConfigEvent" type="c:refreshProductConfigEvent"/>
+    
+    <aura:attribute name="searchmsg" type="String"/>
+    <aura:attribute type="String" name="selectedradio" />
+    
+    <!--Start  -->
+    <aura:attribute name="reservetablename" type="String" />
+    <aura:attribute name="objproductconfig" type="object"/>
+    <aura:attribute name="isdatarefresh" type="boolean" default="false"/>
+    <aura:attribute name="selectedReserverec" type="List" />
+    <aura:attribute name="selectedresrecords" type="object" />
+    <aura:attribute name="isShowTransition" type="boolean" />
+    <!--End  -->
+    
+    <aura:attribute name="productConfiglist" type="List" />
+    <aura:attribute name="selectedtProductConfigList" type="List" />
+    <aura:attribute name="configtablename" type="String" />
+    <aura:attribute type="String" name="selectedSimTypeValue" default="SIM card"/>
+    
+    <aura:attribute type="String" name="newWxistingSIM" default="New SIM" />
+    
+    
+    <!-- Start of EDGE-168641 -->
+    <aura:attribute type="List" name="SIMConfig" default="[]" />
+    <aura:attribute type="List" name="SIMOptions" default="[]"/>
+    <aura:attribute type="List" name="SIMType" default="[]"/>
+    <aura:attribute type="Boolean" name="SIMReadOnly" />
+    <aura:attribute type="Boolean" name="showErrorForTransition"/>
+    <aura:handler event="c:selectTransitionNumberEvt" action="{!c.handleSelectTransitionNumberEvt}"/>
+    <aura:registerEvent name="refreshTransitionTable" type="c:refreshLegacyTransitionTableEvt"/>
+    <aura:attribute  name="showAssignButton" type="Boolean" default="true"/>
+    <aura:attribute type="String" name="unassignedCountForTransition"/>
+    <aura:attribute type="String" name="assignedCountForTransition"/>
+    <aura:attribute name="selectedTransitionList" type="object"  default="{}"/>
+     <aura:attribute name="callVF" type="boolean" default= "false"/>
+    <!-- End of EDGE-168641 -->
+    <aura:attribute type="List" name="simSerialNumber"/><!--DIGI-21833 -->
+    <!--aura:method name="methodreservresult" action="{!c.executeAfterreserve}">        
+        <aura:attribute name="updatednumbers" type="Object" />
+        <aura:attribute name="updatedpcs" type="Object" />
+    </aura:method-->
+    
+    <div aura:id="container"/>  
+    <aura:if isTrue="{!v.loadingSpinner}"> 
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" alternativeText="loading"/>
+        </div>
+    </aura:if>
+    <div class="slds-m-around_xx-large">
+        <div class="slds-col slds-size_1-of-1">
+            <!-- EDGE-142086 - Added IF to check Manage Tab selected else show below components-->
+            <aura:IF isTrue="{!v.isShowManage}">
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.selectedradio!='reactiveServices'}">
+                        <lightning:tabset 
+                                          aura:id="tabs"
+                                          variant="default"
+                                          selectedTabId="{!v.selectedTabId}">
+                            
+                            <!-- EDGE-168704 - Removed search tab for transition -->
+                            <aura:if isTrue="{!v.showSearchTab}"><!--EDGE-144140 Kalashree Conditional rendering of search tab-->
+                                <lightning:tab
+                                               label="Search Result"
+                                               id="searchresulttab"
+                                               onactive="{!c.handleClickedTab}">
+                                    <lightning:layout multipleRows="true">
+                                        <aura:if isTrue="{!v.searchResult.length > 0 }">
+                                            <lightning:layoutItem size="6" padding="around-small">
+                                                <div
+                                                     style="font-weight:bold;color:black;margin-bottom:.25rem;"
+                                                     >{!v.searchmsg} </div>
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem size="6" padding="around-small">
+                                                <div style="text-align: right;">
+                                                    <lightning:button
+                                                                      label="Reserve"
+                                                                      variant="brand"
+                                                                      name="Reserve"
+                                                                      onclick="{!c.handleReserve}"
+                                                                      disabled="{!v.isShowreservebtn}"/>
+                                                </div>
+                                            </lightning:layoutItem>
+                                        </aura:if>
+                                    </lightning:layout>
+                                    <aura:if isTrue="{!v.searchResult.length>0}">
+                                        <c:DynamicDataTable tableId="searchresulttable" columns="{!v.columns}" data="{!v.searchResult}"/>                    
+                                    </aura:if>
+                                </lightning:tab>
+                            </aura:if>
+                            <!--EDGE-185029. Kalashree borgaonkar-->
+                            <!-- 203932-Dheeraj Bhatt-Hide Reservation pool for Transition -->
+                            <aura:if isTrue="{!v.selectedradio!='Transition'}">
+                                <lightning:tab label="Reservation Pool" id="reservationpull"
+                                               onactive="{!c.handleClickedTab}">
+                                    <aura:if isTrue="{!v.reservedata.length>0}">
+                                        <lightning:layout multipleRows="true">
+                                            <lightning:layoutItem size="6" padding="around-small">
+                                                <!--EDGE-166363 Kalashree. Fix to show proper count in case of modify -->
+                                                <div style="text-align: left;font-weight: bold;color: black; margin-bottom: .25rem;">
+                                                    {!v.totalReservedrecord} numbers reserved
+                                                </div>
+                                                <!--added total records count as part of EDGE-201647 -->
+                                            </lightning:layoutItem>
+                                            <lightning:layoutItem size="6" padding="around-small">
+                                                <div style="text-align: right;">
+                                                    <lightning:button label="Remove from Reservation Pool" 
+                                                                      name="removefromreservationPool"
+                                                                      onclick="{!c.removefromreservationPool}"/>
+                                                </div>
+                                            </lightning:layoutItem>
+                                        </lightning:layout>
+                                        <div style="overflow: hidden;" >
+                                            <aura:IF isTrue="{!v.reservedata.length > 0}">
+                                                <c:inlineEditDataTable aura:id= "inlineeditnumberresv" 
+                                                                       tableName="{!v.reservetablename}"
+                                                                       tableData="{!v.reservedata}"
+                                                                       onselectedrowevent="{!c.reservedataRowSelection}" 
+                                                                       ondatatablesaveevent="{!c.reservedatapickListValueChange}"/>
+                                            </aura:IF>
+                                        </div><br />
+                                    </aura:if>
+                                </lightning:tab> 
+                            </aura:if>
+                            
+                        </lightning:tabset>
+                    </aura:if>
+                </aura:set>
+            </aura:IF>
+            
+            
+            <!-- Start of EDGE-168641 -->
+            <div class="slds-box slds-box_small">
+                <aura:If isTrue="{!(v.selectedtab == 'Mobile')}">
+                    <div style="padding-top:10px;padding-bottom:5px;">
+                        <p><b>SIM Configuration</b></p>
+                    </div>
+                    
+                    <div class="slds-box">
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                                <lightning:layout multipleRows="true">
+                                    
+                                    <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                                        <div class="header-column">
+                                            <p class="field-title" title="Select SIM Options">New or Existing SIM</p>
+                                            {!v.simType}
+                                            <p><lightning:select aura:id="SimOpt"
+                                                                 disabled="{!v.simType}" onchange="{!c.getSIMType}" value="{!v.newWxistingSIM}">
+                                                <aura:iteration items="{!v.SIMOptions}" var="simOption" >
+                                                    <option text="{!simOption}" value="{!simOption}"></option>
+                                                    
+                                                </aura:iteration>
+                                                </lightning:select>
+                                            </p>
+                                        </div>
+                                    </lightning:layoutItem>
+                                    <aura:IF isTrue="{!and(v.isngEMPresent == true)}">
+                                        <lightning:layoutItem size="6" mediumDeviceSize="3" padding="around-small">
+                                            <div class="header-column">
+                                                <p class="field-title" title="Select SIM Type">Select SIM Type</p>
+                                                <p><lightning:select aura:id="SimType" value="{!v.selectedSimTypeValue}">
+                                                    <aura:iteration items="{!v.SIMType}" var="simTypeValue" >
+                                                        <option value="{!simTypeValue}" text="{!simTypeValue}" selected ="{!v.selectedSimTypeValue == simTypeValue}"></option>
+                                                    </aura:iteration>
+                                                    </lightning:select>
+                                                </p>
+                                            </div>                
+                                        </lightning:layoutItem>
+                                    </aura:IF>                     
+                                </lightning:layout>                                                        
+                            </div>
+                        </div>
+                    </div>
+                    
+                </aura:If>
+                <br/>
+                <br/> 
+                
+                <!-- End of EDGE-168641 -->
+                
+                
+                <div style="overflow: hidden">
+                    <aura:if isTrue="{!v.productconflist.length>0}">
+                        <!-- EDGE-142086 - Added IF to check Manage Tab selected to show Available Solution Section else show other components-->
+                        <aura:IF isTrue="{!v.isShowManage}">
+                            <div class="slds-col" style="margin-top: 2.75rem;">
+                        <c:inlineEditDataTable aura:id= "inlineEditDataTable" 
+                                                       tableName="{!v.configtablename}" 
+                                                       tableData="{!v.productconflist}" 
+                                                       onselectedrowevent="{!c.prodConfigRowSelection}" 
+                                                       ondatatablesaveevent="{!c.pickListValueChange}"/> 
+                            </div>
+                            <aura:set attribute="else">
+                                <!--EDGE-185029. Kalashree Borgaonkar. Conditional rendering for buttons. start-->
+                                <aura:if isTrue="{!v.selectedradio!='reactiveServices'}">
+                                    <div style="text-align: right;margin-bottom: 0.5rem;">
+                                        <lightning:button
+                                                          label="Remove Assigned Numbers"
+                                                          aura:id="removeassignednumber"
+                                                          name="removeassignednumber"
+                                                          onclick="{!c.removeassignednumber}"/>
+                                        <lightning:button
+                                                          label="Assign Numbers"
+                                                          variant="brand"
+                                                          name="assignNumbers"
+                                                          onclick="{!c.assignSelectedNumbers}"
+                                                          disabled="{!!v.showAssignButton}"/>
+                                    </div><br />
+                                </aura:if>
+                                <aura:if isTrue="{!v.selectedradio=='reactiveServices'}">
+                                    <div style="text-align: right;margin-bottom: 0.5rem;">
+                                        <lightning:button
+                                                          label="Assign SIM"
+                                                          variant="brand"
+                                                          name="assignSIM"
+                                                          onclick="{!c.assignSIMforReactivation}"/>
+                                    </div>
+                                    <br/>
+                                </aura:if>
+                                <aura:if isTrue="{!v.showErrorForTransition}">
+                                    <p style="color:black;">{!v.assignedCountForTransition} Services transitioned successfully</p>
+                                    <p style="color:red;">{!v.unassignedCountForTransition} Legacy services could not be mapped to the new Digital services. Please see Legacy table for unmapped services</p>
+                                </aura:if>
+                                <!--EDGE-185029. Kalashree Borgaonkar. Conditional rendering for buttons. start-->
+                                
+                                <!--    //EDGE-203929-Dheeraj Bhatt-Enhancements to "Assign Numbers To" table to display add-ons in a Tree view for each plan config record-->
+                                <aura:if isTrue="{! and(v.selectedradio=='Transition',v.isngEMPresent)}">
+                                    <c:lwcTreeGrid aura:id="lwcTreeGrid"
+                                                   gridColumns="{!v.productconfcolumns }"
+                                                   tableData="{!v.productconflist}"
+                                                   onselectedrowevent="{!c.onRowSelection}"
+                                                   childName='serviceAddOnList'
+                                                   />
+                                    <aura:set attribute="else">
+                                        <c:inlineEditDataTable aura:id= "inlineEditDataTable" 
+                                                               tableName="{!v.configtablename}" 
+                                                               tableData="{!v.productconflist}" 
+                                                               onselectedrowevent="{!c.prodConfigRowSelection}" 
+                                                               ondatatablesaveevent="{!c.pickListValueChange}"/> 
+                                    </aura:set>
+                                </aura:if>
+                                <!-- 203932-Dheeraj Bhatt-Hide Qualify SIM Serials button for Transition -->
+                                <aura:if isTrue="{!and( and(v.selectedradio!='Transition',v.selectedtab =='Mobile'), v.selectedtab !='Fixed')}">
+                                    <div class="slds-grid" style="margin:7px;">
+                                    	<!--DIGI-1946-Start-->
+                                        <aura:if isTrue="{!v.selectedradio =='Port In'}">
+                                        <div style="margin-left:8px;">
+                                            <c:bulkUploadSimSerialNumbers onsimbulkupload="{!c.handleBulkUploadChange}" />
+                                        </div>
+                                        </aura:if>
+                                        <!--DIGI-1946-End-->
+                                        <div class="slds-col_bump-right">
+                                        </div>
+                                        <div style="margin-right:8px;">
+                                            <lightning:button
+                                                              label="Qualify SIM Serials"
+                                                              onclick="{!c.validateSimSerNum}"/>		
+                                        </div>	
+                                    </div>
+                                </aura:if>
+                                
+                            </aura:set>
+                        </aura:IF>
+                    </aura:if>
+                </div>    
+            </div>
+        </div>   <br />    
+    </div>
+    
+    <div class="slds-m-around_xx-large">
+        <div class="slds-col slds-size_1-of-1">
+            <aura:IF isTrue="{!v.isShowManage}">
+                <!--<div class="slds-col" style="margin: 2rem;margin-top: -0.5rem;">-->
+                <c:NumberManagementComp basket_id="{!v.basket_id}" selectedTabId="{!v.selectedtab}" 
+                                        selectedPC="{!v.selectedProductconfig}" />
+                <!--</div>-->
+            </aura:IF>
+        </div>
+    </div>
+</aura:component>

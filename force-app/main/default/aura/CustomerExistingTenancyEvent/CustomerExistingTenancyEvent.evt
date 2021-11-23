@@ -1,0 +1,7 @@
+<aura:event type="APPLICATION" description="Tenancy Event"  >
+     <aura:attribute  type="String[]" name="selectedTenancyIds" />
+     <aura:attribute  type="String" name="actualTenancyId" />
+     <aura:attribute  type="String" name="callerName" />
+
+    <aura:attribute  type="String" name="close" />
+</aura:event>

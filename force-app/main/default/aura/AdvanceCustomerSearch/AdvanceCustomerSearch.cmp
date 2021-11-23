@@ -1,0 +1,197 @@
+<!--****************************************************************************
+@Author: Nilesh Dethe
+@CreateDate: 08/08/2018
+@Story: EDGE-31363
+@Description: AdvanceCustomerSearch lightning component created under EDGE-31363.
+@TestCoverageClass: AdvanceCustomerSearchControllerTest
+@ChangeLog: v1: Created
+********************************************************************************-->
+<aura:component implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride" access="global" controller="AdvanceCustomerSearchController" >
+    <!--Attributes: Search Filter Criteria-->
+    <aura:attribute name="customerName" type="String" description="using for storing customer name"/>
+    <aura:attribute name="abn" type="String" description="using for storing customer name"/>
+    <aura:attribute name="cidn" type="String" description="using for storing customer name"/>
+    <aura:attribute name="acn" type="String" description="using for storing customer name"/>
+    <aura:attribute name="criteriaErrorMessage" type="String" description="using for storing criteria related error messages"/>
+    <aura:attribute name="searchResultMessage" type="String" description="using for storing search result related messages"/>
+    <aura:attribute name="navurl" type="String" description="using for storing customer details url" />
+    <aura:attribute name="paginationOptions" type="String[]" default="5,10,15,20,25"/>
+    <aura:attribute name="isTCMSearchResults" type="Boolean" default="false"/>
+     <aura:attribute name="isTCMconnected" type="Boolean" default="true"/>
+    <aura:attribute name="resultloaded" type="Boolean" default="true" />
+    <aura:attribute name="noCustomerFound" type="Boolean" default="false"/>
+    <aura:attribute name="singleRecordSelected" type="String"/>
+    <aura:attribute name="isSysAdminUser" type="Boolean"/>
+    
+    <!--Attributes: Search Results and Pagination-->
+    <aura:attribute name="customers" type="CustomerObject.Customer[]"/>
+    <aura:attribute name="selectedCustomer" type="CustomerObject.Customer[]"/>
+    <aura:attribute name="page" type="integer"  description="using for store page Number"/>
+    <aura:attribute name="pages" type="integer" description="using for store All Pages page Number"/>
+    <aura:attribute name="total" type="integer" description="total records count store "/>	
+
+    <!-- component body markup-->
+    <div class="{!(v.isSysAdminUser == true ? 'slds-hide':'slds-is-relative slds-p-bottom_medium slds-show')}">
+        <lightning:card>
+            <aura:set attribute="title">Customer Search</aura:set>
+            <aura:set attribute="footer">
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <lightning:button aura:id="btnSearchCust" label="Search Customer" variant="brand" onclick="{!c.doSearchCustomer}"/>
+                        <!--<lightning:button aura:id="btnNewLead" label="New Lead" variant="brand" onclick="{!c.handleCreateLeadClick}"/>-->
+                        <lightning:button aura:id="btnClear" label="Clear" disabled="true" class="buttonWidth" onclick="{!c.clearFilterCriteria}" />
+                    </div>
+                </div>
+            </aura:set>
+            <div aura:id="searchFilterMessage" class="slds-hide slds-align_absolute-center slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                {!v.criteriaErrorMessage}
+            </div>
+            <div class="slds-is-relative slds-box slds-m-around_small slds-grid">
+                <div class="input-group slds-size_1-of-3 slds-m-right_x-small">
+                    <lightning:input aura:id="custName" class="slds-p-bottom_small inputWidth" label="Customer Name" name="customerName" 
+                                     value="{!v.customerName}" onchange="{!c.handleClearButton}" onblur="{!c.validateString}" 
+                                     placeholder="Enter Customer Name - Wildcard (*) allowed"/>
+                    <lightning:input class="slds-p-bottom_small inputWidth" maxlength="11" label="ABN" name="abn" 
+                                     value="{!v.abn}" onchange="{!c.handleClearButton}" 
+                                     placeholder="Only numeric value allowed"/>
+                </div>
+                <div class="input-group slds-size_1-of-2 slds-m-left_x-small slds-p-right_small">
+                    <lightning:input class="slds-p-bottom_small inputWidth" maxlength="10" label="CIDN" name="cidn" 
+                                     value="{!v.cidn}"  onchange="{!c.handleClearButton}" 
+                                     placeholder="Only numeric value allowed"/>
+                    <lightning:input class="slds-p-bottom_small inputWidth" maxlength="9" label="ACN" name="acn" 
+                                     value="{!v.acn}"  onchange="{!c.handleClearButton}" 
+                                     placeholder="Only numeric value allowed"/>
+                </div>
+            </div>
+        </lightning:card>
+        <aura:if isTrue="{! v.resultloaded }">
+            <aura:set attribute="else">
+                <div class="slds-is-relative">
+                    <lightning:spinner class="spinner" alternativeText="Searching Customer..." variant="brand" size="large"/>
+                </div>
+            </aura:set>
+        </aura:if>
+        <lightning:card aura:id="searchResult" class="{!(v.customers.length > 0 ? 'slds-p-bottom_medium slds-show':'slds-p-bottom_medium slds-hide')}">
+            <aura:set attribute="title">Customers Found</aura:set>
+            <aura:set attribute="actions">
+                <lightning:button label="Sync" aura:id="btnSync" disabled="true" class="buttonWidth"  variant="brand" onclick="{! c.handleSyncClick }"/>
+            </aura:set>
+            <aura:set attribute="footer">
+                <lightning:button disabled="{!v.page == 1}" variant="brand" label="Previous Page" onclick="{! c.navigate }" />            
+                <lightning:button disabled="{!v.page == v.pages}" aura:id="previousPage" variant="brand" label="Next Page" onclick="{! c.navigate }" />
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <p class="slds-truncate">{!v.total} Customers Found</p>
+                        <p class="slds-truncate">Page {!v.page} / {!v.pages}</p>
+                    </div>
+                    <div class="slds-float_left">
+                        <lightning:select aura:id="recordSize" name="select" label="Records Per Page:" value="5" onchange="{!c.onSelectChange}">
+                            <aura:iteration items="{!v.paginationOptions}" var="recSize">
+                                <option text="{!recSize}"></option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </div>
+            </aura:set>
+            <div aura:id="searchResultsMessage" class="slds-align_absolute-center slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_alt-inverse slds-hide" role="alert">
+                {!v.searchResultMessage}
+            </div>
+            <lightning:navigation aura:id="navService"/>
+            <div class="slds-m-around_small">
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Action">Action</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="CIDN">CIDN</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Name">Account Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Cutomer Status">Status</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="ABN">ABN</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Name">ACN</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Type">Type</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Name">Business Unit</div>
+                            </th>
+                            <th scope="col" class="{!(v.isTCMSearchResults == false ? 'slds-show' : 'slds-hide')}">
+                                <div class="slds-truncate" title="Type">Tier</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Market Segment">Market Segment</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Portfolio Code">Portfolio Code</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.customers}" var="customer"> 
+                            <tr> 
+                                <th scope="row">
+                                    <a target="_blank" id="{!customer.Id}" href="{!v.navurl}" class="{!(v.isTCMSearchResults == false ? 'slds-show slds-truncate slds-text-link':'slds-hide')}" title="Click to view customer details" onclick="{!c.viewCustomerDetails}">View</a>
+                                    <lightning:input aura:id="inptCheckCust" class="{!(v.isTCMSearchResults == true ? 'slds-show' : 'slds-hide')}" type="checkbox" label="" value="{!customer}" checked="false" onchange="{!c.handleOnCheckInputChange}" />
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="CIDN">{!customer.CIDN__c}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="Cutomer Name">{!customer.Name}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="Status">{!customer.Customer_Status__c}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="ABN">{!customer.ABN__c}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="ACN">{!customer.ACN__c}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="Type">{!customer.Type}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="Business Unit">{!customer.Business_Unit__c}</div>
+                                </th>
+                                <th scope="row" class="{!(v.isTCMSearchResults == false ? 'slds-show slds-truncate' : 'slds-hide')}">
+                                    <div  style="color:rgb(0, 109, 204);" title="Tier">{!customer.APTPS_Tier__c}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="Market Segment">{!customer.Market_Segment__c}</div>
+                                </th>
+                                <th scope="row">
+                                    <div class="slds-truncate" style="color:rgb(0, 109, 204);" title="Portfolio Code">{!customer.Portfolio_Code__c}</div>
+                                </th>
+                            </tr>
+                        </aura:iteration>	
+                    </tbody>
+                </table>
+            </div>
+        </lightning:card>
+         <lightning:card class="{!(and(v.noCustomerFound , v.isTCMconnected)?'slds-show':'slds-hide')}">
+            <aura:set attribute="title"></aura:set>
+            <div class="slds-align_absolute-center">
+                <div class="slds-text-body_regular">Customer not found in Phoenix or Legacy systems. Please click on the following link to initiate the customer creation process</div>
+               <!-- <div  class="slds-m-bottom_xxx-small">
+                    Customer not found in either Phoenix or Legacy System. Please click on the "New Lead" button to initiate the customer creation process
+                </div> -->
+            </div>
+            <div class="slds-align_absolute-center slds-p-top_small">
+              <a target="_blank" href="https://formify.azurewebsites.net/FormViewer/FormViewerAuth/c39f408c-06b2-4770-80a9-db6d410034ee" class="slds-text-body_regular slds-text-link"> Click Here </a>
+             <!--<lightning:button label="New Lead" aura:id="btnLead" disabled="false" class="buttonWidth"  variant="brand" onclick="{!c.handleCreateLeadClick }"/>-->
+            </div>
+        </lightning:card>
+    </div>
+</aura:component>

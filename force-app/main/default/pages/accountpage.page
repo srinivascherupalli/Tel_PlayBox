@@ -1,0 +1,21 @@
+<apex:page standardController="Account">
+ <apex:form >
+<apex:pageBlock title="Account detail">
+<apex:pageBlockSection >
+ <apex:outputField value="{!account.name}"/>
+ <apex:outputField value="{!account.Fax}"/>
+ <apex:outputField value="{!account.CIDN__c}"/>
+  <apex:outputField value="{!account.website}"/> 
+ <apex:outputField value="{!account.Ultimate_Parent_CIDN__c}"/> 
+ <apex:outputField value="{!account.Phone}"/>
+ 
+  <apex:outputField value="{!account.Customer_ID__c}"/>
+ <apex:outputField value="{!account.Email__c}"/>
+ <apex:outputField value="{!account.Pref_Comm_Method__c}"/>
+  <apex:outputField value="{!account.TCM_MasterID__c}"/> 
+ <apex:outputField value="{!account.ACN__c}"/> 
+ <apex:outputField value="{!account.ABN__c}"/>
+ </apex:pageBlockSection>
+ </apex:pageBlock>
+  </apex:form>
+</apex:page>

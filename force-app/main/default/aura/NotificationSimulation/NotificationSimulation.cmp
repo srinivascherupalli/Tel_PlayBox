@@ -1,0 +1,52 @@
+<aura:component controller="NotificationSimulationController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride" access="global">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="OrderNumber" type="String" default=""/>
+    <aura:attribute name="TypeSelected" type="string" default=""/>
+    
+   <div class="slds-grid slds-grid_vertical"> 
+       <div class="slds-col">
+       <span>
+           <div class="slds-grid slds-gutters"> 
+             <div class="slds-col slds-size_1-of-3">
+                 <span><br/><label class="slds-form-element__label" ><b>Order Number</b></label></span>
+              </div>
+                <div class="slds-col slds-size_1-of-3">
+            <span><lightning:input aura:id="OrdNumber" type="text" value="{!v.OrderNumber}" maxlength="20"/></span>
+              </div>
+           </div>
+           </span>
+       </div>
+  
+      
+      <div class="slds-col ">
+     
+       <span>
+           <div class="slds-grid slds-gutters"> 
+                <div class="slds-col slds-size_1-of-3">
+                    <span><br/><label class="slds-form-element__label"><b>Notification Type</b></label></span>
+              </div>
+             <div class="slds-col slds-size_1-of-3">
+           <span>
+           <lightning:select aura:id="selectType" name="NotifType" label="" value="{!v.TypeSelected}" >
+                                         <option value="">Select Notification Type</option> 
+                                         <option value="In Progress">1.In Progress</option>
+                                         <option value="Equipment Ordered">2.Equipment Ordered</option>
+                                         <option value="Picking and Packing">3.Picking and Packing</option>
+                                         <option value="Delivery Tracking">4.Delivery Tracking</option>
+                                         <option value="Equipment Delivered">5.Equipment Delivered</option>
+                                         <option value="Product Activation and Testing">6.Product Activation and Testing</option>
+                                         <option value="Complete">7.Complete</option>
+           </lightning:select></span>
+               </div></div></span>
+       </div>
+       <br></br>
+        <div class="slds-col ">
+        <span > 
+            <div class="slds-grid slds-gutters"> 
+                <div class="slds-col slds-size_3-of-3">
+                 <span>  <lightning:button class="slds-button slds-button--brand" onclick="{!c.generateNotif}"  label="Generate" /></span>
+                </div></div>
+            </span>   
+       </div>
+    </div>
+</aura:component>

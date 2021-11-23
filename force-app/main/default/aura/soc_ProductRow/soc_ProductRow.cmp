@@ -1,0 +1,18 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+   access="global" >
+   <aura:attribute name="productData" type="Object" />
+   <aura:iteration items="{!v.productData}" var="obj" indexVar="i">
+      <table class="slds-table slds-table_fixed-layout slds-table_resizable-cols">
+          <thead>
+             <tr class="slds-line-height_reset">
+                <td >
+                   <div style="height:12px" class="slds-truncate" title="{!obj.soc_Product_Name__c}">
+                   <lightning:formattedUrl label ="{!obj.soc_Product_Name__c}" value="{!'/'+obj.Id}" target="_self"/>
+                      
+                   </div>
+                </td>
+             </tr>
+          </thead>
+      </table> 
+    </aura:iteration>
+</aura:component>

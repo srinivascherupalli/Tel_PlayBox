@@ -1,0 +1,50 @@
+<template>
+    <article class="slds-card slds-card_boundary headerBottomBorder forceRelatedListCardDesktop" data-aura-class="forceRelatedListCardDesktop">
+      <div if:true={isViewAll}>
+         <lightning-breadcrumbs>
+            <lightning-breadcrumb
+                label={parObjPluName}
+                href="path/to/place/1"
+                onclick={handleNavigateToCustomPage1}>
+            </lightning-breadcrumb>
+            <lightning-breadcrumb
+                label={parRecName}
+                href="path/to/place/2"
+                onclick={handleNavigateToCustomPage2}>
+            </lightning-breadcrumb>
+        </lightning-breadcrumbs>
+      </div>         
+        <div class="slds-grid slds-page-header forceRelatedListCardHeader" data-aura-class="forceRelatedListCardHeader">         
+           <header class="slds-media slds-media--center slds-has-flexi-truncate">
+            <div class="slds-media__figure stencil slds-avatar slds-avatar_small" aria-hidden="true" >
+                 <div class="extraSmall forceEntityIcon" style="background-color: #3c97dd" data-aura-class="forceEntityIcon">
+                    <span class="uiImage" data-aura-class="uiImage">
+                       <lightning-icon icon-name={headerIcon} size="small"></lightning-icon>
+                    </span>
+                 </div>
+              </div>
+              <div class="slds-media__body">
+                 <h2>
+                    <span class="slds-card__header-link baseCard__header-title-container slds-card__header-title slds-truncate slds-m-right--xx-small" title="">
+                     {titleWithCount}
+                    </span>
+                 </h2>
+              </div>
+           </header>  
+        </div> 
+        <div>
+                <lightning-datatable 
+                     class="relatedListLWCStyle" 
+                     data={data} 
+                     columns={columns} 
+                     key-field=" id" 
+                     hide-checkbox-column="true">
+                </lightning-datatable>
+         </div>  
+         <div if:true={countBool} class="slds-card__footer" data-aura-rendered-by="2001:0">
+                  <span>
+                    <lightning-button variant="base" label="View All" title="Looks like a link" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+                  </span>
+         </div>        
+        </article>        
+</template>

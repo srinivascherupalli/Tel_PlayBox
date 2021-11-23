@@ -1,0 +1,149 @@
+<aura:component
+  controller="ShowSubscriptionsOnMACButtonController"
+  implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride"
+  access="global"
+>
+    <!-- EMP API component: to subscribe the platform event 'ChangeOfMobileNumber' EDGE-89984 -->
+    <lightning:empApi aura:id="empApi" />
+    
+  <!--use boolean attribute for Store true/false value,
+    make default to "false" so modal box are not display on the load of component. 
+    -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:attribute name="isOpen" type="boolean" default="true" />
+  <aura:handler
+    event="c:NavigateToNumberChange"
+    action="{!c.NavigateComponent}"
+  />
+  <aura:attribute name="columns" type="List" default="[]" />
+  <aura:attribute name="filteredData" type="List" />
+  <aura:attribute name="sortedBy" type="String" />
+  <aura:attribute name="sortedDirection" type="String" />
+  <aura:attribute name="defaultSortDirection" type="String" />
+  <aura:attribute name="filter" type="String" />
+  <aura:attribute name="theBtnLabel" type="String" />
+  <aura:attribute name="SelectedSubsID" type="List" default="[]" />
+  <aura:attribute name="selectedRowsList" type="List" />
+  <aura:attribute name="data" type="List" default="[]" />
+  <aura:attribute name="showSpinner" type="boolean" default="false"/>
+    <aura:attribute name="isSuccess" type="boolean" default="false"/>
+     <aura:attribute name="isFailure" type="boolean" default="false"/>
+    <aura:attribute name="btnStatus" type="boolean" default="true"/>
+    <aura:attribute name="accountId" type="Id" />
+     <aura:attribute name="actionTypeSelected" type="string"/>
+    <aura:attribute name="tNowCaseRef" type="string"/> <!--EDGE-132715-->
+    <aura:attribute name="isError" type="boolean" default="false" />
+    <aura:attribute name="dateTimeMilliseconds" type="Date"/><!--DIGI-17914-->
+    
+  <!--Use "slds-m-around_xx-large" class to add standard X-Large padding to the component-->
+    
+    <div class="slds-m-around_xx-small">
+      
+        
+    <aura:if isTrue="{!v.isSuccess}">
+		<c:customToast type="success" message="Change Of Mobile Number Order created successfully"  />
+	</aura:if>
+        
+            <aura:if isTrue="{!v.isFailure}">
+		<c:customToast type="Error" message="Failed to Generate Change Of Mobile Number Order"  />
+	</aura:if>
+    <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->
+    <aura:if isTrue="{!v.isOpen}">
+      <!--###### MODAL BOX Start######-->
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-labelledby="modal-heading-01"
+        aria-modal="true"
+        aria-describedby="modal-content-id-1"
+        class="slds-modal slds-fade-in-open"
+      >
+        <div class="slds-modal__container widthOfModal">
+          <!-- ###### MODAL BOX HEADER Start ######-->
+          <header class="slds-modal__header">
+            <lightning:buttonIcon
+              iconName="utility:close"
+              onclick="{! c.closeModel }"
+              alternativeText="close"
+              variant="bare-inverse"
+              class="slds-modal__close"
+            />
+            <h2
+              id="modal-heading-01"
+              class="slds-text-heading_medium slds-hyphenate"
+              >Change Of Mobile Number</h2
+            >
+          </header>
+          <!--###### MODAL BOX BODY Part Start######-->
+          <div
+            class="slds-modal__content slds-p-around_medium"
+            id="modal-content-id-1"
+          >
+            <p>
+              <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-3">
+                  <lightning:input
+                    type="search"
+                    onchange="{!c.filter}"
+                    value="{!v.filter}"
+                    placeholder="Search with Service ID"
+                  /><br />
+                </div>
+              </div>
+                 <aura:if isTrue="{!v.showSpinner}">
+    	<div class="exampleHolder">
+        <lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+    	</div>
+	</aura:if>
+                <aura:if isTrue="{!v.isError}">
+        <!-- Show the message to ui -->
+        <div class="slds-notify slds-notify_toast slds-theme_error">
+            <span class="slds-assistive-text">error</span>
+            <div class="slds-notify__content">
+                <h5 class="slds-text-heading_small slds-align_absolute-center">Error Message </h5>
+                <br/>
+                <p class="slds-align_absolute-center">New number assignment failed to complete. Please retry or contact support.</p>                
+            </div>
+        </div>
+	</aura:if>
+              <lightning:datatable
+                aura:id="subscriptionTableNum"
+                columns="{! v.columns }"
+                data="{! v.filteredData }"
+                keyField="SubscriptionID"
+                resizeColumnDisabled="{! v.resizeColumnDisabled }"
+                sortedBy="{! v.sortedBy }"
+                selectedRows="{!v.selectedRows}"
+                sortedDirection="{!v.sortedDirection }"
+                defaultSortDirection="{!v.defaultSortDirection }"
+                onrowselection="{!c.updateSelectedText }"
+                onsort="{!c.updateColumnSorting }"
+              />
+            </p>
+          </div>
+          <!--###### MODAL BOX FOOTER Part Start ######-->
+          <footer class="slds-modal__footer">
+            <lightning:button
+              variant="neutral"
+              label="Back"
+              title="Back"
+              onclick="{! c.closeModel }"
+            />
+              
+            <lightning:button
+              variant="brand"
+              label="{!v.theBtnLabel}"
+              title="{!v.theBtnLabel}"
+              onclick="{! c.likenClose }"
+              aura:id = "nextbtn"
+              disabled = "{!v.btnStatus}"
+              value="/event/ChangeOfMobileNumber__e"
+            />
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+      <!--###### MODAL BOX Part END Here ######-->
+    </aura:if>
+  </div>
+</aura:component>

@@ -1,0 +1,11 @@
+<apex:page standardController="Apttus__APTS_Agreement__c" action="{!validationsOnActivate}" extensions="APTPS_CheckCompanySignedDateController">
+    <apex:sectionHeader subtitle="{!Apttus__APTS_Agreement__c.name}" title="Activate Agreement"/>
+    <apex:pageBlock >
+        <apex:pageMessages />
+        <apex:form >
+            <br/> 
+            <div><apex:outputText >Click </apex:outputText> <apex:commandLink action="{!Cancel}" value="here" id="theCommandLink"/>  <apex:outputText > to return to the previous page </apex:outputText>  
+            </div>
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

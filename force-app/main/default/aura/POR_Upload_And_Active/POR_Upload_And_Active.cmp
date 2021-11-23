@@ -1,0 +1,44 @@
+<aura:component controller="PORuplodecontroller"  implements="force:appHostable,force:hasSObjectName,force:LightningQuickAction,force:hasRecordId" access="global">
+    	<aura:handler name="init" value="{! this }" action="{! c.doinit }"/>
+    <aura:attribute name="ErrorMsg" type="string"/>
+    <aura:attribute name="filetype" type="List" default="['.pdf']" />
+    <aura:attribute name="multiple" type="Boolean" default="true" />
+    <aura:attribute name="disabled" type="Boolean" default="true" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="invalidstatus" type="Boolean" default="false"/>
+    <aura:attribute name="displaybutton" type="Boolean" default="false"/>
+    <aura:attribute name="displayupload" type="Boolean" default="true"/>
+    <aura:attribute name="displaymsg" type="Boolean" default="false" />
+    <aura:attribute name="encryptedToken" type="String" />
+    <aura:if isTrue="{!v.displaymsg}">
+        
+        <div  class="slds-text-heading_medium slds-theme_shade ">
+            <b>You can only use the upload and activate button once the POR agreement status is in Customer review. </b>
+        </div> 
+    </aura:if>
+    <aura:if isTrue="{!v.invalidstatus}">
+        
+        <div class="slds-text-heading_medium slds-theme_shade">
+ 			<b>You can only use upload and activate button if the account is in either Offshore restricted or Docusign restricted state </b>
+        </div> 
+    </aura:if>
+<aura:if isTrue="{!v.displayupload}">
+ 
+    <lightning:fileUpload label="Attach receipt"
+        name="fileUploader"
+        multiple="true"
+        accept="{!v.filetype}"
+        recordId="{!v.recordId}"
+        onuploadfinished="{!c.handleUploadFinished}" />
+    
+<lightning:button aura:id="disablebuttonid" disabled="true" variant="brand" label="Activate" title="Brand action" onclick="{! c.handleActivate }" />
+        
+   
+</aura:if>
+    
+<!--<aura:if isTrue="{!v.displaybutton}">
+<lightning:button aura:id="disablebuttonid" disabled="true" variant="brand" label="Activate" title="Brand action" onclick="{! c.handleActivate }" />
+   
+</aura:if>-->
+    
+</aura:component>

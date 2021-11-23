@@ -1,0 +1,69 @@
+<!-- 
+* @Author : Shubhi
+* @Date : 12 March 2020
+* @Jira : Edge-133882 new component
+* @Jira : Edge-185639 save and cancel button added
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description 
+1           Shubhi            12/3/2020   Edge-133882
+2			Kamlesh			 02/11/2020	     EDGE-185639
+3 			Jagadeswary		  17/03/2021	 EDGE-207998
+===============================================================================================================================
+-->
+<aura:component controller="RateMatrixForNGUCController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute type="String" name="CallingPlan"/>
+    <!--EDGE-185639-->
+    <aura:attribute type="Object" name="jsonsoi"/>
+    <aura:attribute type="String" name="SolutionID" />
+    <aura:attribute type="String" name="offerid" />
+    <aura:attribute type="Map" name="RateCardMap"/>
+    <aura:attribute type="List" name="discountDataList"/>
+    <aura:attribute type="Boolean" name="isDiscountDataListEmpty"/>
+     <aura:attribute type="string" name="changeType"/> <!-- EDGE-140157 -->
+     <aura:attribute type="string" name="guid"/> <!-- EDGE-140157 -->
+    <aura:attribute name="showSpinner" type="boolean" default="false"/>
+    <aura:attribute type="String" name="Mode" /> <!-- Edge-EDge-120919 -->
+    <aura:attribute type="Boolean" name="isNewBasket" default = "false"/>
+     <aura:attribute type="String" name="basketStage"/>
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="slds-spinner_container">
+            <lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+        </div>
+    </aura:if>
+    <div style="padding :5px;border-bottom: 2px solid lightgrey">
+        <b>
+            <span style="font-size:x-large">{!$Label.c.RateDiscountHeader}</span><br/>
+        </b>
+    </div>
+    <div style="width:860px">
+        <!-- EDGE-185639 -->   
+       <c:RateMatrixForNGUC CallingPlan="{!v.CallingPlan}" SolutionID="{!v.SolutionID}" offerid="{!v.offerid}" RateCardMap="{!v.RateCardMap}" Mode="{!v.Mode}" isNewBasket="{!v.isNewBasket}" basketStage="{!v.basketStage}"/>
+    </div>
+    <br/>
+    <div>
+        <c:ShowPromotionsNGUCVoice discountDataList="{!v.discountDataList}" isDiscountDataListEmpty="{!v.isDiscountDataListEmpty}" changeType="{!v.changeType}"/>
+	</div>
+        <div class="slds-col slds-size_2-of-2 slds-p-top_xx-large" style="background:white;height: 3.5rem;">
+            <div class="slds-page-header slds-page-header_related-list" style="background:white">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title" style="text-align: left;">
+                    </div>
+                    <div class="slds-page-header__col-actions">
+                        <div class="slds-page-header__controls">
+                            <div class="slds-page-header__control">
+                                <button
+                                        class="slds-button  slds-button_neutral"
+                                        onclick="{!c.handleCancel}"
+                                        label="Cancel">Cancel</button>
+                                <button
+                                        class="slds-button  slds-button_neutral slds-p-left_x-large"
+                                        onclick="{!c.handleSave}"
+                                        label="Cancel">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</aura:component>

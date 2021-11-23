@@ -1,0 +1,89 @@
+<!--
+---------------------------------------------------------------------
+Name        : TransferHardwareRepayment HTML
+Description : Template for TransferHardwareRepayment js 
+Author      : Aman Soni
+Story       : EDGE-191076 (Sprint 21.01)
+======================================================================
+No.  Developer				Story(Sprint)			Description
+1.	 Aman Soni				EDGE-207355(21.05) 		Hide Target Billing Account 
+----------------------------------------------------------------------
+-->
+<template>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large" style="padding:5px;">
+    <div class="slds-modal__container" style="padding:5px;">
+        
+        <header class="slds-modal__header">
+            <h4 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate" style="color: #7d7d7d; text-align: center; font-size:small; font-weight:bold">
+                <template if:true={isAccessory}>
+					<span style="font-size: 160%;">
+						Transfer Accessory Repayments					
+					</span>
+				</template>
+				<template if:true={isDevice}>
+					<span style="font-size: 160%;">
+						Transfer Hardware Repayments					
+					</span>
+				</template>
+            </h4>
+        </header>
+
+        <template if:true={isLoaded}>
+            <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+        </template>
+
+        <c-lwc-custom-toast title={toasttitle} 
+        message={toastmsg}
+        variant={toastvariant} 
+        auto-close="true">
+        </c-lwc-custom-toast>
+
+        <div style="margin-left: 0%;margin-top: 1%;margin-bottom: 3%;">
+            <lightning-combobox
+            value={value}
+            placeholder="Filter by Legacy Billing Account"
+            options={legacyBillAccoptions}
+            onchange={handleChange}
+            style="width: 30%;">
+            </lightning-combobox> 
+            <!--<div class="slds-float_right" style="margin-left: 1%;margin-top: -3%;font-size: 108%;">Target Billing Account : {billingAccountNumber}</div>  //Commented for EDGE-207355-->
+        </div>
+        
+        <div class="slds-scrollable" style="display: block;overflow-x:scroll">
+            <template if:true={showDataTable}>
+                <c-inline-edit-data-table  table-name={tableName} table-data={recorddata} 
+                onselectedrowevent={getselectedrowlist}>
+                </c-inline-edit-data-table> 
+            </template>
+        </div>
+        
+
+        <footer class="slds-modal__footer">
+            <lightning-button 
+            variant="brand-outline" 
+            label="Remove from Solution" 
+            title="Remove from Solution" 
+            onclick={handleRemove}
+            disabled={enableUpdateBtn} 
+            class="slds-m-left_x-small">
+            </lightning-button>
+
+            <lightning-button 
+            label="Cancel" 
+            title="Cancel" 
+            onclick={handleCancel} 
+            class="slds-m-left_x-small">
+            </lightning-button>
+
+            <lightning-button 
+            variant="brand"
+            label="Add to Solution" 
+            title="Add to Solution" 
+            onclick={handleAdd}
+            disabled={enableUpdateBtn} 
+            class="slds-m-left_x-small slds-float_right">
+            </lightning-button>
+        </footer>
+    </div>
+    </section>
+</template>

@@ -1,0 +1,44 @@
+<aura:component controller="soc_ManageProductController" 
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" >	
+    
+    <!-- attributes -->
+    <aura:attribute name="clonedCaseGeneratedRecordId" type="String" access="global"/>
+    <aura:attribute name="recordId" type="String" access="global"/>
+    <aura:attribute name="buttonDisabled" type="Boolean" access="global" default="true"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="maxRowSelection" type="Integer" default="5"/>
+    <aura:attribute name="selectedRows" type="Object" access="global"/>    
+    <aura:attribute name="openDataTable" type="boolean" default="true"/>
+    <aura:attribute name="pageType" type="String" default="datatable"/>
+    <aura:attribute name="isOpen" type="boolean"/>
+    
+    <!--Init Handler -->
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <aura:if isTrue="{!v.openDataTable}">
+        <lightning:card>
+            <aura:set attribute="title">
+                <lightning:icon iconName="standard:product_item" size="x-small"/>
+                Select Product Line Items
+            </aura:set>  
+            
+            <lightning:datatable
+                                 columns="{! v.columns }"
+                                 data="{! v.data }"
+                                 keyField="id"
+                                 maxRowSelection="{! v.maxRowSelection }"
+                                 onrowselection="{! c.updateSelectedText }" 
+                                 />
+            <br/>
+            <aura:set attribute="footer">
+                <lightning:button variant="brand" disabled="{!v.buttonDisabled}" label="Next" title="Next" onclick="{! c.next }" />
+                <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.closeModal }"/>
+            </aura:set>            
+            <P><b>Note:</b>
+                <li>Please select at least one Case Line Item.</li>
+            </P>           
+        </lightning:card>
+    </aura:if>
+</aura:component>

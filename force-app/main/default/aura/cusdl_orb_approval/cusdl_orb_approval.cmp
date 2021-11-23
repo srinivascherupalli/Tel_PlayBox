@@ -1,0 +1,61 @@
+<aura:component controller="cusdl_orbApprovalController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowScreens,forceCommunity:availableForAllPageTypes" 
+                access="global" >
+    <aura:attribute name="recordId" type="String" access="global" />
+    <aura:attribute name="errorMessage" type="String" access="global" />
+    <aura:attribute name="showSpinner" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="visible" type="Boolean" access="global" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="showComp" type="Boolean" default="true" />
+    <aura:attribute name="showComp1" type="Boolean" default="false" />
+    <aura:attribute name="showFlowMsg" type="Boolean" default="true" />
+    <aura:attribute name="showFinishBtn" type="Boolean" default="false" />
+    <aura:attribute name="showOrbBtn" type="Boolean" default="true" />
+    <aura:attribute name="showOrbBtn1" type="Boolean" default="true" />
+    <aura:attribute name="onLoad" type="Boolean" default="false" />
+    <aura:attribute name="spinner" type="Boolean" default="false" />
+    <aura:attribute name="contextVar" type="String" access="global" />
+    <div aura:id="uploadCard" style="position:relative">
+    <aura:if isTrue="{!v.showFlowMsg}">
+        <lightning:flow aura:id="flowData" onstatuschange="{!c.handleStatusChange}" />
+         <aura:if isTrue="{!v.spinner}">
+        <lightning:spinner alternativeText="Loading" size="large"/>
+        </aura:if>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showComp}">
+        <lightning:layout horizontalAlign="space" class="align">
+            <aura:if isTrue="{!v.showOrbBtn}">
+                <lightning:layoutItem alignmentBump ="right">
+                    <lightning:button label="Submit for ORB"  
+                                      class="mybuttonCust"
+                                      iconName="utility:send" 
+                                      iconPosition="left"
+                                      title="Submit for ORB" 
+                                      variant="neutral"
+                                      onclick="{!c.flowCall}" />
+                </lightning:layoutItem >
+            </aura:if>
+            
+        </lightning:layout>
+        
+    </aura:if>    
+        <aura:if isTrue="{!v.showComp1}">
+        <lightning:layout horizontalAlign="space" class="align">
+          		<aura:if isTrue="{!v.showOrbBtn1}">
+                <lightning:layoutItem alignmentBump ="right">
+                    <lightning:button label="Modify solution"  
+                                      class="mybuttonCust"
+                                      iconName="utility:send" 
+                                      iconPosition="left"
+                                      title="Modify solution" 
+                                      variant="neutral"
+                                      onclick="{!c.createCli}" />
+                </lightning:layoutItem >
+          
+            </aura:if>
+        </lightning:layout>
+        
+    </aura:if>    
+    </div>
+</aura:component>

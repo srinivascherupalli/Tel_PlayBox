@@ -1,0 +1,9 @@
+<!--
+    AUTHOR : Sajal Shah    
+    DESCRIPTION : Aura for One Fund Balance Transfer
+-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,flexipage:availableForAllPageTypes" access="global">
+    <b>Please wait.. We are retrieving Adaptive Mobility Fund balance details from Legacy</b>
+    <aura:attribute name="recordId" type="String" />
+    <c:fundBalanceTransferComp recordId = "{!v.recordId}" onvaluechange="{!c.doInit}"></c:fundBalanceTransferComp>
+</aura:component>

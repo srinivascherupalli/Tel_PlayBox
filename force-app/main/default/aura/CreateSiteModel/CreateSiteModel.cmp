@@ -1,0 +1,133 @@
+<aura:component controller="CreateSiteController" implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global">
+    <!-- This is the reference of Modal window -->
+    <aura:attribute name="parentRecordId" type="String" />
+    <aura:attribute name="siteName" type="String" />
+    <aura:attribute name="isOpen" type="boolean" default="true"/>
+    <aura:attribute name="accountDetails" type="sObject" default=""/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="siteSaveAndSave" type="sObject" default="" />
+    <aura:attribute name="title" type="String" default="Create Site | Lightning Experience" />
+    <!--EDGE-71384 -->
+    <aura:attribute name="parentComp" type="String" default="CreateSiteModal"/>
+    <lightning:overlayLibrary aura:id="overlayLibRefId"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:RecordDetailEvent" action="{!c.searchedCompletedAction}"/>
+    <aura:handler event="c:windowSPANotifierEvent" action="{!c.handleBubbling}"/>
+    
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner aura:id="spinner" variant="brand" size="large"/>           
+    </aura:if>
+    
+    <!--Use "slds-m-around_xx-large" class to add standard X-Large padding to the component--> 
+    <div class="slds-modal_medium" aura:id="DetailsAddressId">
+        <div style="overflow: hidden;overflow-y: hidden; overflow-x: hidden; position: fixed; width: 100%; height: 100%;">
+            <force:recordView recordId="{!v.parentRecordId}" type="FULL"/> 
+        </div>
+        <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->   
+        <aura:if isTrue="{!v.isOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-slide-up-open">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.doCloseOperation }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="title slds-text-heading--medium">Create Site</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_large" id="modal-content-id-1">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-size_12-of-12">
+                                <br/>
+                                <div class="slds-text-align_left" style="padding-left: 2.5%">
+                                    Site Name will be visible to the customer, as typed. Please use logical naming and check spelling.
+                                </div>
+                                <br/>
+                                <br/>
+                                <div class="slds-text-align_left">
+                                    <div class="slds-size_2-of-2">
+                                        <div class="slds-m-around_x-small">
+                                            <div class="slds-m-around_small slds-grid slds-gutters">
+                                                <div class="slds-col" style="">
+                                                    Account <p class="slds-p-top_xx-small"> <lightning:icon iconName="standard:account" size="small"/> <div class="slds-p-left_x-small" style="display:inline">{!v.accountDetails.Name}</div></p>  
+                                                </div>
+                                                <div class="slds-col" style="">
+                                                </div>
+                                                <div class="slds-col">
+                                                    
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                            <div class="slds-grid slds-wrap" style="">  
+                                                <div class="slds-size_1-of-2">
+                                                    <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+                                                        <div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength">
+                                                            <div class= "slds-form-element__control">
+                                                                <lightning:input type="text" name="SiteName" aria-describedby="form-Note" aura:id="SiteName" label="Site Name" value="{!v.siteName}" required="true"/>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </div>   
+                                                </div>
+                                                <div class="slds-size_1-of-2">
+                                                    
+                                                    <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+                                                        <div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength">
+                                                            <!-- <c:strike_lookup label="Account" aura:id="accountLookup" object="Account" searchField="Name" iconName="standard:account" disabled="true"/>  -->
+                                                          <c:Strike_Lookup_Modal filter="cscrm__Address__c.cscrm__Address_Type__c!='Postal Address' AND cscrm__Address__c.Source_System__c!='TCM'" label="Site Address" 
+                                                                                   aura:id="addressLookup" object="cscrm__Address__c" searchField="Name" subtitleField="NBN_Address_Status__c" overrideNewEvent="true" limit="10" 
+                                                                                   allowNewRecords="true" showRecentRecords="true" placeholder="Search Addresses" customOnUpdateEvent="{!c.getSiteName}" iconName="custom:custom24" loadingMessage="Loading..." required="true"/>
+                                                        </div>
+                                                    </div> 
+                                                    
+                                                </div>                        
+                                            </div>                                      
+                                        </div>
+                                    </div>
+                                </div> 
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                            </div>
+                        </div> 
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral" 
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.doCloseOperation }"/>
+                        <lightning:button variant="brand" 
+                                          label="Save"
+                                          title="Save"
+                                          onclick="{! c.saveSite }"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+        </aura:if>
+    </div>
+    <div aura:id="SearchByAddressAdboreId">  
+        <!--EDGE-71384-added parentComp-->
+        <c:AccountAddressSearchModal aura:id="SearchByAddressAdbore" parentRecordId = "{!v.parentRecordId}" parentComp="{!v.parentComp}"/>        
+        <br/>
+    </div>
+    <div aura:id="SearchResultId">
+        <!--EDGE-71384-added parentComp-->
+        <c:AccountAddressResultModal aura:id="SearchAddressResult" parentRecordId = "{!v.parentRecordId}" parentComp="{!v.parentComp}"/> 
+      </div>
+    <br/>
+</aura:component>

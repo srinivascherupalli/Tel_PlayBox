@@ -1,0 +1,813 @@
+<!-- Author: Ila Verma/Pradeep/Jawahar/Aishwarya 
+Company: Tesltra 
+Description: EDGE-66226/66462/66239
+History 
+<Date> <Ila Verma> <Created the page to show appointmnet list will the ststus and other details> 
+<2/5/2019> <Mahima Gandhe > <EDGE: 66437--Created Reschedule and Rebook button and popup form to enable the functionality>
+-->
+<apex:page showHeader="false" sidebar="false" controller="AppointmentBOMSitePageHandler" docType="html-5.0">
+    
+    <apex:includeScript value="{!$Resource.cscfga__jQuery_min}" />
+    <style type="text/css">
+        .viewDetailmodal {
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        
+        /* Modal Content */
+        .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        width: 80%;
+        border-radius:4px;
+        }
+        .modalOkButton{
+        width:50px !important;
+        }
+        .viewDetailModalOkButton{
+        width:50px !important;
+        left: 50%;
+        position: relative;
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        text-decoration: none;
+        }        
+        .titleHeader{
+        text-decoration: solid;
+        font-weight: bold;
+        padding-left: 1rem;
+        top: 1rem;
+        position: relative;
+        }
+        .titleSite{
+        text-decoration: solid;
+        font-weight: bold;
+        }
+        .innerTitleHeader{
+        text-decoration: solid;
+        font-weight: bold;
+        display: block;
+        }
+        .displayBookApptOuterBlockStyle{
+        border: 2px solid;
+        padding: 30px;
+        border-color : #0070D2 !important;
+        }
+        .submitButton{  
+        height: 30px;
+        min-width: 110px;
+        width:auto;
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        text-decoration: none;
+        margin: 0 15px !important;
+        border:1px solid rgb(221, 219, 218) !important;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        }
+        .closeSiteApptBtnStyle{
+        position:relative;
+        float:right;
+        }
+        .continueBtnStyle{
+        position:relative;
+        float:right;
+        }
+        .apptSiteBox{
+        border:none !important;
+        }
+        .erroMessageClose:hover{
+        cursor:pointer !important;
+        }
+        .secondaryPalette.bPageBlock{
+        border-top: 1px solid #eaeaea !important;
+        }
+        .disabledButton{
+        width:90px; 
+        cursor: not-allowed !important;
+        background : #e8e8e9 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        }
+        .disabledCloseButton{
+        height: 30px;
+        min-width: 100px;
+        width: auto;
+        cursor: not-allowed !important;
+        background : #e8e8e9 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: rgb(196, 196, 196) !important;
+        }
+        .custPopup{
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 3px solid #888;
+        width: 80%;
+        }
+        .help-icon{
+        display: inline-block;
+        position: relative;
+        margin-left: .3rem;
+        cursor: pointer;
+        font-family: 'Times New Roman', serif !important;
+        text-align: center;
+        height: 1rem;
+        width: 1rem;
+        background-color: #54698d;
+        color: #fff;
+        border-radius: 50%;
+        font-size: .8rem;
+        line-height: 1rem;
+        opacity: 0.85;
+        }
+        .help-popup{
+        display: none;
+        position: absolute;
+        border-radius: .25rem;
+        background-color: #54698d;
+        bottom: 1.5rem;
+        left: -300px;
+        color: #fff;
+        padding: .5rem;
+        font-family: 'Salesforce Sans' !important;
+        text-align: left;
+        width: 420px;
+        z-index:100 !important;
+        }
+        .help-icon:hover .help-popup{
+        display: block;
+        
+        }
+        .help-icon .help-popup p {
+        margin: 0;
+        position: relative;
+        box-sizing: border-box;
+        }
+        .help-icon .help-popup:before {
+        width: 1rem;
+        height: 1rem;
+        position: absolute;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        content: '';
+        background-color: #54698d;
+        bottom: -.2rem;
+        right: 7rem;
+        z-index:0 !important;
+        box-sizing: border-box;
+        }
+        .bPageBlock .detailList .labelCol {
+        width: 19%;
+        }
+        
+        i {
+        border: solid black;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+        }
+        
+        .table { 
+        width: 750px; 
+        border-collapse: collapse; 
+        margin:50px auto;
+        }
+        
+        .th { 
+        background: #3498db; 
+        color: white; 
+        font-weight: normal; 
+        }
+        
+        .td, th { 
+        padding: 10px; 
+        border: 1px solid #ccc; 
+        text-align: left; 
+        font-size: 15px;
+        }
+        
+        .labels tr td {
+        color: Black; 
+        font-weight: bold;
+        }
+        
+        .label tr td label {
+        display: block;
+        }
+        
+        .down {
+        transform: rotate(-315deg);
+        -webkit-transform: rotate(-315eg);
+        }
+        .right {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+        white-space: normal;
+        }
+        .btnNew{
+        width:90px;            
+        }
+        
+        [data-toggle="toggle"] {
+        display: none;
+        }
+        
+    </style>
+    
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('.enabledfor').attr('disabled', 'disabled');
+        $('.enabledfor').addClass("disabledButton");
+    });
+    
+    function populateAction(spanID,apptStatus){
+        
+        if (apptStatus == '') {
+            //do something when appointment status is blank
+        }else{
+            $('#'+ spanID +' .enabledfor >option').each(function() {
+                //alert($(this).val());
+                if (apptStatus == 'SCHEDULED' && $(this).val() == 'Schedule' ) {
+                    $(this).remove();
+                    $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                                                          .attr("value",'Reschedule')
+                                                          .text('Reschedule'));
+                    $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                                                          .attr("value",'View Details')
+                                                          .text('View Details'));
+                }
+                if (apptStatus == 'PARTIAL_COMPLETE' && $(this).val() == 'PARTIAL_COMPLETE') {
+                    $(this).remove();
+                    $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                                                          .attr("value",'Rebook Appointment')
+                                                          .text('Rebook Appointment'));
+                    $('#'+ spanID +' .enabledfor').append($("<option></option>")
+                                                          .attr("value",'View Details')
+                                                          .text('View Details'));
+                }
+            });
+        }
+    }
+    
+    function actionChange(actionValue,subID,cat,suggestedDate, Apptid){
+        debugger;
+        if(actionValue == 'View Details'){
+            getAppDetailsPopup(subID,Apptid);
+        }
+        
+        
+        if(actionValue == 'Schedule'){
+            
+            generateBookAppt(subID,actionValue,suggestedDate,cat);
+        }
+        //EDGE-66437- start
+        if(actionValue == 'Reschedule' || actionValue == 'Rebook'){
+            
+            setBookAppt(subID,actionValue,Apptid,cat);
+        }
+        //EDGE-66437- end
+        
+    }
+    
+    
+    //EDGE-66437- start
+    function setRescIframeSRC(subID,ApptId,actionValue, Category)
+    {
+        
+        var windowURL = window.location.href;
+        var firstPart  = windowURL.split('/apex')[0];
+        var apptBookURL = firstPart +'/apex/GenerateAppointmentPage?id=' + subID + '&ApptId=' + ApptId + '&Category=' +Category;
+        //var genApptBookURL = firstPart +'/apex/GenerateAppointmentPage?id=' + subID + '&fromDate=' + suggestedDate + '&Category=' +Category;
+        if (actionValue == 'Reschedule'){
+            document.getElementById('RescheduleApptIframe').src=apptBookURL +'&operation=Reschedule';
+        }else if (actionValue == 'Rebook'){
+            document.getElementById('RescheduleApptIframe').src=apptBookURL +'&operation=FollowOn';
+            
+        }
+    }
+    
+    //EDGE-66437- end
+    
+    function onClickapptID(subID){
+        getAppDetailsPopup(subID);
+    }
+    function setIframeSRC(subID,suggestedDate,Category){
+        debugger;
+        var windowURL = window.location.href;
+        var firstPart  = windowURL.split('/apex')[0];
+        var genApptBookURL = firstPart +'/apex/GenerateAppointmentPage?id=' + subID + '&fromDate=' + suggestedDate + '&Category=' +Category;
+        
+        //document.getElementById('bookApptIframe').src=genApptBookURL +'&operation=Generate Appointment';
+        
+        document.getElementById('bookApptIframe').src=genApptBookURL +'&operation=Schedule';
+        
+        
+    }
+    function checkMessages(hasMessage) {
+        if (hasMessage == true || hasMessage == 'true') {
+            //document.getElementById("msg_block").style.display = "block";
+            //document.getElementById("err_text").innerHTML = 'Appointment should be scheduled for all the sites to proceed.';
+        } else {
+            document.getElementById("msg_block").style.display = "none";
+        }
+    }
+    function closeError(){
+        document.getElementById("msg_block").style.display = "none";
+        document.getElementById("err_text").innerHTML = "";
+    }
+    function iFrameCallbackAppt(){
+        rerenderApptDetailsVF();
+    }
+    function disableAllSelect(){
+        $('.enabledfor').attr('disabled', 'disabled');
+        $('.enabledfor').addClass("disabledButton");
+    }function showPopup()
+    {
+        document.getElementById("ModalPopup").style.display = "block";
+    }
+    function hidePopup()
+    {   
+        document.getElementById("ModalPopup").style.display = "none";
+    }
+    function showPopupOnSave()
+    {       
+        //alert(allscheduledSites);
+        if(allscheduledSites == 'true' && primaryOrderStatus=='Appointment Required'){
+            document.getElementById("ModalPopup1").style.display = "block";
+        }
+        else{
+            navigateBackToPrimaryOrderVF();
+        }
+    }
+    function OkPopUp()
+    {
+        closePopUpWithRedirection();
+    }
+    function CancelPopUp()
+    {
+        document.getElementById("ModalPopup1").style.display = "none";
+    }
+    
+    $(document).ready(function() {
+        $('[data-toggle="toggle"]').change(function(){
+            $(this).parents().next('.hide').toggle();
+            $('#targetarrow').toggleClass('down');
+            $('#targetarrow').toggleClass('right');
+        });
+    });
+    
+    
+    
+    </script>
+    <apex:form >
+        
+        <!--EDGE-66437- start-->
+        <apex:actionFunction action="{!setBookAppointmentParams}" name="setBookAppt" oncomplete="setRescIframeSRC('{!JSENCODE(SubscriptionId)}','{!JSENCODE(ApptId)}','{!JSENCODE(selectedActionVF)}','{!Category}')" reRender="reSchedulePopup">
+            <apex:param name="subscriptionId" assignTo="{!SubscriptionId}" value="" />
+            <apex:param name="actionValue" assignTo="{!selectedActionVF}" value="" />
+            <apex:param name="ApptId" assignTo="{!ApptId}" value="" />
+            <apex:param name="Category" assignTo="{!Category}" value="" />
+        </apex:actionFunction>
+        
+        <!--EDGE-66437- end-->
+        <apex:actionFunction action="{!getAppDetails}" name="getAppDetailsPopup" rerender="tstpopup">
+            <apex:param name="subscriptionId" assignTo="{!SubscriptionId}" value="" />
+            <apex:param name="Apptid" assignTo="{!ApptId}" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction action="{!generateAppointmentBOMQ}" name="generateBookAppt" oncomplete="setIframeSRC('{!JSENCODE(SubscriptionId)}','{!JSENCODE(suggestedDate)}','{!Category}')" reRender="bookAppointmentPanel">
+            
+            <apex:param name="subscriptionId" assignTo="{!SubscriptionId}" value="" />
+            <apex:param name="actionValue" assignTo="{!selectedActionVF}" value="" />
+            <apex:param name="suggestedDate" assignTo="{!suggestedDate}" value="" />
+            <apex:param name="Category" assignTo="{!Category}" value="" />
+        </apex:actionFunction>
+        
+        
+        <apex:actionFunction action="{!clearAllOnNoneAction}" name="clearAll" reRender="tstpopup, bookAppointmentPanel">
+        </apex:actionFunction>
+        <apex:actionFunction action="{!setPrimaryOrderID}" name="setPrimOrdId">
+            <apex:param name="primaryOrderId" assignTo="{!primaryOrderIdGlobal}" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction action="{!reRenderApptDetails}" name="rerenderApptDetailsVF" >
+        </apex:actionFunction>
+        <apex:actionFunction action="{!OKPopup}" name="closePopUpWithRedirection" reRender="Modelpopup1" />
+        <apex:actionFunction action="{!navigateBackToPrimaryOrder}" name="navigateBackToPrimaryOrderVF" reRender="Modelpopup1" />
+        <apex:slds />
+        
+        <!-- ERROR ALERT DIV -->
+        <div id="msg_block" style="display: none;">
+            <div id="err_wrapper"
+                 class="slds-notify slds-notify--alert slds-theme--{!alertType} slds-theme--alert-texture"
+                 role="alert">
+                
+                <h2>
+                    <div xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <svg aria-hidden="true"
+                             class="slds-icon icon-text-email slds-icon--small slds-m-right--x-small" style="position:absolute;top:15%;left:1rem;">
+                            <use xlink:href="{!URLFOR($Resource.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#' + if(alertType = 'success','check','warning'))}"></use>
+                        </svg>
+                        <span id="err_text"></span>
+                    </div>
+                </h2>
+                <span style="position: absolute;right:1rem;color:#fff;" class="erroMessageClose" onclick="closeError()">X</span>
+            </div>
+        </div>
+        <div>
+            <span class="titleHeader">Set Appointments for {!primaryOrderName}</span>                
+        </div>      
+        
+        <div id="msg_block_Resc" style="display: block;margin-top:20px;">
+            <apex:repeat value="{!siteApptWrapperList}" var="siteAppt" >
+                <apex:repeat value="{!siteAppt.subApptWrapperList}" var="childApptd" >
+                    <apex:outputPanel rendered="{!childApptd.isRescheduleRequired}">
+                        <div id="err_wrapper_resc"  style="justify-content:left!important" class="slds-notify slds-notify--alert slds-theme--{!alertType} slds-theme--alert-texture"
+                             role="alert">                    
+                            <h2>
+                                <div >                           
+                                    <span id="err_text">Reschedule of {!childApptd.AppointmentCategory} Appointment {!childApptd.AppointmentID} is Required. Adjust the start date after {!childApptd.suggestedRescheduleDate}.</span>
+                                </div>
+                            </h2>
+                            <span style="position: absolute;right:1rem;color:#fff;" class="erroMessageClose" onclick="closeError()">X</span>
+                        </div>
+                    </apex:outputPanel>
+                </apex:repeat>
+            </apex:repeat>
+        </div>
+        
+            
+        
+        <div class="slds-box slds-theme--default apptSiteBox" id="div2">
+            <apex:outputPanel id="testingParent">
+                
+              <!--  <table class="slds-table slds-no-row-hover" border="2px" style="border-color : #0070D2 !important;">
+                    <thead>
+                        <tr>
+                            <th>Site Address With Required Appointments</th>
+                            <th>Action</th>
+                            <th>Appointment ID</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Appointment Status</th>
+                        </tr>
+                    </thead>
+                    
+                    
+                    <apex:repeat value="{!siteApptWrapperList}" var="siteAppt" >
+                        <apex:repeat value="{!siteAppt.subApptWrapperList}" var="childAppt" >
+                            
+                            <tbody class="labels">           
+                                <tr>
+                                    
+                                    <td style="width:500px;" >
+                                        <apex:outputText rendered="{!childAppt.iteratorFlag}">
+                                            <label for="{!siteAppt.Address}"> <i class="right"> </i> {!siteAppt.Address}  </label>
+                                            <input type="checkbox" name="{!siteAppt.Address}" id="{!siteAppt.Address}" data-toggle="toggle"/> 
+                                            
+                                        </apex:outputText>
+                                    </td>
+                                    
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="{!siteAppt.appointmentCount} of {!reqAppCount} Appointments Booked" ></apex:outputLabel>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody class="hide"> 
+                                <apex:repeat value="{!reqWrapperList}" var="reqAppt" >
+                                    <apex:outputPanel id="testing" rendered="{! If(reqAppt.SubscriptionId == siteAppt.SubscriptionId ,true,false) }">
+                                        <tr class="hide">
+                                            <apex:outputText rendered="true">
+                                                <td style="width:500px;" >
+                                                    <apex:outputLabel styleClass="" value="{!reqAppt.appointmentCategory}" style="width:500px;" />
+                                                </td>
+                                            </apex:outputText>
+                                            <td align="center">
+                                                
+                                                <span id="{!siteAppt.SubscriptionId}" >    
+                                                    <apex:commandButton value="Schedule" id="theButton"  styleClass="{! If(reqAppt.disable == true,'disabledButton, btnNew','btnNew')}" rendered="{!(childAppt.Status =='') }" onclick="actionChange('Schedule','{!JSENCODE(siteAppt.SubscriptionId)}','{!reqAppt.appointmentCategory}');return false;"  />
+                                                </span> 
+                                                
+                                                
+                                               
+                                                <span id="{!siteAppt.SubscriptionId}" style="padding-top: 10px">
+                                                    <apex:commandButton value="Reschedule" styleClass="btnNew" rendered="{! childAppt.Status!='' && (if(CONTAINS(reqAppt.appointmentCategory,'NBN'), true, false) && primaryOrderStatus!='Failed' && primaryOrderStatus!='Completed' && primaryOrderStatus!='Cancelled' && childAppt.Status =='SCHEDULED') || (if(CONTAINS(reqAppt.appointmentCategory,'Telstra'), true, false) && childAppt.Status=='SCHEDULED')  }" id="btnReschedule"  onclick="actionChange('Reschedule','{!JSENCODE(siteAppt.SubscriptionId)}','{!reqAppt.appointmentCategory}','{!JSENCODE(childAppt.StartDate)}','{!JSENCODE(childAppt.AppointmentID)}' );return false;" />
+                                                </span>
+                                                <br/>  
+                                                
+                                                <span style="padding-top: 10px" id="{!siteAppt.SubscriptionId}"> 
+                                                    
+                                                    <apex:commandButton styleClass="btnNew" rendered="{! childAppt.Status!='' &&  (if(CONTAINS(reqAppt.appointmentCategory,'NBN'), true, false) && primaryOrderStatus!='Failed' && primaryOrderStatus!='Completed' && primaryOrderStatus!='Cancelled') || (if(CONTAINS(reqAppt.appointmentCategory,'Telstra'), true, false) && childAppt.Status=='PARTIAL_COMPLETE')  }" value="Rebook"
+                                                                        id="btnRebook"  onclick="actionChange('Rebook','{!JSENCODE(siteAppt.SubscriptionId)}','{!reqAppt.appointmentCategory}','{!JSENCODE(childAppt.StartDate)}','{!JSENCODE(childAppt.AppointmentID)}');return false;" />
+                                                </span>
+                                               
+                                            </td>
+                                            <td>
+                                                <span id="{!siteAppt.SubscriptionId}">
+                                                    
+                                                    <apex:commandLink onclick="actionChange('View Details','{!siteAppt.SubscriptionId}');return false;"> {!childAppt.AppointmentID}                                  
+                                                    </apex:commandLink>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <apex:outputLabel styleClass="" value="{!childAppt.StartDate}" ></apex:outputLabel>
+                                            </td>
+                                            <td>
+                                                <apex:outputLabel styleClass="" value="{!childAppt.EndDate}" ></apex:outputLabel>
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel rendered="{!childAppt.isRescheduleRequired}">
+                                                    <span style="color:red">RESCHEDULE REQUIRED </span>  
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!NOT(childAppt.isRescheduleRequired)}">
+                                                    <apex:outputLabel styleClass="" value="{!childAppt.Status}" ></apex:outputLabel>
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                        </tr>
+                                    </apex:outputPanel>
+                                </apex:repeat>
+                            </tbody>
+                            
+                        </apex:repeat>
+                    </apex:repeat>
+                </table> -->
+                <!--New Table- start-->
+                <br/>
+                
+                
+                <table class="slds-table slds-no-row-hover" border="2px" style="border-color : #0070D2 !important;">
+                    <thead>
+                        <tr>
+                            <th>Site Address With Required Appointments</th>
+                            <th>Action</th>
+                            <th>Appointment ID</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Appointment Status</th>
+                        </tr>
+                    </thead>
+                    <apex:repeat value="{!siteApptWrapperList}" var="siteAppt" >
+
+<tbody>
+                    <tbody class="labels">           
+                                <tr>
+                                    
+                                    <td style="width:500px;" >
+                                       <!--Quick Fix- Collapse Feature-->
+                                        <label for="{!siteAppt.SubscriptionId}"> <i class="right"> </i> {!siteAppt.Address}  </label>
+                                        <input type="checkbox" name="{!siteAppt.SubscriptionId}" id="{!siteAppt.SubscriptionId}" data-toggle="toggle"/>                                        
+                                       
+                                    </td>
+                                    
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="" ></apex:outputLabel>
+                                    </td>
+                                    <td>
+                                        <apex:outputLabel styleClass="" value="{!siteAppt.appointmentCount} of {!siteAppt.reqAppCountNew} Appointments Reserved" ></apex:outputLabel>
+                                    </td>
+                                </tr>
+                            </tbody>
+                                      
+ <tbody class="hide">               
+    <apex:repeat value="{!reqWrapperList}" var="reqAppt" >
+                            
+                           
+                                <apex:repeat value="{!siteAppt.subApptWrapperList}" var="childAppt" >
+                  
+                                 <apex:outputPanel id="testing" rendered="{! If(reqAppt.SubscriptionId == siteAppt.SubscriptionId ,true,false) }">
+<apex:outputPanel rendered="{! If((contains(reqAppt.CategoryName,'TELSTRA') && contains(childAppt.AppointmentCategory,'TELSTRA')) || (contains(reqAppt.CategoryName,'NBN') && contains(childAppt.AppointmentCategory,'NBN')) || 
+(childAppt.AppointmentCategory=='' || childAppt==null) ,true,false)}" >
+                                                                                 
+                                      <tr class="hide">
+                                            <apex:outputText rendered="true">
+                                                <td style="width:500px;" >
+                                                    <apex:outputLabel styleClass="" value="{!reqAppt.appointmentCategory}" style="width:500px;" />
+                                                </td>
+                                            </apex:outputText>
+                                            <td align="center">
+                                                
+                                                <span id="{!siteAppt.SubscriptionId}" >    
+                                                    <apex:commandButton value="Schedule" id="theButton" styleClass="{! If(reqAppt.disable == true,'disabledButton','btnNew')}"  disabled="{!reqAppt.disable}" rendered="{!(childAppt.Status =='') }" onclick="actionChange('Schedule','{!JSENCODE(siteAppt.SubscriptionId)}','{!reqAppt.appointmentCategory}');return false;"  />
+                                                </span> 
+                                                
+                                                
+                                                <!--EDGE-66437- start-->
+                                               
+                                                <span id="{!siteAppt.SubscriptionId}" style="padding-top: 10px">
+                                                <!--EDGE-90315- Conditions Updated for Reschedule Button Visibility for TELSTRA-->
+                                                   <apex:commandButton value="Reschedule" styleClass="btnNew" rendered="{! childAppt.IsParent!= true && childAppt.Status!='' && ((if(CONTAINS(reqAppt.appointmentCategory,'NBN'), true, false) && primaryOrderStatus!='Failed' && primaryOrderStatus!='Completed' && primaryOrderStatus!='Cancelled') || (if(CONTAINS(reqAppt.appointmentCategory,'TELSTRA'), true, false) && childAppt.AppointmentCategory=='TELSTRA' && (childAppt.Status!='REBOOKED' && childAppt.Status!='Partial Complete' && childAppt.Status!='Cancelled' && childAppt.Status!='CANCELLED' && childAppt.Status!='Complete')) ) }" id="btnReschedule"  onclick="actionChange('Reschedule','{!JSENCODE(siteAppt.SubscriptionId)}','{!reqAppt.appointmentCategory}','{!JSENCODE(childAppt.StartDate)}','{!JSENCODE(childAppt.AppointmentID)}' );return false;" />
+                                                </span>
+                                                <br/>                                                 
+                                                <span style="padding-top: 10px" id="{!siteAppt.SubscriptionId}"> 
+                                                    <!--EDGE-90315- Conditions Updated for Rebook Button Visibility for TELSTRA-->
+                                                    <apex:commandButton styleClass="btnNew" rendered="{!childAppt.IsParent!= true && childAppt.Status!='' &&  ((if(CONTAINS(reqAppt.appointmentCategory,'NBN'), true, false) && childAppt.AppointmentCategory=='NBN' && (primaryOrderStatus!='Failed' && 
+ primaryOrderStatus!='Completed' && primaryOrderStatus!='Cancelled')) ||  (if(CONTAINS(reqAppt.appointmentCategory,'TELSTRA'), true, false) && childAppt.AppointmentCategory=='TELSTRA' && (childAppt.Status=='Partial Complete')))}" value="Rebook"
+                                                                        id="btnRebook"  onclick="actionChange('Rebook','{!JSENCODE(siteAppt.SubscriptionId)}','{!reqAppt.appointmentCategory}','{!JSENCODE(childAppt.StartDate)}','{!JSENCODE(childAppt.AppointmentID)}');return false;" />
+                                                </span>
+                                                <!--EDGE-66437- end-->
+                                            </td>
+                                            <td> 
+                                               
+                                               <span id="{!siteAppt.SubscriptionId}">
+                                                    
+                                                    <apex:commandLink onclick="actionChange('View Details','{!siteAppt.SubscriptionId}','','','{!childAppt.AppointmentID}');return false;"> {!childAppt.AppointmentID}                                  
+                                                    </apex:commandLink>
+                                                </span>
+                                                
+                                            </td>
+                                            <td>
+                                                <apex:outputLabel styleClass="" value="{!childAppt.StartDate}" ></apex:outputLabel>
+                                            </td>
+                                            <td>
+                                                <apex:outputLabel styleClass="" value="{!childAppt.EndDate}" ></apex:outputLabel>
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel rendered="{!childAppt.isRescheduleRequired}">
+                                                    <span style="color:red">RESCHEDULE REQUIRED </span>  
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!NOT(childAppt.isRescheduleRequired)}">
+                                                    <apex:outputLabel styleClass="" value="{!childAppt.Status}" ></apex:outputLabel>
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                        </tr>
+                                    </apex:outputPanel> </apex:outputPanel>
+                    </apex:repeat>
+                           
+                        </apex:repeat>
+                                     </tbody>
+            </tbody>
+                                
+                    </apex:repeat>
+                </table>  
+                <!--New Table end-->       
+                
+                
+                
+                
+            </apex:outputPanel>
+            <br/>
+            <br/>
+            <apex:outputPanel id="bookAppointmentPanel" >
+                <apex:outputPanel layout="block" rendered="{!displayBookAppointment}">
+                    <div class="displayBookApptOuterBlockStyle" id="displayBookApptOuterBlock">
+                        <span class="innerTitleHeader">Connected Workplace - {!selectedSite}</span>
+                        <apex:iframe id="bookApptIframe" src="" width="850" height="700" frameborder="0" scrolling="no"/>
+                    </div>
+                </apex:outputPanel>    
+            </apex:outputPanel>
+            <br/>
+            <!--<div id="saveAndContinueButtonID" class="continueBtnStyle">
+<apex:commandButton value="Save Update" styleClass="submitButton" action="{!navigateBackToPrimaryOrder}"/>
+</div> -->
+            <!--EDGE-66476--isAllRescheduled added in condition-->
+            
+            <apex:outputPanel layout="block" rendered="{!NOT(isOrderSubmitted) && isAllRescheduled}">
+                <!--<div id="CloseSiteApptId" class="closeSiteApptBtnStyle">
+<apex:commandButton value="Save and Progress " styleClass="submitButton" action="{!pollAppointmentStatus}" onclick="showPopup()" reRender="post_processing"/>
+</div>-->
+                <div id="CloseSiteApptId" class="closeSiteApptBtnStyle">
+                    <span class="help-icon ">i<span class="help-popup">
+                        <p> 1. On Click of Save and Progress you will be redirected to primary order.<br/>
+                            2. All site appointments must be scheduled before order can be submitted.<br/>   
+                        </p></span></span>
+                    <apex:commandButton value="Save and Progress" styleClass="submitButton" onclick="showPopupOnSave()" reRender="Modalpopup1"/>
+                </div>
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!(isOrderSubmitted) && isAllRescheduled}">
+                <div id="CloseSiteApptIdDisabled" class="closeSiteApptBtnStyle" >
+                    <!--<apex:commandButton value="Save" styleClass="disabledCloseButton" action="{!pollAppointmentStatus}" disabled="true"/>-->
+                    <span class="help-icon ">i<span class="help-popup"><p> 1. On Click of Save and Progress you will be redirected to primary order.<br/>
+                        2. All site appointments must be scheduled before order can be submitted.<br/>                          
+                        </p></span></span>
+                    <apex:commandButton value="Save and Progress" styleClass="submitButton" onclick="showPopupOnSave()"  reRender="Modalpopup1"/>
+                </div>
+            </apex:outputPanel>
+            <br/><br/>
+            <apex:outputPanel id="tstpopup">
+                <apex:outputPanel styleClass="viewDetailmodal" layout="block" rendered="{!displayPopUp}">
+                    <div class='modal-content'>
+                        <apex:pageBlock >
+                            <apex:pageBlockSection columns="1">
+                                <h1 style="font-size: large; font-weight: bold;">Appointment Details</h1>
+                                <br/>
+                                <apex:outputText label="Site Address :" value="{!viewDetailMap['address']}" id="address"/>
+                                <apex:outputText label="Appointment ID :" value="{!viewDetailMap['appointmentID']}" id="appointmentId"/>
+                                <apex:outputText label="Appointment Status :" value="{!viewDetailMap['status']}" id="status"/>                                 
+                                <apex:outputText label="Appointment Start Date :" value="{!viewDetailMap['startDate']}" id="startDate"/>                                    
+                                <apex:outputText label="Appointment End Date :" value="{!viewDetailMap['endDate']}" id="endDate"/>
+                                <!--<apex:outputText label="Subscription ID :" value="{!viewDetailMap['subscriptionID']}" id="subscriptionID"/>-->
+                                <apex:outputText label="User ID :" value="{!viewDetailMap['createdBy']}" id="createdBy"/>
+                                <apex:outputText label="Last Modified Date Time :" value="{!viewDetailMap['lastModifiedDate']}" id="lastModifiedDate"/>
+                                <apex:outputText label="Site Primary Contact Name :" value="{!viewDetailMap['primaryContactName']}" id="primaryContactName"/>
+                                <apex:outputText label="Site Primary Contact Phone :" value="{!viewDetailMap['primaryContactPhone']}" id="primaryContactPhone"/>
+                                <apex:outputText label="Site Technical Contact Name :" value="{!viewDetailMap['technicalContactName']}" id="technicalContactName"/>
+                                <apex:outputText label="Site Technical Contact Phone :" value="{!viewDetailMap['technicalContactPhone']}" id="technicalContactPhone"/>
+                                <apex:outputText label="Parent Appointment ID :" value="{!viewDetailMap['parentappointment']}" id="parentAppointmentID" rendered="{!viewDetailMap['status'] == 'Partial Complete'}"/>
+                                
+                            </apex:pageBlockSection> 
+                        </apex:pageBlock>
+                        <apex:commandButton value="OK" styleClass="viewDetailModalOkButton" action="{!closePopup}" rerender="tstpopup"/>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <br/>
+            <!--EDGE-66437- start-->
+            <apex:outputPanel id="reSchedulePopup">
+                
+                <!--<apex:outputPanel id="bookAppointmentPanel" >-->
+                <apex:outputPanel styleClass="viewDetailmodal" layout="block" rendered="{!displayRescPopUp}">
+                    <div class='modal-content'>
+                        <div class="displayBookApptOuterBlockStyle" id="displayBookApptOuterBlock">
+                            <span class="innerTitleHeader">Connected Workplace - {!selectedSite}</span>
+                            <apex:iframe id="RescheduleApptIframe" src="" width="850"  frameborder="0" scrolling="no"/>
+                        </div>
+                        <apex:commandButton value="Close" styleClass="viewDetailModalOkButton" action="{!closePopup}" rerender="reSchedulePopup"/>
+                    </div>
+                </apex:outputPanel>    
+                <!--</apex:outputPanel>-->
+            </apex:outputPanel>
+            <!--EDGE-66437- end-->
+            
+            <!--APEX VARIABLES DIV-->
+            <apex:outputPanel id="post_processing">
+                <script>
+                var hasMessage = '{!JSENCODE(hasMessageString)}';
+                var allscheduledSites='{!JSENCODE(AppointmentCompletedForAllsitesText)}';
+                var primaryOrderStatus='{!JSENCODE(primaryOrderStatus)}';
+                //if(hasMessage!=''){
+                checkMessages(hasMessage);    
+                //}
+                </script>
+            </apex:outputPanel>
+        </div>
+    </apex:form>
+    <div id = "ModalPopup1" class ="modal">
+        <div class='modal-content'>
+            <apex:outputPanel id="ModelPopup1">
+                <apex:form >
+                    <div>
+                        <h1></h1>    
+                    </div>
+                    <div>
+                        <center>
+                            <span>{!popupMessage}</span> 
+                        </center>       
+                    </div>
+                    <br/>
+                    <center>
+                        <apex:commandButton value="OK" styleclass="submitButton modalOkButton" onClick="OkPopUp()" rerender="ModelPopup1"/>
+                        <apex:commandButton value="Cancel" styleclass="submitButton modalOkButton" onClick="CancelPopUp()" rerender="ModelPopup1"/>
+                    </center>
+                </apex:form>
+            </apex:outputPanel>
+        </div>
+    </div>
+    
+</apex:page>

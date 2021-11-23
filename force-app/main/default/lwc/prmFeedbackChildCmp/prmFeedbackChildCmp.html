@@ -1,0 +1,37 @@
+<template>
+    <!-- P2OB-5311 : Common component for accepting values in floating feedback component -->
+    <div class="slds-grid feedbackFormDetails" style="border-top: 1px solid rgb(177 174 174); padding-top: 1rem;">
+        <!--class="slds-grid"-->
+        <lightning-formatted-text value="Would you like to share URL"></lightning-formatted-text>
+        <lightning-input name="inputUrl" class="realignInput1" type="url" placeholder="Input URL"> </lightning-input>
+        <!--label="Would you like to share URL"-->
+        <lightning-formatted-text value="and/or"></lightning-formatted-text>
+        <!--
+            <lightning-input name="inputFile" class="realignInput" type="file"
+                            accept="image/png, image/jpeg, image/jpg, .zip, .pdf"
+                            onchange={handleFilesChange}
+                            multiple>
+            </lightning-input>-->
+        <div>
+            <lightning-input label="" accept="image/*, .pdf" class="realignInput1" name="inputFile"
+                onchange={handleFilesChange} type="file"></lightning-input>
+            <div class="feedbackError slds-text-body_small slds-text-color_error">
+                <span>{fileName}</span>
+                <template if:true={showLoadingSpinner}>
+                    <lightning-spinner alternative-text="Uploading......" size="medium"></lightning-spinner>
+                </template>
+            </div>
+        </div>
+    </div>
+    <div class="slds-grid feedbackFormDetails feedbackAsterisk">
+        <lightning-formatted-text value="Select Functionality/Module"></lightning-formatted-text>
+        <lightning-combobox class="realignInput1" name="inputModule" label="" value={selectedOption}
+            placeholder="Functionality/Module" options={options} onchange={handleChange}>
+        </lightning-combobox>
+    </div>
+    <div class="feedbackFormDetails feedbackAsterisk">
+        <lightning-formatted-text class="feedbackShare" value="What would you like to share with us?">
+        </lightning-formatted-text>
+        <lightning-textarea name="inputDesc" label="" placeholder=""></lightning-textarea>
+    </div>
+</template>

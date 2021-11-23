@@ -1,0 +1,5 @@
+<design:component>
+	<design:attribute name="varParentIdList" label="varParentIdList"/>
+    <design:attribute name="varChildCaseList" label="varChildCaseList"/>
+    <design:attribute name="blnPartner" label="blnPartner"/>
+</design:component>

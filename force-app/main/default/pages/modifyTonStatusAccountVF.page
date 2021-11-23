@@ -1,0 +1,35 @@
+<!--
+-----------------------------------------------------------------------------------------------------------------------------
+Name        : modifyTonStatusAccountVF
+Description : Enable user to modify TON barring status
+Author      : Sarfraj Ahmad
+Story       : DPG-5729 (Sprint 21.09) || New Component 
+var userTheme ="{!$User.UITheme}";
+var currProfileName = "{!$Profile.Name}";
+======================================================================
+No.  Developer				Story(Sprint)			Description
+1.					
+----------------------------------------------------------------------
+-->
+<apex:page standardController="Account" showHeader="false" sidebar="false" lightningStylesheets="true">
+    <apex:includeLightning />
+    <div id="lightningCapture"></div>
+    <script>
+    var accountId = "{! JSENCODE($CurrentPage.parameters.Id) }";
+    var currProfileName = "{!$Profile.Name}";
+    console.log('accountId :: ' + accountId);
+    console.log('currProfileName :: ' + currProfileName);
+    $Lightning.use("c:CaptureSubNicknameOrderApp", function(){
+        
+        $Lightning.createComponent(
+            "c:modifyTonStatusAccount",
+            {   "accountId": accountId,
+                "currProfileName": currProfileName
+            },
+            "lightningCapture",
+            function(cmp){
+                console.log("Component created!");
+            });
+        });
+    </script>
+</apex:page>

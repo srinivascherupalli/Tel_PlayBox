@@ -1,0 +1,275 @@
+<!-- 
+Name : AdvancedStockCheck
+Description : New Lightning UI for checking stock availability for mobile devices. 
+Author: Pradeep Bhumi
+Story: EDGE-143860
+Modified: Shresth(DPG-3510)
+-->
+
+<aura:component controller="AdvancedStockCheckController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global" >
+    <!--aura:html tag="style"
+       class="slds-modal_medium"  min-width=        
+               /--> 
+    <!--  this tag sets modal width -->
+    <aura:html tag="style" >
+    .slds-modal__container {
+     min-width: 70vw;
+    }
+</aura:html>  
+    <!--Declare Title attribute -->
+    <aura:attribute name="title" type="String" default=" Stock Check"/>
+    
+    <!--Handler attributes for Lookup Fields -->
+    <aura:attribute name="resultSearchMap" type="Map" default="{}"/>
+    <aura:attribute name="selectedDeviceRecord" type="sObject" default="{}"/>
+    <aura:attribute name="selectedManufacturer" type="sObject" default="{}"/>
+    <aura:attribute name="selectedModel" type="sObject" default="{}"/>
+    <aura:attribute name="selectedColor" type="sObject" default="{}"/>
+    <aura:attribute name="clearedSearchRecord" type="sObject" default="{}"/>
+    <aura:attribute name="clearDevice" type="Boolean"/>
+    <aura:attribute name="clearManufacturer" type="Boolean"/>
+    <aura:attribute name="clearModel" type="Boolean"/>
+    <aura:attribute name="clearColor" type="Boolean"/>
+  	<!-- EDGE-155450 Stock Check_Greying Out Manufacture and Colour fields for accessories  -->
+    <aura:attribute name="disableManufacturer" type="Boolean"/>
+    <aura:attribute name="disableColour" type="Boolean"/>
+    <aura:attribute name="disableModel" type="Boolean"/>    
+    <!-- EDGE-155450 Stock Check_Greying Out Manufacture and Colour fields for accessories-->
+  <!--  <aura:attribute type="List" name="selectedRows" default="[]" />-->
+    <!--Declare Pagination attributes -->
+    <aura:attribute name="pageNo" type="Integer" default="1" />
+    <aura:attribute name="PageSize" type="Integer" default="10" />
+    <aura:attribute name="CurrentPage" type="Integer" default="1" />
+    <aura:attribute name="TotalPages" type="Integer" default="1" />
+    <aura:attribute name="columns" type="Integer" />
+    <aura:attribute name="deviceModel" type="List" />
+    <aura:attribute name="dispList" type="List" />
+    <aura:attribute name="loadData" type="Boolean" default="false" />
+    
+    <!--Declare Spinner Handler and attributes-->
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="SpinnerLoading" type="boolean" default="false"/>
+    
+    <!--Register/handle the component level events-->
+    <aura:registerEvent name="paginationEvent" type="c:paginationEvent" />
+    <aura:handler event="c:paginationEvent" action="{!c.changeData}" />
+    <aura:handler name="oSelectedRecordEvent" event="c:DynamicLookupEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="SelectedRecordEvent" event="c:DynamicLookupClearEvent" action="{!c.handleClearEvent}"/>
+    <!--EDGE-148577:Boolean attribute to track when new search is made and component name to fire when event fired-->
+    <aura:attribute name="reLoadData" type="Boolean" default="false" />
+    <aura:attribute type="string" name="componentName" default="AdvancedStockCheck" />
+    <!--EDGE-148587: Attributes to modify CSS for Partner profile users  -->
+    <aura:attribute name="userProfile" type="Boolean" default="false" />
+    <!--EDGE-148587:  RecordStart and RecordEnd attributes for displaying record count in page for Partner users-->
+    <aura:attribute name="RecordStart" type="integer" default="0"/>
+    <aura:attribute name="RecordEnd" type="integer" default="0"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--EDGE-148587: End-->
+    <!--Handle Lookup Search  Fields-->
+    <aura:attribute name="isSC" type="Boolean" default="false" />
+    <!--DPG-3510 : To filter commercial product records on the base of the PD type-->
+    <aura:attribute name='type' type='String' description="Contains the type of configuration i.e the PD name"/>
+    <!--DPG-3510 : To provide custom additional filter to SQQL query-->
+    <aura:attribute name='filterCriteria' type='String' description="Contains Additional filter criteria"/>
+    <!--EDGE-159884: Added additional class to remove Outerbox in search criteria -->
+ <div class="{!if(v.userProfile == true,'noOuterboxTop slds-theme_default','slds-box slds-theme_default')}">
+    <!--EDGE-159884: Added additional class to remove Outerbox in search criteria -->
+          <lightning:card class="{!if(v.userProfile == true,'noOuterboxTop slds-theme_shade slds-size_5-of-5','slds-box slds-theme_shade slds-size_5-of-5')}" >
+            <div class="c-container" >
+                <lightning:layout >
+                    <!--DPG-3510 : Conditionally evaluating size of layout item-->
+                    <lightning:layoutItem size="{!v.type==$Label.c.PD_Name_Mobile_Accessory?6:3}" padding="around-small">
+                        <!--EDGE-148587: assigning CSS class based on logged in profile for each Lookup component below to remove borders for inputbox (Parner users)-->
+                        <div class="{!if(v.userProfile == true,'newbox','custom-box')}">
+                            <!--DPG-3510 : Added new parameter filter to DynamicLookupComponent-->
+                            <c:DynamicLookupComponent selectedRecord="{!v.selectedDeviceRecord}"  objectAPIName="cspmb__Price_Item__c" label="{!v.type==$Label.c.PD_Name_Mobile_Accessory?'AccessoryType':'DeviceType'}" primaryField="Type__c" IsMandatory="true"  clearSelection = "{!v.clearDevice}" filter="{!v.filterCriteria}"/>                
+                        </div>                
+                    </lightning:layoutItem>
+
+                    <!--DPG-3510 : Conditionally Show/Hide layout item-->
+                    <aura:if isTrue="{!v.type!=$Label.c.PD_Name_Mobile_Accessory}">
+                        <lightning:layoutItem size="3" padding="around-small">
+                            <div  class="{!if(v.userProfile == true,'newbox','custom-box')}">
+                                <!--DPG-3510 : Added new parameter filter to DynamicLookupComponent-->
+                                <c:DynamicLookupComponent selectedRecord="{!v.selectedManufacturer}"  objectAPIName="cspmb__Price_Item__c" label="Manufacturer" primaryField="Manufacturer__c"  resultMap = "{!v.resultSearchMap}" clearSelection = "{!v.clearManufacturer}" greyOut="{!v.disableManufacturer}" filter="{!v.filterCriteria}"/>  
+                            </div>
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <!--DPG-3510 : Conditionally evaluating size of layout item-->
+                    <lightning:layoutItem size="{!v.type==$Label.c.PD_Name_Mobile_Accessory?6:3}" padding="around-small">
+                        <div class="{!if(v.userProfile == true,'newbox','custom-box')}">
+                            <!--DPG-3510 : Added new parameter filter to DynamicLookupComponent-->
+                            <c:DynamicLookupComponent selectedRecord="{!v.selectedModel}"  objectAPIName="cspmb__Price_Item__c" label="Model" primaryField="Model__c" resultMap = "{!v.resultSearchMap}"  clearSelection = "{!v.clearModel}"  greyOut="{!v.disableModel}"  filter="{!v.filterCriteria}"/>
+                        </div>
+                    </lightning:layoutItem>
+                    <!--DPG-3510 : Conditionally Show/Hide layout item-->
+                    <aura:if isTrue="{!v.type!=$Label.c.PD_Name_Mobile_Accessory}">
+                        <lightning:layoutItem size="3" padding="around-small">
+                            <div class="{!if(v.userProfile == true,'newbox','custom-box')}">
+                                <!--DPG-3510 : Added new parameter filter to DynamicLookupComponent-->
+                                <c:DynamicLookupComponent selectedRecord="{!v.selectedColor}"  objectAPIName="cspmb__Price_Item__c" label="Color" primaryField="Colour__c" resultMap = "{!v.resultSearchMap}"  clearSelection = "{!v.clearColor}" greyOut="{!v.disableColour}" filter="{!v.filterCriteria}"/>
+                            </div>
+                        </lightning:layoutItem> 
+                    </aura:if>
+                </lightning:layout>
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                <lightning:layout horizontalAlign="end"	>
+                  
+                    <lightning:layoutItem  padding="horizontal-medium">
+                        <div class="custom-box">
+                            <!--EDGE-148587: assigning CSS class for modfying the clear button UI --> 
+                            <button class="{!if(v.userProfile == true,'clearbutton','slds-button slds-button_outline-brand')}" onclick="{! c.clearSelection}">Clear</button>                
+                        </div>
+                    </lightning:layoutItem> 
+                    <lightning:layoutItem  padding="horizontal-medium">
+                        <div>
+                        <aura:if isTrue="{!v.userProfile}">
+                            <!--EDGE-148587: assigning CSS class for modfying Check Availability for enabling based on selction of Device Type for Partner users --> 
+                            <button style="min-width:0px;" class="{!if((v.userProfile == true &amp;&amp; empty(v.selectedDeviceRecord.Type__c)),'slds-button slds-button_brand slds-button--small buttoncolor availabilitybuttonEmpty','slds-button slds-button_brand availabilitybutton')}" onclick="{!c.getDeviceStockDetails}"  disabled ="{!v.selectedDeviceRecord.Type__c == null}">Check Availability </button> 
+                            <aura:set attribute="else">
+                             <button class="slds-button slds-button_brand" onclick="{!c.getDeviceStockDetails}"  disabled ="{!v.selectedDeviceRecord.Type__c == null}">Check Availability </button>                
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                    </lightning:layoutItem> 
+                </lightning:layout>
+            </div> 
+        </lightning:card>
+        <br></br>
+        <br></br>
+       
+        
+        <aura:if isTrue="{!(v.loadData)}">
+            <!--loading spinner start... style=Brand Medium (blue dots)-->
+            <aura:if isTrue="{!and(v.Spinner, v.SpinnerLoading)}">
+                <div aura:id="spinnerId" class="slds-spinner_container">
+                    <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                        <span class="slds-assistive-text">Loading....</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </aura:if>
+            <!-- Loading spinner end--> 
+
+            <span class = "{!if(v.userProfile == true,'slds-hide','')}" >
+                {!v.columns} devices found
+            </span>
+           
+            <div class="{!if(v.userProfile == true,'slds-size_5-of-5','slds-size_5-of-5 slds-border_right slds-border_left slds-border_bottom')}">
+                <table class="slds-table_bordered">
+                    <thead>
+                        <th   style="background-color:#F6F4F4;padding:12px;font-size:13px;" >
+                            <div>Device Type</div>
+                        </th>
+                        <th   style="background-color:#F6F4F4;padding:12px;font-size:13px;" >
+                            <div>Manufacturer</div>
+                        </th>
+                        <th   style="background-color:#F6F4F4;padding:12px;font-size:13px;" >
+                            <div>Model</div>
+                        </th>
+                        <th   style="background-color:#F6F4F4;padding:12px;font-size:13px;" >
+                            <div>Colour</div>
+                        </th>
+                        <th   style="background-color:#F6F4F4;padding:12px;font-size:13px;">
+                            <div>Availability</div>
+                        </th>
+                    </thead>  
+                    <tbody>
+                        <aura:iteration items="{!v.dispList}" var="devices">
+                            <tr>
+                     
+                       <!-- Reusing the existing solution of checkbox based selection of records to be sent to LOMS 10--> 
+                            <div class="slds-hide">
+                                <th>
+                                    <label class="slds-checkbox">
+                                    <ui:inputCheckbox
+                                    value="true" 
+                                    aura:id="checkQuantity"
+                                    text="{!devices.skuId}"
+                                    change="{!c.handledeSelectAllProduct}"/>
+                                       <span class="slds-checkbox--faux" />
+                                       <span class="slds-form-element__label"></span>
+                                    </label>
+                             </th>
+                             
+                          </div>
+                                <th>
+                                    <div  style="font-weight: normal; padding:12px; padding-left: 15px;">{!devices.deviceType}</div>
+                                </th>
+                                <th>
+                                    <div  style="font-weight: normal;padding:12px;padding-left: 15px;">{!devices.manufacturer}</div>
+                                </th>
+                                <th   >
+                                    <div  style="font-weight: normal;padding:12px;padding-left: 15px;">{!devices.model}</div>
+                                </th>
+                                <th   >
+                                    <div  style="font-weight: normal;padding:12px;padding-left: 15px;">{!devices.colour }</div>
+                                </th>   
+                 
+                                
+                                
+                                
+                                <aura:if isTrue="{!devices.errorMessage!=null}">
+                                    <th>
+                                     <div class="iconColorChange" style="color:red;padding:7px;font-weight:bold;">
+            <lightning:icon class="slds-icon" iconName="utility:warning" size="small"/>
+            {!devices.errorMessage}
+                  </div>
+                                    </th>
+                                    <aura:set attribute="else">
+                                        <aura:if isTrue="{!devices.quantityAvailable !=null}">
+                                            <th>
+                                                <div>
+                                                    <aura:if isTrue="{!and(devices.quantityAvailable ==0,devices.restockDate!=null)}">
+                                                         &nbsp;&nbsp;  
+                                                       <lightning:badge label="No Stock" class= "nostocklabel" title = "{!$Label.c.StockCheckRestock  +devices.restockDate}"/>
+
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!and(devices.quantityAvailable ==0,devices.restockDate==null)}">
+                                                         &nbsp;&nbsp;   
+                                                    <lightning:badge label="No Stock" class= "nostocklabel" title = "{!$Label.c.StockCheckAvailability}"/>
+
+                                                    </aura:if>
+                                                    <aura:if
+                                                             isTrue="{!(devices.quantityAvailable !=0)}"                                           >
+                                                               &nbsp;&nbsp;   
+                                                    </aura:if>
+                                                    {!devices.message}
+                                                </div>
+                                            </th>
+                                        </aura:if>
+                                    </aura:set>
+                                </aura:if>
+                                <th  > <div  ></div> </th>
+                                <th  > <div  ></div> </th>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                <br/>
+                <!--EDGE-148577 : added componentName attribute to paginationCmp for avoiding duplicate handling of pagination events-->
+                <!--EDGE-148587: added values for RecordStart and RecordEnd for displaying record count in page for Partner users --> 
+                <c:paginationCmp
+                                 PageSize="{!v.PageSize}"
+                                 data="{!v.deviceModel}"
+                                 columns="{!v.columns}"
+                                 TotalPages="{!v.TotalPages}"
+                                 CurrentPage="{!v.CurrentPage}"
+                                 componentName ="{!v.componentName}"
+                                 userProfile="{!v.userProfile}"
+                                 RecordStart="{!v.RecordStart}"
+                                 RecordEnd="{!v.RecordEnd}"
+                                 />
+                <br/>
+            </div>
+               
+    </aura:if>
+        
+    </div> 
+    
+</aura:component>

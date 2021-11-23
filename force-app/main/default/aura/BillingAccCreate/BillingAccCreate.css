@@ -1,0 +1,123 @@
+.THIS .popover1 {
+position: absolute;
+left: 33%;
+bottom: 73%;
+}
+
+.THIS .slds-icon{
+    /*width: 1.1rem !important;*/
+}
+
+.THIS .ms-help-popup-in-header {
+    display: inline-block;
+    position: absolute !important;
+    top: -10px !important;
+    left: 55px !important;
+    margin-left: -1rem !important;
+    max-width: 20rem !important;
+    overflow: visible !important;
+    text-transform: none !important;
+}
+
+.THIS .ms-help-popup-in-header:before, .THIS .ms-help-popup-in-header:after {
+    width: 0.8rem !important;
+    height: 0.8rem !important;
+    position: absolute;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    content: '';
+    background-color: inherit;
+    top: 50%;
+    left: -0.4rem !important;
+    margin-top: -.8rem !important;
+}
+
+.THIS .ms-help-popup-body {
+    white-space: unset !important;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    width: 200px;
+}
+.THIS  .cCustomHelpText{
+    margin-top: -9px!important;
+    margin-left: -5px!important;
+}
+
+.THIS .cCustomHelptextBilling{
+    left: 33% !important;
+    padding-top: 10px;
+
+}
+
+.THIS .myCheckbox{
+    display: inline-block !important;
+}
+.THIS .popover {
+position: absolute;
+left: 18%;
+bottom: 69%;
+}
+
+.THIS .slds-icon .slds-icon-text-default .slds-icon_xx-small{
+    margin-bottom: -21px;
+}
+.THIS .help-popup{
+            display: none;
+            position: absolute;
+            border-radius: .25rem;
+            background-color: #17325D;
+            bottom: 1.5rem;
+            left: -1rem;
+            color: #fff;
+            padding: .5rem;
+            font-family: 'Salesforce Sans' !important;
+            text-align: left;
+            width: 420px;
+            z-index:1 !important;
+        }
+        .THIS .help-icon:hover .help-popup{
+            display: block;
+            
+        }
+        .THIS .help-icon .help-popup p {
+            margin: 0;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .THIS .help-icon .help-popup:before {
+            width: 1rem;
+            height: 1rem;
+            position: absolute;
+            -webkit-transform: rotate(45deg);	
+            transform: rotate(45deg);
+            content: '';
+            background-color: #17325D;
+            bottom: -.2rem;
+            left: .95rem;
+            z-index:0 !important;
+            box-sizing: border-box;
+        }
+.THIS .help-icon{
+            display: inline-block;
+            position: relative;
+            margin-left: .3rem;
+            cursor: pointer;
+            font-family: 'Times New Roman', serif !important;
+            text-align: center;
+            height: 0.8rem;
+            width: 0.8rem;
+            background-color: #B1AEAB;
+            color: #fff;
+            border-radius: 50%;
+            font-size: .8rem;
+            line-height: 1rem;
+            opacity: 0.85;
+        }
+.THIS .slds-notify_container{
+   width:50% !important;
+    
+}
+.THIS .customIcon div{
+    vertical-align: top !important;
+    }

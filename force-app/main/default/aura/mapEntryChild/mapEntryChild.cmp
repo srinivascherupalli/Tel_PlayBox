@@ -1,0 +1,18 @@
+<!--
+//EDGE -66472/84934/66471
+Description: Display map values
+Author:Ila/Mahima/Kalashree
+-->
+<aura:component >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="map" type="map"/>
+    <aura:attribute name="key" type="string"/>
+    <aura:attribute name="value" type="string"/>
+    <aura:attribute name="startDateSlot" type="string"/>
+    
+    
+    <button class="slds-button slds-button_neutral" label="{!v.value}"  title="{!v.startDateSlot}" 
+            value="{!v.value}" onclick="{!c.confirmAppt}" name="{!v.key}" >{!v.value}</button>
+    
+    
+</aura:component>

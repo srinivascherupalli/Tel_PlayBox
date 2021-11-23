@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>50.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="recordId" label="Record ID" type="String" role="inputOnly"/>
+            <property name="VerificationComplete" label="Numbers Verified" type="Boolean" role="outputOnly"/>
+            <property name="fileUploaded" label="File Uploaded" type="Boolean" role="outputOnly"/>
+            <property name="manualList" label="List of Numbers" type="String[]" role="outputOnly"/>
+            <property name="validationErrorIndex" label="Numbers in invalid format in file" type="String[]" role="outputOnly"/>
+            <property name="totalNumbers" label="Total port-in numbers" type="String" role="outputOnly"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

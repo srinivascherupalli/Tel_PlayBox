@@ -1,0 +1,56 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes" controller="soc_ProductListController" access="global">
+    <aura:attribute name="recordId" type="String" access="global"/>
+    <aura:attribute name="products" type="List" access="global"/>	    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+	<aura:attribute name="colorMap" type="map" description="map to store dependent values with controlling value"/>
+
+    <!--<aura:attribute name="options" type="List" access="global"/>-->
+    <aura:attribute name="showSpinner" type="Boolean" default="false" access="global"/>
+    <aura:attribute name="visibility" type="Boolean" default="true" access="global"/>
+
+     <aura:if isTrue="{!v.products.length >0}">
+    <div class="slds-grid slds-grid--align-end slds-m-around--x-small">
+    	<lightning:button disabled="{!!v.visibility}" variant="brand" label="Save" title="Save" onclick="{! c.saveTable }" />
+    </div>
+    </aura:if>
+      	<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+             <aura:if isTrue="{!v.showSpinner}"><c:soc_Spinner /></aura:if> 
+   		<thead>
+            <tr class="slds-text-title_caps">
+                <th scope="col">
+                    <div class="slds-truncate" title="Sr.No">Sr.No</div>
+                </th>                       
+                <th scope="col">
+                    <div class="slds-truncate" title="Domain">Domain</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Product Name">Product Name</div>
+                </th>
+                <th scope="col">
+                     <div class="slds-truncate" title="Order/Reference No">Order/Reference No</div>
+    			</th>
+                <th scope="col">
+                     <div class="slds-truncate" title="Order Status">Order Status</div>
+    			</th>
+                <th scope="col">
+                     <div class="slds-truncate" title="Order Sub Status">Order Sub Status</div>
+    			</th>
+            </tr>
+        </thead>               
+        <aura:if isTrue="{!v.products.length >0}">
+            <tbody>
+                <aura:iteration items="{!v.products}" var="prd" indexVar="index" >
+                    <c:soc_flexiProductListRow depnedentFieldMap="{!v.colorMap}" visibility="{!!v.visibility}" prd="{!prd}" serial="{!index}"/>
+                </aura:iteration>                
+            </tbody>
+            <aura:set attribute="else">
+                <div class="slds-align_absolute-center" style="height: 5rem;">There is no data to display</div>     
+            </aura:set>
+        </aura:if>
+   	</table>
+     <aura:if isTrue="{!v.products.length >0}">
+    <div class="slds-grid slds-grid--align-end slds-m-around--x-small">
+    	<lightning:button disabled="{!!v.visibility}" variant="brand" label="Save" title="Save" onclick="{! c.saveTable }" />
+    </div>
+    </aura:if>
+</aura:component>

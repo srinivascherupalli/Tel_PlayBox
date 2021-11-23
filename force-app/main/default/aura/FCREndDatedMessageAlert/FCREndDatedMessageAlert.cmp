@@ -1,0 +1,17 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" Controller="FCREndDatedMessageAlertController" >
+    <aura:attribute name="ShowNotification" type="Boolean"/>
+    <aura:attribute name="AlertMessage" type="String"/>
+    <aura:attribute name="AlertTheme" type="String"/>
+    <aura:attribute name="IsFCREndDatedWithNonAuthACR" type="Boolean" default="False"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    
+    <aura:renderIf isTrue="{!v.ShowNotification}">
+        <aura:renderIf isTrue="{!v.IsFCREndDatedWithNonAuthACR}">
+            <div class="{!'slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_'+ v.AlertTheme}" role="alert">
+                <h2>{!v.AlertMessage}</h2>        
+            </div>
+        </aura:renderIf>
+    </aura:renderIf> 
+</aura:component>

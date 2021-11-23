@@ -1,0 +1,20 @@
+<!-- **********************************************************************************************************
+Sprint        	- SFO Sprint 20.17, P2OB-11314.
+Component   	- opportunityDuplicateRule
+Descriptionc	- Displays warning message with Opportunity is Identified as deplicate.  
+Author      	- Amar Chakka. 
+************************************************************************************************************ -->
+
+<template>
+    <template if:true={showMessage}>
+        <div class="slds-notify slds-notify_toast slds-theme_warning" role="toast">   
+			<lightning-icon icon-name="utility:warning" alternative-text="Warning!" variant="warning"
+			title="warning variant small" size="small"></lightning-icon>
+			<span class="slds-text-title_caps slds-text-color_warning" style="text-transform:uppercase;margin-left : 10px">warning</span>        
+            <div style="margin-left : 35px">
+				<span><b>{oppDupWarTitle}</b></span>
+				<p>{oppDupWarMsg}</p>
+			</div>
+		</div>
+    </template>
+</template>

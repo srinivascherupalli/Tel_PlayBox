@@ -1,0 +1,25 @@
+.THIS .inputwidht{
+    max-width: 400px;
+    
+}
+.THIS  .displaynone{
+    display : none;
+}
+
+.THIS .menu-outer-top{
+    bottom: 35px!important;
+    border-bottom-right-radius: 0px!important;
+    border-bottom-left-radius: 0px!important;
+    border-top-right-radius: 4px!important;
+    border-top-left-radius: 4px!important;
+}
+
+.THIS .sWrapTest {
+    height:100px;
+    
+}
+
+.THIS .slds-icon-text-error {
+    fill: rgb(112, 110, 107);
+    
+}

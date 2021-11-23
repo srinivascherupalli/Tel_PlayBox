@@ -1,0 +1,8 @@
+<aura:event type="COMPONENT">
+    <aura:attribute name="selectedreservationrec" type="list"/>
+    <aura:attribute name="selectedProductconfig" type="list"/>
+    <aura:attribute name="selectedSimTypeValue" type="String"/>
+
+
+    <aura:attribute name="newWxistingSIM" type="String"/>
+</aura:event>

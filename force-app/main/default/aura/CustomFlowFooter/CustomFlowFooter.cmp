@@ -1,0 +1,46 @@
+<!--
+    @ComponentName : CustomFlowFooter
+    @description : DIGI-4646 : Used in reopen flow for footer,Can be used in Flows
+    @sprint      : 21.11 Team SFO
+    -->
+<aura:component access="global" implements="lightning:availableForFlowScreens">
+    
+    <!-- Determine which actions are available -->
+    <aura:attribute name="canPause" type="Boolean" />
+    <aura:attribute name="canBack" type="Boolean" />
+    <aura:attribute name="canNext" type="Boolean" />
+    <aura:attribute name="canFinish" type="Boolean" />
+    
+    <!-- Determine the labels -->
+    <aura:attribute name="pause" type="String" default = "Pause"/>
+    <aura:attribute name="back" type="String" default = "Back"/>
+    <aura:attribute name="next" type="String" default = "Next"/>
+    <aura:attribute name="finish" type="String" default = "Finish"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    
+    <div aura:id="actionButtonBar" class="slds-clearfix slds-p-top_medium">
+        <!-- If Previous is available, display to the left -->
+        <div class="slds-float_left">
+            <aura:if isTrue="{!v.canBack}">
+                <lightning:button aura:id="BACK" label="{!v.back}"
+                                  variant="neutral" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+        </div>
+        <div class="slds-float_right">
+            <!-- If Pause, Next, or Finish are available, display to the right -->
+            <aura:if isTrue="{!v.canPause}">
+                <lightning:button aura:id="PAUSE" label="{!v.pause}"
+                                  variant="neutral" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+            <aura:if isTrue="{!v.canNext}">
+                <lightning:button aura:id="NEXT" label="{!v.next}" 
+                                  variant="brand" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+            <aura:if isTrue="{!v.canFinish}">
+                <lightning:button aura:id="FINISH" label="{!v.finish}"
+                                  variant="brand" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

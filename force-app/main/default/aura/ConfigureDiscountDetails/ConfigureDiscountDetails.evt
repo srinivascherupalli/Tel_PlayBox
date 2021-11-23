@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Add price Item">
+    <aura:attribute type="String" name="process" />
+    <aura:attribute type="String" name="index" />
+</aura:event>

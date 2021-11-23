@@ -1,0 +1,8 @@
+<design:component>
+    <!--Object Meta field JSON will contain list of Object and each object will have 2 keys i) metadataField ii) objectField and value will be metadata field api name and object field api name whose value should match
+		Sample Json is [{"metadataField" :"Support_Type_PRM__c", "objectField" :"Support_Type_PRM__c"},{"metadataField" :"Category_PRM__c", "objectField" :"Category_PRM__c"},{"metadataField" :"Work_Required_PRM__c", "objectField" :"Work_Required_PRM__c"}]
+	-->
+	<design:attribute name="objectName" label="Object Name" description="Name of object for which field values to be compared" />
+    <design:attribute name="metaDataApiName" label="Metadata API Name" description="Name of custom metadata for which fields to be compared"/>
+    <design:attribute name="objMetaFieldJson" label="Object Metadata Field JSON" description="Object and Metadata field Json" />
+</design:component>

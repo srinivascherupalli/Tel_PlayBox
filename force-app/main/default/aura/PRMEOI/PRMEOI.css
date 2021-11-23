@@ -1,0 +1,14 @@
+.THIS .slds-form-element__help{
+    height: 0px;
+    margin-left: 33%;
+}
+.THIS .phone .slds-form-element__help{
+    height: 0px;
+    margin-left: 0%;
+}
+@media (max-width: 768px) {
+
+.THIS .slds-form-element__help{
+    margin-left: 0% !important;
+}
+}

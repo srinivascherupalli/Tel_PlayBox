@@ -1,0 +1,48 @@
+<!--
+Created By : Alexanadria
+Jira : EDGE-163361
+-->
+<aura:component controller="PRM_CreateSupportButtonController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >    <aura:attribute name="isInit" type="Boolean" default="false"/>
+    <aura:attribute name="DisplayedOn" type="String"/>
+    <!--<aura:Handler name = "cmpEvent" event = "c:closeEvent" action="{!c.closeFlow}"/>-->
+    <aura:attribute name="Home" type="String" Default= "Home"/>
+    <aura:attribute name="CaseList" type="String" Default="CaseList"/>
+     <aura:attribute name="opptyid" type="String"/>
+    <aura:attribute name="ButtonLabel" type="String" Default="Create Case"/>
+    <aura:handler event="c:closeParentPopupFromThankYouScreen" action="{!c.closeFlow}"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <aura:attribute name="POR" type="String" Default="Partner Of Record"/><!-- Adedd part of EDGE-150892-->
+    <aura:attribute name="conrole" type="String" Default="UpdateContactRole"/>
+    <aura:html tag="style">
+        .createCaseSupportBtn{
+        width : 100%;
+        padding :1rem 2rem;
+        } 
+        .createcontarolebtn{
+        min-width: fit-content!important;
+        align:right;
+        border: 1px solid rgb(217, 219, 221) !important;
+        border-radius: 0.25rem!important;
+        border-width: 1px!important;
+    	border-style: solid!important;
+    	text-decoration: none;
+        font-family:akkuratLight!important;
+        padding: 5px;
+        font-size:14px !important;
+        text-align: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        } 
+    </aura:html>
+    
+       <aura:if isTrue="{!v.DisplayedOn == v.POR}">
+        <div align="Center" >
+            <lightning:button variant="brand" label="{!v.ButtonLabel}" title="New Partner Of Record agreement" onclick="{!c.handlePOR}" class="createCaseSupportBtn"/>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.DisplayedOn == v.conrole}">
+        <div align="right" >
+         <lightning:button variant="brand" label="{!v.ButtonLabel}" title="Configure Contact Role" onclick="{!c.UpdateContactRole}" class="createcontarolebtn"/>
+            </div>
+    </aura:if>
+</aura:component>

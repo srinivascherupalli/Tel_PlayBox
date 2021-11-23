@@ -1,0 +1,108 @@
+<!-- 
+* @Author : Shubhi
+* @Date : 12 March 2020
+* @Jira : Edge-133882 New component
+* @Jira : Edge-185639 new expected SIOs added in Rate Card UI
+
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description 
+1           Shubhi            12/3/2020   Edge-133882
+2			Kamlesh			 03/11/2020	     EDGE-185639
+3           Vivek            20/01/2021    EDGE-189344
+===============================================================================================================================
+-->
+<aura:component controller="RateMatrixForNGUCController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+	<aura:attribute type="String" name="CallingPlan"/>
+<!-- EDGE-185639-->
+    <aura:attribute type="String" name="SolutionID" />
+    <aura:attribute name="RateCardMap" type="Map" />
+    <aura:attribute type="String" name="offerid" />
+    <aura:attribute type="boolean" name="isNewBasket"/>
+    <aura:attribute type="String" name="basketStage"/>
+    <aura:attribute type="String" name="Mode" /> <!-- Edge-EDge-120919 -->
+   <div style="padding :5px">
+         <!-- Edge-EDge-120919 start-->
+       <span style="font-size:small">Mode: <b>{!v.Mode}</b> </span><br/>
+       <span style="font-size:small">Plan: <b>{!v.CallingPlan}</b></span> <!-- Edge-EDge-120919 end-->
+         <br/><b>
+           <span style="font-size:medium">{!$Label.c.RateMatrixHeader}</span>
+       </b>
+    </div>
+    <table style=" border-collapse: collapse; width: 100%; padding :5px" cellpadding="20">
+        <tr>
+            <td style="width: 100px;"> </td>
+            <th class="rateHeader">Discount<br/>Eligibility</th>
+            <th class="rateHeader1">1-10</th>
+            <th class="rateHeader2">11-20</th>
+            <th class="rateHeader3">21-50</th>
+            <th class="rateHeader4">51-200</th>
+            <th class="rateHeader5">201-500</th>
+            <th class="rateHeader6">501+</th>    <!-- EDGE-189344 -->
+           	<aura:if isTrue="{!v.isNewBasket}">
+                <th class="rateHeader">Expected<br/>SIOs
+                    <lightning:helptext iconName="utility:info" content="Please enter expected SIOs based on discussion with your customer" />
+                </th>
+                <aura:set attribute="else">
+                    <th class="rateHeader">Actual<br/>SIOs
+                        <lightning:helptext iconName="utility:info" content="Please enter actual SIOs based on customer usage" />
+                    </th>
+                </aura:set>
+            </aura:if>
+        </tr>
+        <tr>
+        	<td style="width: 100px;"> </td>
+        	<td style="border: solid #f5f5f0 1px;border-top-style: none;"></td>
+            <td Class="unitMessage">Monthly Price<br/>per unit</td>
+            <td Class="unitMessage">Monthly Price<br/>per unit</td>
+            <td Class="unitMessage">Monthly Price<br/>per unit</td>
+            <td Class="unitMessage">Monthly Price<br/>per unit</td>
+            <td Class="unitMessage">Monthly Price<br/>per unit</td>
+            <td Class="unitMessage">Monthly Price<br/>per unit</td>
+            <td style="border: solid #f5f5f0 1px;border-top-style: none;"></td>
+            
+      	</tr>
+        <aura:iteration items="{!v.RateCardMap}" var="rateCardList" indexVar="key">
+            <tr>
+                <td style="border: solid #f5f5f0 1px;border-top-style: none;color:#16325C;">{!rateCardList.key}</td>
+                <td style="border: solid #f5f5f0 1px;border-top-style: none;text-align: center;">
+               		<aura:if isTrue="{!rateCardList.value[0].discountEligibility}">
+                        <lightning:icon iconName="action:approval" alternativeText="Approved" title="Approved" size="xx-small"/>
+                        <aura:set attribute="else">
+                            <lightning:icon iconName="action:close" alternativeText="close" title="close" size="xx-small"/>
+                        </aura:set>
+                	</aura:if>
+                </td> 
+                 <aura:iteration items="{!rateCardList.value}" var="rateCard" indexVar="key">
+                    <aura:if isTrue="{!rateCard.rangeFrom==1}">
+                        <td class="unitPrice" >${!rateCard.recurringCharge}</td>
+                    </aura:if>
+                    <aura:if isTrue="{!rateCard.rangeFrom==11}">
+                        <td class="unitPrice">${!rateCard.recurringCharge}</td>
+                    </aura:if>
+                    <aura:if isTrue="{!rateCard.rangeFrom==21}">
+                        <td class="unitPrice">${!rateCard.recurringCharge}</td>
+                    </aura:if>
+                    <aura:if isTrue="{!rateCard.rangeFrom==51}">
+                        <td class="unitPrice">${!rateCard.recurringCharge}</td>
+                    </aura:if>
+                    <aura:if isTrue="{!rateCard.rangeFrom==201}">
+                        <td class="unitPrice">${!rateCard.recurringCharge}</td>
+                    </aura:if>
+                    <aura:if isTrue="{!rateCard.rangeFrom==501}">
+                        <td class="unitPrice">${!rateCard.recurringCharge}</td>
+                    </aura:if>
+                </aura:iteration>
+                <aura:if isTrue="{!v.isNewBasket}">
+                    <td class="unitPrice">
+                        <ui:inputNumber class="sios" value="{!rateCardList.value[0].expectedSIO}" updateOn="keyup" disabled="{!or(rateCardList.value[0].isSIODisabled, and(v.basketStage != 'Draft',v.basketStage != 'Commercial Configuration'))}"/>
+                    </td>
+                    <aura:set attribute="else">
+                        <td class="unitPrice">
+                            <ui:inputNumber class="sios" value="{!rateCardList.value[0].actualSIO}" updateOn="keyup" disabled="{!or(rateCardList.value[0].isSIODisabled, and(v.basketStage != 'Draft',v.basketStage != 'Commercial Configuration'))}"/>
+                        </td>
+                    </aura:set>
+                </aura:if>
+            </tr>
+        </aura:iteration>
+    </table>
+</aura:component>

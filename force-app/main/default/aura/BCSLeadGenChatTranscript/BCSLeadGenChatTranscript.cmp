@@ -1,0 +1,26 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="BCSLeadGenTranscript">
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <aura:attribute name="record" type="Object"
+                    description="The record object to be displayed"/>
+    <aura:attribute name="isOrphan" type="boolean" default="true"
+                    description="By this can validate Chat transcript is Orphan or not"/>
+    <aura:attribute name="isLeadAssigned" type="boolean" default="false"
+                    description="By this can validate Chat transcript is Orphan or not"/>
+    <aura:handler event="force:refreshView" action="{! c.init}"/>
+    <aura:if isTrue="{!v.isLeadAssigned}">
+        <ui:message title="Success" severity="confirm" closable="false">
+            {!$Label.c.IS_LEAD_ASSIGNED}
+        </ui:message>
+        <aura:set attribute="else">
+            <aura:if isTrue="{!not(v.isOrphan)}">
+                <lightning:flow aura:id="flowData" onstatuschange="{!c.statusChange}"/>
+                <aura:set attribute="else">
+                    <ui:message title="Warning" severity="warning" closable="false">
+                        {!$Label.c.NON_CONTACT_TRANSCRIPRT}
+                    </ui:message>
+                </aura:set>
+            </aura:if> 
+        </aura:set>
+    </aura:if>
+</aura:component>

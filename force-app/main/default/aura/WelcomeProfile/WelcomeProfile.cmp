@@ -1,0 +1,42 @@
+<aura:component controller="WelcomeProfile" implements="forceCommunity:availableForAllPageTypes">
+<ltng:require styles="/resource/LDS100/assets/styles/salesforce-lightning-design-system.min.css"/>
+    <aura:attribute name="profileDepartmentImg" type="String"/><!-- used in conjunction with currentUser attribute above-->
+    <aura:attribute name="today" type="String"/><!--display todays date-->
+    <aura:attribute name="partOfDayGreeting" type="String"/><!--display greeting based on time of day-->
+    <aura:attribute name="displayLoader" type="Boolean" />
+    <aura:attribute name="currentUser" type="User" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <div class="wrapper">
+        <div id="department" style="{!'min-height: 130px; background-repeat: no-repeat; background-position: top; background-image: url(&quot;' + $SfdcSite.pathPrefix+v.profileDepartmentImg + '&quot;);'}">
+            <div style="padding-top: 90px; clear: left; float: left; position: relative; left: 50%; ">
+                <!--display profile photo-->
+                <a type="button" href="{!'profile/' + v.currentUser.Id}">
+                	<img style="width:80px;height:80px;border-radius:50px;border:3px solid white;display:block;float:left;position:relative;right:50%; " src="{!v.currentUser.FullPhotoUrl}"/><br/>
+                </a>
+                <!-- ANIMATED LOADER --> 
+        		<center style="float:left;position:relative;right:25%;" >
+            		<aura:if isTrue="{!v.displayLoader}">
+                        <div class="slds">
+                            <div id="spinner" class="slds-spinner--medium">
+                                <img src="{!$SfdcSite.pathPrefix+'/resource/LDS100/assets/images/spinners/slds_spinner.gif'}" alt="Loading..." />
+                            </div>
+                        </div>
+            		</aura:if>
+                </center>
+            </div>
+        </div>
+
+        <!--welcome-->
+        <table style="width: 100%;">
+            <tr>
+                <td colspan="2" style="width: 100%; text-align:center; height: 80px;">
+                    <span class="slds-form-element__label" style="color:#000000">{!v.today}</span><br/>
+                    <span class="slds-text-heading--large"><aura:unescapedHtml value="{!v.partOfDayGreeting}"/></span>
+                    <br/><br/>
+                </td>
+            </tr>
+        </table>
+    </div>
+</aura:component>

@@ -1,0 +1,59 @@
+<apex:page standardstylesheets="false" showHeader="false" sidebar="false">
+    <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8"/>
+    <apex:slds />
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+    async="" defer=""></script>
+    <div id="captcha"></div>
+    <div id="g-recaptcha-response"></div>
+    <script type="text/javascript">
+    //var lightningDomain = "https://copadoorl1-telstra.cs116.force.com";
+    //var lightningDomain2 = "https://copadoorl1-telstra.cs116.force.com";
+    
+     var lightningDomain = "https://"+"{!$Label.PRM_EOI_Visualforce_Domain}";
+    var lightningDomain2 = "https://"+"{!$Label.PRM_EOI_Visualforce_Domain}";
+    
+    
+   /** 
+    * Adding event listener on send button 
+    * to send message to lightning component
+    **/
+    /* var response=document.getElementById('g-recaptcha-response');
+    document.querySelector('#g-recaptcha-response').addEventListener("change",function(event){
+        console.log('Visualforce Sends: ', document.querySelector('#g-recaptcha-response').value);
+        //Posting message to parent window object (in our case its lightning component's window object)
+        parent.postMessage(document.querySelector('#g-recaptcha-response').value, lightningDomain);
+        //Resetting input element to blank again
+        // document.querySelector('#g-recaptcha-response').value = "";
+        event.preventDefault();
+    });*/ 
+    function enableButton(){
+        var token = grecaptcha.getResponse();
+        console.log('enablez!!!'+token);
+        parent.postMessage(token, lightningDomain2);
+        document.getElementById('g-recaptcha-response').value=token;
+        console.log('posted!!!'+token);
+    }
+    //Added by Ayush for JIRA:P2OB:7585
+    function recaptchaExpired(){
+        console.log('Expired');
+        parent.postMessage('true', lightningDomain2);
+    }
+    var captchaId;
+    var onloadCallback = function() {
+        //alert("grecaptcha is ready!");
+        var sitekey="{!$Label.PRM_EOI_Captcha_sitekey}" ;
+        console.log('Visualforce Sends:');
+
+        captchaId = grecaptcha.render('captcha', {
+            'sitekey' : sitekey, //'6Ld5aOASAAAAAKazutyqHaMKMgeD6waL92m4ZhlS', 
+            'callback' : enableButton, 
+            'expired-callback' : recaptchaExpired
+        });
+        
+        console.log('captchaid is-->'+captchaId);
+    };
+    
+    
+    </script>
+    <!-- End Default Content REMOVE THIS -->
+</apex:page>

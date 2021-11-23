@@ -1,0 +1,46 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"  >
+	<aura:attribute name="recordId" type="String"  />
+    <aura:attribute name="recordError" type="String"/>
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="appDetailsSimpleSec" type="Object"/>
+    <aura:attribute name="appDetailsSec" type="Object"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="FieldsetName" type="String" default="Applicant_operation"/>
+    <aura:registerEvent name="ApplicationBooleanEvent" type="c:ApplicationBooleanEvent"/>
+    <aura:registerEvent name="closeModalEvent" type="c:closeModalEvent"/>
+    <force:recordData aura:Id="ApplicantOperation"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.appDetailsSimpleSec}"
+                      targetFields="{!v.appDetailsSec}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+    
+     <div class="slds-text-heading_large slds-text-align_center">
+        <h1>Third Party Agent Application Form</h1>
+        </div>
+          <div class="slds-text-body_regular slds-text-align_left">
+        <h3>Applicant's Operations</h3>
+        </div>
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+    <div area-labelledby="newAppform">
+    	<lightning:textarea label="{!v.queAndAns[0].Question}"  required="true" Name="BuseinessOp" value="{!v.appDetailsSec.Nature_History_of_Business_Operations__c}" aura:id="expenseform"/>
+    	<lightning:textarea label="{!v.queAndAns[1].Question}"  required="true" Name="Grographic_Coverage" value="{!v.appDetailsSec.Grographic_Coverage__c}" aura:id="expenseform"/>
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>	
+        <div class="slds-modal__footer">
+            	<lightning:button label="Save" variant="brand" onclick="{!c.handleUpdateRecord}" />
+    			<lightning:button label="Next" variant="brand" onclick="{!c.navigateToMyComponent}" /> 
+        </div>
+    </div>
+</aura:component>

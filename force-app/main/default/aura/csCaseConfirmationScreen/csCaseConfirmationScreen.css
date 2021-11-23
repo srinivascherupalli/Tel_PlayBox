@@ -1,0 +1,35 @@
+.THIS.background{
+    background-color:#F1F1F0;
+    padding: 4%;
+    text-align: center;
+    margin: 5%; 
+    margin-top:-3px;
+        
+}
+.THIS.button{
+    float: right;
+    margin-right: 20px;
+
+}
+.THIS.reqSub{
+    text-align: center;
+    font-family: revert;
+    
+}
+.THIS.link{
+    text-align: center;
+    
+}
+.THIS.caseNo{
+    
+    color: blue;
+    font-size:70px !important;
+}
+.THIS.caseNoHeader{
+    background-color:#F1F1F0;
+    padding: 4%;
+    text-align: center;
+    margin: 5%; 
+    margin-top:-3px;
+    
+}

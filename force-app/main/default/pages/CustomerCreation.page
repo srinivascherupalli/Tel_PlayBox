@@ -1,0 +1,327 @@
+<apex:page id="customerCreationPage" controller="CustomerCreationController" showHeader="false" sidebar="false" cache="true">
+  
+    <style>
+            
+        .bPageTitle {
+            background-color:#5D2D91 !important;
+            font-size: 130%;
+            font-weight: bold;
+        }
+    
+        .pageDescription {
+            color: white;
+            font-size: 100%;
+            font-weight: bold;
+        }
+        
+        .pageType {
+            color: white;
+        }
+    
+        .bPageBlock {
+            background-color: #FFFFFF !important;
+        }
+        
+        .pbSubheader {
+            background-color: #5D2D91 !important;
+            color : black;
+        }
+        
+        .mainTitle {
+            color:#5D2D91 !important;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .big {
+            font-size: 20px;
+            font-weight: bold;
+            color:#5D2D91;
+            /*color:3854B8;*/
+        }
+        
+        .panelGridStyling {
+            border-color:#5D2D91; 
+            border-style:solid; 
+        }
+        
+        .checkBoxStyling {
+            float:left;
+        }
+        
+        .headerRow .headerStyle {
+            background-color: #5D2D91 !important;
+            color: white !important; 
+        }
+        
+        .rowStyling {
+            width:250px;
+            color:#5D2D91;
+        }        
+        
+        .inputTextStyling {
+            color:#5D2D91;
+        }
+        
+        .outputTextStyling {
+            color:#5D2D91;
+            font-weight: bold;
+        }
+    </style> 
+        
+    <script>
+        function runABNValidation() {
+            var val = document.getElementById('customerCreationPage:form1:pb1:pbs1:pbs2:accountABN').value;
+            if(val.length >= 11){
+                validateAbn();    
+            }
+        }
+        
+        function runABNValidationOnClient() {
+            var abn = document.getElementById('customerCreationPage:form1:pb1:pbs1:pbs2:accountABN').value;
+            if(abn != null && abn != '' && abn.length == 11){
+                var total = 0;
+                var weighting = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+                var abnDigits = new Array(11);
+                    
+                for(var i=0; i<abn.length; i++){
+                    var digit = abn.substring(i, i+1);
+                    if(i==0){digit = digit-1;}
+                    abnDigits.push(digit);
+                    total = total + digit*weighting[i];
+                }
+                
+                var modulus = total%89;
+                console.log(modulus);
+                if(modulus==0){
+                    return 'valid';
+                }else{
+                    return 'invalid';
+                }
+            }
+            else {
+                return 'invalid';
+            }
+        }
+        
+        function runACNValidation() {
+            var val = document.getElementById('customerCreationPage:form1:pb1:pbs1:pbs3:accountACN').value;
+            if(val.length >= 9){
+                validateAcn();    
+            }
+        }
+        
+        function toggleMailingAddress() {
+            
+            var ele1 = document.getElementById('customerCreationPage:j_id77:j_id78:j_id98:addressTable:searchLine1');
+            
+            if(document.getElementById('customerCreationPage:j_id77:j_id78:j_id80:j_id82:copyAddress').checked){
+                ele1.value = '';
+                ele1.disabled=true;
+            }
+            
+            else {
+                ele1.disabled=false;
+            }
+        }
+        
+  </script>  
+    
+  <apex:sectionHeader subtitle="New Customer Creation"/>
+  <apex:form id="form1">
+    <apex:pageBlock id="pb1">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:actionFunction focus="accountABN" action="{!validateABN}" name="validateAbn"/>
+        <apex:actionFunction focus="accountACN" action="{!validateACN}" name="validateAcn"/>
+      <apex:facet name="footer">
+        <apex:commandButton action="{!createCustomer}" value="Create" style="background:#5D2D91;color:white"/>
+      </apex:facet>  
+      <apex:pageBlockSection id="pbs1" title="Customer Account Information" columns="2">
+         
+        <apex:panelGrid id="pg1" columns="3" border="0" width="100%" styleClass="panelGridStyling">
+          <apex:outputLabel styleClass="big" value="Account Information" />
+          <apex:outputLabel value=""/>
+          <apex:outputLabel value=""/>
+          <hr/>
+          <apex:outputLabel value=""/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Business Name / Last Name" for="accountName" title="Enter Business Name / Last Name" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountName" value="{!account.name}" required="false" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+
+          <apex:outputLabel value="ABN" for="accountABN" title="Enter 11 digit Australian Business Number" styleClass="outputTextStyling"/>
+          <apex:pageBlockSection id="pbs2" columns="4">              
+              <apex:inputField id="accountABN" value="{!account.ABN__c}" onkeyup="runABNValidation()" label="" styleClass="inputTextStyling"/>
+              <apex:image id="theImage1" value="{!If(abnValid == "valid", $Resource.Valid, If(abnValid =="invalid", $Resource.Invalid, $Resource.warning))}" width="20" height="20" title="ABN validation status"/>
+          </apex:pageBlockSection>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="ACN" for="accountACN" title="Enter 9 digit Australian Company Number" styleClass="outputTextStyling"/>
+          <apex:pageBlockSection id="pbs3" columns="4">
+              <apex:inputField id="accountACN" value="{!account.ACN__c}" onkeyup="runACNValidation()" label="" styleClass="inputTextStyling"/>
+              <apex:image id="theImage2" value="{!If(acnValid == "valid", $Resource.Valid, If(acnValid =="invalid", $Resource.Invalid, $Resource.warning))}" width="20" height="20" title="ACN validation status"/>
+          </apex:pageBlockSection>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value=""/>
+          <apex:outputLabel value=""/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Language Preference" for="accountLanguagePreference" title="Select language preference for this customer" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountLanguagePreference" value="{!account.Language_Preference__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Trading as Name" for="accountTradingName" title="Enter customers trading name" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountTradingName" value="{!account.Customer_Trading_Name__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Industry" for="accountIndustry" title="Select customer's industry" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountIndustry" value="{!account.Industry}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Business Unit" for="accountBusinessUnit" title="Select customer's business unit" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountBusinessUnit" value="{!account.Business_Unit__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Market Segment" for="accountMarketSegment" title="Select customer's market segment" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountMarketSegment" value="{!account.Market_Segment__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Managed" for="accountManaged" title="Select customer's managed flag if applicable" styleClass="outputTextStyling"/>
+          <apex:inputCheckbox id="accountManaged" value="{!account.Managed__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="SOU" for="accountSOU" title="Enter customer's service org unit" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountSOU" value="{!account.Legacy_SOU__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Type" for="accountType" title="Select customer's account type" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountType" value="{!account.Type}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+          <apex:outputLabel value="Customer Status" for="accountStatus" title="Select customer's account status" styleClass="outputTextStyling"/>
+          <apex:inputField id="accountStatus" value="{!account.Customer_Status__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+            
+          <apex:outputLabel value="Preferred Communication Method" for="prefCommMethod" title="Select preferred communication method" styleClass="outputTextStyling"/>
+          <apex:inputField id="prefCommMethod" value="{!account.Pref_Comm_Method__c}" styleClass="inputTextStyling"/>
+          <apex:outputLabel value=""/>
+          
+       </apex:panelGrid>
+
+       <apex:panelGrid columns="2" border="0" title="Authorised Contact Information" width="100%" styleClass="panelGridStyling">
+         <apex:outputLabel styleClass="big" value="Authorised Contact Information" />
+         <apex:outputLabel value=""/>
+         <hr/>
+         <apex:outputLabel value=""/>
+       
+         <apex:outputLabel value="Title" for="contactTitle" styleClass="outputTextStyling"/>
+         <apex:inputField id="contactTitle" value="{!contact.Salutation}" styleClass="inputTextStyling"/> 
+       
+         <apex:outputLabel value="First Name" for="contactFirstName" styleClass="outputTextStyling"/>
+         <apex:inputField id="contactFirstName" value="{!contact.firstName}" styleClass="inputTextStyling"/>
+         
+         <apex:outputLabel value="Last Name" for="contactLastName" styleClass="outputTextStyling"/>
+         <apex:inputField id="contactLastName" value="{!contact.lastName}" required="false" styleClass="inputTextStyling"/>
+         
+         <apex:outputLabel value="Date of Birth" for="birthDate" styleClass="outputTextStyling"/>
+         <apex:inputField id="birthDate" value="{!contact.birthDate}" required="false" styleClass="inputTextStyling"/>
+
+         <apex:outputLabel value="Phone" for="contactPhone" styleClass="outputTextStyling"/>
+         <apex:inputField id="contactPhone" value="{!contact.phone}" styleClass="inputTextStyling"/>
+         
+         <apex:outputLabel value="Contact Role" for="contactType" styleClass="outputTextStyling"/>
+         
+         <apex:outputLabel value="Contact Status" for="contactStatus" styleClass="outputTextStyling"/>
+         <apex:inputField id="contactStatus" value="{!contact.Contact_Status__c}" styleClass="inputTextStyling"/>
+                 
+         <apex:outputLabel value="Preferred Communication Method" for="contactPrefCommMethod" styleClass="outputTextStyling"/>
+         <apex:inputField id="contactPrefCommMethod" value="{!contact.Pref_Comm_Method__c}" styleClass="inputTextStyling"/>
+         
+         <apex:outputLabel value="Work Email" for="contactWorkEmail" styleClass="outputTextStyling"/>
+         <apex:inputField id="contactWorkEmail" value="{!contact.Email}" styleClass="inputTextStyling"/>
+       </apex:panelGrid>
+       
+      </apex:pageBlockSection>
+
+    </apex:pageBlock>
+      
+  </apex:form>
+  
+   <apex:pageBlock >
+      <apex:pageBlockSection title="Address Information" columns="2">
+        <apex:outputLabel value=""/>
+        <apex:form >
+          
+          <apex:actionFunction name="checkUncheck" action="{!copyTheAddress}" rerender="showstate">
+              <apex:param name="checkVal" value="" id="cuc" assignTo="{!copyAddress}" />
+          </apex:actionFunction>
+          
+          <apex:pageBlockSection columns="1">              
+              <apex:inputCheckbox id="copyAddress" label="Use billing address for mailing ?" value="{!copyAddress}" onchange="toggleMailingAddress()"/>
+          </apex:pageBlockSection> 
+        </apex:form>
+        
+        <apex:panelGrid columns="1" border="0" title="Business Address" width="100%" styleClass="panelGridStyling">
+          <!--apex:outputLabel styleClass="big" value="Business Address" /-->
+            
+            <apex:form >
+              <apex:actionFunction name="selectBillingAddId" action="{!selectBillingAddress}" rerender="showstate">
+                 <apex:param name="selectId" value="" id="si" assignTo="{!selectedBillingAddressId}" />   
+              </apex:actionFunction>
+              
+              <apex:pageBlock title="Business Address" id="addressTable">
+                  <apex:inputText id="searchLine1" label="Enter Address" value="{!searchString}" style="width:300px" styleClass="inputTextStyling"/> 
+                  <span/><span/>
+                  <apex:commandButton action="{!runSearch}" value="Search" reRender="addressTable" style="background:#5D2D91;color:white"/>
+                  <br/><br/>
+
+                  <apex:pageBlockTable style="width:100%" value="{!addressList}" var="address" cellpadding="2" cellspacing="2">
+                      
+                      <apex:column style="width:250px;color:#5D2D91" headerValue="" headerClass="headerStyle">
+                          <input type="radio" value="{!address}" name="<strong>selectRadio</strong>" onclick="selectBillingAddId('{!address.addressId}')"/>    
+                      </apex:column>
+                      <apex:column style="width:250px;color:#5D2D91" headerValue="Address Id" value="{!address.addressId}" rendered="true" headerClass="headerStyle"/>
+                      <apex:column style="width:250px;color:#5D2D91" headerValue="Address" value="{!address.addressLine}" headerClass="headerStyle"/>
+                      <apex:column style="width:250px;color:#5D2D91" headerValue="Locality" value="{!address.locality}" headerClass="headerStyle"/>
+                      <apex:column style="width:250px;color:#5D2D91" headerValue="State" value="{!address.state}" headerClass="headerStyle"/>
+                      <apex:column style="width:250px;color:#5D2D91" headerValue="Postcode" value="{!address.postcode}" headerClass="headerStyle"/>
+                      <apex:column style="width:250px;color:#5D2D91" headerValue="Type" value="{!address.addressType}" headerClass="headerStyle"/>
+                  </apex:pageBlockTable>
+              </apex:pageblock>
+            </apex:form>
+        </apex:panelGrid>
+          
+        <apex:panelGrid id="mailingAddressPg" columns="1" border="0" title="Mailing Address" width="100%" styleClass="panelGridStyling">
+          <!--apex:outputLabel styleClass="big" value="Mailing Address" /-->
+          <apex:form >
+            <apex:actionFunction name="selectMailingAddId" action="{!selectMailingAddress}" rerender="showstate">
+               <apex:param name="selectId" value="" id="si" assignTo="{!selectedMailingAddressId}" />   
+            </apex:actionFunction>
+
+            <apex:pageBlock title="Mailing Address" id="addressTable">
+                <apex:inputText id="searchLine1" label="Enter Address" value="{!searchString}" style="width:300px" styleClass="inputTextStyling"/> 
+                <span/><span/>
+                <apex:commandButton action="{!runSearch}" value="Search" reRender="addressTable" style="background:#5D2D91;color:white"/>
+                <br/><br/>
+
+                <apex:pageBlockTable style="width:100%" value="{!addressList}" var="address" cellpadding="2" cellspacing="2">
+                    
+                    <apex:column style="width:250px;color:#5D2D91" headerValue="" headerClass="headerStyle">
+                        <input type="radio" value="{!address}" name="<strong>selectRadio</strong>" onclick="selectMailingAddId('{!address.addressId}')"/>    
+                    </apex:column>
+                    <apex:column style="width:250px;color:#5D2D91" headerValue="Address Id" value="{!address.addressId}" rendered="true" headerClass="headerStyle"/>
+                    <apex:column style="width:250px;color:#5D2D91" headerValue="Address" value="{!address.addressLine}" headerClass="headerStyle"/>
+                    <apex:column style="width:250px;color:#5D2D91" headerValue="Locality" value="{!address.locality}" headerClass="headerStyle"/>
+                    <apex:column style="width:250px;color:#5D2D91" headerValue="State" value="{!address.state}" headerClass="headerStyle"/>
+                    <apex:column style="width:250px;color:#5D2D91" headerValue="Postcode" value="{!address.postcode}" headerClass="headerStyle"/>
+                    <apex:column style="width:250px;color:#5D2D91" headerValue="Type" value="{!address.addressType}" headerClass="headerStyle"/>
+                </apex:pageBlockTable>
+            </apex:pageblock>
+          </apex:form>
+        </apex:panelGrid>
+      </apex:pageBlockSection>
+   </apex:pageBlock>
+   
+</apex:page>

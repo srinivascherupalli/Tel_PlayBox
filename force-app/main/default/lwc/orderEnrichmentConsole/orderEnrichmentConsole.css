@@ -1,0 +1,144 @@
+.wrapper {
+  min-height: 100%;
+}
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.left-section {
+  width: 250px;
+  height: 100%;
+  border-right: 1px solid #d8dde6;
+  overflow-y: auto;
+}
+
+.left-section h2 {
+  color: #747474;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.quick-search {
+}
+.select-option {
+  padding: 10px 0 0 0;
+}
+.pd-row {
+  margin: 10px 0 20px;
+}
+
+.pd-name {
+  font-weight: bold;
+}
+
+.h-splitter {
+  border-bottom: 1px solid #d8dde6;
+}
+
+.v-splitter {
+  border-left: 1px solid #d8dde6;
+}
+
+.pd-row:last-child .h-splitter {
+  display: none;
+}
+
+.check-row {
+  margin-bottom: 10px;
+  min-height: 50Px;
+  width: 100%;
+  padding: 0 4px 0 20px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+}
+
+.check-row[data-is-visible="true"] {
+  display: flex;
+}
+.check-row[data-is-visible="false"] {
+  display: none;
+}
+
+.check-row[data-is-selected="true"] {
+  margin-bottom: 10px;
+  background-color: #d8edff;
+  border-color: #0070d2;
+  cursor: default;
+}
+.loader {
+  display: none;
+}
+.loader[data-is-loading="true"] {
+  display: block;
+}
+
+.solution-section {
+  width: 200px;
+}
+
+.option-item {
+  display: flex;
+  padding: 5px 0;
+}
+.option-label {
+  display: inline-block;
+  margin-left: 5px;
+  word-break: break-word;
+  color: #3e3e3c;
+  font-size: 13px;
+}
+
+.selection-faux {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  border: 1px solid #706e6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.selection-faux_is-selected {
+  width: 8px;
+  height: 8px;
+  background-color: #0070d2;
+  border-radius: 100%;
+}
+
+.custom-checkbox-list .selection-faux_is-selected {
+  width: 100%;
+  height: 100%;
+  padding: 0px 2px;
+}
+
+.right-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.path-wrapper {
+  width: 100%;
+  height: 49px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #d8dde6;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+c-path-tabs {
+  width: 80%;
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}

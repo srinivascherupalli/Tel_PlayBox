@@ -1,0 +1,276 @@
+<!---------------------------------------------------------------------
+Name : NumberReservationPage
+Description : Vf page 
+Author: Kalashree
+Story: EDGE-93081
+1. ankit Goswami 13/01/2021  EDGE-197555
+----------------------------------------------------------------------->
+<apex:page showHeader="false" sidebar="false" >
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <apex:slds />
+    <!-- poc-->
+    <cssmgnt:SolutionConsoleAPI appMode="true" />  
+    <script>    
+    var basketId = "{!JSENCODE($CurrentPage.parameters.basketId) }";
+    var solutionname = "{!JSENCODE($CurrentPage.parameters.solutionname) }";
+    console.log('basketId in vpf', basketId + '===solutionname=====' + solutionname);
+    
+    var userTheme = "{!$User.UITheme}"
+    var loggedinUserProfilename = "{!$Profile.Name}"
+    console.log("basketId:" + basketId);
+    console.log("loggedinUserProfilename:" + loggedinUserProfilename);
+    $Lightning.use("c:LightningAppDependencyHandler", function () {
+        $Lightning.createComponent(
+            "c:NumberReservationParentComp",
+            {
+                "basket_id": basketId,
+                "solutionname": solutionname,
+                Value: populateSimTypeonConfig,
+            },
+            "sub",
+            function (cmp) {
+                console.log("Component created!");
+                console.log(cmp);
+                $A.eventService.addHandler({
+                    event: 'force:navigateToSObject',
+                    handler: function (event) {
+                        console.log('vfp event: ' + event.getParam("recordId"));
+                        if (userTheme == 'Theme4t') {
+                            // Salesforce app navigation
+                            console.log('inside sf1');
+                            sforce.one.navigateToSObject(event.getParam("recordId"));
+                        }
+                        else if (userTheme == 'Theme3') {
+                            // Set the window's URL using a Visualforce expression
+                            console.log('inside prm');
+                            var recordId = event.getParam("recordId");
+                            if (loggedinUserProfilename.includes("PRM")) {
+                                window.location.href = '/partners/' + recordId;
+                            } else
+                                window.location.href = '/' + recordId;
+                        }
+                            else if (userTheme == 'Theme4d') {
+                                // Set the window's URL using a Visualforce expression
+                                console.log('inside lightning');
+                                var recordId = event.getParam("recordId");
+                                window.location.href = '/' + recordId;
+                            } else {
+                                // Set the window's URL using a Visualforce expression
+                                console.log('inside classic');
+                                var recordId = event.getParam("recordId");
+                                window.location.href = '/' + recordId;
+                            }
+                        
+                    }
+                });
+               
+            });
+    });
+    
+    //poc
+   /* async function populateSimTypeonConfig(selectedreservationrec,ProductConfig, selesctedsimtype, newsim,callback) {
+        console.log('ProductConfig>>> ' +ProductConfig );
+        console.log('selesctedsimtype>>> ' +selesctedsimtype );
+        console.log('sim type>>> ' +newsim );
+         console.log('assigned number >>>'+selectedreservationrec);
+        var CallerName ;
+        //  currentBasket1 = await CS.SM.getActiveSolution();
+        //console.log('currentBasket1'+currentBasket1);
+        currentBasket = await CS.SM.loadBasket(basketId);
+        if (currentBasket && currentBasket.solutions != null) {
+            const currSol = Object.values(currentBasket.solutions);
+            for (const solution of currSol) {
+                console.log('solution' + solution);
+                var updateMap = {};
+                //fetching and updating all configurations
+                if (solution.name.includes('Adaptive Mobility') || solution.name.includes('Corporate Mobile Plus')) {
+                    await CS.SM.setActiveSolution(solution.solutionId);
+                    console.log('inside solution');
+                    if (solution.components && Object.values(solution.components).length > 0) {
+                        Object.values(solution.components).forEach(async (comp) => {
+                            if ((comp.name === 'Enterprise Mobility' || comp.name === 'Mobile Subscription' ) && comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {
+                            //console.log('inside component');
+                            CallerName = comp.name;
+                            if(comp.name == 'Enterprise Mobility'){
+                                window.activeNGEMSolutionID = solution.solutionId;
+                            }
+                            else{
+                            window.activeCMPSolutionID  = solution.solutionId;
+                            }
+                            Object.values(comp.schema.configurations).forEach(async (config) => {
+                            if(ProductConfig.includes(config.id)){
+                            console.log('inside config guid  ' + config.guid);
+                            updateMap[config.guid] = [];
+                            updateMap[config.guid].push({
+                            name: 'SimAvailabilityType',
+                            value:newsim,
+                            showInUi: true,
+                            readOnly: false
+                        });
+                    }
+                    console.log('updateMap' + JSON.stringify(updateMap));
+                    
+                });
+            }
+        });
+    }
+     var activeSolution = await CS.SM.getActiveSolution();
+    //await currentBasket.submitSolution(activeSolution);   
+    //await currentBasket.updateSolution(activeSolution.id,'',false);
+    console.log('#######Saved Solution Successfully!!!' );
+    if(selectedreservationrec != null && (CallerName!= null || CallerName!= '') && updateMap != null){
+        var payload =
+            {
+                command: 'POCTEST',
+                assignednumber : JSON.stringify(selectedreservationrec),
+                data: JSON.stringify(updateMap),
+                caller: CallerName
+            };
+    }
+    console.log('payload >>  '+payload);
+    window.parent.postMessage(payload, '*') ;
+    sessionStorage.setItem("payload", JSON.stringify(payload));
+   if (callback && typeof(callback) === "function") {
+    callback('call back');
+  }
+    
+    
+    }// end of Adaptive Mob check
+    
+    }
+    }
+    
+    }*/
+    
+    async function populateSimTypeonConfig(recordtable,calledfrom,callback) {
+        console.log('recordtable>>> ' +JSON.stringify(recordtable ));
+        recordtable.forEach(function(message){
+        console.log('record row  ' +message);
+        console.log(message.assignedNumber);
+        });
+       var CallerName ;
+        currentBasket = await CS.SM.loadBasket(basketId);
+
+        if (currentBasket && currentBasket.solutions !== null) {
+
+            const currSol = Object.values(currentBasket.solutions);
+            for (const solution of currSol) {
+                console.log('solution' + solution);
+                var updateMap = {};
+                //fetching and updating all configurations
+                if (solution.name.includes('Adaptive Mobility') || solution.name.includes('Corporate Mobile Plus')) {
+                    await CS.SM.setActiveSolution(solution.solutionId);
+                    console.log('inside solution');
+                    if (solution.components && Object.values(solution.components).length > 0) {
+                        Object.values(solution.components).forEach(async (comp) => {
+                            if ((comp.name === 'Enterprise Mobility' || comp.name === 'Mobile Subscription' ) && comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {
+                            //console.log('inside component');
+                            CallerName = comp.name;
+                            if(comp.name == 'Enterprise Mobility'){
+                                window.activeNGEMSolutionID = solution.solutionId;
+                            }
+                            else{
+                            window.activeCMPSolutionID  = solution.solutionId;
+                            }
+                            Object.values(comp.schema.configurations).forEach(async (config) => {
+                                recordtable.forEach(function(message){
+                                if(calledfrom == 'Assign Button'){                                
+                                    if(message.Id ==config.id){
+                                         console.log('configuration id >>' +message.Id);
+                                            console.log('inside config guid  ' + config.guid);
+                                            updateMap[config.guid] = [];
+                                            updateMap[config.guid].push({
+                                            name: 'SimAvailabilityType',
+                                            value:message.newExistingSim,
+                                            showInUi: true,
+                                            readOnly: false,
+                                            assignnumber :message.assignedNumber
+                                        });
+                                        //EDGE-197555 || start
+                                            updateMap[config.guid].push({
+                                            name: 'SubScenario',
+                                            value:message.pcSubType,
+                                            });
+                                            //EDGE-197555 || end
+                                    }
+                                }
+                                else if(calledfrom == 'Inline Table'){                                
+                                    if(message.id ==config.id){
+                                         console.log('configuration id >>' +message.id);
+                                            console.log('inside config guid  ' + config.guid);
+                                            updateMap[config.guid] = [];
+                                            updateMap[config.guid].push({
+                                            name: 'SimAvailabilityType',
+                                            value:message.newExistingSim,
+                                            showInUi: true,
+                                            readOnly: false,
+                                            assignnumber :message.assignedNumber
+                                        });
+                                            //EDGE-197555 || start
+                                            updateMap[config.guid].push({
+                                            name: 'SubScenario',
+                                            value:message.pcSubType,
+                                            });
+                                            //EDGE-197555 || end
+                                    }
+                                }
+                                else if(calledfrom == 'Portout Tab'){                                
+                                    if(message.pcid ==config.id){
+                                         console.log('configuration id >>' +message.pcid);
+                                            console.log('inside config guid  ' + config.guid);
+                                            updateMap[config.guid] = [];
+                                            updateMap[config.guid].push({
+                                            name: 'SimAvailabilityType',
+                                            value:message.SimAvailibilityType,
+                                            showInUi: true,
+                                            readOnly: false,
+                                            assignnumber :message.number_x
+                                        });
+                                            //EDGE-197555 || start
+                                            updateMap[config.guid].push({
+                                            name: 'SubScenario',
+                                            value:message.pcSubType,
+                                            });
+                                                //EDGE-197555 || end
+                                    }
+                                }
+                                
+                            
+                                });
+                                console.log('updateMap' + JSON.stringify(updateMap));
+                                
+                            });
+            }
+        });
+    }
+     var activeSolution = await CS.SM.getActiveSolution();
+    //await currentBasket.submitSolution(activeSolution);   
+    //await currentBasket.updateSolution(activeSolution.id,'',false);
+    console.log('#######Saved Solution Successfully!!!' );
+    if(updateMap != null){
+        var payload =
+            {
+                command: 'POCTEST',
+                //assignednumber : JSON.stringify(selectedreservationrec),
+                data: JSON.stringify(updateMap),
+                caller: CallerName
+            };
+    }
+    console.log('payload >>  '+payload);
+    window.parent.postMessage(payload, '*') ;
+    sessionStorage.setItem("payload", JSON.stringify(payload));
+   if (callback && typeof(callback) === "function") {
+    callback('call back');
+  }
+    
+    
+    }// end of Adaptive Mob check
+    
+    }
+    }
+    
+    }
+    //poc
+    </script>
+    <div id="sub"></div>
+</apex:page>

@@ -1,0 +1,102 @@
+<template>
+  <div class="input" data-is-no-click={isNoClick}>
+    <!-- Text, Date, Time input Start -->
+    <template if:true={attribute.field.isInput}>
+      <lightning-input
+        class="input-field"
+        autocomplete="off"
+        name={attribute.name}
+        label={attribute.label}
+        type={attribute.field.type}
+        value={attribute.value}
+        checked={attribute.isChecked}
+        required={attribute.required}
+        read-only={attribute.readOnly}
+        field-level-help={attribute.helperText}
+        onchange={handleInputChange}
+        onfocus={handleFocus}
+        onblur={handleInputBlur}
+        data-field-id={attribute.name}
+      ></lightning-input>
+    </template>
+    <!-- Text area start -->
+    <template if:true={attribute.field.isTextarea}>
+      <lightning-textarea
+        label={attribute.label}
+        value={attribute.value}
+        required={attribute.required}
+        read-only={attribute.readOnly}
+        maxlength="255"
+        onchange={handleInputChange}
+        onfocus={handleFocus}
+        onblur={handleInputBlur}
+        data-field-id={attribute.name}
+      ></lightning-textarea>
+    </template>
+    <!-- Checkbox group Start -->
+    <template if:true={attribute.field.isCheckbox}>
+      <lightning-checkbox-group
+        class="checbox-input"
+        name={attribute.name}
+        label={attribute.label}
+        options={attribute.options}
+        value={attribute.value}
+        onchange={handleInputChange}
+        onfocus={handleFocus}
+        onblur={handleInputBlur}
+        data-field-id={attribute.name}
+      ></lightning-checkbox-group>
+    </template>
+    <!-- Radio group Start -->
+    <template if:true={attribute.field.isRadio}>
+      <lightning-radio-group
+        type="radio"
+        class="radio-input"
+        name={attribute.name}
+        label={attribute.label}
+        options={attribute.options}
+        value={attribute.value}
+        onchange={handleInputChange}
+        onfocus={handleFocus}
+        onblur={handleInputBlur}
+        data-field-id={attribute.name}
+      ></lightning-radio-group>
+    </template>
+    <!-- Picklist start -->
+    <template if:true={attribute.field.isPicklist}>
+      <lightning-combobox
+        class="hide-label"
+        name={attribute.name}
+        label={attribute.label}
+        value={attribute.value}
+        required={attribute.required}
+        read-only={attribute.readOnly}
+        placeholder="Please select"
+        options={attribute.options}
+        onfocus={handleFocus}
+        onchange={handleInputChange}
+        spinner-active={attribute.field.isSpinner}
+        data-field-id={attribute.name}
+      ></lightning-combobox>
+    </template>
+    <template if:true={attribute.field.isLookup}>
+      <c-oe-custom-lookup
+        name={attribute.name}
+        required={attribute.required}
+        label={attribute.label}
+        read-only={attribute.readOnly}
+        placeholder="Please select"
+        value={attribute.value}
+        display-value={attribute.displayValue}
+        options={attribute.options}
+        onfocuslookup={handleFocus}
+        onchangelookup={handleInputChange}
+        onsearchlookup={handleLookupSearch}
+        onremovelookupvalue={handleInputChange}
+        spinner-active={attribute.field.isSpinner}
+        data-field-id={attribute.name}
+      ></c-oe-custom-lookup>
+    </template>
+    <p class="has-error" if:true={uiAttribute.errorMessage}>{uiAttribute.errorMessage}</p>
+  </div>
+</template>

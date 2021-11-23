@@ -1,0 +1,92 @@
+<apex:page standardController="Account" showHeader="false" sidebar="false">
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    
+    <apex:slds />
+     <script>
+        
+        var basketId = "{!JSENCODE($CurrentPage.parameters.basketID) }";
+        var callerName = "{!JSENCODE($CurrentPage.parameters.callerName) }";
+        var isSC = "{!JSENCODE($CurrentPage.parameters.isSC) }";
+    var solutionName = "{!JSENCODE($CurrentPage.parameters.solutionName) }"; /*DPG-3510, Ila: Added solutionName parameter*/
+        var userTheme="{!$User.UITheme}"
+        var loggedinUserProfilename="{!$Profile.Name}"
+        console.log("basketId:" + basketId);
+        var DeviceTypesJson;
+        console.log("loggedinUserProfilename:" + loggedinUserProfilename);
+    /*EDGE-125178. Kalashree Borgaonkar. Fix for Conditionally showing heading*/
+    	var isSCValue=true;
+        if(isSC=='false'){
+            isSCValue=false;
+        }
+    	console.log('isSCValue',isSCValue);
+        let solutionId="{!JSENCODE($CurrentPage.parameters.SolutionId)}";
+        console.log('solutionId'+solutionId);
+        
+        /*EDGE-146972- Capture the Device types from the Active Solution*/
+        let pageloadPayload={
+        command: 'StockCheck',
+        data: solutionId,
+        caller: callerName};    
+        
+        window.parent.postMessage(pageloadPayload, '*') ; //Posting Event to Parent with the caller details   
+        
+        window.addEventListener('message', function(event) { //Capturning the Eventdata trigged from JS
+            if (event.data != '' && event.data['caller']==callerName && event.data['command']==solutionId) {
+                   if(event.data['data']){
+                  
+                        DeviceTypesJson=JSON.stringify(event.data['data']);  
+                    }
+                    }
+                });
+        /*End-EDGE-146972*/ 
+        
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+             /*EDGE-144680. Manjunath Ediga. changing to parenlightning component Name to hold two tabs (Stock check Basket and Advance Stock Check) */
+            $Lightning.createComponent(
+                "c:StockCheckBaseMainComp",
+                {"basketId": basketId,"isSC":isSCValue,"attrJson":DeviceTypesJson,"solutionName": solutionName}, /*DPG-3510, Ila: Added solutionName parameter*/
+                 "sub",
+                function(cmp) {
+                    console.log("Component created!");
+                    console.log(cmp);
+                    
+                    $A.eventService.addHandler({
+                      event: 'force:navigateToSObject',
+                      handler: function(event) {
+                        console.log('vfp event: ' + event.getParam("recordId"));
+                        console.log('theme'+userTheme);
+                        
+                        if(userTheme =='Theme4t' ){
+                            // Salesforce app navigation
+                            console.log('inside sf1');
+                            sforce.one.navigateToSObject(event.getParam("recordId"));
+                        }
+                        else if(userTheme =='Theme3' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside prm');
+                            var recordId = event.getParam("recordId");
+                            if(loggedinUserProfilename.includes("PRM")){
+                                window.location.href = '/partners/' + recordId;
+                            }else
+                                window.location.href = '/' + recordId;
+                        }
+                        else if(userTheme =='Theme4d' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside lightning');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }else{
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside classic');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }
+                        
+                      }
+                    });
+                });
+            });
+    </script>
+    <div id="sub"></div>
+
+</apex:page>

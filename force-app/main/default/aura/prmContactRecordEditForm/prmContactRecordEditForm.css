@@ -1,0 +1,146 @@
+.THIS .modalClass {
+  height: 22rem;
+  width: 100%;
+}
+.THIS .modal-container {
+  width: 70%;
+  max-width: 840px;
+  min-width: 480px;
+  min-height: 50vh !important;
+}
+.THIS .cancelButton {
+  border: 1px solid;
+    border-radius: 4px;
+    transition: border .15s linear;
+    background-color: var(--sds-c-button-neutral-color-background, var(--lwc-buttonColorBackgroundPrimary,rgb(255, 255, 255)));
+    border-color: var(--sds-c-button-neutral-color-border, var(--lwc-colorBorderPrimary,rgb(217, 219, 221)));
+}
+.THIS .submitButton {
+  border: 1px solid;
+    border-radius: 4px;
+    background-color: var(--lwc-brandAccessible,rgb(0, 100, 210));
+    border-color: var(--lwc-brandAccessible,rgb(0, 100, 210));
+    color: var(--lwc-colorTextButtonBrand,rgb(250, 250, 250));
+}
+                                    
+.THIS .secTitle {
+	color: var(--lwc-colorTextDefault,rgb(51, 51, 51));
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold); 
+    font-size: 16px;
+    padding: 0px 12px;
+}
+
+.THIS .slds-notify_container .slds-notify_toast .slds-notify__content h2.slds-text-heading_small{
+	display: none;
+}
+
+.THIS .slds-notify_container .slds-notify_toast .slds-notify__content p{
+	color: var(--lwc-colorTextInverse,rgb(250, 250, 250)); background-color: var(--lwc-colorBackgroundToastError,rgb(194, 57, 52)); padding: 15px 22px 15px 22px;border-radius:4px;
+}  
+.THIS .slds-notify_container .slds-theme_error{
+	background-color: transparent !important;
+}
+                                                            
+.THIS .accountClass .slds-input-has-icon .slds-input__icon{
+	pointer-events: none; display: none;
+}
+                                                            
+.THIS .modalClass {
+	height: 38rem; width: 100%; max-height: 38rem; 
+}
+.THIS .modal-container { 
+	width: 70%; max-width: 840px; min-width: 480px;height: inherit;  
+}
+@media (max-width: 1366px){
+  .THIS .modalClass {
+    height: -webkit-fill-available;
+    max-height: -webkit-fill-available;
+  }
+  .THIS .modal-container { 
+    height: -webkit-fill-available;
+    margin-bottom: 15px;
+  }
+}
+@media (max-width: 767px){
+  .THIS .modalClass {
+    height: -webkit-fill-available;
+    max-height: 30rem;
+  }
+}                                                           
+
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .slds-form-element_horizontal .slds-form-element .slds-form-element__control{
+  padding-left: 0;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .slds-form-element_horizontal .slds-form-element__label{
+  max-width: 100%;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .slds-form-element_horizontal fieldset{
+  display:flex;
+  flex-direction: column;
+  padding-left: initial;
+  padding-right: initial;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .slds-form-element_horizontal{
+  padding-right: 12px;
+  padding-left: 12px;
+  padding-bottom: 0px;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .emailMethod .slds-form-element{
+  display: flex;
+  flex-direction: column;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .emailMethod .slds-form-element .slds-form-element__control .slds-combobox_container .slds-combobox{
+  pointer-events: none !important;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .emailMethod .slds-form-element .slds-form-element__control .slds-combobox_container .slds-combobox .slds-input-has-icon_right .slds-input__icon-group_right{
+  display: none;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .emailCustom{
+  position: relative;
+}
+.THIS .modal-container .slds-form .modalClass .slds-wrap .slds-col .emailCustom lightning-helptext{
+  position: absolute;
+  top: 4px;
+  left: 74px;
+}
+.THIS.genericButton .slds-button{
+  margin-right: 0;
+}
+.THIS .modal-container .slds-form .modalClass .customError{
+  padding-left: 12px;
+  padding-bottom: 12px;
+  font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+}
+.THIS .modal-container .modal-footer.slds-modal__footer{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+@media (max-width: 1024px){
+  .THIS .modal-container .modal-footer.slds-modal__footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+}
+@media (max-width: 767px){
+  .THIS .modal-container{
+    width: 92%;
+    height: -webkit-fill-available;
+  }
+  .THIS .modal-container .modal-footer.slds-modal__footer{
+    position: fixed;
+    bottom: auto;
+    width: 100%;
+  }
+  .THIS .modal-container .modal-footer.slds-modal__footer .slds-button_brand{
+    min-width: 30%;
+  }
+}
+.THIS .slds-modal__close.slds-button_icon-border {
+    border: unset; 
+    border-color: unset;                                                                       
+    color : #FFFFFF                                                                    
+}

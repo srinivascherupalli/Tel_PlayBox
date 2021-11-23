@@ -1,0 +1,32 @@
+.searchBox{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 0;
+}
+h2{
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+    font-size: 2.125rem !important;
+}
+.loadMore{
+    display: flex;
+    justify-content: center;
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+    top: 1rem;
+    position: relative;
+}
+.showMsg{
+    display: flex;
+    justify-content: center;
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+    top: 1rem;
+    position: relative;
+}
+.This .dt-outer-container table tbody tr th a{
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+}
+.This .dt-outer-container table tbody tr td a{
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+}
+.dataTable lightning-datatable .dt-outer-container .slds-table_header-fixed_container table tbody tr th lightning-primitive-cell-factory span .slds-truncate lightning-formatted-url a{
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+}

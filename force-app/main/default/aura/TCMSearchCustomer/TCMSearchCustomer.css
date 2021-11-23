@@ -1,0 +1,55 @@
+/**
+* @Description : EDGE 36. Customer Search By lightning
+* @Author : Shambo Ray
+* @Date : 11/11/2017
+* @Story : EDGE-36
+* @Changes : DEFECT FIXES- 19/11/2017
+*/
+
+.THIS .slds-notify--toast {
+    color: rgb(255, 255, 255);
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    /* position: fixed; */
+    background: rgba(84, 105, 141, 0.95);
+    font-weight: 300;
+    border-radius: .25rem;
+    margin: .5rem;
+    padding: .75rem 3rem .75rem 1.5rem;
+    min-width: 30rem;
+    text-align: left;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+}
+
+.THIS .buttontestclass{
+  
+   display: inline-block;
+}
+
+.THIS .testlabel{
+   padding-top: 1rem;
+}
+
+.THIS .inner
+{
+    display: inline-block;
+}
+.THIS.stl
+{
+    height: 50%;
+    width: 80%;
+    background: #ffffff;
+    text-align:center;
+    margin:auto;
+}
+.THIS.color{
+    color: #ffffff;
+}

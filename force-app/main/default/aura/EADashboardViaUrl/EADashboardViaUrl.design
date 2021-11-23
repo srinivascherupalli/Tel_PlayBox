@@ -1,0 +1,24 @@
+<!--
+****************************************************************************
+@Name: EA Dashboard
+@Author: Mathew Horvath(Einstein Team)
+@CreateDate: 03/06/2020
+@Description: Sprint 20.08 ; P2OB-5864 : Original Version
+              Sprint 20.10 ; P2OB-8071 : Added OpenLocation design Attribute.
+@Deployment  :   Pallavi B(SFO Team)
+*******************************************************************************
+-->
+<design:component>
+  <design:attribute name="dashboardId" label="Dashboard ID" description="Dashboard ID for the Einstein Analytics Dashboard." />
+  <design:attribute name="parameters" label="Parameters" description="Comma delimited string of parameters [paramname] to be applied to filter. Ensure that these parameters are provided in URL as c__[paramname]" />
+  <design:attribute name="filterString" label="Filter String" description="Filter string template to be used to apply to the dashboard. Use #[paramname]# in string." />
+
+  <design:attribute name="height"  label="Height" default="800" />
+  <design:attribute name="showHeader"  label="Show Header" default="false" />
+  <design:attribute name="showTitle"  label="Show Title" default="false" />
+  <design:attribute name="showSharing"  label="Show Sharing" default="false" />
+  <design:attribute name="openLocation"  label="Open Location" default="HIDE" description="Determines how 'open dashboard' button is presented: OPEN_IN_STUDIO, OPEN_IN_TAB, HIDE" /> 
+  <design:attribute name="openLinksInNewWindow" label="Open Links In New Window" default="false" />
+
+
+</design:component>

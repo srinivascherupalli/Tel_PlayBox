@@ -1,0 +1,79 @@
+<aura:component >
+    <aura:attribute name="picklistValues" type="Object" />
+    <aura:attribute name="MarketableOffer" type="Marketable_Offer__c[]" />
+    <aura:attribute name="boolean" type="boolean" default="false"/>    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-page-header__col-title">
+        <div class="slds-media">
+            <div class="slds-media__body">
+                <div class="slds-page-header__name">
+                    <div class="slds-page-header__name-title">
+                        <lightning:select name="select1" label="Select Product" required="true" onchange="{!c.changeproductpicklist}">
+                            <option value="">Select Product</option>
+                            <option value="Corporate Mobile Plus" text="Corporate Mobile Plus" />
+                            <option value="2" text="2" />
+                            <!--<aura:iteration items="{!v.MarketableOffer}" var="item">
+                                            <option value="{!item.Name}" text="{!item.Name}" />
+                                        </aura:iteration> -->
+                        </lightning:select>
+                    </div> 
+                    <br></br>
+                    <br></br>
+                    <div class="slds-page-header__control">
+                        <ul class="slds-button-group-list">
+                            <li>
+                                <lightning:button class="slds-float_right align" variant="brand" label="Save" title="Save" onclick="{!c.SelectProductComponent }" disabled="true"/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <aura:if isTrue="{!v.boolean}">
+        <div class="slds-box applyBGColor">
+            <br></br>
+            <div class="slds-page-header" style="background:skyblue;">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <!-- Please Show Selected Product-->
+                                    Selected Product
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+            
+            <br></br>
+            <h1 class="slds-section-title--divider slds-text-body--regular slds-text-title_bold " style="background:skyblue;">Hardware Option</h1>
+            <lightning:select class="slds-size_1-of-3" name="select1" label="Hardware Options" required="true">
+                <option value="1">MRO/BYO</option>
+                ConfigurePlanAndOffers<option value="2">One Fund</option>
+            </lightning:select>
+            <br></br><br></br>     
+            
+            <h1 class="slds-section-title--divider slds-text-body--regular slds-text-title_bold " style="background:skyblue;">Plan And Offers</h1>
+            <c:ConfigureDiscountIterate />
+            <div class="slds-hide" aura:id="PlanAndOfferPageID">
+                <c:ConfigurePlanAndOffers/>
+            </div>
+            
+        </div>
+    </aura:if>
+</aura:component>
+
+<!--<aura:component implements="flexipage:availableForAllPageTypes" access="global" >
+    
+    <lightning:select name="select1" label="Select Product" required="true">
+                                        <option value="">Select Product</option>
+                                        <aura:iteration items="{!v.MarketableOffer}" var="item">
+                                            <option value="{!item.Name}" text="{!item.Name}" />
+                                        </aura:iteration>
+     </lightning:select>
+ 
+</aura:component> -->

@@ -1,0 +1,2 @@
+public with sharing class AuthorizationException extends Exception {
+}

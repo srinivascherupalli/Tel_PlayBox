@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>50.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="selObject" type="String" label="Object Name" role="inputOnly" description="The SObject name" />
+            <property name="selPicklistField" type="String" label="Picklist Field Name" role="inputOnly" description="picklist field api name" />
+            <property name="recTypeId" type="String" label="Current Recordtype Id" role="inputOnly" description="Optional" />
+            <property name="currentPicklistValue" type="String" label="Recordtype Id" role="inputOnly" description="recordtype id" />
+            <property name="selValue" type="String" label="selected value" role="outputOnly" description="selected value" />
+            <property name="selrequiredcheckbox" type="Boolean" label="Mark as required" role="inputOnly" description="Set true to make field required" default="true"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

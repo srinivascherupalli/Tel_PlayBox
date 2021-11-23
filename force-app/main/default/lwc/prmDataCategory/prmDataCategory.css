@@ -1,0 +1,12 @@
+a.slds-tile--detail {
+    position: relative; background-color: transparent;box-shadow: none;height: 250px;transition: none;background-size: 100%;background-repeat: no-repeat;
+}
+span.slds-tile--name{
+    position: absolute;
+    bottom: -30px;
+    font: 1rem akkuratBold;
+    color: rgb(51,51,51);
+}
+a.slds-tile--detail .slds-tile--image {
+    object-fit: cover;
+}

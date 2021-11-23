@@ -1,0 +1,149 @@
+<!--****************************************************************************
+@Name       :   Funnel Scorecard
+@Author     :   Pallavi/Amar(Team SFO)
+@CreateDate :   11/11/2020
+@Description:   Sprint 20.15 ; P2OB-7883, 
+                This component is used on Opportunity (Standard & Custom Record Types) 
+                to create Bluesheet record and to calculate/update Scorecard on Blue sheet and show it on Dashboard (developer by Einstein) 
+                on opportunity flexipages.
+                Sprint 21.03 ; P2OB-12665(Bug)
+                Made changes to refresh/Hide Funnel Score card Component When Opportunity is closed Lost/Won,Cancelled.
+                And also when there is not Blule Sheet Record
+*****************************************************************************-->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" controller="mhScorecardCriteriaController" >
+    
+    <aura:attribute name="dashboardId" type="String" default='0FK5m00000001LZGAY'/>
+    <aura:attribute name="filterString" type="String" default="{'datasets':{'LandedOpportunityLineSummary2':[{'fields':['OpportunityId'],'filter':{'operator':'in','values':['#OppId#']},'locked':null,'hidden':true}]}}" />
+    <aura:attribute name="parameters" type="String" default="OppId"  />    
+    <aura:attribute name="height" type="Integer" default="200" />
+    <aura:attribute name="showHeader" type="Boolean" default="false" />
+    <aura:attribute name="showTitle" type="Boolean" default="false" />
+    <aura:attribute name="showSharing" type="Boolean" default="false" />
+    <aura:attribute name="openLocation" type="String" default="HIDE" />
+    <aura:attribute name="openLinksInNewWindow" type="Boolean" default="false" />
+    <aura:attribute name="type" type="String" default="Account" />
+    <aura:attribute name="accountId" type="String" />
+    <aura:attribute name="headerTitle"  type="string" />
+    <aura:attribute name="CreateBSMessage"  type="string" />
+    <aura:attribute name="UpdateBSCriteriaMessage"  type="string" />
+    <aura:attribute name="bsRecordNotExist" type="Boolean" default="false"/>
+    <aura:attribute name="criteria" type="List" />
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/> 
+    <aura:attribute name="IsSpinner" type="Boolean" default="false" />
+    <!--P2OB-11273 Attributes START-->
+    <aura:attribute name="OpportunityRecord" type="Object"/>
+    <aura:attribute name="createBlueSheetCheck" type="Boolean" default="false"/>
+    <aura:attribute name="editBluesheetCheck" type="Boolean" default="false"/>
+    <!--P2OB-11273 Attributes END-->
+    <aura:attribute name="criteriaChoice" type="List" default="[
+                                                               {'label': 'Yes', 'value': 'Yes'},
+                                                               {'label': 'Unknown', 'value': 'Unknown'},
+                                                               {'label': 'No', 'value': 'No'}  ]"/>
+    <!-- Added below line as part of Funnel score full launch P2OB-12665(Bug) Sprint 21.03 -->
+    <aura:attribute name="showComponent" type="Boolean" default="True"/>
+    <!--Added as part of P2OB-11273 -->    
+    <force:recordData aura:id="recordLoader" 
+                      recordId="{!v.recordId}"
+                      fields="StageName"
+                      targetFields="{!v.OpportunityRecord}"/>
+    <aura:attribute name="headerTitleB" type="Aura.Component[]"><b>{!v.headerTitle}</b></aura:attribute>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- Added below line as part of Funnel score full launch P2OB-12665(Bug) Sprint 21.03 -->
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <!--Added Image as part of P2OB-11273-->
+     <!-- Added below aura if as part of Funnel score full launch P2OB-12665(Bug) Sprint 21.03 -->
+    <aura:if isTrue="{!v.showComponent}">  
+        <lightning:card>
+            <aura:set attribute="title">
+                <img class="img-valign slds-m-right_small" src="{!$Resource.FunnelScorecardImage}" width ="30" height ="30" />
+                <span class="textHeaderSize" width ="30">{!v.headerTitleB}</span>
+            </aura:set> <!--Ends here-->
+            <aura:set attribute="actions">
+                <div class="slds-float_right">
+                    <aura:if isTrue="{!v.editBluesheetCheck}"> <!--MOdified as part of P2OB-11273-->
+                        <lightning:buttonIcon iconName="utility:edit" alternativeText="Edit Scorecard" title="Edit Scorecard" onclick="{!c.openModel}"/>
+                    </aura:if>
+                </div>  
+            </aura:set>
+            <aura:if isTrue="{!not(v.bsRecordNotExist)}">
+                <wave:waveDashboard
+                                    dashboardId="{!v.dashboardId}"  
+                                    filter="{!v.filterString}"
+                                    height="{!v.height}"
+                                    showHeader="{!v.showHeader}"
+                                    showTitle="{!v.showTitle}"
+                                    showSharing="{!v.showSharing}"
+                                    openLocation="{!v.openLocation}"
+                                    openLinksInNewWindow="{!v.openLinksInNewWindow}"
+                                    /> 
+            </aura:if>   
+            <aura:if isTrue="{!v.createBlueSheetCheck}"> <!--MOdified as part of P2OB-11273-->
+                <div class="slds-text-align_left slds-m-left_xx-large">{!v.CreateBSMessage}</div>
+                <div class="slds-align_absolute-center">
+                    <lightning:button  variant="Neutral" label="Create Scorecard" title="Create Scorecard" onclick="{!c.openModel}" />
+                </div>
+            </aura:if>
+        </lightning:card>
+        <aura:if isTrue="{!v.isOpen}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_small slds-backdrop">
+                
+                <div class="slds-modal__container ">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.UpdateBSCriteriaMessage}</h2>
+                    </header>
+                    <aura:if isTrue="{!v.IsSpinner}">
+                        <lightning:spinner size="medium" />
+                    </aura:if>
+                    <!--Body -->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <table class="slds-table slds-table_bordered slds-border_top slds-table_stripped slds-table_cell-buffer slds-border_left slds-border_right" role="grid">
+                            <thead>
+                                <tr class="slds-text-heading_label">
+                                    <th scope="col" style=""><div class="slds-truncate" title="Name">Name</div></th>
+                                    <th scope="col" style=""><div class="slds-truncate" title="Criteria">Criteria</div></th>
+                                    <th scope="col" style=""><div class="slds-truncate" title="Choose Response">Choose Response</div></th>                
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.criteria}" var="scCriteria">
+                                    <tr class="slds-hint-parent">
+                                        <td><div class="slds-truncate" title="{!scCriteria.Name}">{!scCriteria.Name}</div></td>
+                                        <td><div class="slds-truncate slds-cell-wrap" title="{!scCriteria.Criteria_Definition__c}">{!scCriteria.Criteria_Definition__c}</div></td>
+                                        <td>
+                                            <div class="slds-truncate">
+                                                <lightning:radioGroup 
+                                                                      aura:id="optionList"
+                                                                      name="{!scCriteria.Id}"
+                                                                      options="{!v.criteriaChoice}"
+                                                                      value="{!scCriteria.Answer__c}"
+                                                                      type="radio"
+                                                                      class="customRadioCls"
+                                                                      />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>              
+                    </div>
+                    <!--Footer -->
+                    <div>
+                        <footer class="slds-modal__footer">
+                            <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.closeModel}" />
+                            <lightning:button variant="Brand" class="slds-button" label="Save" onclick="{!c.doSave}" />
+                        </footer>
+                    </div>
+                </div>
+            </section>
+            
+        </aura:if>
+    </aura:if> 
+</aura:component>

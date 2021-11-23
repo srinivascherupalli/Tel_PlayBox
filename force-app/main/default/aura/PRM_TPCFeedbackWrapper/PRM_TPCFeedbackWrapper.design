@@ -1,0 +1,3 @@
+<design:component>
+  <design:attribute name="accountId" label="Account Id of logged in user" description="Please add Account Id of logged in user" />
+</design:component>

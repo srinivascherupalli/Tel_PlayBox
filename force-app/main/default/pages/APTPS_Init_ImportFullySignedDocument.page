@@ -1,0 +1,99 @@
+<apex:page extensions="APTPS_ImportFullySignedDocController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+  <apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+  <apex:includeScript value="{!$Resource.APTPS_Bootstrap_Min_JS}"></apex:includeScript> 
+  <style type="text/css">
+    .rcorners {
+    border: 2px solid #319431;
+    }
+  </style>
+    <script>
+       
+       function showWrapper()
+       {
+           
+           $('#myWrapper').show();
+           $('#progressBarOuter').show();
+       }
+      
+     function checkAll(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+
+   </script>
+   <apex:sectionHeader subtitle="{!agreementName}" ></apex:sectionHeader>
+   <h5> <b>Import fully signed document</b></h5>
+   <br/>
+    <apex:form >
+        <apex:pageMessages id="theMessages"></apex:pageMessages>        
+        <apex:pageBlock >
+            <!-- In our table we are displaying the Agreement records    -->
+            
+            <apex:pageBlockSection >
+                <apex:inputField value="{!Apttus__APTS_Agreement__c.APTPS_Other_Party_Signed_By__c}" />
+                <apex:inputField value="{!Apttus__APTS_Agreement__c.Apttus__Other_Party_Signed_Date__c}" />
+                <apex:inputField value="{!Apttus__APTS_Agreement__c.APTPS_Company_Signed_By__c}" />
+                <apex:inputField value="{!Apttus__APTS_Agreement__c.Apttus__Company_Signed_Date__c}" />
+                
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+        <br/>
+        <br/>
+        <h5> <b>Choose the child agreements whose status you want to change</b></h5>
+        <apex:pageBlock > 
+        <apex:pageBlockTable value="{!agreements}" var="a" id="table">
+                <apex:column >
+                    <apex:facet name="header"> <apex:inputCheckbox onclick="checkAll(this)" />
+                      
+                    </apex:facet>
+
+                    <!-- This is our selected Boolean property in our wrapper class -->
+                    <apex:inputCheckbox value="{!a.selected}" id="checkedone"/>
+                </apex:column>
+                <apex:column value="{!a.agreement.Apttus__FF_Agreement_Number__c}" />
+                <apex:column value="{!a.agreement.Name}" />
+                <apex:column value="{!a.relationship}" headerValue="Relationship" />
+                <apex:column value="{!a.agreement.Apttus__Status_Category__c}" />
+                <apex:column value="{!a.agreement.Apttus__Status__c}" />
+                <apex:column value="{!a.agreement.Apttus__Agreement_Category__c}" />
+                <apex:column value="{!a.agreement.APTPS_Agreement_Subcategory__c}" />
+               
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+            
+            <apex:pageBlock >
+            <!--<input type = 'file' name = "myFile" Id = "myFile" value="{!myDoc.Body}" fileName="{!myDoc.name}" /> -->
+            <apex:pageBlockSection >
+                <apex:inputFile id="myFile" value="{!importedAttachment}" fileName="{!fileName}"></apex:inputFile>
+            </apex:pageBlockSection> 
+           </apex:pageBlock>
+           
+            
+            <div id="outer" style="margin-top:20px;margin-bottom:20px;">
+                <div id="inner" style="margin-left:40%">
+            <apex:commandButton value="Import" action="{!import}" onclick="showWrapper()" style="margin-left:2%"></apex:commandButton>               
+            <apex:commandButton value="Cancel" action="{!cancel}" style="margin-left:2%"></apex:commandButton>
+            </div>
+            </div>
+        
+        
+        
+        <div id="myWrapper" style="display:none;  position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            </div>
+            <div id= "progressBarOuter" style="display:none; position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 42%;width: 14%;background-color: white;
+             text-align:center; height: 140px; " class="rcorners">
+                
+                <apex:image id="theImage" style="margin-top:20px;margin-bottom:11px;" value="{!$Resource.APTS_WaitImage}" width="77" height="77"/>
+                    <div>
+                        <span id="statusSpan" style="margin-top:10px;font-weight:bold; font-size:16px;">Importing document...</span>
+                    </div>
+               </div>
+           
+    </apex:form>
+</apex:page>

@@ -1,0 +1,10 @@
+.THIS .slds-custom--errorMsg {
+    overflow: visible;
+    white-space: normal;
+    color: #c23934;
+    padding: 0 0.25rem;
+    display: inline-block;
+}
+.THIS .slds-buttonDyn--delete:hover svg {
+    fill: #004487;
+}

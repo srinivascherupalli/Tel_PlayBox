@@ -1,0 +1,49 @@
+<!-- 
+Created By          :   Team Hawaii : Ritika Jaiswal
+Desc                :   This is used to display card-listing for shared leads in TPC
+Jira                :   P2OB-5611
+Date            Version             Modified By             Desc
+2-April-2020         1              Ritika Jaiswal          P2OB:5611 - Show shared leads in TPC as a card-list
+27-April-2020        2              Ritika Jaiswal          P2OB:5673 - Show most recent Campaign associated with lead, remove link of lead-record
+-->
+<template> 
+    <!-- It will show and hide loading spinner -->
+    <div if:false={isLoaded} class="slds-is-relative">
+        <lightning-spinner variant="brand" size="medium">
+        </lightning-spinner>
+    </div>
+    <!-- End here loading spinner -->
+    <H2 class="title2">{headerLabel}</H2>
+    <div class="leads-listing">
+        <c-decline-lead-with-reason lead-record={declinedLead} approval-record={approvalId} ondeclinedevent={handledeclinedevent}></c-decline-lead-with-reason>         
+        <template for:each={record} for:item="cardRow">            
+            <lightning-card key={cardRow.Id}>
+                    <div slot="footer" class="card-footer">                                           
+                        <lightning-button variant="base" label="Accept" title="Accept" icon-name="utility:forward" icon-position="right" data-id={cardRow.workItemId} data-record-id={cardRow.Id}
+                            class="btn-accept slds-m-right_small" onclick={handleAcceptLead}></lightning-button>
+                        <lightning-button variant="base" label="Decline" title="Decline" icon-name="utility:forward" icon-position="right" data-id={cardRow.workItemId} data-record-id={cardRow.Id}
+                            class="btn-reject slds-m-right_small" onclick={handleDeclineLead}>
+                        </lightning-button>
+                    
+                    </div>
+                <h4 class="card-title" data-id={cardRow.Id}>
+                    <a href="#" onclick={recordView} data-id={cardRow.Id}>{cardRow.Name}</a>
+                </h4>
+                <template if:true={cardRow.primaryDomain}><div class="card-name">{cardRow.primaryDomain}</div></template>
+                <template if:true={cardRow.showCampaign}><div class="card-name">{cardRow.campaignName}</div></template>
+                <div class="card-name">{cardRow.AccountName}</div>
+                <div class="card-data">
+                    {label.labelSharedOn} &nbsp;
+                    <lightning-formatted-date-time value={cardRow.CloseDate}></lightning-formatted-date-time>
+                    </br>{label.labelSharedBy}&nbsp; {cardRow.DchOwner}
+                </div>            
+            </lightning-card>
+        </template>
+        <template if:true={hasRecord}>
+            <div class="alert no-bg">There are no new Leads</div>
+        </template>                     
+    </div>
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+ </template>

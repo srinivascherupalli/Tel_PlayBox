@@ -1,0 +1,56 @@
+<template>
+    <lightning-card title="Subscriptions">
+        <template if:true={checkbox}>
+            <lightning-datatable data={data} columns={columns} selected-rows={selectedRows} key-field="SubscriptionID"
+                onrowselection={getSelectedName}>
+
+            </lightning-datatable>
+        </template>
+        <template if:true={checkbox1}>
+            <lightning-datatable data={data} columns={columns} key-field="SubscriptionID" hide-checkbox-column=true>
+            </lightning-datatable>
+        </template>
+    </lightning-card>
+
+    <div class="slds-var-m-around_small" style="display:flex;width: 100%;margin-left: 0px;">
+        <span class="rows-div" style="width: 14%;">
+
+            <lightning-combobox class="combobox" label="Rows per page" value={pageSize} placeholder={pageSize}
+                options={options} onchange={handleComboBoxChange} style="color:grey;width:90px;">
+            </lightning-combobox>
+        </span>
+        <span class='page-count-div' style='margin-top: 24px;width: 83%;position: relative;left: 0%;'>
+            <div class="slds-align_absolute-center" style="width: 100%;">
+                <lightning-spinner if:true={isLoading} alternative-text="loading" size="small"></lightning-spinner>
+                <div slot="actions" style="position: relative;width: 65%;display: flex;">
+                    <lightning-button variant="neutral" class="slds-float_left" label="First"
+                        icon-name="utility:chevronleft" icon-position="left" onclick={firstHandler}></lightning-button>
+                    <lightning-button variant="neutral" class="slds-float_left" label="Previous"
+                        icon-name="utility:chevronleft" icon-position="left" onclick={previousHandler}>
+                    </lightning-button>
+                    <template if:true={pagelinks}>
+                        <div class="btn-div" style="position: relative;overflow-x: scroll;">
+
+                            <lightning-button-group>
+                                <template for:each={pagelinks} for:item="page">
+                                    <lightning-button key={page} label={page} onclick={handlePage}></lightning-button>
+                                </template>
+                            </lightning-button-group>
+
+                        </div>
+                    </template>
+                    <lightning-button variant="neutral" class="slds-float_right" label="Next"
+                        icon-name="utility:chevronright" icon-position="right" onclick={nextHandler}></lightning-button>
+                    <lightning-button variant="neutral" class="slds-float_right" label="Last"
+                        icon-name="utility:chevronright" icon-position="right" onclick={lastHandler}></lightning-button>
+                </div>
+            </div>
+        </span>
+    </div>
+    <div class="slds-var-m-around_medium" style='position: relative;left: 34%;'>
+        <p class="slds-var-m-vertical_medium content">
+            Displaying {startingRecord} to {endingRecord} of {totalRecountCount} records.
+            Page {page} of {totalPage} </p>
+    </div>
+
+</template>

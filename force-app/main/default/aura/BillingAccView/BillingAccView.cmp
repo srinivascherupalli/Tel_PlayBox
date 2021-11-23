@@ -1,0 +1,177 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride,forceCommunity:availableForAllPageTypes" access="global" controller="BillingAccountCreate" >
+	<aura:attribute name="picklistValues" type="String" />
+    <aura:attribute name="picklistValues1" type="String" />
+    <aura:attribute name="picklistValues3" type="String" />
+    <aura:attribute name="billingRecord" type="Billing_Account__c" />
+    <aura:attribute name="id" type="String" />
+     <aura:registerEvent name="oSelectedContactEvent" type="c:selectedContactEvent"/>
+    <aura:registerEvent name="oSelectedAddressEvent" type="c:selectedAddressEvent"/>
+   <force:recordData aura:id="forceRecord"
+                      recordId="{!v.recordId}"
+                      targetFields="{!v.billingRecord}"
+                      fields="Id,Name,Billing_Account_Name__c,Payment_Terms__c,Status__c,Email_Address__c,Billing_Communication_Method__c,Bill_Cycle_Day__c,Account__c,Billing_Account_Number__c,Billing_Account_Owner__c,Billing_Address__c"
+                      mode="EDIT" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />  
+	<!---Use Salesforce Lightning Design System CSS From Static resources-->   
+     
+    
+    <!--declare attributes--> 
+    <aura:attribute name="billingAccountNumber" type="String"  />
+   <aura:attribute name="selectedRecord" type="Account"  description="Use,for store SELECTED sObject Record"/>
+   <aura:attribute name="selectedRecordContact" type="AccountContactRelation" default="{'sobjectType' : 'AccountContactRelation', 'Name' : ''}" description="Use,for store SELECTED sObject Record"/>
+   <aura:attribute name="selectedRecordAddress" type="cscrm__Address__c" default="{'sobjectType' : 'cscrm__Address__c', 'Name' : ''}" description="Use,for store SELECTED sObject Record"/>
+   <aura:attribute name="listOfSearchRecords" type="Account[]" description="Use,for store the list of search records which returns from apex class"/>
+   <aura:attribute name="listOfSearchRecordscon" type="Contact[]" description="Use,for store the list of search contact records which returns from apex class"/>
+   <aura:attribute name="listOfSearchRecordsAdd" type="cscrm__Account_Address_Relationship__c[]" description="Use,for store the list of search address records which returns from apex class"/> 
+   <aura:attribute name="SearchKeyWord" type="String"/>
+   <aura:attribute name="SearchKeyWordAdd" type="String"/>
+   <aura:attribute name="Message" type="String" default="Search Result.."/>
+   <aura:attribute name="Message1" type="String" default="Search Result.."/>
+   <aura:attribute name="BillingNumber" type="String" default=" "/>
+   <aura:attribute name="URLId" type="String" default=" "/>
+   	<aura:attribute name="AccountDefault" type="Billing_Account__c"  default="{'sobjectType' : 'Billing_Account__c', 'Name' : '','Billing_Account_Number__c' : ''}"/> 
+	<aura:attribute name="BillingAcc" type="Billing_Account__c"  /> 
+    <aura:attribute name="AccountName" type="String" default="" />
+    <aura:attribute name="AccountId" type="String" default="" />
+   
+    <aura:attribute name="testObj" type="Account" default="{}"/>
+    <!--declare events hendlers-->
+    <aura:handler name="oSelectedAccountEvent" event="c:selectedAccountEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="oSelectedContactEvent" event="c:selectedContactEvent" action="{!c.handleComponentEvent1}"/>
+    <aura:handler name="oSelectedAddressEvent" event="c:selectedAddressEvent" action="{!c.handleComponentEvent2}"/>
+    
+    <!--<c:PickListValues sObjectName="Billing_Account__c" fieldName="Status__c" picklistValues="{!v.picklistValues1}" />-->
+    <!--<c:PickListValues sObjectName="Billing_Account__c" fieldName="Bill_Cycle_Day__c" picklistValues="{!v.picklistValues3}" />-->
+    
+    <div aura:id="editDialog" style="height: 780px;" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium ">Billing Account</h2>
+                </div>
+            
+            	<div class="slds-section-title--divider">
+                  <h1  >Information</h1>
+                </div>
+            
+                <div class="slds-modal__content slds-p-around--large slds-grid slds-wrap ">
+    
+                <label class="slds-size--1-of-2 slds-p-horizontal_x-small">Billing Account Number
+                    <br></br>
+                    
+                <div></div>
+                <lightning:formattedText aura:id="BillNumber" value="{!v.AccountDefault.Billing_Account_Number__c}" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+				</label>
+                 
+                 <label class="slds-size--1-of-2 slds-p-horizontal_x-small">Billing Account Name
+                    <br></br>
+                 <div></div><lightning:formattedText aura:id="billName" value="{!v.AccountDefault.Name}" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+				</label>
+                <!---Display Status Field-->
+                <lightning:input aura:id="status"  name="status" label="Status" value="{!v.AccountDefault.Status__c}" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+                 <aura:if isTrue="{!v.BillingAcc != Null}">
+      			<lightning:input aura:id="payTerm" name="payTerm" label="Payment Terms" value="{!v.BillingAcc.paymentTerms}" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+                <lightning:input aura:id="billCycle" name="billCycle" label="Bill Cycle Day" value="{!v.BillingAcc.billCycleDay}" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+				</aura:if>
+                 <aura:if isTrue="{!v.BillingAcc == Null}">
+      			<lightning:input aura:id="payTerm1"  name="payTerm" label="Payment Terms" value="30" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+                <lightning:input  aura:id="billCycle1" name="billCycle" label="Bill Cycle Day" value="01" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+				</aura:if>
+                
+          
+   <!--Customer Account Number  field-->          
+   <lightning:input aura:id="accName" name="AccountName" label="Account Name" value="{!v.AccountName}" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+                 
+  <!--Billing Account Owner Lookup field-->               
+  <div class="slds-size--1-of-2 slds-p-horizontal_x-small slds-form-element__control">
+      <div aura:id="searchRes2" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+         <label class="slds-form-element__label" for="lookup-348" >Billing Account Owner</label>
+         <!--This part is for display search bar for lookup-->  
+         <div class="slds-form-element__control">
+            <div class="slds-input-has-icon slds-input-has-icon--right">
+               <c:svg aura:id="icon" class="slds-input__icon slds-show" xlinkHref="{!$Resource.slds + '/assets/icons/utility-sprite/svg/symbols.svg#search'}" />
+               <!-- This markup is for when an record is selected -->
+               <div aura:id="lookup-pill2" class="slds-pill-container slds-hide"  >
+                  <span class="slds-pill">
+                     <span class="slds-pill__label">
+                       {!v.selectedRecordContact.Contact.Name}&nbsp;&nbsp;&nbsp;{!v.selectedRecordContact.Roles}  
+                     </span>
+                    
+                  </span>
+               </div>
+              <div aura:id="lookupField2" class="slds-show">
+              <ui:inputText disabled="true"  updateOn="keyup" keyup="{!c.keyPressController}"  value="{!v.SearchKeyWord}" click="{!c.keyPressControllerBilling}" class="slds-lookup__search-input slds-input "  placeholder="search.." aura:id="bao"/>
+              </div>
+              
+            </div>
+         </div>
+         <!--This part is for Display typehead lookup result List-->  
+         <div class="slds-lookup__menu slds" aura:id="lookup-348">
+            <div id="lookuptest" class="slds-lookup__item--label slds-text-body--small">{!v.Message}</div>
+            
+             <!--- <center> <ui:spinner aura:id="spinner"/> </center> -->
+            <ul class="slds-lookup__list" role="listbox">
+               <aura:iteration items="{!v.listOfSearchRecordscon}" var="singleRec">
+                  <c:customLookupResult oContact="{!singleRec}" />
+               </aura:iteration>
+            </ul>
+         </div>
+      </div>
+</div> 
+   
+  <!--Billing Address Lookup field-->                  
+ <div class="slds-size--1-of-2 slds-p-horizontal_x-small slds-form-element__control">
+      <div aura:id="searchRes3" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+         <label class="slds-form-element__label" for="lookup-3481">Billing Address </label>
+         <div class="slds-form-element__control">
+            <div class="slds-input-has-icon slds-input-has-icon--right">
+               <c:svg aura:id="iconAdd" class="slds-input__icon slds-show" xlinkHref="{!$Resource.slds + '/assets/icons/utility-sprite/svg/symbols.svg#search'}" />
+               <!-- This markup is for when an record is selected -->
+               <div aura:id="lookup-pill3" class="slds-pill-container slds-hide" >
+                  <span class="slds-pill">
+                     <span class="slds-pill__label">
+                       {!v.selectedRecordAddress.Name}
+                     </span>
+                    
+                  </span>
+               </div>
+              <div aura:id="lookupField3" class="slds-show">
+               <ui:inputText disabled="true" updateOn="keyup" keyup="{!c.keyPressController1}" value="{!v.SearchKeyWordAdd}" click="{!c.keyPressControllerAddress}" class="slds-lookup__search-input slds-input "  placeholder="search.." aura:id="ba"/>
+              </div>   
+            </div>
+         </div>
+         <!--This part is for Display typehead lookup result List-->  
+         <div class="slds-lookup__menu slds" aura:id="lookup-3481">
+            <div id="lookuptest1" class="slds-lookup__item--label slds-text-body--small">{!v.Message1}</div>
+            
+             <!--- <center> <ui:spinner aura:id="spinner"/> </center> -->
+            <ul class="slds-lookup__list" role="listbox">
+               <aura:iteration items="{!v.listOfSearchRecordsAdd}" var="singleRec">
+                  <c:customLookupResult oAddress="{!singleRec}" />
+               </aura:iteration>
+            </ul>
+         </div>
+      </div>
+   </div>
+               <aura:if isTrue="{!v.BillingAcc != Null}">      
+             <lightning:input aura:id="lang1" name="language" label="Language" value="{!v.BillingAcc.language}" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+             <lightning:input aura:id="curr1" name="currency" label="Currency" value="{!v.BillingAcc.currencyCode}" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+                </aura:if>
+                    
+           <aura:if isTrue="{!v.BillingAcc == Null}">      
+             <lightning:input aura:id="lang2" name="language" label="Language" value="English" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+             <lightning:input aura:id="curr2" name="currency" label="Currency" value="AUD" disabled="true" class="slds-size--1-of-2 slds-p-horizontal_x-small" />
+           </aura:if>
+                    
+                    
+            </div>      
+            <div class="slds-modal__footer">  
+               
+                <lightning:button variant="brand" label="Back" onclick="{!c.goBack}" />
+          </div>
+        </div> 
+      
+    </div>
+  
+    <div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+     
+</aura:component>

@@ -1,0 +1,10 @@
+<!-- P2OB:9929 Presales solution case creation -->
+<template>
+    <div if:true={options}>
+        <lightning-combobox name="progress" class="getSolutionSupportDropdown" label={selPicklistFieldLabel}
+            value={value} placeholder="--Select--" options={options} onchange={handleChange} style="width: 43.8rem">
+        </lightning-combobox><br />
+
+        <!--Selected Value : <b>{value}</b><br/><br/> -->
+    </div>
+</template>

@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="Plan" type="String" />
+    <aura:attribute name="MMC" type="Integer" />
+</aura:event>

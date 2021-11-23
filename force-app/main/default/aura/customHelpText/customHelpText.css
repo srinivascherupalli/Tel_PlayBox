@@ -1,0 +1,96 @@
+.THIS .slds-icon{
+    width: 1.1rem !important;
+}
+
+.THIS .ms-help-popup-in-header {
+    display: inline-block;
+    position: absolute !important;
+    top: -10px !important;
+    left: 55px !important;
+    margin-left: -1rem !important;
+    max-width: 20rem !important;
+    overflow: visible !important;
+    text-transform: none !important;
+}
+
+.THIS .ms-help-popup-in-header:before, .THIS .ms-help-popup-in-header:after {
+    width: 0.8rem !important;
+    height: 0.8rem !important;
+    position: absolute;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    content: '';
+    background-color: inherit;
+    top: 50%;
+    left: -0.4rem !important;
+    margin-top: -.8rem !important;
+}
+
+.THIS .ms-help-popup-body {
+    white-space: unset !important;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    width: 200px;
+}
+
+.THIS .fall-into-ground{
+    visibility: hidden;
+    opacity: 0;
+    transform: translate(0%, 0%);
+    transition: opacity .1s linear,visibility .1s linear,transform .1s linear;
+    will-change: transform;
+}
+
+.THIS .raise-from-ground{
+    visibility: visible;
+    opacity: 1;
+    transform: translate(0%, 0%);
+    transition: opacity .1s linear,visibility .1s linear,transform .1s linear;
+    will-change: transform;
+}
+
+.THIS .popup-tooltip{
+    width: auto;
+    max-width: 20rem;
+    background: rgb(22, 55, 92);
+    border: 0;
+}
+
+.THIS .popover{
+    position: relative;
+    border-radius: .25rem;
+    width: 20rem;
+    min-height: 2rem;
+    z-index: 6000;
+    color: rgb(255, 255, 255);
+    display: inline-block;
+    box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, 0.16);
+    border: 1px solid rgb(221, 219, 218);
+}
+
+.THIS .nubbin-bottom-left::before{
+    left: 19.08rem;
+    top: 100%;
+    margin-top: -.5rem;
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    transform: rotate(45deg);
+    content: '';
+    background-color: inherit;
+    bottom: -.5rem;
+    margin-left: -.5rem;
+}
+
+.THIS .nubbin-bottom-left::after{
+    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.16);
+    z-index: -1;
+}
+
+.THIS .popover-body{
+    position: relative;
+    padding: .5rem .75rem;
+    word-wrap: break-word;
+    margin-right: .95rem;
+}

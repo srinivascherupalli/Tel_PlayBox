@@ -1,0 +1,21 @@
+<!--
+   
+   *  Description of the purpose of the method.
+   *  @name PortalEngineerListView
+   *  @description               : This LWC is used to View Telstra Collaboration Services selected in Enrichment and in current basket to display list of Telstra Collaborations(NGUC services) related to Unified Communication Tenancies in Fulfilment Task detailed view 
+   *  @param                     : Fulfilment Task Record Id.
+   *  @return 				 	 : - 
+   *  @Jira Story Ref            : EDGE-137134
+   *  @createdBy  				 : Purushottam Sahu, Alexandria
+-->
+<template>
+    <template if:true={isVisible}>
+        <lightning-accordion class="relatedListLWCStyle" allow-multiple-sections-open onsectiontoggle={handleSectionToggle}
+            active-section-name={activeSections}>
+            <lightning-accordion-section name="FCRTenancy" label="Tenancies and related subscriptions">
+                <lightning-datatable  data={data} columns={columns} key-field=" id" hide-checkbox-column="true">
+                </lightning-datatable>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </template>
+</template>

@@ -1,0 +1,41 @@
+<!--
+****************************************************************************
+@Name: ViewRelatedACR
+@Author: Sri Chittoori(Team SFO)
+@CreateDate: 29/05/2019
+@Description: Sprint 19.07 , EDGE-85148 :: This component retrives the list of ACR's related to the given Contact
+*******************************************************************************
+-->
+<aura:component controller="RelatedACRsController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="viewLimit" type="Integer" default="2"/>
+    <aura:attribute name="viewVerRecom" type="Boolean" default="false"/>
+    <aura:attribute name="relatedACRs" type="Object[]"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>    
+    <aura:attribute name="acr" type="AccountContactRelation"/>        
+    
+    <aura:handler event="c:refreshChildComponent" action="{!c.handleEventFired}" />    
+    
+    <lightning:card>
+        <aura:set attribute="title">
+            <lightning:icon iconName="standard:relationship" size="medium"/>
+            Related Relationships ({!(v.relatedACRs.length)})
+        </aura:set>
+        <aura:if isTrue="{!not(empty(v.relatedACRs))}">                
+            <div class="slds-p-left_medium slds-p-right_medium">
+                <ul class="slds-list_vertical slds-has-dividers_top-space">
+                    <aura:iteration items="{!v.relatedACRs}" var="acr" end= "{!v.viewLimit}" >
+                        <li class="slds-list__item">                        
+                            <c:CustomRelatedList acr="{!acr}" />
+                        </li>
+                    </aura:iteration>
+                </ul>
+            </div>
+            <aura:if isTrue="{!and(greaterthan(v.relatedACRs.length,2),not(greaterthan(v.viewLimit,2)))}">
+                <footer class="slds-card__footer">
+                    <a class="slds-card__footer-action" onclick="{!c.handleViewAll}">View All</a>
+                </footer>        
+            </aura:if>
+        </aura:if>
+    </lightning:card>
+</aura:component>

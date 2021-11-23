@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata" fqn="PRM_GenericStandardPageRedirection">
+    <apiVersion>46.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="recordTypeName" type="String" default="" label="Record Type Name" description="Label of Record Type"/>
+            <property name="buttonLable" type="String" default="" label="Button Label" description="button label to be displayed on UI"/>
+            <property name="objectName" type="String" required="true" default="" label="Object Api Name" description="Api name of object"/>
+            <property name="jsonString" type="String" default="" label="Default field Value In JSON Format" description="JSON structure format of defaulted field values"/>
+            <property name="actionName" type="String" required="true" default="" label="Action Name" description="Action to be performed on click of button.Supported values are new,home,list.There might be additional values are supported in future"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

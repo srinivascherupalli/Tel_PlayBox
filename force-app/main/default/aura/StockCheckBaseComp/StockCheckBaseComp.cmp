@@ -1,0 +1,186 @@
+<!-- 
+Name : StockCheckBaseComponent
+Description : Lightning UI for checking stock availability for mobile devices 
+Author: Aishwarya Yeware
+Story: EDGE-80858
+Modified: Shresth(DPG-3510)
+-->
+<aura:component
+  controller="stockCheckController"
+  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+  access="global"
+>
+  <ltng:require styles="{!$Resource.popupCSS}" />
+  <aura:attribute name="pageNo" type="Integer" default="1" />
+  <aura:attribute name="PageSize" type="Integer" default="10" />
+  <aura:attribute name="CurrentPage" type="Integer" default="1" />
+  <aura:attribute name="TotalPages" type="Integer" default="1" />
+  <aura:attribute name="columns" type="Integer" />
+  <aura:attribute name="available" type="String" />
+  <aura:attribute name="isAllSelected" type="Boolean" default="false" />
+  <aura:attribute name="isSC" type="Boolean" default="true" />
+  <aura:attribute name="isSelectAll" type="Boolean" default="false" />
+  <aura:attribute type="List" name="selectedRowsDetails" />
+  <aura:attribute name="devices" type="String[]" default="--None--" />
+  <aura:attribute name="deviceType" type="String[]" default="--None--" />
+  <aura:attribute type="string" name="selectDevice" />
+  <aura:attribute type="string" name="selectType" />
+  <aura:attribute name="restocked" type="String" />
+  <aura:attribute name="deviceModel" type="List" />
+  <aura:attribute name="dispList" type="List" />
+  <aura:attribute name="basketId" type="Id" />
+  <aura:attribute name="deviceMap" type="Map" />
+  <aura:attribute name="column" type="List" />
+  <aura:attribute name="isDeviceSelected" type="Boolean" default="true"/>
+  <aura:attribute type="List" name="selectedRows" default="[]" />
+  <aura:registerEvent name="paginationEvent" type="c:paginationEvent" />
+  <aura:handler event="c:paginationEvent" action="{!c.changeData}" />
+  <!--<aura:handler event="c:paginationParentEvent" action="{!c.changeData}"/>-->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:attribute name="moreDevices" type="Boolean" default="false"/>
+  <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+  <!--EDGE-148577:To capture component name when event fired-->
+  <aura:attribute type="string" name="componentName" default="StockCheckBaseComponent" />
+  <aura:attribute type="string" name="attrJson"/> <!--Added as part of EDGE-146972 20.08 -->
+  <aura:attribute type="string" name="type" description="Contains the type of configuration i.e the PD name"/><!--Added as a part of DPG-3510-->
+    <aura:attribute type="string" name="solutionName"/> <!--DPG-3510, Ila-->
+    <aura:if isTrue="{!v.loadingSpinner}">
+    <div >
+      <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+    </div>
+  </aura:if>
+  <!--EDGE-80860 Kalashree Borgaonkar. Multpile stock check - start-->
+  
+      <div class="slds-grid">
+         <div class="slds-col_bump-right">
+            <aura:if isTrue="{!v.moreDevices}">
+                <h1>{!v.deviceModel.length} Devices in Basket</h1> 
+                    <aura:set attribute="else">
+                        <h1>{!v.deviceModel.length} Device in Basket page</h1> 
+                    </aura:set>
+            </aura:if>
+          </div>
+      <div>
+               <lightning:button
+                label="Check Stock"
+                class="slds-button_brand checkstockbrand"
+                onclick="{!c.handleSelectedProducts }"
+                disabled="{!v.isDeviceSelected}"/>
+             </div>  
+      </div>      
+   <div>
+   <div>
+      <!--Product List Table-->
+      <table
+        class="slds-table slds-table--bordered slds-border_left slds-border_right slds-table--cell-buffer" role="grid">
+        <thead>
+          <tr class="slds-text-title" style="background-color:#F6F4F4;padding:0px;">
+            <th style="background-color:#F6F4F4;">
+              <label class="slds-checkbox">
+                <ui:inputCheckbox
+                  value="{!v.isSelectAll}"
+                  change="{!c.handleSelectAllContact}"
+                   aura:id="selectAll"/>
+                <span class="slds-checkbox--faux" />
+                <span class="slds-form-element__label"></span>
+              </label>
+            </th>
+			<!-- Start of EDGE-144680 added additional columns-->
+            <th scope="col" style="background-color:#F6F4F4;padding:15px;font-size:15px;" >
+                  <div class="slds-truncate " title="DeviceType">Device Type</div>
+            </th>
+            <th scope="col" style="background-color:#F6F4F4;padding:15px;font-size:15px;" >
+                  <div class="slds-truncate " title="manufacturer">Manufacturer</div>
+             </th>
+             <th scope="col" style="background-color:#F6F4F4;padding:15px;font-size:15px;" >
+                  <div class="slds-truncate " title="model">Model</div>
+             </th>
+              <th scope="col" style="background-color:#F6F4F4;padding:15px;font-size:15px;" >
+                  <div class="slds-truncate " title="colour">Colour</div>
+              </th>
+              <!-- End of EDGE-144680 -->
+            <th scope="col" style="background-color:#F6F4F4;padding:15px;font-size:15px;">
+              <div class="slds-truncate " title="Account">Availability</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <aura:iteration items="{!v.dispList}" var="devices">
+            <tr>
+              <th>
+                <label class="slds-checkbox">
+                  <ui:inputCheckbox
+                    aura:id="checkQuantity"
+                    value=""
+                    text="{!devices.skuId}"
+                    change="{!c.handledeSelectAllContact}"
+                  />
+                  <span class="slds-checkbox--faux" />
+                  <span class="slds-form-element__label"></span>
+                </label>
+              </th>
+			<!-- Start of EDGE-144680 added additional columns-->
+              <th scope="row" >
+                <div class="slds-truncate" style="padding:7px;">{!devices.deviceType}</div>
+              </th>
+              <th scope="row" >
+                <div class="slds-truncate" style="padding:7px;">{!devices.manufacturer}</div>
+              </th>
+              <th scope="row" >
+                <div class="slds-truncate" style="padding:7px;">{!devices.model}</div>
+              </th>
+              <th scope="row" >
+                <div class="slds-truncate" style="padding:7px;">{!devices.colour}</div>
+              </th> 
+			  <!-- End of EDGE-144680 -->                
+              <aura:if isTrue="{!devices.errorMessage!=null}">
+                <th>
+                  <div class="iconColorChange" style="color:red;padding:7px;font-weight:bold;">
+            <lightning:icon class="slds-icon" iconName="utility:warning" size="small"/>
+            {!devices.errorMessage}
+                  </div>
+                </th>
+                <aura:set attribute="else">
+                    <!--EDGE-128883 Kalashree Borgaonkar. Fix for showing details on multiple API calls -->
+                  <aura:if isTrue="{!devices.quantityAvailable !=null}">
+                    <th>
+                      <div class="slds-truncate" style="padding:7px	">
+                        <aura:if isTrue="{!and(devices.quantityAvailable ==0,devices.restockDate!=null)}">
+                            <lightning:badge label="No Stock" class= "nostocklabel" title = "{!$Label.c.StockCheckRestock  +devices.restockDate}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!and(devices.quantityAvailable ==0,devices.restockDate==null)}">
+                        <lightning:badge label="No Stock" class= "nostocklabel" title = "{!$Label.c.StockCheckAvailability}"/>
+                        </aura:if>
+                          <aura:if isTrue="{!(devices.quantityAvailable !=0)}">
+                               {!devices.message}
+                          </aura:if>
+                      </div>
+                    </th>
+                  </aura:if>
+                </aura:set>
+              </aura:if>
+              <th scope="row" style="padding:7px;"> <div class="slds-truncate" ></div> </th>
+              <th scope="row" style="padding:7px;"> <div class="slds-truncate" ></div> </th>
+              </tr>
+          </aura:iteration>
+        </tbody>
+      </table>
+    </div>
+    <!--EDGE-80860 Kalashree Borgaonkar. Multiple stock check - end-->
+
+      <br/>
+      <!--EDGE-148577 : added componentName attribute to paginationCmp for avoiding duplicate handling of pagination events-->
+    <c:paginationCmp
+      PageSize="{!v.PageSize}"
+      data="{!v.deviceModel}"
+      columns="{!v.columns}"
+      TotalPages="{!v.TotalPages}"
+      componentName ="{!v.componentName}"
+    />
+
+    <div
+      class="slds-border_bottom slds-p-top_xxx-small"
+      style="margin:8px;padding:8px;"
+    />
+  </div>
+</aura:component>

@@ -1,0 +1,80 @@
+<!--
+   *  Description of the purpose of the method.
+   *  @name changeownerfli
+   *  @description               : This LWC is used  to display the Engineering Users of he partner account
+   *  @return 				 	         : - 
+   *  @Jira Story Ref            : EDGE-140596
+   *  @createdBy  				       : RaviTeja K, Alexandria -  04/05/2020
+-->
+
+<template>
+    <template if:true={showspinner}> 
+     <!-- <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>-->
+
+      <div id="spinnerDiv" class="demo-only demo--inverse" style="height: 10rem">
+          <div class="slds-spinner_container slds-is-relative">
+            <div role="status" class="slds-spinner slds-spinner_medium">
+              <span class="slds-assistive-text">Loading</span>
+              <div class="slds-spinner__dot-a"></div>
+              <div class="slds-spinner__dot-b"></div>
+            </div>
+          </div>
+        </div>
+    </template>
+
+  <template if:true={tableDisplay}>
+  <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+    <div class="slds-modal__container" style='width:700px'>
+        <header class="slds-modal__header">
+            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closemodelPopup}>
+                <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+            </button>
+            <h2 class="slds-text-heading_medium slds-text-align_left"> Change Owner</h2>
+           
+        </header>
+       
+        <template if:true={hasdata}>
+        <div class="slds-modal__content slds-p-around_medium">
+            <div class="recordListStandard">  
+                <div style="height:175px;max-height:175px;">               
+                              <lightning-datatable
+                                data={data}
+                                columns={columns}
+                                key-field="id"
+                                selected-rows={selectedRows}   
+                                max-row-selection="1" 
+                                ></lightning-datatable>   <!--onrowselection={getSelectedName}-->               
+            </div>
+            </div>
+           
+              <lightning-button variant="brand" label="Save" title="Save" onclick={handleSave} class='slds-float_right'>Save</lightning-button>             
+              <lightning-button variant="base" label="Cancel" title="Cancel" onclick={closemodelPopup} class='slds-float_left'>Cancel</lightning-button>             
+            
+        </div>
+      </template>
+    
+        <template if:false={hasdata}>
+            <div class="slds-modal__content slds-p-around_medium">
+                <div class="emptyContentInner" tabindex="-1" data-aura-rendered-by="238:202;a">
+                    <p data-aura-rendered-by="190:908;a">No items to display.</p>
+                </div>
+        </div>
+        </template>
+
+
+        </div>
+     
+     
+   
+
+    </section>
+  </template>
+  
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+
+
+
+
+</template>

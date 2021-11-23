@@ -1,0 +1,64 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 05-03-2021
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+  Modifications Log 
+  Ver   Date         Author                               Modification
+  1.0   04-30-2021   ChangeMeIn@UserSettingsUnder.SFDoc   Initial Version
+-->
+<template>
+    <div class="slds-grid " style="padding-left:30px;">
+        <div class="slds-col slds-align-bottom" style="font-weight: bold;">
+            <p class="slds-text-body--small">{selectedrecords} of {totalrows} selected</p>
+        </div>
+        <div class="slds-form-element__control" style="padding-right: .5rem;">
+            <lightning-input type="text"
+                                placeholder="Search this list..."                              
+                                onkeypress={handleSearch}></lightning-input>
+        </div>
+        <!--Start of EDGE-213744 by Aishwarya Introducing download CSV button-->
+        <div class="slds-col slds-no-flex slds-grid slds-align-bottom">
+            <lightning-button icon-name="utility:download" 
+                            label="Download CSV" 
+                            title="Download CSV File"
+                            onclick={generateCsvFile} variant="brand"></lightning-button>
+        </div>&nbsp;&nbsp;
+         <!--End of EDGE-213744 by Aishwarya Introducing download CSV button-->
+            <lightning-combobox
+                        name="Size"
+                        value={pageSizevalue}
+                        options={options}
+                        onchange={handleChange} >
+            </lightning-combobox>
+    
+    </div>
+    <br/>
+    <div class="slds-border_top slds-border_right slds-border_left">
+        <lightning-tree-grid
+            columns={gridColumns}
+            data={gridData}
+            key-field="Id"
+            onrowselection={onrowselectionEvent}
+            is-loading={gridLoadingState}
+            ontoggle={handleRowToggle}
+            selected-rows={selectedRows}
+        ></lightning-tree-grid>
+        <br/>
+<!--template if:false={isdatanotpresent}-->
+        <div class="slds-clearfix">
+            <div class="slds-float_left slds-p-left_medium" style="font-weight: bold;">
+                {paginationWrapper.currentPage} OF TOTAL {paginationWrapper.totalPages} PAGES
+            </div>
+            <div class="slds-float_right slds-p-bottom_medium">
+            
+                <lightning-button variant="Brand" label="First"     title="First"    onclick={first} disabled={paginationWrapper.disableFirstButton}/> </lightning-button>&nbsp;&nbsp;
+                <lightning-button variant="Brand" label="Previous"  title="Previous" onclick={previous} disabled={paginationWrapper.disablePreviousButton}/> </lightning-button>&nbsp;&nbsp;
+                <lightning-button variant="Brand" label="Next"      title="Next"     onclick={next} disabled={paginationWrapper.disableNextButton}/> </lightning-button>&nbsp;&nbsp;
+                <lightning-button variant="Brand" label="Last"      title="Last"     onclick={last} disabled={paginationWrapper.disableLastButton}/> </lightning-button>&nbsp;&nbsp;
+                </div> 
+        </div>
+<!--/template-->
+    </div> 
+</template>

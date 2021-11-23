@@ -1,0 +1,70 @@
+<!--
+---------------------------------------------------------------------
+Name        : captureNicknamesAccountPage HTML
+Description : Template for CaptureNicknameAccountPage js
+Author      : Adityen Krishnan
+----------------------------------------------------------------------
+-->
+<template>
+  
+    <template if:true={showTable}>
+        <lightning-badge label="You can edit the nicknames from the below table." class="slds-text-color_error slds-badge_lightest"  icon-name="utility:info_alt"></lightning-badge><br>
+        <lightning-badge label="Nickname cannot exceed more than 80 characters." class="slds-text-color_error slds-badge_lightest" icon-name="utility:info_alt"></lightning-badge><br>
+        <lightning-badge label="Only the active subscriptions in the uploaded file are updated with nicknames." class="slds-text-color_error slds-badge_lightest"  icon-name="utility:info_alt"></lightning-badge>
+        
+        <div class="slds-grid slds-grid_vertical-align-center">
+            <div class="slds-col">
+            <template if:true={showTable} >
+                <lightning-button icon-name="utility:download" 
+                                    label="Download CSV" 
+                                    title="Download CSV File"
+                                    onclick={generateCsvFile} variant="brand"></lightning-button>
+        </template>
+            </div>
+        <div class="slds-col">
+            <template if:true={showTable} >
+                <lightning-input icon-name="utility:upload" 
+                                type="file" 
+                                title="Upload CSV File"
+                                onchange={uploadFile} 
+                                accept = ".csv"
+                                >
+                            </lightning-input> 
+            </template>
+            </div>
+            <div class="slds-col">
+        <c-generic-paginator records={subs} 
+                    total-records={subs.length} 
+                    show-search-box="true" 
+                    onpaginatorchange={handlePaginatorChange}>
+        </c-generic-paginator>
+        </div>
+        </div>
+        <!-- sldsValidatorIgnoreNextLine -->
+        <lightning-datatable key-field="Id" 
+                            data={recordsToDisplay}
+                            columns={columns}
+                            onsave={handleSave}
+                            draft-values={saveDraftValues}
+                             sorted-by={sortBy}
+                             sorted-direction={sortDirection}
+                             onsort={doSorting}
+                            hide-checkbox-column
+                            show-row-number-column
+                            row-number-offset={rowNumberOffset}>
+        </lightning-datatable>
+    </template>
+    <template if:true={isDisplayNoRecords}>
+            <div class="slds-align_absolute-center slds-text-heading_large">
+                <br/>
+                No Subscription Records Found
+            </div>
+    </template>
+    <template if:true={isLoading} class="slds-spinner_container slds-is-fixed">
+        <lightning-spinner variant="brand"
+                           alternative-text="Loading"
+                           size="medium">
+        </lightning-spinner>
+    </template>
+
+</template>

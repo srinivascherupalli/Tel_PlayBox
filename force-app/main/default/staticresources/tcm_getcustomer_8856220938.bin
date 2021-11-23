@@ -1,0 +1,127 @@
+{
+  "data": {
+    "customers": [
+      {
+        "location": "10610000000000",
+        "servicingOrgUnit": "959ABV",
+        "languagePreference": "English",
+        "parentCidn": "",
+        "customerAccount": {
+          "preferredMethod": "White Mail",
+          "lastName": "BLAIRE",
+          "acn": "",
+          "fraudFlag": "N",
+          "driverLicenceNumber": "",
+          "effectiveRetiredDate": "",
+          "webAddress": "",
+          "emailAddress": "",
+          "dataSovereignty": "SFDC Integration",
+          "abn": "10000000000",
+          "driverLicenceState": "",
+          "title": "",
+          "faxNumber": "",
+          "phoneNumber": "",
+          "birthDate": "",
+          "accountUuid": "C46F8AFA-E002-4cd8-A5AA-18C1CF942343",
+          "firstName": ""
+        },
+        "accountTrading": [
+          {
+            "isPrimary": "",
+            "tradingName": ""
+          }
+        ],
+        "cac": "2021916632",
+        "marketSegment": "Fed Government Key",
+        "customerManagedFlag": "Y",
+        "accountStatus": "ACTIVE",
+        "createdDate": "2017-10-24T17:22:23+11:00",
+        "geographicalLocationCode": "3T",
+        "customerType": "Organisation",
+        "customerSince": "2017-10-24",
+        "accountPortfolio": [
+          {
+            "portfolioName": "TB NEW CUSTOMERS VIC",
+            "isPrimary": "Y",
+            "accountExecutiveLastName": "TB MASS NEW CUSTOMER",
+            "portfolioCode": "SVU01",
+            "accountExecutivePhoneNumber": "132000\n00 0000",
+            "accountExecutiveFirstName": "VIC"
+          }
+        ],
+        "lastUpdated": "2017-10-24T21:26:45+11:00",
+        "cidn": "8856220938",
+        "ultimateParentCidn": "",
+        "ownershipCode": "",
+        "businessUnit": "Enterprise",
+        "category": {
+          "online": "N"
+        },
+        "revenueOrganisationUnit": "EEKAA1",
+        "priorityAssist": "N",
+        "address": [
+          {
+            "state": "VIC",
+            "streetTypeCode": "",
+            "addressId": "161152457",
+            "statusCode": "",
+            "streetTypeSuffixCode": "",
+            "postalCode": "3000",
+            "registeredPlan": "",
+            "streetNumberStart": "45",
+            "subAddress": {
+              "propertyName": "",
+              "privateStreetType": "",
+              "privateStreetName": "",
+              "details": [
+                {
+                  "detailType": "",
+                  "value": "",
+                  "detailTypeCode": ""
+                },
+                {
+                  "detailType": "",
+                  "value": "",
+                  "detailTypeCode": ""
+                }
+              ],
+              "numberStart": "33",
+              "buildingName": "",
+              "addressLines": [
+                "_",
+                "",
+                ""
+              ],
+              "numberEnd": "",
+              "privateStreetTypeCode": ""
+            },
+            "streetType": "",
+            "internationalState": "",
+            "isPrimary": "Y",
+            "status": "",
+            "streetNumberStartSuffix": "",
+            "streetName": "LA TROBE",
+            "addressType": "",
+            "additionalInfo": "",
+            "country": "AUSTRALIA",
+            "internationalPostcode": "",
+            "addressTypeCode": "BUILDING",
+            "streetTypeSuffix": "",
+            "streetNumberEnd": "67",
+            "deliveryPointId": "",
+            "streetNumberEndSuffix": "",
+            "locality": "MELBOURNE"
+          }
+        ],
+        "masterID": "10000157367",
+        "premiumService": "N"
+      }
+    ],
+    "paging": {
+      "limit": "50",
+      "lastPage": "Y",
+      "resultBlockSize": "1",
+      "offset": "0"
+    }
+  }
+}

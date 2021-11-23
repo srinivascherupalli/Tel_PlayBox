@@ -1,0 +1,87 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    
+    <aura:attribute name="feelings" type="List" default="[
+                                                       {'label': 'Euphoria', 'value': 'Euphoria'},
+                                                       {'label': 'Great', 'value': 'Great'},
+                                                       {'label': 'Secure', 'value': 'Secure'},
+                                             		   {'label': 'Comfort', 'value': 'Comfort'},
+                                             		   {'label': 'OK', 'value': 'OK'},
+                                             		   {'label': 'Concern', 'value': 'Concern'},
+                                             		   {'label': 'Discomfort', 'value': 'Discomfort'},
+                                             		   {'label': 'Worry', 'value': 'Worry'},
+                                             		   {'label': 'Fear', 'value': 'Fear'},
+                                                       {'label': 'Panic', 'value': 'Panic'}
+                                                       ]"/>
+    
+    
+    <aura:attribute name="feelingsValue" type="String" />
+    
+    <!--LDS retrieving record data -->
+    <aura:attribute name="record" type="Object" />
+	<aura:attribute name="bluesheetRecord" type="Object" />
+	<aura:attribute name="recordError" type="String" />
+	<force:recordData aura:id="recordEditor"
+            layoutType="FULL"
+            fields = "Feelings__c"
+            recordId="{!v.recordId}"
+            targetError="{!v.recordError}"
+            targetRecord="{!v.record}"
+            targetFields ="{!v.bluesheetRecord}"
+            mode="EDIT" />
+	
+    <div class="slds-align_absolute-center" style="height: 2rem;">Current position reinforcement</div>
+    
+    
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Euphoria'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_euphoria.png'}"/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Great'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_great.png'}"/>
+    </aura:if>
+
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Secure'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_secure.png'}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Comfort'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_comfort.png'}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'OK'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_ok.png'}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Concern'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_concern.png'}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Discomfort'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_discomfort.png'}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Worry'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_worry.png'}"/>
+    </aura:if>
+        <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Fear'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_fear.png'}"/>
+    </aura:if>   
+    <aura:if isTrue="{!v.bluesheetRecord.Feelings__c == 'Panic'}">
+   		<img class="slds-align_absolute-center" src="{!$Resource.mhPositionFeeling + '/mh_panic.png'}"/>
+    </aura:if>
+    
+   <!-- radio buttons in horizontal view label="My Feeling Today"--> 
+    <lightning:radioGroup name="myFeelings" 
+                          options="{!v.feelings}"
+                          value="{!v.bluesheetRecord.Feelings__c}"
+                          type="radio"
+                          onchange="{!c.handleChange}"
+                          class="customRadioCls"
+                          />
+
+    <!-- Display Lightning Data Service errors, if any -->
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            {!v.recordError}
+        </div>
+    </aura:if>
+	<div></div>
+    
+    
+</aura:component>

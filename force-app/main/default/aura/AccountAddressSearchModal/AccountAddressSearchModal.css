@@ -1,0 +1,18 @@
+.THIS .toggle {
+    display: none;
+}
+.THIS .displayShow {
+    display: visible;
+}
+.THIS .displayHide {
+    display: none;
+}
+.THIS .red {
+    color: red;
+}
+.THIS .paddingBottom {
+    padding-bottom: 10px;
+}
+.THIS .inputMinHeight{
+	min-height: calc(1.875rem + (1px * 2)) !important;
+}

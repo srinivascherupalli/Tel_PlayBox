@@ -1,0 +1,439 @@
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-button-group button.slds-button.slds-button_icon:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group button.slds-button:before,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group button.slds-button:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-dropdown-trigger button.slds-button:before,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-dropdown-trigger button.slds-button:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list div.slds-form-element__control:after,
+.cTelstra_ThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink div.triggerLinkTextAndIconWrapper:after,
+.cTelstra_ThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link span.profileName:after,
+.cTelstra_ThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper:before,
+.cTelstra_ThemeLayout .header-inner button.unsNotificationsCounter.slds-global-actions__notifications:before {
+	font-family: 'telstra_icons' !important;
+    color: #414141;
+}
+
+.cTelstra_ThemeLayout .dashboardView .dashboardHeader .slds-icon-standard-dashboard:after,
+.cTelstra_ThemeLayout .firstHeaderRow .slds-icon:after, 
+.cTelstra_ThemeLayout force-highlights-icon .highlights-icon-container:after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 32px;
+  background: url(images/TelstraLogo.png) no-repeat center center;
+  background-size: cover;
+}
+.slds-tabs_default__item:after {
+    height: 80% !important;
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: auto;
+    width: 1px;
+    display: none;
+    left: 0px;
+    background: #cccccc !important;
+  }
+  
+  .slds-tabs_default__item[data-tab="true"] + .slds-tabs_default__item[data-tab="true"]:after {
+    display: block;
+  }
+  
+  .slds-tabs_default__link {
+    height: 80px;
+  }
+  
+  .slds-is-active .slds-tabs_default__link {
+    color: #0070D2;
+    font-weight: normal !important;
+  }
+  
+  .slds-is-active .slds-icon-text-default {
+    fill: #0070D2;
+  }
+  
+  .slds-tabs__left-icon {
+    display: block;
+    text-align: center;
+  }
+
+.cTelstra_ThemeLayout .slds-card {
+  margin-bottom: 20px;
+}
+
+.leads-grid {
+  padding: 10px;
+}
+
+.leads-col {
+  padding: 10px;
+  border: #ddd 1px solid;
+}
+
+.leads-col + .leads-col {
+  border-left: none;
+}
+
+.leads-col-title {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #797979;
+}
+
+.runtime_sales_pipelineboardPipelineViewCardStencil .showActionsButton,
+.forceListViewManagerHeader .slds-button_icon,
+.forceListViewManagerHeader .slds-button_icon-border-filled {
+  border: none !important;
+}
+
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCardInnerWrapper {
+  border: #c5c5c5 1px solid !important;
+  border-radius: 0 !important;
+}
+
+.forceListViewManager .slds-page-header {
+  border: none !important;
+  border-radius: 0 !important;
+}
+.slds-input[name="Lead-search-input"],
+.slds-input[name="Opportunity-search-input"],
+.slds-input[name="Case-search-input"] {
+  border-radius: 0;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  padding-left: 0 !important;
+  color: #414141;
+}
+
+.cTelstra_ThemeLayout .runtime_sales_pipelineboardPipelineView .recordTypeTabSetContainer~.container {
+  margin-top: 0;
+}
+
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .runtime_sales_pipelineboardPipelineViewCardItemStencil .outputLookupLink, 
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .runtime_sales_pipelineboardPipelineViewCardItemStencil {
+    color: #414141 !important;
+}
+
+.runtime_sales_pipelineboardPipelineView .container .pipelineColumn .pipelineAggregateHeader.aggregateColumn,
+.runtime_sales_pipelineboardPipelineViewCardStencil.forceRecordLayout .pipelineViewCard .pipelineViewCardInnerWrapper div.hasAlert,
+.runtime_sales_pipelineboardPipelineViewMultipleRecordTypeTabSet .recordTypeTabSet,
+.runtime_sales_pipelineboardPipelineViewMultipleRecordTypeTabSet .iconContainer,
+.cTelstra_ThemeLayout .body-inner footer.slds-card__footer.actionButtonBar .actionsRight button[title="Finish"],
+.cTelstra_ThemeLayout .header-inner .forceCommunityGlobalNavigation community_navigation-global-navigation-list community_navigation-global-navigation-item a[title="Home"] {
+    display: none !important;
+}
+
+.forceListViewManager .slds-page-header.forceListViewManagerHeader button.slds-button {
+    border: none !important;
+    margin: 0 15px;
+    padding: 0;
+	background: none;
+	outline: none;
+	box-shadow: none;
+}
+
+.comm-page-home .cTelstra_ThemeLayout .body-inner .uiTabset--default>.uiTabBar .uiTabItem .tabHeader:hover, 
+.comm-page-home .cTelstra_ThemeLayout .body-inner .uiTabset--default>.uiTabBar .uiTabItem .tabHeader:focus {
+    color: inherit;
+}
+
+.cTelstra_ThemeLayout .slds-config-header--section button:hover,
+.cTelstra_ThemeLayout .slds-config-header--section button:focus,
+.cTelstra_ThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton:hover,
+.cTelstra_ThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton:focus,
+.cTelstra_ThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button.slds-button.uiButton:hover,
+.cTelstra_ThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button.slds-button.uiButton:focus {
+    background: #0064D2;
+    color: #fff;
+    text-decoration: none;
+    transition: ease-out 450ms;
+}
+
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-dropdown-trigger button.slds-button:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-button-group button.slds-button.slds-button_icon:after,
+.cTelstra_ThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink div.triggerLinkTextAndIconWrapper:after,
+.cTelstra_ThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link span.profileName:after {
+	content: "\e90a";
+    font-size: 0.5rem;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.cTelstra_ThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header] > div.ui-widget,
+.cTelstra_ThemeLayout .body-inner .siteforceSldsOneColLayout .slds-config-header--section {
+    margin-bottom: 0;
+}
+.cTelstra_ThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header] {
+    margin-bottom: -15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.cTelstra_ThemeLayout .header-inner .forceCommunityGlobalNavigation {
+    background-color: transparent;
+}
+/**********************   Anchor & Button styles ************************/
+.cTelstra_ThemeLayout .body-inner .forceRecordLayout.uiVirtualDataGrid a,
+.comm-page-home .cTelstra_ThemeLayout .body-inner .uiTabset.forceCommunityTabset .tabs__item.active.uiTabItem a.tabHeader,
+.comm-page-home .cTelstra_ThemeLayout .body-inner .uiTabset.forceCommunityTabset .tabs__item.active.uiTabItem a.tabHeader span,
+.cTelstra_ThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink .triggerLinkTextAndIconWrapper,
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .primaryDisplayField .outputLookupLink:hover,
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .primaryDisplayField .outputLookupLink:focus,
+.cTelstra_ThemeLayout .body-inner .forceRecordLayout.uiVirtualDataTable a,
+.cTelstra_ThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink div.triggerLinkTextAndIconWrapper:after,
+.forceCommunityTabset .tabs__content.active.uiTab .forceListViewManager .slds-page-header__title.listViewTitle a {
+	color: #0064D2;
+}
+.cTelstra_ThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink .triggerLinkTextAndIconWrapper {
+	font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+    font-size: 1.125rem;
+}
+
+.cTelstra_ThemeLayout .body-inner .forceRecordLayout.uiVirtualDataGrid a,
+.comm-page-home .cTelstra_ThemeLayout .body-inner .uiTabset.forceCommunityTabset .tabs__item.uiTabItem .tabHeader span.title,
+.cTelstra_ThemeLayout .body-inner .forceRecordLayout.uiVirtualDataTable a:not(.slds-th__action),
+.cTelstra_ThemeLayout .body-inner .forceChatterRecommendationBig .cuf-bodyActionGroup .forceChatterActionLinkGroup button.cuf-platformAction,
+.cTelstra_ThemeLayout .body-inner .forceCommunityRecommendations .forceChatterRecommendationBig .cuf-recommendationDisplayLabel {
+	font-family: akkuratBold,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+}
+
+.cTelstra_ThemeLayout .body-inner .slds-config-header--section .slds-config-h2Tag,
+.cTelstra_ThemeLayout .body-inner .forceCommunityCreateRecordForm .headerLabel,
+.cTelstra_ThemeLayout .body-inner .forceCommunityCreateRecordForm h1,
+.cTelstra_ThemeLayout .body-inner .forceCommunityRecommendations h2.rec-cardHeader {
+    font-size: 2.125rem !important;
+}
+.cTelstra_ThemeLayout .body-inner .slds-config-header--section .slds-config-pTag {
+    font-size: 1.375rem !important;
+	letter-spacing: -0.3px;
+}
+.cTelstra_ThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton,
+.cTelstra_ThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button {
+    font-size: 1rem !important;
+    transition: ease-in 450ms;
+    min-width: 350px;
+}
+.cTelstra_ThemeLayout .forceCommunityGlobalNavigation .slds-list__item a, 
+.cTelstra_ThemeLayout .forceCommunityGlobalNavigation .slds-list__item button {
+    font-size: 0.875rem;
+    font-family: Arial;
+    line-height: 1.5;
+}
+
+.cTelstra_ThemeLayout div[data-region-name="newFooter"] footer.cPcFooter {
+    margin-top: 60px;
+}
+.cTelstra_ThemeLayout footer:not(.cPcFooter) {
+    margin-top: 0 !important;
+}
+
+.flowruntimeBody flowruntime-flow-screen-input abbr.flowruntime-required.slds-required {
+    margin: 0;
+    font-size: 0.8125rem !important;
+    vertical-align: top;
+    display: inline-block;
+    width: 8.5px;
+    font-weight: bold;
+}
+.flowruntimeBody flowruntime-flow-screen-input .flowruntime-input.slds-form-element {
+    padding: 0;
+}
+
+body.null.comm-page-detail .cTelstra_ThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header],
+body:not(.comm-page-home) .cTelstra_ThemeLayout .createRecordWrapper.forceCommunityCreateRecordButton > * {
+	display: block;
+}
+
+.cTelstra_ThemeLayout .body-inner .slds-config-header--section.slds-stillNeedHelp--block .slds-button--desc {
+    display: block;
+    text-align: center;
+	margin: 0.875rem auto 0;
+	font-size: 1rem;
+}
+
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align .slds-button {
+    margin: 1rem auto;
+    width: 300px;
+    font-size: 1rem;
+    display: block;
+    border: 2px solid #0064D2;
+    padding: 1rem 2rem;
+    border-radius: 0;
+	transition: ease-in 450ms;
+	font-family: akkuratBold;
+}
+
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align .slds-button:hover {
+	background: #0064D2;
+	text-decoration: none;
+	color: #fff;
+	transition: ease-out 450ms;
+}
+
+.uiModal .slds-modal .modal-container.slds-modal__container .slds-modal__content {
+    max-height: none !important;
+}
+
+/******************************* Homepage *************************************/
+.comm-page-home .cTelstra_ThemeLayout .body-inner .siteforceSldsThreeCol444Layout div[data-region-name="sidebar"] .ui-widget div.uiOutputRichText > h3,
+.comm-page-home .cTelstra_ThemeLayout .body-inner .siteforceSldsThreeCol444Layout div[data-region-name="sidebarAlt"] .ui-widget div.uiOutputRichText > h3,
+.comm-page-home .cTelstra_ThemeLayout .body-inner .siteforceSldsThreeCol444Layout div[data-region-name="content"] .ui-widget div.uiOutputRichText > h3 {
+    margin-bottom: 1.25rem;
+}
+.comm-page-home .cTelstra_ThemeLayout .body-inner .siteforceSldsThreeCol444Layout div[data-region-name="content"] .ui-widget div.uiOutputRichText > p,
+.comm-page-home .cTelstra_ThemeLayout .body-inner .siteforceSldsThreeCol444Layout div[data-region-name="sidebar"] .ui-widget div.uiOutputRichText > p,
+.comm-page-home .cTelstra_ThemeLayout .body-inner .siteforceSldsThreeCol444Layout div[data-region-name="sidebarAlt"] .ui-widget div.uiOutputRichText > p {
+    overflow: hidden;
+    height: 105px;
+    width: 85%;
+    margin-bottom: 2.5rem;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align a {
+	font-size: 1.125rem;
+    font-family: akkuratReg;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align a:not(.slds-button) {
+	display: inline-block;
+    margin-top: 2rem;
+	letter-spacing: -.0575rem;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align a:hover:not(.slds-button),
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align a:focus:not(.slds-button) {
+	text-decoration: none;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align a:not(.slds-button) span {
+    display: inline-block;
+    transition: 0.3s ease-in;
+    background-repeat: no-repeat;
+    width: 1rem;
+    height: 1rem;
+    margin: 0 5px;
+    vertical-align: middle;	
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align a:hover:not(.slds-button) span {
+	transform: translateX(50%);
+}
+.cTelstra_ThemeLayout .body-inner .siteforceSldsThreeCol444Layout .cdSupport-btn--align a.cdSupport-next--btn {
+    margin-top: 6.5rem;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn {
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 250px;
+    display: block;
+    margin: 0 auto 3rem;
+    background-size: auto;
+	position: relative;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn .cdSuport-banner--overlayHeader {
+    background: #fff;
+    width: 55%;
+    position: absolute;
+    bottom: 0;
+    border-width: 2px 0 0;
+    border-style: solid;
+    border-image: linear-gradient(to right, rgb(91, 197, 242), rgb(198, 157, 201) 35%, rgb(135, 121, 183) 70%) 1;
+    padding: 1.5rem 0 0;	
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn.cdSupport-get--support {
+	background-image: url('images/svg-get-support.svg');
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn.cdSupport-log--inside {
+	background-image: url('images/svg-log-in-to.svg');
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn.cdSupport-three--people {
+	background-image: url('images/svg-three-people-next.svg');
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-btn--align .cdSupport-next--arrow {
+	background-image: url('images/Navigation_Arrow.svg');
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn.cdSupport-telstra--banner {
+	background-image: url('images/Telstra_Support_Banner.jpg');
+    height: 365px;
+    margin: 0 auto 3rem;
+    background-size: 100% 100%;
+	position: relative;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn.cdSupport-telstra--banner h1.cdSupport-h1--header {
+	font-size: 2.5rem;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn .cdSuport-banner--overlayHeader .cdSupport-h3--header {
+	font-size: 1.5rem;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-icon--align {
+	position: relative;
+    float: right;
+    margin-right: 65px;
+}
+/*.cTelstra_ThemeLayout .body-inner .cdSupport-icon--align .cdSupport-info--icon {
+	font-size: 0.875rem;
+    border: 1px solid #706e6b;
+    border-radius: 50%;
+    background: #706e6b;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-icon--align .cdSupport-info--icon:after {
+    content: "\2139";
+    display: inline-block;
+    width: 12px;
+    height: 20px;
+    color: #fff;
+    margin: 0 0.125rem;
+    text-align: center;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-icon--align .cdSupport-info--icon .cdSupport-info--tooltip:before {
+	content: " ";
+    display: inline-block;
+    box-sizing: border-box;
+    height: 15px;
+    width: 15px;
+    border-style: solid;
+    border-color: #393865;
+    border-width: 9px;
+    transform: rotate(45deg);
+    position: absolute;
+    bottom: -7px;
+    right: 1.5rem;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-icon--align .cdSupport-info--icon .cdSupport-info--tooltip {
+    display: none;
+    width: 300px;
+    background-color: #393865;
+    color: #fff;
+    text-align: left;
+    padding: 1rem;
+    border-radius: 6px;
+    font-style: normal;
+    position: absolute;
+    z-index: 1;
+    top: -6rem;
+    left: -16rem;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-icon--align .cdSupport-info--icon:hover .cdSupport-info--tooltip {
+    display: inline-block;
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-icon--align .cdSupport-info--icon:hover {
+    background: #393865;
+    cursor: pointer;
+}*/
+.cTelstra_ThemeLayout .cdSupportTelstraLogo {
+	background-image: url('images/TelstraLogo.png');
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-consumer-smallBus a {
+    font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+    font-size: 1rem;
+    color: rgb(0, 100, 210);
+}
+.cTelstra_ThemeLayout .body-inner .cdSupport-consumer-smallBus span {
+    margin: 0 1.5rem;
+}
+
+@media only screen and (max-width: 767px) {
+	.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn.cdSupport-telstra--banner {
+		background-size: contain;
+	}
+	.cTelstra_ThemeLayout .body-inner .cdSupport-img--blockbtn .cdSuport-banner--overlayHeader {
+		width: 100%;
+	}
+}

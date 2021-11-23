@@ -1,0 +1,29 @@
+<!--EDGE-10487: To Display a Message on Contact Record based on the Contact Last Verified Date
+Author: Nikita Tiwari-->
+
+<apex:page standardController="Account" extensions="PortfolioCodeController"
+           showHeader="false" 
+           sidebar="false" 
+           showChat="false">
+    <!--EDGE-28500(AC1): Added new message and updated the condition for previouse message-->
+    
+    <apex:pageMessage summary="Customer is Retired" severity="INFO" strength="3" rendered="{!IF(Account.Customer_Status__c == 'RETIRED',true,false)}"></apex:pageMessage>
+    <apex:pageMessage summary="This account hasn't been reviewed for over 12 months. Please review account details."
+                      severity="INFO"
+                      strength="3"
+                      rendered="{!IF(Account.Customer_Status__c != 'RETIRED' && prtfcode && (Account.Customer_Last_Verified_Date__c!=NULL&&((TODAY() - Account.Customer_Last_Verified_Date__c)  > VALUE($Label.Account_Verified_Criteria_Days))),true,false)}" />
+    <!--EDGE-28288:To Display a Message If Customer has Insolvent Account-->   
+    <apex:pageMessage summary="This customer account is Insolvent.<br/> 
+                               For further information please contact the Insolvency team via email at: ice@online.telstra.com.au or via phone: 1800 022 802"
+                      severity="INFO"
+                      strength="3" 
+                      escape = "false"
+                      rendered="{!IF(Account.Customer_Status__c != 'RETIRED' && prtfcode,true,false)}"
+                      />
+    <!--EDGE-98386: To display message if account has suspended subscrptions -->
+    <apex:pageMessage summary="One or More Subscription Associated With This Account Are Suspended "
+                      severity="INFO"
+                      strength="3"
+                      rendered="{!IF(Account.Customer_Status__c != 'RETIRED' && suspendedSub,true,false)}"
+                      />
+</apex:page>

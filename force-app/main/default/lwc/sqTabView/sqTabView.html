@@ -1,0 +1,209 @@
+<!-- *******************************************************************
+DIGI        -333
+Created Date   -2 AUG 2021
+Description -To show service Qualification for the sites
+Author      -Ajith Kumar
+************************************************************************* -->
+<template>
+    <template if:false={loaded}>
+        <lightning-spinner alternative-text="Loading"></lightning-spinner>
+    </template>
+    <template if:true={loaded}>
+        <lightning-accordion  allow-multiple-sections-open active-section-name={activeSections}> 
+            <lightning-accordion-section class="slds-p-bottom_medium"  name="TELSTRAFIBRE"  label="Telstra Fibre">
+                <template if:true={telstraFibreSQ}>
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item class="customPadding" size="6">        
+                            <lightning-input class="slds-form-element_readonly" type="text" readonly="true" label="Status" value={telstraFibreSQ.Status__c}>                            
+                            </lightning-input>                        
+                        </lightning-layout-item> 
+                        <lightning-layout-item class="customPadding" size="6">                            
+                            <lightning-input class="slds-form-element_readonly" type="text" readonly="true" label="Availability Reason Code" value={telstraFibreSQ.Status_Reason__c}>                            
+                            </lightning-input>                        
+                        </lightning-layout-item> 
+                        </lightning-layout>
+                    <lightning-layout>
+                        <lightning-layout-item class="customPadding"  size="6">                           
+                            <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Maximum ESA Bandwidth" value={maxESABandwidth}>                            
+                            </lightning-input>                           
+                        </lightning-layout-item> 
+                        <lightning-layout-item class="customPadding" size="6">
+                            <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Last Verification Date" value={telstraFibrelastModifiedDate} >                            
+                            </lightning-input>
+                        </lightning-layout-item> 
+                    </lightning-layout><br/>
+                    <lightning-layout>
+                        <lightning-layout-item class="customPadding" size="12">
+                            <div><b>Carriage Details</b></div>
+                        </lightning-layout-item>
+                    </lightning-layout><br/>
+                    <lightning-layout>
+                        <lightning-layout-item class="customPadding" size="12">
+                            <lightning-datatable
+                                        key-field="id"
+                                        data={carriagesol}
+                                        columns={columnsCarriageSolutions}
+                                        hide-checkbox-column="true">
+                            </lightning-datatable>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+            </lightning-accordion-section>               
+            <lightning-accordion-section class="slds-p-bottom_medium"  name="NBNNEBS" label="NBN NEBS">
+                <template if:true={nbESFibreSQ}>
+                    <lightning-layout multiple-rows="true">
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Status" value={nbESFibreSQ.Status__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN Location ID" value={nbESFibreSQ.Location_ID__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN Technology" value={nbESFibreSQ.Technology_Type__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN TC4 Max Downstream Speed" value={nbESFibreSQ.Max_Downstream_Speed__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN TC4 Max Upstream Speed" value={nbESFibreSQ.Max_Upstream_Speed__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN TC2 Min/Max Speed" value={nbESFibreSQ.Max_Backhaul__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Max Spare Copper Pair" value={nbESFibreSQ.Max_Spare_Copper_Pair__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN TC1 Speed" value={nbESFibreSQ.NBN_TC1_Speed__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Resource Type" value={serviceQualificationProviderRecord.Resource_Type__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Copper Pair ID" value={serviceQualificationProviderRecord.Copper_Pair_ID__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Copper Path" value={serviceQualificationProviderRecord.Copper_Path__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN Ready for Service (RFS) Date" value={nbESFibreSQReadyDate}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN Appointment Required" value={nbESFibreSQ.Appointment_Required__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="CSA ID" value={nbESFibreSQ.CSA_ID__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Serviceability Class" value={nbESFibreSQ.Serviceability_Class__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Cease Sale Date" value={nbESFibreSQCeaseDate}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="SIC Indicator" value={serviceQualificationProviderRecord.SIC_Indicator__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="SIC Code" value={serviceQualificationProviderRecord.SIC_Code__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="SIC Reason" value={serviceQualificationProviderRecord.SIC_Reason__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Last Verification Date" value={nbESFibreSQLastModifiedDate}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                        <br/>                        
+                        <lightning-layout>
+                            <lightning-layout-item class="customPadding" size="12">
+                                <div><b>NBN Resource Details</b></div>
+                            </lightning-layout-item>
+                        </lightning-layout><br/>
+                        <lightning-layout>
+                            <lightning-layout-item class="customPadding" size="12">
+                                <lightning-datatable
+                                    data={nbESFibreSQ.Service_Qualification_Resource_Details__r}
+                                    columns={columnsResourceDetails}
+                                    key-field="id"
+                                    hide-checkbox-column="true">
+                                </lightning-datatable>
+                            </lightning-layout-item>
+                        </lightning-layout><br/>
+                        <lightning-layout>
+                            <lightning-layout-item class="customPadding"  size="12">
+                                <div><b>NBN Port Details</b></div>
+                            </lightning-layout-item>
+                        </lightning-layout><br/>
+                        <lightning-layout>
+                            <lightning-layout-item class="customPadding" size="12">
+                                <lightning-datatable
+                                    data={serviceQualificationPortDetailRecords}
+                                    columns={columnsPortDetails}
+                                    key-field="id" 
+                                    hide-checkbox-column="true" >
+                                </lightning-datatable>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </template>
+                </lightning-accordion-section>
+                <lightning-accordion-section class="slds-p-bottom_medium"  name="NBNEE" label="NBN Enterprise Ethernet">
+                    <template if:true={nbnEthernertSQ}>
+                        <lightning-layout multiple-rows="true">
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Status" value={nbnEthernertSQ.Status__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN Technology" value={nbnEthernertSQ.Technology_Type__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN Service " value={nbnEthernertSQ.Service_Type__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="NBN Location ID" value={nbnEthernertSQ.Location_ID__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Maximum Downstream Speed" value={nbnEthernertSQ.Max_Downstream_Speed__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Maximum Upstream Speed" value={nbnEthernertSQ.Max_Upstream_Speed__c}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Estimated Availability Date" value={nbnEthernertSQAvailabilityDate}>                            
+                                </lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item class="customPadding"  size="6">
+                                <lightning-input type="text" class="slds-form-element_readonly" readonly="true" label="Last Verification Date" value={nbnEthernertSQLastModifiedDate}>                            
+                                </lightning-input>
+                            </lightning-layout-item>                           
+                            </lightning-layout>
+                        </template>            
+                </lightning-accordion-section>
+        </lightning-accordion> 
+    </template>
+</template>

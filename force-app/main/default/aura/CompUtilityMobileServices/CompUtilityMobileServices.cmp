@@ -1,0 +1,83 @@
+<!--
+* @Author   :   Maqsood Alam
+* @Date     :   25 June 2019
+* @Desc     :   Component for to see list of customer's legacy mobile services as part of transition order journey
+* -->
+<aura:component controller="ReplicatorGetServiceManager">
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" />
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <aura:attribute name="adborid" type="String" access="global" />
+    <aura:attribute name="CIDN_String" type="String" />
+    <aura:attribute name="basketIdString" type="String" access="global" />
+    <aura:attribute name="selectedMobileRecrod" type="List" access="global" />
+    <aura:attribute name="iconName" type="String" access="global" default="utility:chevronright" />
+    <aura:attribute name="mobileTransitionData" type="TransitionDataDTO" access="global" />
+    <aura:attribute name="ngUcTransitionData" type="TransitionDataDTO" access="global" />
+    <aura:attribute name="selectedNgUcRecrod" type="List" access="global" />
+    <aura:attribute name="allSiteAndMobileClicked" type="Map" access="global" />
+    <aura:attribute name="isServicesPresent" type="Map" access="global" />
+    <aura:attribute name="isServicesClicked" type="Map" access="global" />
+
+    <aura:attribute name="siteDTOList" type="ProductBasketSiteDataObject[]" access="global" />
+    <aura:attribute name="siteDTOMap" type="Map" />
+    <aura:attribute name="selectedCIDN" type="List"/><!--Added as a part of EDGE-198196-->
+    <aura:attribute name="isCidnHierarchy" type="Boolean" default="false"/><!--Added as a part of EDGE-198196-->
+
+    <aura:method name="getSiteAgnosticService" access="PUBLIC" action="{!c.mobileDisplayAction}">
+        <aura:attribute name="CIDNString" type="String" access="global" />
+        <aura:attribute name="basketId" type="String" access="global" />
+    </aura:method>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:GetServicesEvent" action="{!c.handleGetServicesEvent}" />
+    <aura:handler event="c:MobilityEventBus" action="{!c.mobileSelectionCompleted}" />
+    <div aura:id="main" class="slds" style="background-color:white;">
+        <div style="text-transform: uppercase;"><b>Site Agnostic Services</b></div>
+        <!--DIGI-16451 : Modified aura:if to make it re-usable for IoT -->
+        <aura:if isTrue="{!or(v.isServicesPresent.Mobility == 'true',v.isServicesPresent.IoT == 'true')}">
+            <div id="sitesMobile" data-id="sitesMobile" class="left-content display-width "
+                style="direction: ltr;background: " aura:Id="sitesMobile" onclick="{!c.onClickMobile}">
+                <div class="left-content-top" data-id="mobileLeftColumn">
+                    <span class="down-arrow">
+                        <lightning:icon class="slds-show" aura:id="iconChevron" iconName="{!v.iconName}" size="x-small"
+                            alternativeText="" />
+                    </span>
+                    <div class="top-right">
+                        <!-- Start of DIGI-16451 by Abhishek(Osaka) to enable IoT Trasition --> 
+                        <aura:if isTrue="{!v.isServicesPresent.IoT == 'true'}">
+                            <p class="blue-text">&nbsp;&nbsp; IoT Connectivity</p>
+                            <aura:set attribute="else">
+                                <p class="blue-text">&nbsp;&nbsp; Mobile </p>
+                            </aura:set>
+                        </aura:if>
+                        <!-- End of DIGI-16451 --> 
+                        <!--EDGE-185056: Rename order type to Migration for Migration type -->
+                        <aura:if isTrue="{!v.ProdBasket.cscfga__Opportunity__r.Type == 'Migration'}">
+                        <p>Order Type:<span class="p-right-name"><b>Migration</b></span></p>
+                            <aura:set attribute="else">
+                        <p>Order Type:<span class="p-right-name"><b>Transition </b></span></p>
+                                </aura:set>
+                        </aura:if>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+        <!-- EDGE-92538 : legacy services (ISDN10/20/30) to transition them into ngUC hosted offer : START-->
+        <aura:if isTrue="{!v.isServicesPresent.NgUc == 'true'}">
+            <div id="sitesMobile" data-id="sitesMobile" class="left-content display-width "
+                style="direction: ltr;background: " aura:Id="sitesMobile" onclick="{!c.onClickNGUC}">
+                <div class="left-content-top" data-id="mobileLeftColumn">
+                    <span class="down-arrow">
+                        <lightning:icon class="slds-show" aura:id="iconChevron" iconName="{!v.iconName}" size="x-small"
+                            alternativeText="" />
+                    </span>
+                    <div class="top-right">
+                        <p class="blue-text">&nbsp;&nbsp; Adaptive Collaboration</p>
+                        <p>Order Type:<span class="p-right-name"><b>Transition</b></span></p>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+        <!-- EDGE-92538 : legacy services (ISDN10/20/30) to transition them into ngUC hosted offer : END-->
+    </div>
+</aura:component>

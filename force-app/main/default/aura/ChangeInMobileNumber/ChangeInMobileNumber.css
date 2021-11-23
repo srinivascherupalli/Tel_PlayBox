@@ -1,0 +1,10 @@
+.THIS .widthOfModal{
+   max-width : 70% !important;
+   width: 100% !important;
+}
+.THIS.exampleHolder{
+    position: relative;
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+}

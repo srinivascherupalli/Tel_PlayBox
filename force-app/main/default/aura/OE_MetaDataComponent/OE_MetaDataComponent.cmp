@@ -1,0 +1,13 @@
+<aura:component
+  implements="flexipage:availableForAllPageTypes,force:appHostable"
+  access="global"
+>
+  <aura:attribute name="solutionId" type="String" />
+  <aura:attribute name="basketId" type="String" />
+  <aura:registerEvent name="oecloseevent" type="c:OE_CloseEvent"/>
+  <c:orderEnrichmentConsole
+    solutionId="{!v.solutionId}"
+    basketId="{!v.basketId}"
+    onclosesignal="{!c.handleCloseSignal}"
+  ></c:orderEnrichmentConsole>
+</aura:component>

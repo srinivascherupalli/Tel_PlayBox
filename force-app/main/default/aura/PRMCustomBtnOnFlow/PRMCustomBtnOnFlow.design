@@ -1,0 +1,7 @@
+<design:component>
+	<design:attribute name="buttonLabel" label="button Label" />
+    <design:attribute name="recId" label="record Id" />
+    <design:attribute name="Param1" label="Param1" default=""/>
+    <design:attribute name="flowName" label="flow Name"/>
+    <design:attribute name="setRedirection" label="set redirection to record" default="true"/>
+</design:component>

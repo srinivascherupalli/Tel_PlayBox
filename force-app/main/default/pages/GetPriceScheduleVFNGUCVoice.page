@@ -1,0 +1,431 @@
+<!-- 
+/*******************************************************************
+@Author : SHUBHI
+@Description : GetPriceScheduleControllerNGUCVoice
+@Release : Sprint 20.03 - EDGE - 133963
+@Created Date :   06-Feb-2020
+1, SHUBHI updated for qa deployment failure EDGE-143957
+*******************************************************************/
+-->
+<apex:page sidebar="false" showHeader="false" Controller="GetPriceScheduleControllerNGUCVoice">
+    <!--Added lightningStyleSheets attribute to page - by Samish for EDGE-132203 on 8-2-2020-->
+    <apex:includeScript value="{!$Resource.cometd}"/>
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!$Resource.json2}"/>
+    <apex:includeScript value="{!$Resource.jquery_cometd}"/>
+    <apex:includeScript value="{!$Resource.cometdReplayExtension}"/>    
+    <apex:slds /><!--Added by Samish for EDGE-132203 on 8-2-2020-->
+
+    <!--<apex:outputText value="{!channel}"/>
+    <apex:outputText value="{!replayFrom}"/>-->
+
+<script type='text/javascript'>
+    var cometd;
+    var subscribedToChannel;
+    var isExtensionEnabled;
+    var metaConnectListener;
+    var metaDisconnectListener;
+    var metaHandshakeListener;
+    var metaSubscribeListener;
+    var metaUnSubscribeListener
+    var metaUnSucessfulListener;
+    var REPLAY_FROM_KEY = 'replay';
+    var _connected = false;
+    var correlationId
+    correlationId='{!JSENCODE(correlationId)}';
+    console.log('correlationId-->'+correlationId);
+    var solutionName="{!JSENCODE($CurrentPage.parameters.solutionName)}";
+    var callerName="{!JSENCODE($CurrentPage.parameters.callerName)}";
+    var DiscountApplicableStatus='{!DiscountApplicableStatus}';
+    var notApplicableGuidList='{!notApplicableGuidList}';
+    console.log('notApplicableGuidList-->'+notApplicableGuidList);
+    console.log('DiscountApplicableStatus##############'+DiscountApplicableStatus);
+    passCorrelationIdToEMJs();
+    if(notApplicableGuidList && notApplicableGuidList!=null){
+        console.log('Inside notApplicableGuidList---');
+        validateNotApplicableConfigsVF();
+    }
+    if(DiscountApplicableStatus && DiscountApplicableStatus=='No discount applicable'){
+        console.log('Inside notApplicableGuidList---');
+        unlockbasketAndValidateBasket();
+        validateNotApplicableConfigsVF();
+    }else if(DiscountApplicableStatus && DiscountApplicableStatus=='Already triggered'){        
+        let payload ={
+            command: 'Already triggered',
+            data: 'Already triggered',
+            caller: callerName
+        };
+        console.log('payload Already triggered --->'+payload);
+        window.parent.postMessage(payload, '*') ;
+        //window.parent.postMessage("close", '*'); 
+        console.log('payload Is --->'+payload);
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        // sessionStorage.setItem("close", "close");
+        //setInterval(function(){sessionStorage.setItem("close", "close");},30000);
+    }else if(DiscountApplicableStatus && DiscountApplicableStatus=='Initial'){
+        handleError();
+    }
+    function unlockbasketAndValidateBasket(){
+        let payload ={
+            command: 'unlockBasket',
+            data: notApplicableGuidList,
+            caller: callerName
+        };
+        console.log('payload unlockBasket --->'+payload);
+        window.parent.postMessage(payload, '*') ;
+        //window.parent.postMessage("close", '*') ;
+        
+        console.log('payload Is --->'+payload);
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        // sessionStorage.setItem("close", "close");
+        //setInterval(function(){sessionStorage.setItem("close", "close");},30000);
+    } 
+    function validateNotApplicableConfigsVF(){
+        let payload ={
+            command: 'validNotApplicableConfigs',
+            data: notApplicableGuidList,
+            caller: callerName
+        };
+        console.log('payload validNotApplicableConfigs --->'+payload);
+        window.parent.postMessage(payload, '*') ;
+        //window.parent.postMessage("close", '*') ;
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        // sessionStorage.setItem("close", "close");
+        //setInterval(function(){sessionStorage.setItem("close", "close");},30000);
+    }             
+    getTest($);
+    function getTest($){
+      $(document).ready(function(){       
+        cometd = $.cometd;
+        var REPLAY_FROM = '-1';
+        var channel = '/event/PriceScheduleEvent__e';
+        var topicsubscription = false;    
+        console.log('REPLAY_FROM-->'+REPLAY_FROM);
+        console.log('channel-->'+channel);
+        console.log('callerName-->'+callerName);         
+        
+        // ensure extension isn't already registered
+        if (cometd.getExtension(REPLAY_FROM) != null) {
+            cometd.unregisterExtension(REPLAY_FROM, replayExtension);
+        }        
+        // register durable generic streaming replayFrom extension
+        var replayExtension = new cometdReplayExtension();
+        replayExtension.setChannel(channel);
+        replayExtension.setReplay(-2);
+        if(isExtensionEnabled) {
+            replayExtension.setExtensionEnabled(isExtensionEnabled);
+        }
+        cometd.registerExtension(REPLAY_FROM, replayExtension);                 
+        // unsubscribe if you have already subscribed
+        if(subscribedToChannel) {
+            cometd.unsubscribe(subscribedToChannel, null, function(unsubscribeReply) {
+                subscribedToChannel = subscribe(channel); 
+            });
+        }        
+        //var _connected = false;
+        if(!metaConnectListener) {
+            metaConnectListener = cometd.addListener('/meta/connect', function(message) {        
+                if (cometd.isDisconnected()) {
+                    $('#content').append('Disconnected: '+JSON.stringify(message)+'<br><br>');
+                    return;
+                }
+          
+                var wasConnected = _connected;
+                var topic='/event/PriceScheduleEvent__e';
+                _connected = message.successful;
+                
+                if (!wasConnected && _connected) {
+                    $('#content').append('DEBUG: Connection Successful : '+JSON.stringify(message)+'<br><br>');
+                    console.log('topic : '+topic+'<br>');
+                    subscribe(topic);                       
+                } else if (wasConnected && !_connected) {
+                    $('#content').append('DEBUG: Disconnected from the server'+JSON.stringify(message)+'<br><br>');
+                }
+            }); 
+        }                       
+        if(!metaDisconnectListener) {
+            metaDisconnectListener = cometd.addListener('/meta/disconnect', function(message) {  
+                $('#content').append('DEBUG: /meta/disconnect message: '+JSON.stringify(message)+' <br><br>');
+            });
+        }    
+        if(!metaHandshakeListener) {
+            metaHandshakeListener = cometd.addListener('/meta/handshake', function(message) {
+                if (message.successful) {
+                    $('#content').append('<br><br> DEBUG: Handshake Successful: '+JSON.stringify(message)+' <br><br>');                            
+                    
+                    if (message.ext && message.ext[REPLAY_FROM_KEY] == true) {
+                        isExtensionEnabled = true;
+                    }                    
+                    subscribedToChannel = subscribe(channel);
+                } else
+                    $('#content').append('DEBUG: Handshake Unsuccessful: '+JSON.stringify(message)+' <br><br>');
+            });
+        }        
+        if(!metaSubscribeListener) {
+            metaSubscribeListener = cometd.addListener('/meta/subscribe', function(message) {  
+                if (message.successful) {
+                    $('#content').append('DEBUG: Subscribe Successful '+channel+': '+JSON.stringify(message)+' <br><br>');
+                } else {
+                    $('#content').append('DEBUG: Subscribe Unsuccessful '+channel+': '+JSON.stringify(message)+' <br><br>');                
+                }    
+            });
+        }        
+        if(!metaUnSubscribeListener) {
+            metaUnSubscribeListener = cometd.addListener('/meta/unsubscribe', function(message) {  
+                if (message.successful) {
+                    $('#content').append('DEBUG: Unsubscribe Successful '+JSON.stringify(message)+' <br><br>');
+                } else {
+                    $('#content').append('DEBUG: Unsubscribe Unsuccessful '+JSON.stringify(message)+' <br><br>');                
+                }
+            });    
+        }
+        // notifies any failures
+        if(!metaUnSucessfulListener) {
+            metaUnSucessfulListener = cometd.addListener('/meta/unsuccessful', function(message) {  
+                $('#content').append('DEBUG:  /meta/unsuccessful Error: '+JSON.stringify(message)+' <br><br>');
+            });
+        }             
+        cometd.websocketEnabled = false;      
+       // Connect to the CometD endpoint
+        cometd.configure({
+            url: window.location.protocol+'//'+window.location.hostname+ (null != window.location.port ? (':'+window.location.port) : '') +'/cometd/37.0/',
+            requestHeaders: { Authorization: 'OAuth {!$Api.Session_ID}'},
+            appendMessageTypeToURL : false
+        });          
+        cometd.handshake();         
+      });
+    }(jQuery)    
+    function subscribe(topic) {  
+        if(_connected) {
+        if (topic == null || name.topic == 0) {
+            console.log('<br>Please enter a topic<br>');
+            return;
+        }   
+        channel = topic;
+        console.log('channel :::::'+channel);
+        topicsubscription = cometd.subscribe(channel,'',receive); 
+        } else {
+            console.log('<br>DEBUG: Cannot subscribe due to unsuccessful connection<br>');
+        }                
+    }            
+
+    function unsubscribe() {
+        if(topicsubscription) {
+            cometd.unsubscribe(topicsubscription);
+        }
+        topicsubscription = null;
+    }
+    function passDataToEMJs(){
+        let payload ={
+            command: 'ResponseReceived',
+            data: correlationId,
+            caller: callerName
+        };
+        window.parent.postMessage(payload, '*') ;
+        window.parent.postMessage("close", '*') ;
+        console.log('payload In passDataToEMJs ---'+payload);
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        // sessionStorage.setItem("close", "close");
+        setInterval(function(){sessionStorage.setItem("close", "close");},60000);
+    }
+    function passCorrelationIdToEMJs(){
+        let payload ={
+            command: 'correlationId',
+            data: correlationId,
+            caller: callerName
+        };
+        window.parent.postMessage(payload, '*') ;           
+        console.log('payload In passCorrelationIdToEMJs ---'+payload);
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+      
+    }
+    function handleError(){
+        let payload ={
+            command: 'ErrorInResponse',
+            data: 'ErrorInResponse',
+            caller: callerName
+        };
+        window.parent.postMessage(payload, '*') ;
+        window.parent.postMessage("close", '*') ;
+        console.log('payload In ErrorInResponse ---'+payload);
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        setInterval(function(){sessionStorage.setItem("close", "close");},60000);
+      
+    }
+    function receive(message) {
+        console.log('message::::'+message);
+        data = message.data; 
+        
+        console.log(JSON.stringify(data));
+        var responseData = JSON.parse(JSON.stringify(data));
+        console.log('On receive event');
+        console.log(responseData);
+        console.log('message received:-->'+responseData.payload.CorrelationId__c);
+        if(correlationId === responseData.payload.CorrelationId__c && responseData.payload.eventType__c.toLowerCase()=='response'){
+            unsubscribe();
+            passDataToEMJs();
+            document.getElementById("loader").style.visibility="hidden";
+            document.getElementById("afterResult").innerHTML = "Response Received";
+        }else if(correlationId === responseData.payload.CorrelationId__c && responseData.payload.eventType__c.toLowerCase()=='error'){
+            unsubscribe();
+            handleError();
+            document.getElementById("loader").style.visibility="hidden";
+            document.getElementById("afterResult").innerHTML = "Response Received";
+        }
+    }
+    function disconnect() {
+        if (cometd) {
+            cometd.removeListener(metaConnectListener);
+            cometd.removeListener(metaDisconnectListener);
+            cometd.removeListener(metaHandshakeListener);
+            cometd.removeListener(metaSubscribeListener);
+            cometd.removeListener(metaUnSubscribeListener);
+            cometd.unsubscribe(subscribedToChannel);
+            cometd.disconnect();
+        }
+    }    
+    window.onbeforeunload = disconnect;
+</script>
+<style>
+        /* Center the loader */
+        /*----Commented by Samish for EDGE-132203 on 8-2-2020----
+        #loader {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          z-index: 1;
+          width: 150px;
+          height: 150px;
+          margin: -75px 0 0 -75px;
+          border: 16px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 16px solid #3498db;
+          width: 120px;
+          height: 120px;
+          -webkit-animation: spin 2s linear infinite;
+          animation: spin 2s linear infinite;
+        }
+        */
+        
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        /* Add animation to "page content" */
+        .animate-bottom {
+          position: relative;
+          -webkit-animation-name: animatebottom;
+          -webkit-animation-duration: 1s;
+          animation-name: animatebottom;
+          animation-duration: 1s
+        }
+        
+        @-webkit-keyframes animatebottom {
+          from { bottom:-100px; opacity:0 } 
+          to { bottom:0px; opacity:1 }
+        }
+        
+        @keyframes animatebottom { 
+          from{ bottom:-100px; opacity:0 } 
+          to{ bottom:0; opacity:1 }
+        }        
+        #myDiv {
+          display: none;
+          text-align: center;
+        }
+        p{  font-family: verdana;
+            font-size: 20px;
+             text-align:center;
+             margin: auto;
+         }
+        .center {
+          margin: auto;
+          width: 60%;     
+          padding: 10px;
+        }
+        p.msgLeft{              /*-- Added by Samish for EDGE-132203 on 8-2-2020 --*/
+            font-size: 17px;
+            padding-left: 25px;
+            padding-top: 25px;
+            text-align:left;
+        }
+</style>
+    <!-- Modified by Samish for EDGE-132203 on 8-2-2020 START -->
+    <!-- LIGHTNING HEADER INFO-->
+    <apex:outputPanel rendered="{!DiscountApplicableStatus !='Initial'}" >
+        <div class="modal-header slds-modal__header slds-theme--info slds-theme--alert-texture">
+            <h2 class="title slds-text-heading--medium slds-hyphenate" id="pricingHead">
+                <lightning-formatted-text>Generate Pricing Schedules</lightning-formatted-text>
+            </h2>
+        </div>
+    </apex:outputPanel>
+    <!-- LIGHTNING HEADER INFO-->
+    <!-- LIGHTNING HEADER ERROR-->
+    <apex:outputPanel rendered="{!DiscountApplicableStatus =='Initial'}" >
+        <div class="modal-header slds-modal__header slds-theme--error slds-theme--alert-texture">
+            <h2 class="title slds-text-heading--medium slds-hyphenate" id="pricingHead">
+                <lightning-formatted-text>Generate Pricing Schedules</lightning-formatted-text>
+            </h2>
+        </div>
+    </apex:outputPanel>
+    <!-- LIGHTNING HEADER ERROR-->
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Discount Applicable'}" >
+         <!-- <div id="loader"></div> --><!--Commented by Samish for EDGE-132203 on 8-2-2020-->
+         <!-- SPINNER --><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+        <div id="loader" role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+            <div class="slds-spinner__dot-a"></div>
+            <div class="slds-spinner__dot-b"></div>
+        </div>
+        <!-- / SPINNER -->
+        <p id="afterResult" class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+            <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+                {!$Label.price_schedule_initaited}
+            </lightning-formatted-text>
+        </p>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Waiting for response'}" >
+        <!-- <div id="loader"></div> --><!-- Commented by Samish for EDGE-132203 on 8-2-2020 -->
+        <!-- SPINNER --><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+        <div id="loader" role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+            <div class="slds-spinner__dot-a"></div>
+            <div class="slds-spinner__dot-b"></div>
+        </div>
+        <!-- / SPINNER -->
+        <p id="afterResult"><lightning-formatted-text></lightning-formatted-text></p><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='No discount applicable'}" >
+         <div class="center">
+            <p class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+                <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 --><!-- //EDGE-143957 shubhi -->
+                     {!$Label.no_applicable_discounts_common}
+                </lightning-formatted-text>
+            </p>
+         </div>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Initial'}" >
+         <div class="center">ac
+            <p class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+                <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+                    {!$Label.price_schedule_error}
+                </lightning-formatted-text>
+            </p>
+            <button class="slds-button slds-button--neutral" tabindex="-1">OK</button><!-- Added by Samish for EDGE-132203 on 10-2-2020 -->
+         </div>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Already triggered'}" >
+         <div class="center">
+            <p class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+                <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+                    {!$Label.price_schedule_already_triggered}
+                </lightning-formatted-text>
+            </p>
+         </div>
+    </apex:outputPanel>
+    <!-- Modified by Samish for EDGE-132203 on 8-2-2020 END -->
+</apex:page>

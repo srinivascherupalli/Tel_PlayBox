@@ -1,0 +1,133 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" controller="PRMWebtoLeadContr" access="global">
+    <ltng:require styles="{!join(',',
+                          $Resource.telephonejs + '/build/css/intlTelInput.css',
+                          $Resource.telephonejs + '/build/css/demo.css')}"/>
+    <aura:attribute name="isValidNumber" type="boolean" default="false"/>
+    <aura:handler event="c:PRMEOIEvent" action="{!c.handleApplicationEvent}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="leadRec" type="Lead" default="{ 'sobjectType': 'Lead'}"/>
+    <aura:attribute name="CaptchaToken" type="String"/>
+    <aura:attribute name="step" type="Integer" default="1" /> 
+    <aura:attribute name="captchaVerified" type="boolean" default="false" />
+    <!--<aura:attribute name="visualforceDomain" type="string" default="{!$Label.c.PRM_EOI_Visualforce_Domain}" />-->
+    <aura:attribute name="visualforceDomain" type="string" default="" />
+   	<aura:attribute name="spinner" type="boolean" default="false" />
+    <aura:attribute name="LeadrecordId" type="String"/>
+    <aura:attribute name="currentStep" type="String" default="1"/>
+    <aura:registerEvent name="PRMEOIEvent" type="c:PRMEOIEvent"/>
+    <aura:attribute name="Isvalidemail" type="boolean" default="false" />
+    <aura:attribute name="CommunityUrl" type="String"/>
+    <aura:attribute name="InvalidABN" type="boolean" default="true" />
+    <aura:attribute name="severity" type="String" />
+    <aura:attribute name="instruction" type="String" />
+    <aura:attribute name="message" type="String" />
+    <aura:attribute name="showMessage" type="Boolean" default="false" />
+	<aura:attribute name="FormCompleted" type="Boolean" default="false" />
+   <aura:attribute name="FormSubmitted" type="Boolean" default="false" />
+    <aura:attribute name="BusinessnamelistMap" type="Map"/> 
+    <aura:attribute name="phonenumber" type="String" />
+    <!--Added by team Hawaii for P2OB-8478-->
+    <aura:attribute name="companySizeValid" type="boolean" default="false" />
+
+
+    <div class="containerEOI">
+    <div>
+    <aura:if isTrue="{!v.spinner}">
+        <!-- <lightning:spinner variant="brand"  size="large" /> -->
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- All Fields label changed to Custom labels by Hawaii for P2OB-8478 -->
+    <div class="slds-text-heading_large slds-align_absolute-center">{!$Label.c.EOI_Register_Your_Interest}</div>
+    <br/>
+  
+
+    
+   <div class="slds-size_1-of-1">
+        <c:PRMEOINavigation  currentStep="{!v.currentStep}"/>
+       </div>
+    <br/>
+    
+        <aura:if isTrue="{!v.showMessage}">
+            <div class="{!'slds-size_1-of-2 slds-align_absolute-center slds-box slds-theme--'+v.severity}" style='align:center'>
+               		 <table>
+                      	  <tr>
+                             <aura:if isTrue="{!'error'==  v.severity}">
+                           		 <td><lightning:icon class="slds-float_left" iconName="utility:error" alternativeText="Error!" variant="inverse" /></td>
+                         	 </aura:if>
+                                <aura:if isTrue="{!'success'==  v.severity}">
+                           		 <td><lightning:icon class="slds-float_left" iconName="utility:success" alternativeText="Success!" variant="inverse" /></td>
+                         	 </aura:if>
+                               
+
+                             <td>
+                                 {!v.message}  <div class="slds-text-body_small"> {!v.instruction} </div>
+                                                                
+                              </td>
+                              
+                             <td><lightning:icon class="slds-float_right" iconName="utility:close" alternativeText="Close!" variant="inverse" onclick="{!c.closeToast}" /></td>
+
+                      	 </tr>
+                   	 </table>
+            </div>
+</aura:if>
+       <form class="slds-form--stacked"> 
+        <aura:if isTrue="{!v.step==1}">
+            <c:PRMEOIContactinfo aura:id="contactInfo" leadRec="{!v.leadRec}" phonenumber="{!v.phonenumber}" />
+            
+        </aura:if>
+        <aura:if isTrue="{!v.step==2}">
+            <c:PRMEOICompanyInformation aura:id="companyInfo" leadRec="{!v.leadRec}" BusinessnamelistMap="{!v.BusinessnamelistMap}" LeadrecordId="{!v.LeadrecordId}"/>
+        </aura:if>
+         <aura:if isTrue="{!v.step==3}">
+                 <c:PRMEOIPartnerInformation aura:id="partnerinfo" leadRec="{!v.leadRec}"  />
+
+        </aura:if>
+        <aura:if isTrue="{!v.step==4}">
+             <c:PRMEOIVerifyInfo aura:id="VerifyInfo" leadRec="{!v.leadRec}"/>
+        </aura:if>
+        <aura:if isTrue="{!v.step==5}">
+            <c:PRMEOIThankYou aura:id="Thankyou"/>
+        </aura:if>
+    </form>
+    </div>
+    <div>
+    <aura:if isTrue="{!v.step==1 || v.step==2 || v.step==3 || v.step==4}">
+        <div class="slds-col slds-float_left">
+            <div style="position:right">
+            <lightning:button label="Cancel" class="slds-button slds-button_neutral" onclick="{!c.handleCancel}" />
+            <aura:if isTrue="{!v.step==3 || v.step==4}">
+                <lightning:button label="Back" class="slds-button slds-button_neutral" onclick="{!c.handleBacknavigation}" />
+            </aura:if> 
+            </div>
+            
+        </div>
+        <div class="slds-col slds-float_right">
+             <aura:if isTrue="{!v.step==1 || v.step==2 || v.step==3 }"> 
+                 <aura:if isTrue ="{!or(or(and(and(v.step==1,v.Isvalidemail)),and(v.step==2,and(!v.InvalidABN,v.companySizeValid))),v.step==3)}">
+                     <lightning:button label="Continue" variant="brand" class="slds-float_right slds-button" onclick="{!c.handleContinue}" />
+				 <aura:set attribute="else">
+                     <lightning:button label="Continue" disabled="true" class="slds-float_right slds-button" onclick="{!c.handleContinue}" />
+   				 </aura:set>
+                 </aura:if>
+			</aura:if> 
+            
+           <aura:if isTrue="{!and(v.step==4,v.captchaVerified)}">
+                <lightning:button aura:id="submitButton" label="Submit" variant="brand" class="slds-float_right slds-button" onclick="{!c.handleContinue}" />
+			</aura:if>
+            
+            <aura:if isTrue="{!and(v.step==4,!v.captchaVerified)}">
+                  <lightning:button label="Submit" disabled="true" class="slds-float_right slds-button" onclick="{!c.handleContinue}" />
+            </aura:if>
+            
+        </div>
+    </aura:if>
+    </div>
+   </div>
+    <br/><br/><br/><br/>
+</aura:component>

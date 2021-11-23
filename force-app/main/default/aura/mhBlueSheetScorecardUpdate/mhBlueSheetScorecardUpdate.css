@@ -1,0 +1,13 @@
+.THIS input[type=checkbox]:checked.green-checkbox{
+    border-color: rgb(0,178,0);
+    box-shadow: 0 0 3px #006A00;
+    background-color: rgb(0,178,0);
+}
+
+.THIS .customRadioCls .slds-form-element__control .slds-radio{
+    display : inline-block;
+}
+
+.THIS .customRadioCls .slds-form-element__control{
+    text-align: left;
+}

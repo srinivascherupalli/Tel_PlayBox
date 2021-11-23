@@ -1,0 +1,84 @@
+<!-- 
+****************************************************************************
+@Name       :   EditRelatedRecordFromApprovalRequestPage
+@Author     :   Sri,Amar (Team SFO)
+@CreateDate :   08/27/2020
+@Description:   Sprint 20.12 ; P2OB-9282, 
+                This componet is to edit the related record from an approval requeest page
+***************************************************************************** -->
+
+<aura:component implements="force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:appHostable,lightning:isUrlAddressable,force:lightningQuickAction,force:hasSObjectName" controller="ApprovalRequestPageController" access="global" >
+    <!--Below Attributes are to update Final Revenue Target on Approval Page -->
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="targetRecordId" type="Object" />
+    <aura:attribute name="objectApiName" type="String" />
+    <aura:attribute name="fields" type="String[]" />
+    <aura:attribute name="fieldsToDisplay" type="String" />
+    <aura:attribute name="Mode" type="String" />
+    <aura:attribute name="DisableComponent" type="boolean" />
+    <aura:attribute name="No_Of_Columns" type="string" />
+    <aura:attribute name="cardHeader" type="string"/>
+    <aura:attribute name="SuccessMessage" type="string"/>
+    
+    
+    <!-- Below Attributes are for Einstein Dashboard Component -->
+    
+    <aura:attribute name="dashboardId" type="String" default='0FK5P00000001M3WAI'/>
+    <aura:attribute name="filterString" type="String" default="{'datasets':{'CustomerHierarchy':[{'fields':['Id'],'filter':{'operator':'in','values':['#ACCOUNTID#']}}]}}" />
+    <aura:attribute name="parameters" type="String" default="ACCOUNTID"  />
+    
+    <aura:attribute name="height" type="Integer" default="250" />
+    <aura:attribute name="showHeader" type="Boolean" default="false" />
+    <aura:attribute name="showTitle" type="Boolean" default="false" />
+    <aura:attribute name="showSharing" type="Boolean" default="false" />
+    <aura:attribute name="openLocation" type="String" default="HIDE" />
+    <aura:attribute name="openLinksInNewWindow" type="Boolean" default="false" />
+    <aura:attribute name="type" type="String" default="Account" />
+    <aura:attribute name="accountId" type="String" />
+    <aura:attribute name="DisableEAComponent" type="boolean" />
+    <aura:attribute name="EAcardHeader" type="String" />
+    <aura:handler name="init" value="{!this }" action="{!c.init }"/>    
+    
+    <aura:if isTrue="{!and(not(empty(v.targetRecordId.Id)), not(v.DisableComponent))}">
+        <lightning:card >
+            <aura:set attribute="title">
+                <h2><b>{!v.cardHeader}</b></h2>
+            </aura:set>
+            <div class="slds-var-p-around_medium">
+                <lightning:recordForm
+                                      aura:id="myRecordForm"
+                                      recordId="{!v.targetRecordId.Id}"
+                                      objectApiName="{!v.objectApiName}"
+                                      fields="{!v.fields}"
+                                      onsuccess="{!c.handleSuccess}"
+                                      mode="{!v.Mode}"
+                                      columns="{!v.No_Of_Columns}"
+         
+                                      />
+            </div>
+            
+            <aura:if isTrue="{!and(not(empty(v.targetRecordId.AccountId)), not(v.DisableEAComponent))}"> 
+                <lightning:card>
+                    <aura:set attribute="title">
+                        <h2> <b>{!v.EAcardHeader}</b></h2>
+                    </aura:set>           
+                    <wave:waveDashboard
+                                        dashboardId="{!v.dashboardId}"
+                                        filter="{!v.filterString}"
+                                        height="{!v.height}"
+                                        showHeader="{!v.showHeader}"
+                                        showTitle="{!v.showTitle}"
+                                        showSharing="{!v.showSharing}"
+                                        openLocation="{!v.openLocation}"
+                                        openLinksInNewWindow="{!v.openLinksInNewWindow}"
+                                        />
+                    
+                    
+                </lightning:card>
+            </aura:if>
+        </lightning:card>
+    </aura:if>
+    
+    
+</aura:component>

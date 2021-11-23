@@ -1,0 +1,83 @@
+<!-- *******************************************************************
+EDGE        -150172
+component   -DeviceHistory
+Description -Enable search functionality to search original device id using replaced device id
+Author      -Dheeraj Bhatt
+************************************************************************* -->
+<template>
+    <div class="slds-box slds-theme_shade box ">
+        <template if:true={isLoaded}>
+            <div class="slds-align_absolute-center" >
+            <lightning-spinner variant="brand" alternative-text="Loading" ></lightning-spinner>
+        </div>
+        </template>
+        <template if:false={isPartnerUser}>
+  <lightning-input
+            class="validValue"
+            name="enter-search"
+            label="Search for Devices"
+            type="search"  
+            onchange={onDeviceValueChange}
+            value={deviceId}
+            placeholder=""
+            message-when-value-missing=""
+            required
+            >
+            </lightning-input> 
+        </template>
+            <template if:true={isPartnerUser}>
+                <h1 class="h1">Device History</h1>
+                <p>Search and view device replacement history</p> </br>
+                <label for="Search for Devices"><b>Search for Devices</b></label> </br></br>
+            <input  class="validValue inputBox" required placeholder="Please enter device id here..." value={deviceId} type="search"   size="175"   name="Search for Devices" oninput={onDeviceValueChange} /><br/>
+        </template> 
+             <br/> 
+        <div class="slds-clearfix">
+            <div class="slds-float_right">
+                <lightning-layout>
+                    <lightning-layout-item padding="around-small">
+                <button class="slds-button slds-button_neutral slds-button_outline-brand clearBtn" onclick={clear}>Clear </button>
+                    </lightning-layout-item>
+                <lightning-layout-item padding="around-small">
+                <button style="min-width:0px;" class="slds-button slds-button_brand searchBtn" onclick={search}>Search </button>
+                </lightning-layout-item>   
+            </lightning-layout>
+            </div>
+        </div> 
+        </div>
+    <br/>
+    
+    <template if:true={isDevicePresent}>
+            <div class="slds-grid slds-wrap" >
+                <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                    <template if:false={isReplacementInProgress}>
+                      <p> <b> Current Device: </b><a href={currentDeviceUrl} target="_blank">{currentDevice}</a></p>
+                      </template>
+                      <template if:true={isReplacementInProgress}>
+                        <p> <b> Current Device: </b>{currentDevice}</p>
+                      </template>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-right_small">
+                    <p><b>Original Device: </b><a href={orginalDeviceUrl} target="_blank">{originalDevice}</a></p>
+                    </div>
+                    </div> <br/>
+        </template>
+        <template if:true={deviceNotFound}>
+        <p>No device found with id <b>{deviceId} </b></p>
+    </template>
+        <template if:true={isReplacedDevicePresent}>
+            <c-dynamic-l-w-c-data-table 
+            records = {asset}
+            page-size ="10"
+            columns={columns}
+            hide-row-checkbox="true"
+            pagination-by-button={paginationByButton}
+            is-partner-user={isPartnerUser}
+            >
+            </c-dynamic-l-w-c-data-table>
+         
+        </template> 
+        <template if:true={noReplaceDeviceFound}>
+                <p><lightning-formatted-text value="This device has no replacements." ></lightning-formatted-text></p>
+        </template>
+</template>

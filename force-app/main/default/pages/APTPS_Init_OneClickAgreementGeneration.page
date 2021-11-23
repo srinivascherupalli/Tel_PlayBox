@@ -1,0 +1,171 @@
+<apex:page extensions="APTPS_OneClickAgrmntGenerationController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+  <apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+  <apex:includeScript value="{!$Resource.APTPS_Bootstrap_Min_JS}"></apex:includeScript> 
+  <apex:stylesheet value="{!$Resource.APTS_Progress_Bar_CSS}"></apex:stylesheet>
+  <apex:stylesheet value="{!$Resource.APTS_Pie_Progress_CSS}"></apex:stylesheet>
+  <script src="{!$Resource.APTS_Pie_Progress}"></script>    
+  <style type="text/css">
+    .rcorners {
+    border: 2px solid #319431;
+    }
+  </style>
+    <script>
+       
+       jQuery(document).ready(function($){
+        
+           $('.pie_progress').asPieProgress({
+            namespace: 'pie_progress'
+        });
+                
+        });
+        
+       var width = 0;
+       var timer;
+       var agreementIndex = 0;
+       var agreementSelectedSize;
+        var valueToBeIncreased;
+        var agreementArray;
+        
+        function Generate()
+        {
+            if(agreementIndex == agreementSelectedSize)
+            {
+                CallCancelAction();
+            }
+            else
+            {
+                $('#statusSpan').html((agreementIndex + 1)+ ' <I>Out of</I> ' + agreementSelectedSize + ' <I>Agreement in Progress</I>');
+            }
+            
+           var agreementId = agreementArray[agreementIndex];
+            
+            agreementId = agreementId.replace('[','');
+            agreementId = agreementId.replace(']','');
+            agreementId = agreementId.trim();
+            
+            
+            
+            CallAgreementGeneration(agreementId);
+            
+            agreementIndex = agreementIndex + 1;
+            width = width + valueToBeIncreased;
+            
+           
+                       
+        }
+        
+        function GenerateSelectedAgreements(agreementIds, selectedSize)
+        {
+           
+             
+            if(parseInt(selectedSize) > 0)
+            {
+                $('#myWrapper').show();
+                $('#progressBarOuter').show();
+               agreementArray = agreementIds.split(',');
+               
+               agreementSelectedSize = agreementArray.length;
+               
+                Generate();
+            }
+        }
+       
+       
+       
+       
+        function fnShowMessage(selectedSize)
+        {
+           if(parseInt(selectedSize) > 0)
+            {
+                alert('All child agreement generation is in progress…Please check back later…');
+                CallCancelAction();
+            }
+        }
+        
+        function checkAll(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+
+      
+     
+
+   </script>
+   <apex:sectionHeader subtitle="{!agreementName}" ></apex:sectionHeader>
+   <h5> <b>Select Agreements to Generate Documents and Click Generate</b></h5>
+   <br/>
+    <apex:form >
+        <apex:pageBlock >
+           <apex:actionFunction name="CallCancelAction" action="{!cancelAndUpdate}"></apex:actionFunction>
+            <apex:actionFunction name="CallAgreementGeneration" action="{!generateAgreementAsync}" rerender="table" oncomplete="Generate()"> 
+            <apex:param id="agreementIdVal" name="agreementId" value=""></apex:param>
+           </apex:actionFunction> 
+             <div style="font-size:18px"> 
+			<apex:pageMessages id="theMessages">
+                 </apex:pageMessages>
+            </div>
+            
+            <!-- In our table we are displaying the Agreement records    -->
+            <apex:pageBlockTable style="font-size:16px;"  value="{!agreements}" var="a" id="table"> 
+                <apex:column >
+                    <apex:facet name="header"> <apex:inputCheckbox onclick="checkAll(this)" />
+                      
+                    </apex:facet>
+
+                    <!-- This is our selected Boolean property in our wrapper class -->
+                    <apex:inputCheckbox value="{!a.selected}" id="checkedone"/>
+                </apex:column>
+                <apex:column value="{!a.agreement.Apttus__FF_Agreement_Number__c}" />
+                <apex:column value="{!a.agreement.Name}" />
+                <apex:column value="{!a.relationship}" headerValue="Relationship" />
+                <apex:column value="{!a.agreement.Apttus__Status_Category__c}" />
+                <apex:column value="{!a.agreement.Apttus__Status__c}" />
+                <apex:column value="{!a.agreement.Apttus__Agreement_Category__c}" />
+                <apex:column value="{!a.agreement.APTPS_Agreement_Subcategory__c}" />
+               
+            </apex:pageBlockTable>
+            
+            <div id="outer" style="margin-top:20px;margin-bottom:20px;">
+                <div id="inner" style="margin-left:40%">
+            <apex:commandButton style="font-size:16px;" value="Generate" action="{!createListForGenerateAgreements}"  rerender="theMessages" status="status"
+                    oncomplete="GenerateSelectedAgreements('{!selectedAgreementListIds}', '{!selectedAgreementListSize}')"></apex:commandButton> 
+            
+                           <!-- oncomplete="fnGenerateAgreementAsync('{!selectedAgreementListSize}','{!selectedAgreementIds}')"-->
+            <apex:commandButton value="Cancel" action="{!cancel}" rerender="theMessages" style="font-size:16px;margin-left:2%"></apex:commandButton> 
+            </div>
+            </div>
+        </apex:pageBlock>
+        
+        
+        <div id="myWrapper" style="display:none;  position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            </div>
+            <div id= "progressBarOuter" style="display:none; position: fixed; left: 0; top: 10; bottom: 0; right: 0; z-index: 1001; margin: 20% 42%;width: 17%;background-color: white;
+            text-align:center; height: 140px; " class="rcorners"> 
+                
+                <apex:image id="theImage" style="margin-top:20px;margin-bottom:11px;" value="{!$Resource.APTS_WaitImage}" width="77" height="77"/>
+                    <div>
+                        <span id="statusSpan" style="margin-top:10px;font-weight:bold; font-size:13px;"></span>
+                    </div>
+                <!--<div 0 <I>Out of</I> 4 <I>Agreements Generated class="pie_progress" role="progressbar" data-goal="100" aria-valuemin="0" aria-valuemax="100" data-barcolor="#3daf2c" data-barsize="10">
+                     
+                    <span class="pie_progress__number" style="position:absolute; font-family: Helvetica Neue, Helvetica, Arial, sans-serif !important;" >0%</span>
+                   
+                    
+                </div>
+                
+             <div class="progress" style="width:40%; display: inline-block; padding: 2px;   width: 50%; margin: 15% 25%; opacity: 1;" >
+                <div id="theprogressbar" class="progress-bar progress-bar-striped active progress-bar-success" role="progressbar"  
+                aria-valuemin="0" aria-valuemax="100" style=" display: inline-block; padding: 2px; opacity: 1;">
+                  <span id = "theprogressbarSpan" style="color:black; font-weight:Bold;margin-top:0%;"></span>
+                </div>
+            </div>-->
+            
+            </div>
+           
+    </apex:form>
+</apex:page>

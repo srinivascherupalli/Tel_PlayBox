@@ -1,0 +1,28 @@
+.custom-background-notfound {
+    background-color:   #C73032;
+}
+
+.custom-background-found {
+    background-color: #FF8E13;
+}
+
+.custom-background-created{
+    background-color: #00C94D;
+}
+
+.spins::after {
+    position: absolute;
+    content: 'Validating the address in your file...This will take up to two minutes';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}
+
+.slds-spinner_container {
+    position: fixed;
+}
+
+.custom_width{
+    width: 100%;
+}

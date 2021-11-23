@@ -1,0 +1,34 @@
+<!--********************************************************************
+    EDGE        : 115087
+    Component   : OneFundAccrualTransactions
+    Description : Need to show OneFund Expiry details on OneFund Balance pop-up
+    Author      : Hari
+    *********************************************************************--> 
+
+<!--******************** EDGE:115087 | START |***********************-->
+
+<aura:component implements="lightning:availableForFlowScreens" access="global">
+    <aura:attribute name="ExpiredOFTransactions" type="OneFund_Transactions__c[]"/>
+           <!--Show OneFund transactions expiring in Next 30 Days-->
+                <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+            <tr>
+                <th scope="col"><span class="slds-truncate">Fund Transactions Name</span></th>
+                <th scope="col"><span class="slds-truncate">Current Amount</span></th>
+                <th scope="col"><span class="slds-truncate">Transaction Status</span></th>
+                <th scope="col"><span class="slds-truncate">Expiry Date</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.ExpiredOFTransactions}" var="EOFT">
+                <tr>
+                    <td>{!EOFT.Name}</td>
+                    <td> <ui:outputCurrency value="{!EOFT.Current_Amount__c}"/></td>
+                    <td>{!EOFT.Transaction_Status__c}</td>                    
+                    <td>{!EOFT.Expiry_Date__c}</td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+</aura:component>
+<!--******************** EDGE:115087 | END |***********************-->

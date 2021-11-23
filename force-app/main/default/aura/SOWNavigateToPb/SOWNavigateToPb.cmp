@@ -1,0 +1,18 @@
+<aura:component implements="force:hasRecordId,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="sowRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    <div>
+        <a class="back-button-label" onclick="{! c.recordUpdate }" href="">Back</a>
+		<!--<lightning:button label="Back"
+                          title=""
+                          onclick="{! c.recordUpdate }"
+                          class="slds-m-left_x-small"/>-->
+    </div>
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="Name,Basket__c"
+                      targetFields="{!v.sowRecord}"
+                      targetError="{!v.recordLoadError}"                      
+                      /> 
+	<aura:handler  name="init" value="{!this}" action="{!c.doInit}"/>
+</aura:component>

@@ -1,0 +1,64 @@
+<!--
+* @Author : Gnana/Rohit
+* @Date : 26 Nov 2019
+* @Desc : Discount DTO
+* @Jira : Edge-120132
+* 1. shubhi Edge-133882
+* 2. Aman Soni EDGE-123593
+-->
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:slds />
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+    <apex:includeLightning />
+        <script>
+            var configId="{!JSENCODE($CurrentPage.parameters.configId)}";
+            var BussinessId_Addon="{!JSENCODE($CurrentPage.parameters.BussinessId_Addon)}";
+            var BussinessId_PI="{!JSENCODE($CurrentPage.parameters.BussinessId_PI)}";
+            var solutionName="{!JSENCODE($CurrentPage.parameters.solutionName)}";
+            var planName="{!JSENCODE($CurrentPage.parameters.planName)}"; //added for EDGE-136003
+            var addOnPlanName="{!JSENCODE($CurrentPage.parameters.addOnName)}"; //Modified by Aman Soni as a part of EDGE-123593
+            var oldPlanName="{!JSENCODE($CurrentPage.parameters.oldPlanName)}"; //Modified by Aman Soni as a part of EDGE-123593
+            var oldIddName="{!JSENCODE($CurrentPage.parameters.oldIddName)}"; //Modified by Aman Soni as a part of EDGE-123593
+            var initialDate="{!JSENCODE($CurrentPage.parameters.initialDate)}"; //Modified by Aman Soni as a part of EDGE-123593
+            var contractType="{!JSENCODE($CurrentPage.parameters.contractType)}";
+            var changeType="{!JSENCODE($CurrentPage.parameters.EmChangeTypeValue)}";//Added by Aman Soni as a part of EDGE-123593
+            var planId='';
+            console.log("configId---->"+configId+' --pi busid-->'+BussinessId_PI+'-----changeType'+changeType);
+            if (solutionName == 'Unified Communication Device') { //Edge-133882 updated by shubhi
+                $Lightning.use("c:LightningAppDependencyHandler", function() {
+                    $Lightning.createComponent(
+                        "c:custpmPriceScheduleNGUC", 
+                        {   "configId":configId,
+                         "contractType":contractType
+                        },
+                        "lightning",
+                        function(cmp){
+                            console.log("Component created!");
+                        });
+                });
+            }
+            else{
+                $Lightning.use("c:LightningAppDependencyHandler", function() {
+                    $Lightning.createComponent(
+                        "c:customPriceSchedule",
+                        {   "configId":configId,
+                         "solutionName":solutionName,
+                         "planName":planName, //added for EDGE-136003
+                         "addOnPlanName":addOnPlanName, //added for EDGE-136003
+                         "changeType":changeType, //Added by Aman Soni as a part of EDGE-123593
+                         "oldPlanName":oldPlanName, //Added by Aman Soni as a part of EDGE-123593
+                         "oldIddName":oldIddName, //Added by Aman Soni as a part of EDGE-123593
+                         "initialDate":initialDate //Added by Aman Soni as a part of EDGE-123593
+                         //"BussinessId_Addon":BussinessId_Addon,
+                         //"BussinessId_PI":BussinessId_PI
+                        },
+                        "lightning",
+                        function(cmp){
+                            console.log("Component created!");
+                        });
+                });
+            }
+
+        </script>
+    <div id="lightning" ></div>
+</apex:page>

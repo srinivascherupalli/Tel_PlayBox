@@ -1,0 +1,45 @@
+<template>
+    <template if:true={isLoaded}>
+        <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+    </template>
+    <c-lwc-custom-toast title={toasttitle} 
+    message={toastmsg}
+    variant={toastvariant} 
+    auto-close="true" >
+    </c-lwc-custom-toast>
+    <div  class="scrollDiv" style=" border: 1px solid rgb(217, 219, 221);background-color: white;padding:20px;">
+    &nbsp;Results<br/>
+    <div class="slds-grid slds-wrap">
+        <div  class="slds-col slds-size--1-of-2">
+            <div class="slds-grid slds-wrap">
+                <div  class="slds-col slds-size--1-of-2">
+                <c-lwc-lookup  lookup-label={partnerLabel} object-api-name="account" icon-name="standard:account"  selected-record-id={accountRecordId} selected-value={accountName}
+                onrecordselection={onAccountSelection} name="lookupAcc" records-list = {resList} filter-string={partnerfilterStr}></c-lwc-lookup>
+                </div>
+                <div  class="slds-col" style="padding-top:25px;">
+                <lightning-button label="Update Partner Code" 
+                title="UpdatePartner" 
+                variant ="Neutral"
+                onclick={handleUpdatePartner} 
+                disabled={disableUpdateBtn}
+                name="updateNotification"
+                class="slds-m-left_x-small disableBtn"></lightning-button>
+                </div>
+            </div> 
+        </div>
+        <div  class="slds-col slds-size--2-of-2" >
+        </div>
+    </div>
+    </br>
+    <div class="slds-border_top relatedListLWCStyle">
+        <lightning-datatable  data={data} columns={columns} key-field="Id" default-sort-direction={defaultSortDirection}
+        sorted-direction={sortDirection} sorted-by={sortedBy} onsort={onHandleSort} onrowselection={getSelectedSubscription}></lightning-datatable>
+    </div>
+    <template if:true={emptytable}>
+        <div class="emptyContentInner" tabindex="-1" data-aura-rendered-by="238:202;a">
+            <p data-aura-rendered-by="190:908;a">No items to display.</p>
+        </div>
+      </template>
+    </div>
+    </br> </br> </br> </br>
+</template>

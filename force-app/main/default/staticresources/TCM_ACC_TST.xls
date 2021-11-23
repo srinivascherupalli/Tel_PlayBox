@@ -1,0 +1,5 @@
+Name,Pref_Comm_Method__c,Phone,Migrated_Customer__c,Type,Customer_Status__c,ABN__c,Business_Unit__c,BillingCity,BillingPostalCode,Market_Segment__c,Managed__c,id
+ACR test,Phone,400111222,TRUE,Sole Trader,ACTIVE,1000000013,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,1
+ACR test 2,Phone,400111222,TRUE,Sole Trader,ACTIVE,1000000014,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,2
+ACR test 3,Phone,400111222,TRUE,Residential,ACTIVE,1000000015,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,3
+ACR test 4,Phone,400111222,TRUE,Residential,ACTIVE,1000000016,Business,AUSTRALIAN NATIONAL UNIVERSITY,200,DHL Express,TRUE,4

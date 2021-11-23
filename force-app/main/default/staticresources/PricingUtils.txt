@@ -1,0 +1,1485 @@
+/******************************************************************************************
+Version No	Author 			                Date					Edge
+1 			Shubhi 							9-Jan-2019
+2			Aditya							9-Jan-2019
+3			Aman							9-Jan-2019
+4			Laxmi							17-Feb-2020    CHanged 		SHowinUI as true for  name: "viewDiscounts",
+															as promotions and discount needs to be shown always
+5           Ankit Goswami		19-Feb-2020		EDGE-123594 Added setMainSolutionCorrelationID method
+6. 			Laxmi 				9-mar-2020		EDGE-138001 - Changed Message when teh config is invalid
+7			Laxmi 				23-Mar-2020		EDGE-131531	  Added code to handle Cancel and Active status
+8.          Shubhi 				23.mrch.2020		Edge-121376	
+9           Ankit Goswami		30-apr-2020		 EDGE-140967 Added Related List Loop on postMessageToPricing method	
+10.			Romil Anand			30-apr-2020		 EDGE-144161 Enabling Redemption as Discount for NGUC
+11.			Gnana				30-apr-2020		EDGE-140968 Enabling Redemption as Discount for Device Payout 
+12. 		Aman Soni			5-May-2020		EGDE-143527 Added Modify and New check by Aman Soni To hide promotion link in case of 
+10.			Romil Anand			6-May-2020		 EDGE-144161 Enabling Redemption as Discount for NGUC 
+13.			Kiran				23-Apr-2020		DPG-1512 - CWP Adoption of Common Comp.
+14. 		Aman Soni			13-May-2020 	Modified by Aman Soni as a part of EDGE-145148
+15.         Shubhi V 			02-June-2020	EDGE-151069 taxtreatment in cli
+16. 		Shubhi V 			28-June-2020    Edge-149830 device care pricing
+17.         Arinjay Singh   	02-July-2020    EDGE-155244 : JSPlugin Upgrade  and Merge with 20.08
+18.         Shubhi Vijayvergia	21.08.2020		//added by shubhi for EDGE-169593 -redemptions fix for em,nguc and dop
+19.          Shubhi /samish             28-july-2020    20.12          //EDGE-165013
+*******************/
+console.log('Load pricingUtils');
+var ENTERPRISE_COMPONENTS = {
+	enterpriseMobility: 'Corporate Mobile Plus', //EDGE-81062 
+	mobileSubscription: 'Mobile Subscription',
+	device: 'Device',
+};
+var solutionList =['Corporate Mobile Plus','Telstra Collaboration','Connected Workplace']; 
+var ENTERPRISE_Mobility ={
+	mainSolution: 'Corporate Mobile Plus', //EDGE-81062 
+	componentName: 'Mobile Subscription',
+	correlationId_attribute : 'correlationId',
+	DiscountStatus_attribute: 'DiscountStatus',
+	attribbuteListforCLi :['Select Plan','SelectPlanName','isRecontractingDiscountEligible','TotalPlanBonus','IDD ChargeLookup','RemainingTerm','BussinessId_PI','IsDiscountCheckNeeded','PlanShadowTCV','IDDShadowTCV','IDD Charge','RC','ChangeType','SelectPlanType','PlanTypeString','BillingAccountNumber','OldPlanTypeString','OldIDD','OldDataPackPlan','DP Plan','BussinessId_Addon','initialActivationDate','InternationalDirectDial','ContractTerm','isPaymentTypeOneFund','deviceTypeBusinessID','IsRedeemFundCheckNeeded'],
+	attribbuteListforDeviceCLi :['GUID','MobileDeviceETC','EarlyTerminationCharge','RedeemFund','taxTreatmentETC'] // Added as part of EDGE-140967 //EDGE-151069
+};
+var NEXTGENUC_DEVICE ={
+	mainSolution: 'Telstra Collaboration',
+	componentName: 'Devices', //Edge-121376
+	correlationId_attribute : 'correlationId',
+	DiscountStatus_attribute : 'DiscountStatus',
+	attribbuteListforCLi:['ContractType','OC','BussinessId_Device','PriceItemId','RC','Quantity','IsDiscountCheckNeeded','IsRedeemFundCheckNeeded','RedeemFund','isEAPActive','forceScheduleButton','ContractTerm','taxTreatmentETC','ETCPriceItemID','taxTreatment','EarlyTerminationCharge']////EDGE-151069
+};
+var NEXTGENUC_VOICE ={
+	mainSolution:'Telstra Collaboration',
+	componentName: 'Business Calling',
+	correlationId_attribute : 'correlationId_voice',
+	DiscountStatus_attribute : 'DiscountStatus_voice',
+	attribbuteListforCLi :['ContractTerm','IsDiscountCheckNeeded','callingPlans','Mode','ModeString','isEAPActive','forceScheduleButton']	
+};
+//Added by romil for EDGE-144161
+var NEXTGENUC_Accessory ={
+	mainSolution:'Telstra Collaboration',
+	componentName: 'Accessories',
+	correlationId_attribute : 'correlationId_Accessory',
+	DiscountStatus_attribute : 'DiscountStatus_Accessory',// needs to be crated on main solution
+	attribbuteListforCLi :['ContractType','ContractTerm','OC','BussinessId_Accessory','PriceItemId','RC','Quantity','IsDiscountCheckNeeded','IsRedeemFundCheckNeeded','RedeemFund','taxTreatmentETC','ETCPriceItemID','taxTreatment','EarlyTerminationCharge']////EDGE-151069
+};
+var CWP_Mobility ={ // DPG-1512
+	mainSolution: 'Connected Workplace', 
+	componentName: 'CWP Mobile Subscription',
+	correlationId_attribute : 'correlationId',
+	DiscountStatus_attribute: 'DiscountStatus',
+   	attribbuteListforCLi :['Select Plan','SelectPlanName','isRecontractingDiscountEligible','TotalPlanBonus','IDD ChargeLookup','RemainingTerm','BussinessId_PI','IsDiscountCheckNeeded','PlanShadowTCV','IDDShadowTCV','IDD Charge','RC','ChangeType','SelectPlanType','PlanTypeString','BillingAccountNumber','OldPlanTypeString','OldIDD','OldDataPackPlan','DP Plan','BussinessId_Addon','initialActivationDate','InternationalDirectDial','ContractTerm','isPaymentTypeOneFund','deviceTypeBusinessID']
+};
+// Added DOP_MOBILEDEVICE as part of EDGE_140968
+var DOP_MOBILEDEVICE ={
+	mainSolution:'Device Outright Purchase',
+	componentName: 'Mobile Device',
+	correlationId_attribute : 'correlationId',
+	DiscountStatus_attribute : 'DiscountStatus',// needs to be crated on main solution
+	attribbuteListforCLi :['MobileHandsetColour','OneOffCharge','TotalOneOffCharge','Quantity','BussinessId','IsRedeemFundCheckNeeded','RedeemFund','taxTreatment']	 //EDGE-151069
+};
+//////////////// shubhi EDGE-148662 start
+var NextGen_Device ={
+	mainSolution:'Adaptive Mobility',////EDGE-165013
+	componentName: 'Device',
+	correlationId_attribute : 'correlationId',
+	DiscountStatus_attribute : 'DiscountStatus',// needs to be crated on main solution
+	attribbuteListforCLi :['OC','TotalOneOffCharge','Quantity','BusinessId','IsRedeemFundCheckNeeded','RedeemFund','taxTreatment','PriceItemId','taxTreatmentETC','ETCPriceItemID','EarlyTerminationCharge'],
+	attribbuteListforDeviceCLi :['GUID','OC','TotalOneOffCharge','Quantity','BusinessId','IsRedeemFundCheckNeeded','RedeemFund','taxTreatment','PriceItemId','taxTreatmentETC','ETCPriceItemID','EarlyTerminationCharge'] // Added as part of Edge-149830 
+
+};
+var RedemptionApplicableCompList=['Mobile Device','Accessories','Devices'];
+
+var pricing_isChildApplicable = new Map([
+    ['Mobile Subscription',true],
+	['Devices',false],
+	['Accessories',false],
+    ['Device Outright Purchase', false],
+    ['Device', true],
+	['CWP Mobile Subscription', false]
+]);//Edge-149830 
+var redemption_changeTypeChild = new Map([
+			['Mobile Subscription','ChangeTypeDevice'],
+			['Device', 'ChangeType_Child']
+]);//Edge-149830
+//////////////// shubhi EDGE-148662 end
+//CWPM
+let callerName='';
+var pricingUtils = {
+	//ADDED BY SHUBHI FOR HANDLE I-FRAME METHODS to getGuid list to be updated for TCV calculation
+	getGuidListforRemoteAction : async function(mainSolutionName,pisolutionName){
+		let guidList = [];
+		//await CS.SM.getActiveSolution().then((product) => {
+		//Spring 20
+		let product = await CS.SM.getActiveSolution();
+		if (product && product.name === mainSolutionName) {
+			if (product.components && Object.values(product.components).length > 0) {
+				Object.values(product.components).forEach((comp) => {
+					if(comp.name === pisolutionName) {
+						if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {
+							Object.values(comp.schema.configurations).forEach((config) => {
+								var guid = config.guid;
+								guidList.push(config.guid);
+							});
+						}
+					}
+				});
+			}
+		}
+		//});
+		return Promise.resolve(guidList);
+	},
+	//ADDED BY SHUBHI FOR HANDLE I-FRAME METHODS
+	handleIframeDiscountGeneric : async function(command,data,caller,IsDiscountCheckAttr,IsRedeemFundCheckAttr,ApplicableGuid){
+		//added by Shubhi
+		let mainSolution='';
+		let componentName='';
+		callerName=caller;
+		if(caller==='Enterprise Mobility'){
+			mainSolution=ENTERPRISE_Mobility.mainSolution;
+			componentName=ENTERPRISE_Mobility.componentName;
+		}else if(caller === 'Devices'){
+			mainSolution=NEXTGENUC_DEVICE.mainSolution;
+			componentName=NEXTGENUC_DEVICE.componentName;
+		}else if(caller === 'Accessories'){//added by Romil for 144161
+			mainSolution=NEXTGENUC_Accessory.mainSolution;
+			componentName=NEXTGENUC_Accessory.componentName;
+		}else if(caller === 'Business Calling'){
+			mainSolution=NEXTGENUC_VOICE.mainSolution;
+			componentName=NEXTGENUC_VOICE.componentName;
+		}else if(caller === 'CWP'){
+            console.log('Caller Identified as CWP');
+			mainSolution=CWP_Mobility.mainSolution;
+			componentName=CWP_Mobility.componentName;
+		}
+        else if(caller === 'Mobile Device'){
+			mainSolution=DOP_MOBILEDEVICE.mainSolution;
+			componentName=DOP_MOBILEDEVICE.componentName;
+		}
+		else if(caller === 'Device'){//////////////// shubhi EDGE-148662
+			mainSolution=NextGen_Device.mainSolution;
+			componentName=NextGen_Device.componentName;
+		}
+		if (command && command === 'correlationId') {
+			pricingUtils.setCorrelationId(data,mainSolution);
+		}
+		//added by Aditya
+		if (command && command === 'timeout') {
+			pricingUtils.customLockSolutionConsole('unlock');
+			if(data)
+				pricingUtils.setCorrelationId(data,mainSolution);
+			if(componentName===NEXTGENUC_VOICE.componentName){
+				pricingUtils.setDiscountStatusBasedonComponent('None', mainSolution,'DiscountStatus_voice');
+			}else if(componentName===NEXTGENUC_Accessory.componentName){//added by Romil for 144161
+				pricingUtils.setDiscountStatusBasedonComponent('None', mainSolution,'DiscountStatus_Accessory');//added by Romil 144161
+			}else{
+				pricingUtils.setDiscountStatusBasedonComponent('None', mainSolution,'DiscountStatus');
+			}
+		}
+		//added by shubhi
+		if(command && command === 'ResponseReceived'){
+			if(data){
+				let guidList=[];
+				//await CS.SM.getActiveSolution().then((product) => {
+				let product = await CS.SM.getActiveSolution(); // Spring 20
+				let currentBasket =  await CS.SM.getActiveBasket();  // Spring 20
+				if (product && product.name === mainSolution) {
+					if (product.components && Object.values(product.components).length > 0) {
+						Object.values(product.components).forEach((comp) => {
+							console.log('@@comp.name@@'+comp.name);
+							if(comp.name === componentName) {
+								if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {
+									Object.values(comp.schema.configurations).forEach((config) => {
+										var guid = config.guid;
+										guidList.push(config.guid);
+									});
+								}
+							}
+						});
+					}
+				}
+				//});
+                let inputMap = {};
+                inputMap['configIdList'] = guidList.toString();
+                inputMap['CorrelationId'] = data;
+                console.log(inputMap);
+				// added by Aman/Ankit
+				if(IsDiscountCheckAttr === 'true'){
+                await currentBasket.performRemoteAction('SolutionActionHelper', inputMap).then(async response => {
+                        var resultTCV = JSON.stringify(response["TCVMap"]);
+                        console.log(resultTCV);
+                        if (resultTCV) {
+                            var res = JSON.stringify(response);
+                            console.log(res);
+                            var res1 = JSON.parse(res);
+                            console.log(res1);
+                            console.log(res1.TCVMap);
+                            var res2 = JSON.stringify(res1.TCVMap);
+                            console.log(res2);
+                            var res3 = JSON.parse(res2);
+                            console.log(res3);
+                            let updateConfigMap1 = {};
+							let updateConfigMap2 = {};
+                            var configTobeUpdated = false;
+							var mainKey='';
+                            Object.keys(res3).forEach(valueKey => {
+                                console.log('valueKey:::', valueKey);
+                                mainKey = valueKey.replace(/['"]+/g, '');
+                                console.log('valueKey:::', res3[valueKey]);
+                                console.log('valueKey:::', JSON.stringify(res3[valueKey]));
+                                var attrNameMap = JSON.stringify(res3[valueKey])
+                                var attrName = JSON.parse(attrNameMap);
+                                updateConfigMap1[mainKey.toString()] = [];
+								updateConfigMap2[mainKey.toString()] = [];
+                                Object.keys(attrName).forEach(keyValue => {
+                                    console.log('valueKey1:::', keyValue);
+                                    console.log('valueKey2:::', attrName[keyValue]);
+                                    if (keyValue.toString() != null && keyValue.toString() != '' && keyValue.toString() != undefined) {
+                                        updateConfigMap1[mainKey.toString()].push({
+                                            name: keyValue.toString(),
+                                            // value: {
+                                                value: attrName[keyValue],
+                                                displayValue: attrName[keyValue],
+                                                //showInUi: true,
+                                                readOnly: true
+                                            // }
+                                        });                                        
+                                        configTobeUpdated = true;
+										updateConfigMap1[mainKey.toString()].push({
+											name: "IsDiscountCheckNeeded",
+											// value: {
+												value: false  	
+											// }
+										});
+										updateConfigMap2[mainKey.toString()].push({
+											name: "Price Schedule",
+											// value: {
+												showInUi: true
+											// }
+										});
+                                    }
+                                });
+                            });
+                            if (configTobeUpdated === true) {
+								//CS.SM.updateConfigurationAttribute(componentName, updateConfigMap1, false);
+								// Spring 20
+								let component = await product.getComponentByName(componentName); 
+								//const config1 = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap1, false); 
+								let keys = Object.keys(updateConfigMap1);
+								for (let i = 0; i < keys.length; i++) {
+									await component.updateConfigurationAttribute(keys[i], updateConfigMap1[keys[i]], false); 
+								}
+
+								//CS.SM.updateConfigurationAttribute(componentName, updateConfigMap2, false);
+								//const config2 = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap2, false); 
+								let keys1 = Object.keys(updateConfigMap2);
+								for (let i = 0; i < keys1.length; i++) {
+									await component.updateConfigurationAttribute(keys1[i], updateConfigMap2[keys1[i]], false); 
+								}
+                                if(componentName===NEXTGENUC_VOICE.componentName){
+									pricingUtils.setDiscountStatusBasedonComponent('Acknowledge', mainSolution,'DiscountStatus_voice');
+								}else if(componentName===NEXTGENUC_Accessory.componentName){//added by Romil 144161
+									pricingUtils.setDiscountStatusBasedonComponent('Acknowledge', mainSolution,'DiscountStatus_Accessory');
+								}else{
+									pricingUtils.setDiscountStatusBasedonComponent('Acknowledge', mainSolution,'DiscountStatus');
+								}
+								if(componentName==='Mobile Subscription' || componentName==='CWP Mobile Subscription'){
+									//added by ankit EDGE-132203 || start
+									 var IsUpadate=CheckErrorsOnSolution(); 
+									console.log('updateConfigMap1:::',updateConfigMap1);
+									if(!IsUpadate){	
+										//added by ankit EDGE-132203 || end
+										//CS.SM.updateConfigurationStatus(componentName,mainKey.toString(),true);
+										//Spring 20
+										let cnfg = await component.getConfiguration(mainKey.toString()); 
+										cnfg.status = true;
+									}else{
+										pricingUtils.resetDiscountAttributes(ENTERPRISE_COMPONENTS.mobileSubscription);
+									}
+								}
+								Utils.updateCustomAttributeLinkText('Promotions and Discounts','View All');// Added as part of Edge-123593 by ankit
+								Utils.updateCustomAttributeLinkText('Price Schedule','View All');// Added as part of Edge-123593 by ankit
+								Utils.updateCustomAttributeLinkText('Rate Card','View All'); //added by shubhi
+                            }
+                        } else {
+                            console.log('no response');
+							//if(componentName!='CWP Mobile Subscription')
+							console.log('Price schedule could not be generated');
+                            CS.SM.displayMessage('Price schedule could not be generated; Please try generating price schedule after sometime. If it continues to error out, please raise case.', 'error');
+							/*DPG-1512 - Reset IsDiscountCheckNeeded as no response */
+                            let updateConfigMap1 = {};
+                         	updateConfigMap1[guidList[0]] = [];
+                            updateConfigMap1[guidList[0]].push({
+                            name: "IsDiscountCheckNeeded",
+                            // value: {
+                                value: false  	
+							// }
+                        	});
+							//CS.SM.updateConfigurationAttribute(componentName, updateConfigMap1, false);
+							//Spring 20
+							let component = await product.getComponentByName(componentName); 
+							//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap1, false); 
+							let keys = Object.keys(updateConfigMap1);
+							for (let i = 0; i < keys.length; i++) {
+								await component.updateConfigurationAttribute(keys[i], updateConfigMap1[keys[i]], false); 
+							}
+
+                        }
+                    });	
+				}if(IsRedeemFundCheckAttr === 'true'){
+					pricingUtils.validateApplicableConfigsJS(ApplicableGuid,componentName); 
+                    //Added by romil for EDGE-144161 and EDGE-140968
+				}	
+				setTimeout(function(){ pricingUtils.closeModalPopup(); }, 1000);//Edge-143527
+				pricingUtils.customLockSolutionConsole('unlock'); 
+                return Promise.resolve(true);
+			}
+		}else if (command && command === 'unlockBasket') { // added by shubhi
+			if(data)
+				pricingUtils.validateNotApplicableConfigsJS(data,componentName);
+			if(componentName===NEXTGENUC_VOICE.componentName){
+				pricingUtils.setDiscountStatusBasedonComponent('Acknowledge', mainSolution,'DiscountStatus_voice');
+			}else if(componentName===NEXTGENUC_Accessory.componentName){//added by Romil 144161
+				pricingUtils.setDiscountStatusBasedonComponent('Acknowledge', mainSolution,'DiscountStatus_Accessory');		
+			}else{
+				pricingUtils.setDiscountStatusBasedonComponent('Acknowledge', mainSolution,'DiscountStatus');
+			}   
+            pricingUtils.customLockSolutionConsole('unlock');
+            setTimeout(function(){ pricingUtils.closeModalPopup(); }, 1000);
+            return Promise.resolve(true);            
+        }else if (command && command === 'validNotApplicableConfigs'){ // added by shubhi
+			if(data)
+				pricingUtils.validateNotApplicableConfigsJS(data,componentName);
+            return Promise.resolve(true);
+        }else if (command && command === 'Already triggered') { // added by shubhi 
+            pricingUtils.customLockSolutionConsole('unlock'); 
+            setTimeout(function(){ pricingUtils.closeModalPopup(); }, 1000);
+            return Promise.resolve(true);            
+        }else if (command && command === 'ErrorInResponse') { // added by shubhi
+			pricingUtils.customLockSolutionConsole('unlock');
+			if(componentName===NEXTGENUC_VOICE.componentName){
+				pricingUtils.setDiscountStatusBasedonComponent('None', mainSolution,'DiscountStatus_voice');
+			}else if(componentName===NEXTGENUC_Accessory.componentName){//added by Romil for EDGE-144161
+				pricingUtils.setDiscountStatusBasedonComponent('None', mainSolution,'DiscountStatus_Accessory');
+			}else{
+				pricingUtils.setDiscountStatusBasedonComponent('None', mainSolution,'DiscountStatus');
+			}  
+			//console.log('Price schedule could not be generated');
+			CS.SM.displayMessage('Price schedule could not be generated; Please try generating price schedule after sometime. If it continues to error out, please raise case.', 'error'); // added by shubhi for error //Edge-121376
+           	setTimeout(function(){ pricingUtils.closeModalPopup(); }, 1000);
+            return Promise.resolve(true);
+		}
+		
+		return Promise.resolve(true);
+	},
+	//added by Aditya for edge-123575 // ***use only for EM not for other product for other product use -
+	setDiscountAttribute : async function () {
+		console.log('Inside setDiscountAttribute');
+		let product = await CS.SM.getActiveSolution(); // Spring 20
+		//CS.SM.getActiveSolution().then((product) => {
+		if (product && product.components && (solutionList.includes(product.name))) {
+			let component = await product.getComponentByName(product.name); 
+			let updateMap = {};
+			let updateCurr = false;
+			if (product.schema && product.schema.configurations && Object.values(product.schema.configurations).length > 0) {  
+				Object.values(product.schema.configurations).forEach(async (config) => {
+					if (config.attributes && Object.values(config.attributes).length > 0) {
+						Object.values(config.attributes).forEach((att) => {
+							if (att.name === 'DiscountStatus') {
+								updateMap[config.guid] = [{
+									name: "DiscountStatus",
+									// value: {
+										value: "Locked",
+									// }
+								}];
+								updateCurr = true;
+							}
+						});
+						if (updateCurr) {
+							//CS.SM.updateConfigurationAttribute(product.name, updateMap, false); 
+							// Spring 20
+							//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateMap, false); 
+							let keys = Object.keys(updateMap);
+							for (let i = 0; i < keys.length; i++) {
+								await component.updateConfigurationAttribute(keys[i], updateMap[keys[i]], false); 
+							}
+							updateCurr = false;
+						}
+					}
+				});
+			}
+		}
+		//});
+		return Promise.resolve(true);
+	},
+	// added by shubhi edge-123575
+    //method to lock or unlock the solution console via custom stylesheets
+    customLockSolutionConsole : function (actionStr){
+		var rootElement;
+		url = window.location.href;
+        if(url.includes('lightning')){
+            rootElement = document.getElementsByTagName("app-root")[0];
+        }else{
+            rootElement = document.getElementById("contentWrapper");
+			if(!rootElement || rootElement===null)
+				rootElement = document.getElementsByTagName("app-root")[0];
+        }
+		//get all buttons that this logic should support, asumption is that those buttons are never rendered together on the UI
+		var buttonElements = document.querySelectorAll('*[id^="getPriceScheduleAPI"]');
+		console.log('@@@@@@@@@@buttonElements');
+        switch (actionStr){
+            case 'lock':
+				rootElement.classList.add("spinner-overlay");
+        		rootElement.classList.add("custom-overlay-solution");
+                buttonElements.forEach((buttonElem)=>{buttonElem.classList.add("custom-allow-pointer-button");});
+                break;
+            case 'unlock':
+                rootElement.classList.remove("spinner-overlay");
+        		rootElement.classList.remove("custom-overlay-solution");
+                buttonElements.forEach((buttonElem)=>{buttonElem.classList.remove("custom-allow-pointer-button");});
+				//var someIframe = window.parent.document.getElementsByClassName('cdk-overlay-container')[0];
+				//someIframe.parentNode.removeChild(someIframe);
+		}
+		return Promise.resolve(true);
+    },
+	//////////////////////////	
+	/// custom attribute Price schedule visiblity based on shadow tcv for EM edge-123575
+	//Modified by Aman Soni as a part of EDGE-145148 
+	resetCustomAttributeVisibility : async function(){
+		console.log('@@@@@@@@@@@@@@inside reset@@@@@@@@@@@@');
+		let solution = await CS.SM.getActiveSolution();
+		//CS.SM.getActiveSolution().then((solution) => {
+		if (solution.name.includes(ENTERPRISE_COMPONENTS.enterpriseMobility)|| solution.name.includes('Connected Workplace')) {
+			if (solution.components && Object.values(solution.components).length > 0) {
+				let updateConfigMap = {};
+				let updateCurr = false;	
+				Object.values(solution.components).forEach((comp) => {
+					if (comp.name.includes(ENTERPRISE_COMPONENTS.mobileSubscription)) {
+						if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {	
+							Object.values(comp.schema.configurations).forEach((config) => {											
+								updateConfigMap[config.guid] = [];
+								var IDDShadowTCV_value='';
+								var PlanShadowTCV_value='';
+								var TotalPlanBonus_value='';
+								var TotalPlanBonus = Object.values(config.attributes).filter(TotalPlanBonus =>{
+										return TotalPlanBonus.name === 'TotalPlanBonus' 
+									});
+								if(TotalPlanBonus.length >0 &&  TotalPlanBonus[0].value && TotalPlanBonus[0].value != null){
+									TotalPlanBonus_value=TotalPlanBonus[0].value;
+									console.log('TotalPlanBonus_value '+TotalPlanBonus_value);
+								}
+								var IDDShadowTCV = Object.values(config.attributes).filter(IDDShadowTCV =>{
+										return IDDShadowTCV.name === 'IDDShadowTCV' 
+									});
+								var PlanShadowTCV = Object.values(config.attributes).filter(PlanShadowTCV =>{
+									return PlanShadowTCV.name === 'PlanShadowTCV' 
+								});
+								if(IDDShadowTCV.length >0 &&  IDDShadowTCV[0].value && IDDShadowTCV[0].value != null){
+									IDDShadowTCV_value=IDDShadowTCV[0].value;
+								}
+								if(PlanShadowTCV.length >0 &&  PlanShadowTCV[0].value && PlanShadowTCV[0].value != null){
+									PlanShadowTCV_value=PlanShadowTCV[0].value;
+								}	
+								// Added by Laxmi for EDGE-131531 
+								var changeTypeVal = '';
+								var ChangeType = Object.values(config.attributes).filter(ChangeType =>{
+									return ChangeType.name === 'ChangeType' 
+								});	
+								if(ChangeType.length >0 &&  ChangeType[0].value && ChangeType[0].value != null){
+									changeTypeVal=ChangeType[0].value;
+								}
+								// END  by Laxmi for EDGE-131531  
+								if(IDDShadowTCV || PlanShadowTCV){ 
+									if(((IDDShadowTCV_value!==null && IDDShadowTCV_value!=='' )|| (PlanShadowTCV_value!==null && PlanShadowTCV_value!=='')) && (changeTypeVal=== 'Modify' || (changeTypeVal=== 'New' && (config.replacedConfigId === undefined || config.replacedConfigId === null)))) {//Added Modify and New check by Aman Soni as a part of EGDE-143527
+										console.log('button vis inside if setting to true');
+										updateConfigMap[config.guid].push(
+										{
+											name: "Price Schedule",
+											// value: {
+												showInUi:true
+											// }
+										});
+										if(comp.name.includes('CWP') && TotalPlanBonus_value!=''){
+											updateConfigMap[config.guid].push(
+										{
+											name: "viewDiscounts",
+											// value: {
+												showInUi:true
+											// }
+										});
+										}
+										updateCurr = true; // Added to handle the UI Issues EDGE-131531
+									}else{
+										console.log('button vis inside else setting to false');
+										if(comp.name.includes('CWP') && TotalPlanBonus_value!=''){
+										console.log('Setting CWP');
+										updateConfigMap[config.guid].push(
+										{
+											name: "Price Schedule",
+											// value: {
+												showInUi:true
+											// }
+											},
+											{
+												name:"viewDiscounts",
+												// value:{
+													showInUi:true
+												// }
+										});
+										updateCurr = true;
+										}
+									}									
+								}
+								//Changes for EDGE-131531 Generic Check apart from TCV || Modified by Aman Soni as a part of EDGE-145148
+								if (changeTypeVal!=null && (changeTypeVal==='Active' || changeTypeVal==='Cancel' )){
+									console.log (' Chanegtype is Cancel/Active - hiding both the links!!!' );
+									updateConfigMap[config.guid].push(
+									{
+										name: "Price Schedule",
+										// value: {
+											showInUi:false
+										// }
+									},
+									{
+										name: "viewDiscounts",
+										// value: {
+											showInUi:false
+										// }
+									});
+									updateCurr = true;
+									}// End if ChangeTypeVal || Modified by Aman Soni as a part of EDGE-145148
+									
+							});
+						}
+						Utils.updateImportConfigButtonVisibility();
+					}
+				});
+				if (updateCurr) {
+					console.log('Updated IsDiscountCheckNeeded',updateConfigMap);
+					//if (updateConfigMap && updateConfigMap.length >0){ // Aditya changes after Antun Comment
+						console.log('Updated IsDiscountCheckNeeded1111',updateConfigMap);
+					//CS.SM.updateConfigurationAttribute(ENTERPRISE_COMPONENTS.mobileSubscription, updateConfigMap, false);
+
+					let activeSolution = await CS.SM.getActiveSolution(); 
+					let component = await activeSolution.getComponentByName(ENTERPRISE_COMPONENTS.mobileSubscription); 
+					//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap ,false ); 
+					let keys = Object.keys(updateConfigMap);
+					var complock = component.commercialLock;
+					//if(complock) component.lock('Commercial', false);
+					for (let i = 0; i < keys.length; i++) {
+						await component.updateConfigurationAttribute(keys[i], updateConfigMap[keys[i]], false); 
+					}
+					//if(complock) component.lock('Commercial', true);
+
+
+					//}
+					Utils.updateCustomAttributeLinkText('Promotions and Discounts','View All');// edge-120132
+					Utils.updateCustomAttributeLinkText('Price Schedule','View All');
+					updateCurr = false;
+				}
+			}
+		}
+		//});
+		return Promise.resolve(true);
+	},
+	/// custom attribute Price schedule visiblity based on shadow tcv for NGUC Device edge-133963:Aditya Changes
+	resetCustomAttributeVisibilityNGUC_Device :  async function(){
+		console.log('@@@@@@@@@@@@@@inside reset@@@@@@@@@@@@');
+		let solution = await CS.SM.getActiveSolution();
+		//CS.SM.getActiveSolution().then((solution) => {
+		if (solution && solution.name.includes(NEXTGENUC_DEVICE.mainSolution)) {
+			if (solution.components && Object.values(solution.components).length > 0) {
+				let updateConfigMap = {};
+				let updateCurr = false;	
+				Object.values(solution.components).forEach((comp) => {
+						// Aditya updated for Voice EDGE-121376
+					if (comp.name === NEXTGENUC_DEVICE.componentName) {
+						if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {	
+							Object.values(comp.schema.configurations).forEach((config) => {											
+								updateConfigMap[config.guid] = [];
+								var deviceShadowRCTCV_value='';
+							//	var deviceShadowRCTCV = config.attributes.filter(deviceShadowRCTCV =>{PD
+								var deviceShadowRCTCV = Object.values(config.attributes).filter(deviceShadowRCTCV =>{
+										return deviceShadowRCTCV.name === 'deviceShadowRCTCV' 
+									});
+								if(deviceShadowRCTCV.length >0 &&  deviceShadowRCTCV[0].value && deviceShadowRCTCV[0].value != null){
+									deviceShadowRCTCV_value=deviceShadowRCTCV[0].value;
+								}
+								console.log('deviceShadowRCTCV-->');
+								console.log(deviceShadowRCTCV);
+								if(deviceShadowRCTCV){ 
+								console.log('@@@@@@@@@@@@@@inside if 1 @@@@@@@@@@@@');
+								console.log('condition 1'+deviceShadowRCTCV_value);
+								//console.log('Final result'+(deviceShadowRCTCV.value && deviceShadowRCTCV.value!==null));
+									if(deviceShadowRCTCV_value && deviceShadowRCTCV_value!=undefined && deviceShadowRCTCV_value!=null && deviceShadowRCTCV_value!="" ){
+										console.log('button vis inside if setting to true');
+										updateConfigMap[config.guid].push(
+										{
+											name: "Price Schedule",
+											// value: {
+												showInUi:true
+											// }
+										});
+										updateCurr=true;
+									}
+								}								
+							});
+						}
+					}
+				});
+				if (updateCurr) {
+					console.log('Updated IsDiscountCheckNeeded',updateConfigMap);
+					if (updateConfigMap /*&& updateConfigMap.length >0*/){ // Aditya changes after Antun Comment
+						//CS.SM.updateConfigurationAttribute(NEXTGENUC_DEVICE.componentName, updateConfigMap, false);
+						let component = await solution.getComponentByName(solutionName); 
+						//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap, false); 
+						let keys = Object.keys(updateConfigMap);
+						for (let i = 0; i < keys.length; i++) {
+							await component.updateConfigurationAttribute(keys[i], updateConfigMap[keys[i]], false); 
+						}
+
+					}
+					updateCurr = false;
+				}
+			}
+		}
+		//});	
+		return Promise.resolve(true);				
+    },
+    //Aditya for NGUC MACD EDGE-121389---Start--->
+    resetCustomAttributeVisibilityNGUC_Voice :  async function(showRateCart){
+		let solution = await CS.SM.getActiveSolution(); // Spring 20
+        //CS.SM.getActiveSolution().then((solution) => {
+		if (solution && solution.name.includes(NEXTGENUC_VOICE.mainSolution)) {
+			if (solution.components && Object.values(solution.components).length > 0) {
+				let updateConfigMap = {};
+				let updateCurr = false;	
+				Object.values(solution.components).forEach((comp) => {
+						// Aditya updated for Voice EDGE-121376
+					if (comp.name === NEXTGENUC_VOICE.componentName) {
+						if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {	
+							Object.values(comp.schema.configurations).forEach(async (config) => {											
+								updateConfigMap[config.guid] = [];
+								var ChangeType_Value='';
+								var IsDiscountCheckNeededAttr_value = '';
+								var IsDiscountCheckNeededAttr = Object.values(config.attributes).filter(IsDiscountCheckNeededAttr =>{
+									return IsDiscountCheckNeededAttr.name === 'IsDiscountCheckNeeded' 
+								});
+								var ChangeTypeAttr = Object.values(config.attributes).filter(ChangeTypeAttr =>{
+										return ChangeTypeAttr.name === 'ChangeType' 
+									});
+									if(IsDiscountCheckNeededAttr.length >0 &&  IsDiscountCheckNeededAttr[0].value && IsDiscountCheckNeededAttr[0].value != null){
+										IsDiscountCheckNeededAttr_value=IsDiscountCheckNeededAttr[0].value;
+									}
+								if(ChangeTypeAttr.length >0 &&  ChangeTypeAttr[0].value && ChangeTypeAttr[0].value != null){
+									ChangeType_Value=ChangeTypeAttr[0].value;
+								}
+								console.log('ChangeTypeAttr-->');
+								console.log(ChangeTypeAttr);
+								if(ChangeTypeAttr){ 
+								console.log('@@@@@@@@@@@@@@inside if 1 @@@@@@@@@@@@');
+								console.log('condition 1'+ChangeType_Value);
+								//console.log('Final result'+(ChangeTypeAttr.value && ChangeTypeAttr.value!==null));
+									if( showRateCart== false && ChangeType_Value && ChangeType_Value!=undefined && ChangeType_Value!=null && ChangeType_Value!="" && (ChangeType_Value == 'Modify'|| ChangeType_Value == 'Active' ||  ChangeType_Value == 'New' || ChangeType_Value == 'Cancel')){
+										console.log('button vis inside if setting to true');
+										updateConfigMap[config.guid].push(
+										{
+											name: "NGUCRateCardButton",
+											// value: {
+												showInUi:false
+											// }
+										});
+										updateCurr=true;
+									}
+									if(showRateCart == true && ChangeType_Value && ChangeType_Value!=undefined && ChangeType_Value!=null && ChangeType_Value!="" && ChangeType_Value == 'Modify'){
+										console.log('button vis inside if setting to true');
+										updateConfigMap[config.guid].push(
+										{
+											name: "NGUCRateCardButton",
+											// value: {
+												showInUi:true
+											// }
+										});
+										// Spring 20
+										//CS.SM.updateConfigurationStatus(NEXTGENUC_VOICE.componentName, config.guid, true);
+										let cnfg = await comp.getConfiguration(config.guid); 
+										cnfg.status = true;
+										updateCurr=true;
+									}
+									if(IsDiscountCheckNeededAttr_value == false && ChangeType_Value && ChangeType_Value!=undefined && ChangeType_Value!=null && ChangeType_Value!="" && ChangeType_Value == 'Modify'){
+										console.log('button vis inside if setting to true');
+										updateConfigMap[config.guid].push(
+										{
+											name: "NGUCRateCardButton",
+											// value: {
+												showInUi:true
+											// }
+										});
+										//CS.SM.updateConfigurationStatus(NEXTGENUC_VOICE.componentName, config.guid, true);
+										let cnfg = await comp.getConfiguration(config.guid); 
+										cnfg.status = true;
+										updateCurr=true;
+									}
+								}								
+							});
+						}
+					}
+				});
+				if (updateCurr) {
+					console.log('Updated IsDiscountCheckNeeded',updateConfigMap);
+						if (updateConfigMap){ // Aditya changes after Antun Comment
+							//CS.SM.updateConfigurationAttribute(NEXTGENUC_VOICE.componentName, updateConfigMap, true);
+							let component = await solution.getComponentByName(NEXTGENUC_VOICE.componentName); 
+							//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap, true); 
+							let keys = Object.keys(updateConfigMap);
+							for (let i = 0; i < keys.length; i++) {
+								await component.updateConfigurationAttribute(keys[i], updateConfigMap[keys[i]], true); 
+							}
+
+						}
+					updateCurr = false;
+				}
+			}
+		}
+		//});	
+		return Promise.resolve(true);				
+    },
+    //Aditya for NGUC MACD EDGE-121389---END--->
+	//// method to reset attributes if change in configurations Edge-123575 // also to call this method if new configuration is getting clonned from existing configuration before validate and save
+	resetDiscountAttributes : async function(configId,componentName){
+        console.log('Inside reset check need-->'+configId);
+		var updateConfigMap=[];
+		updateConfigMap[configId] = [];
+		updateConfigMap[configId].push({
+			name: "IsDiscountCheckNeeded",
+			// value: {
+				value: true
+			// }
+		});
+		if(componentName !== NEXTGENUC_VOICE.componentName){
+			updateConfigMap[configId].push({
+				name: "Price Schedule",
+				// value: {
+					showInUi:false
+				// }
+			});
+		}		
+
+		let activeSolution = await CS.SM.getActiveSolution();  
+		let component = await activeSolution.getComponentByName(componentName); 
+		//const config = await component.updateConfigurationAttribute(configId, updateConfigMap ,false ); 
+		if(component && component !=null && component != undefined) {
+			let keys = Object.keys(updateConfigMap);
+			for (let i = 0; i < keys.length; i++) {
+				await component.updateConfigurationAttribute(keys[i], updateConfigMap[keys[i]], false); 
+			}
+		}
+		else 
+			console.log("Could not find component ", componentName);
+
+		//await CS.SM.updateConfigurationAttribute(componentName, updateConfigMap, false);
+		console.log('reset IsDiscountCheckNeeded');
+        Utils.updateCustomAttributeLinkText('Promotions and Discounts','View All');// edge-120132
+		Utils.updateCustomAttributeLinkText('Price Schedule','View All');
+		return Promise.resolve(true);
+	},
+	//adedd by shubhi for validNotApplicableConfigs
+	validateNotApplicableConfigsJS : async function(guidListJson,componentname){
+		var guidListString=guidListJson;
+        guidListString=guidListString.replace("[",'');
+        guidListString=guidListString.replace("]",'');
+        var guidList = guidListString.split(',');
+		console.log('guidList--->'+guidList);
+		console.log('@@@@@@@@@$$$$$$Inside validNotApplicableConfigs$$$$$@@@@@@@@@@@');
+		var updateConfigMap={};
+		var updateSub=false;
+
+		let solution = await CS.SM.getActiveSolution();
+		let component = await solution.getComponentByName(componentname);
+
+        guidList.forEach(async (guid) => {
+            var guidID=guid.trim();
+            if(guidID !==null && guidID !==''){
+            	console.log('Inside updatemap',guidID);
+				updateSub=true;
+            	updateConfigMap[guidID]=[];
+                updateConfigMap[guidID] = [{
+                    name: "IsDiscountCheckNeeded",
+                    // value: {
+                        value: false
+                    // }
+                }];
+				//if (componentname === NEXTGENUC_DEVICE.componentName || componentname === NEXTGENUC_VOICE.componentName) {
+				//CS.SM.updateConfigurationStatus(componentname, guidID, true);
+				//}
+			}
+		});
+        if(updateSub){
+			if (updateConfigMap){ //Aditya changes after Antun comment 
+				console.log('updateConfigMap---->');
+				console.log(updateConfigMap);
+				//CS.SM.updateConfigurationAttribute(componentname, updateConfigMap, false);
+				//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap, false); 
+				let keys = Object.keys(updateConfigMap);
+				for (let i = 0; i < keys.length; i++) {
+                	var config= await component.getConfiguration(keys[i]);
+                    config.status=true;
+					await component.updateConfigurationAttribute(keys[i], updateConfigMap[keys[i]], false); 
+				}
+
+			}
+		}
+		//CS.SM.getActiveSolution().then((product) => {
+		if(solution) {
+			//Added by Shubhi as a part of EDGE-133963 
+			pricingUtils.checkDiscountValidation(solution,'IsDiscountCheckNeeded',NEXTGENUC_DEVICE.componentName);
+			pricingUtils.checkDiscountValidation(solution,'IsDiscountCheckNeeded',NEXTGENUC_VOICE.componentName);	
+		}
+		//});
+		return Promise.resolve(true);
+	},
+	/***********************************************************************************************
+ * Author	   : Ankit Goswami
+ * EDGE number : EDGE-140967
+ * Method Name : validateApplicableConfigsJS
+ * Invoked When: RedeemFund Will be change or Change Type on Device or Change Type on Mobile device will change.
+ * Description : Update RedeemCheck Flag as false
+ ***********************************************************************************************/
+	validateApplicableConfigsJS : async function(guidListJson,componentname){
+		var guidListString=guidListJson;
+        guidListString=guidListString.replace("[",'');
+        guidListString=guidListString.replace("]",'');
+        var guidList = guidListString.split(',');
+		console.log('guidList--->'+guidList);
+		console.log('componentname--->'+componentname);
+		console.log('@@@@@@@@@$$$$$$Inside validNotApplicableConfigs$$$$$@@@@@@@@@@@');
+		var updateConfigMap={};
+		var updateSub=false;
+
+		let activeSolution = await CS.SM.getActiveSolution();  
+		let component = await activeSolution.getComponentByName(componentname); 
+
+        guidList.forEach(async (guid) => {
+            var guidID=guid.trim();
+            if(guidID !==null && guidID !==''){
+            console.log('Inside updatemap',guidID);
+				updateSub=true;
+            	updateConfigMap[guidID]=[];
+                updateConfigMap[guidID] = [{
+                    name: "IsRedeemFundCheckNeeded",
+                    // value: {
+                        value: false
+                    // }
+                },{
+                     name: 'CheckOneFund',//added by shubhi for EDGE-169593
+                            value: false,
+                            displayValue: false
+                }];
+				//CS.SM.updateConfigurationStatus(componentname, guidID, true);
+				
+			}
+		});
+        if(updateSub){
+			if (updateConfigMap){ //Aditya changes after Antun comment 
+				console.log('updateConfigMap---->',updateConfigMap);
+				//CS.SM.updateConfigurationAttribute(componentname, updateConfigMap, false);
+				//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateConfigMap,false ); 
+				let keys = Object.keys(updateConfigMap);
+				for (let i = 0; i < keys.length; i++) {
+                	var config= await component.getConfiguration(keys[i]);
+                    config.status=true;
+					await component.updateConfigurationAttribute(keys[i], updateConfigMap[keys[i]], false); 
+				}
+
+			}
+		}
+
+		return Promise.resolve(true);
+	},
+	///////////////////////////////////////////////Samish-Aditya For EDGE-132203 Error handling//////////////////////
+	setIsDiscountCheckNeeded : async function (compSchema,cmpName) {
+		// Arinjay 
+		let activeSolution = await CS.SM.getActiveSolution();
+		let component = await activeSolution.getComponentByName(cmpName);
+
+		if (compSchema && compSchema.configurations && Object.values(compSchema.configurations).length > 0) {
+			Object.values(compSchema.configurations).forEach(async (subsConfig) => {
+				console.log('Inside NGUC 2');
+				var changeTypeAttribute = Object.values(subsConfig.attributes).filter(obj => {
+					return obj.name === 'ChangeType'
+				});
+				// Added as part of EDGE-134880 || start
+				var OldPlanTypeStringAttr = Object.values(subsConfig.attributes).filter(obj => {
+					return obj.name === 'OldPlanTypeString'
+				});
+				var OldIDDAttr = Object.values(subsConfig.attributes).filter(obj => {
+					return obj.name === 'OldIDD'
+				});
+				var SelectPlanAttr = Object.values(subsConfig.attributes).filter(obj => {
+					return obj.name === 'Select Plan'
+				});
+				var InternationalDirectDialAttr = Object.values(subsConfig.attributes).filter(obj => {
+					return obj.name === 'InternationalDirectDial'
+				});
+				var IsRedeemFundCheckNeededAttr = Object.values(subsConfig.attributes).filter(obj => {
+					return obj.name === 'IsRedeemFundCheckNeeded'
+				});
+				// Added as part of EDGE-134880 || End
+				if (subsConfig.attributes && Object.values(subsConfig.attributes).length > 0 && ((changeTypeAttribute[0].value !== 'Cancel' && changeTypeAttribute[0].value !== 'Active' && (OldPlanTypeStringAttr[0].value !==SelectPlanAttr[0].displayValue || OldIDDAttr[0].value !== InternationalDirectDialAttr[0].displayValue )) || IsRedeemFundCheckNeededAttr[0].value ===true /*&& changeTypeAttribute[0].value !== 'Modify'*/)){ // Added conditions as part of EDGE-134880 //Added IsRedeemFundCheckNeededAttr as part of EDGE-140967
+					Object.values(subsConfig.attributes).forEach(async (att) => {
+						console.log('Inside NGUC 3');
+						if ((att.name === 'IsDiscountCheckNeeded' || att.name ==='IsRedeemFundCheckNeeded') && att.value === true) {
+							//EDGE-138001 - Changed below message
+							//CS.SM.updateConfigurationStatus(cmpName, subsConfig.guid, false,'Please Click on "Generate Net Price" to update pricing of items in the basket');
+							// Arinjay
+							let config = await component.getConfiguration(subsConfig.guid,); 
+							config.status = false;
+							config.statusMessage = 'Please Click on "Generate Net Price" to update pricing of items in the basket';
+						}
+					});
+				}else if(subsConfig.attributes && Object.values(subsConfig.attributes).length > 0 && changeTypeAttribute[0].value !== 'Cancel' && changeTypeAttribute[0].value !== 'Active' && OldPlanTypeStringAttr[0].value ===SelectPlanAttr[0].displayValue && OldIDDAttr[0].value === InternationalDirectDialAttr[0].displayValue && IsRedeemFundCheckNeededAttr===false){
+					//CS.SM.updateConfigurationStatus(cmpName, subsConfig.guid, true);
+					// Arinjay
+					let config = await component.getConfiguration(subsConfig.guid,); 
+					config.status = true;
+				}	
+			});
+		}
+		return Promise.resolve(true);
+	},
+	///////////////	added by shubhi to setCorrelationId ///////////////////////
+	setCorrelationId : async function (correlationId,solutionName) {
+		// Arinjay
+		console.log('Inside setCorrelationId');
+		console.log('Inside setDiscountAttributeAfterResponse');
+		var correlationIdAttribute='';
+		if(callerName==='Voice'){
+			correlationIdAttribute='correlationId_voice';
+		}else if(callerName==='Accessories'){//added by Romil EDGE-144161
+			correlationIdAttribute='correlationId_accessory';
+		}else{
+			correlationIdAttribute='correlationId';
+        }
+
+        let product = await CS.SM.getActiveSolution();                    
+        if (product.components && product.name.includes(solutionName)) {
+            let updateMap = {};
+            let updateCurr = false;
+            if (product.schema && product.schema.configurations && Object.values(product.schema.configurations).length > 0) {  
+                Object.values(product.schema.configurations).forEach((config) => {
+                    updateMap[config.guid]=[{
+                        name: correlationIdAttribute,
+                        // value: {
+                            value: correlationId,
+                            displayValue: correlationId
+                        // }
+                    }];
+                });
+            }
+			//CS.SM.updateConfigurationAttribute(solutionName, updateMap, false);
+			let component = await product.getComponentByName(solutionName); 
+			//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateMap, false); 
+			let keys = Object.keys(updateMap);
+			for (let i = 0; i < keys.length; i++) {
+				await component.updateConfigurationAttribute(keys[i], updateMap[keys[i]], false); 
+			}
+
+		}
+		return Promise.resolve(true);
+	},
+	/////added by shubhi to set discountStatus will in use only for EM now dont use if for other products////////////////
+	setDiscountStatus : async function (statusValue,solutionName) {
+		// Arinjay
+		console.log('Inside setDiscountStatus'+statusValue);
+        console.log('Inside setDiscountAttributeAfterResponse');
+        
+        let product = await CS.SM.getActiveSolution();                    
+
+        if (product.components && product.name.includes(solutionName)) {
+            let updateMap = {};
+            let updateCurr = false;
+            if (product.schema && product.schema.configurations && Object.values(product.schema.configurations).length > 0) {  
+                Object.values(product.schema.configurations).forEach((config) => {
+                    updateMap[config.guid]=[{
+                        name: 'DiscountStatus',
+                        // value: {
+                            value: statusValue
+                        // }
+                    }];
+                });
+            }
+			//CS.SM.updateConfigurationAttribute(solutionName, updateMap, false);
+			let component = await product.getComponentByName(solutionName); 
+			//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateMap, false);
+			let keys = Object.keys(updateMap);
+			for (let i = 0; i < keys.length; i++) {
+				await component.updateConfigurationAttribute(keys[i], updateMap[keys[i]], false); 
+			}
+
+		}	
+		return Promise.resolve(true);		
+	},
+	//////////////	added by shubhi to set discountStatus back to none ///////////////////////
+	setDiscountStatusBasedonComponent : async function (statusValue,solutionName,attributeName) {
+		//Arinjay
+		console.log('Inside setDiscountStatusBasedonComponent');
+		let product = await CS.SM.getActiveSolution();
+		if (product.components && product.name === solutionName) {
+			let updateMap = {};
+			let updateCurr = false;
+			if (product.schema && product.schema.configurations && Object.values(product.schema.configurations).length > 0) {  
+				Object.values(product.schema.configurations).forEach((config) => {
+					updateMap[config.guid]=[{
+						name: attributeName,
+						// value: {
+							value: statusValue
+						// }
+					}];
+				});
+			}
+			//CS.SM.updateConfigurationAttribute(solutionName, updateMap, false);
+
+			let activeSolution = await CS.SM.getActiveSolution();  
+			let component = await activeSolution.getComponentByName(solutionName); 
+			//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateMap,false );
+			let keys = Object.keys(updateMap);
+			for (let i = 0; i < keys.length; i++) {
+				await component.updateConfigurationAttribute(keys[i], updateMap[keys[i]], false); 
+			}
+
+		}
+		return Promise.resolve(true);
+	},
+	//EDGE-123594 Added setMainSolutionCorrelationID method
+	setMainSolutionCorrelationID : async function () {
+		let product = await CS.SM.getActiveSolution(); // Spring 20
+		//CS.SM.getActiveSolution().then((product) => {
+		if (product && product.components && product.name === ENTERPRISE_COMPONENTS.enterpriseMobility) {
+			let updateMap = {};
+			if (product.schema && product.schema.configurations && Object.values(product.schema.configurations).length > 0) {  
+				Object.values(product.schema.configurations).forEach((config) => {
+					var onLoadFlagAttribute = Object.values(config.attributes).filter(obj => {
+						return obj.name === 'onLoadFlag'
+					});
+					if(onLoadFlagAttribute !== 'Yes'){
+						updateMap[config.guid]=[{
+							name: 'correlationId',
+							// value: {
+								value: '',
+								displayValue: ''
+							// }
+						},{
+							name: 'onLoadFlag',
+							// value: {
+								value:'Yes',
+								displayValue:'Yes'
+							// }
+						}];
+					}
+				});
+				//CS.SM.updateConfigurationAttribute(product.name, updateMap, false);
+				let component = await product.getComponentByName(product.name); 
+				//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateMap, false); 
+				let keys = Object.keys(updateMap);
+				
+				var complock = component.commercialLock;
+                for (let i = 0; i < keys.length; i++) {
+                    // if (complock)
+                    // component.lock('Commercial', false);
+
+                    await component.updateConfigurationAttribute(keys[i], updateMap[keys[i]], true);
+                }
+                // if (complock) {
+                //     component.lock('Commercial', true);
+                // }
+
+			}
+		}
+		//});
+		return Promise.resolve(true);
+	},
+	//EDGE-123594 Added setMainSolutionCorrelationID method
+	setMainSolutionCorrelationIDToNull : async function (solName){
+		//CS.SM.getActiveSolution().then((product) => {
+		let product = await CS.SM.getActiveSolution(); // Spring 20
+		if (product && product.components && product.name === solName) {
+			let updateMap = {};
+			if (product.schema && product.schema.configurations && Object.values(product.schema.configurations).length > 0) {  
+				Object.values(product.schema.configurations).forEach((config) => {
+					var onLoadFlagAttribute = Object.values(config.attributes).filter(obj => {
+						return obj.name === 'onLoadFlag'
+					});
+					if(onLoadFlagAttribute !== 'Yes'){
+						updateMap[config.guid]=[{
+							name: 'correlationId',
+							// value: {
+								value: '',
+								displayValue: ''
+							// }
+						},{
+							name: 'onLoadFlag',
+							// value: {
+								value:'Yes',
+								displayValue:'Yes'
+							// }
+						}];
+					}
+				});
+				//CS.SM.updateConfigurationAttribute(product.name, updateMap, false);
+				let component = await product.getComponentByName(solName); 
+				//const config = await component.updateConfigurationAttribute(component.configuration.guid, updateMap, false); 				
+				let keys = Object.keys(updateMap);
+				for (let i = 0; i < keys.length; i++) {
+					await component.updateConfigurationAttribute(keys[i], updateMap[keys[i]], false); 
+				}
+
+			}
+		}
+		//});
+		return Promise.resolve(true);
+	},
+	//generic method to check if price schedules are generated or not and to invalidate configuration ///
+	checkDiscountValidation : function (solution,attributeName,componentName){	
+		var skipsave = false;
+		if (solution.components && Object.values(solution.components).length > 0){
+			Object.values(solution.components).forEach((comp) => {
+				/* if(comp.name === componentName && (componentName === NEXTGENUC_DEVICE || componentName === NEXTGENUC_VOICE)) { 
+					if (comp.schema && comp.schema.configurations && comp.schema.configurations.length > 0) {	
+						comp.schema.configurations.forEach((config) => {											
+						/*	var IsDiscountCheckNeededAtt = config.attributes.filter(IsDiscountCheckNeededAt =>{
+								return IsDiscountCheckNeededAt.name ===  attributeName 
+							});
+							var isEAPActiveAtt = config.attributes.filter(isEAPActiveAT =>{
+								return isEAPActiveAT.name ===  'isEAPActive' 
+							});
+							var forceScheduleButtonAtt = config.attributes.filter(forceScheduleButtonAt =>{
+								return forceScheduleButtonAt.name ===  'forceScheduleButton' 
+							});
+						/*	if(IsDiscountCheckNeededAtt && IsDiscountCheckNeededAtt[0] && IsDiscountCheckNeededAtt[0].value === true){
+								CS.SM.updateConfigurationStatus(comp.name, config.guid, false, 'Please Click on "Generate Net Price" to update pricing of items in the basket');
+								skipsave = true;
+							}
+							if((isEAPActiveAtt && isEAPActiveAtt[0] && isEAPActiveAtt[0].value !== null) && (forceScheduleButtonAtt && forceScheduleButtonAtt[0] && forceScheduleButtonAtt[0].value === true) ){
+								CS.SM.updateConfigurationStatus(comp.name, config.guid, false, 'Please Click on "Generate Net Price" to update pricing of items in the basket');
+								skipsave = true;
+							}
+						});
+					}
+				}
+				else*/
+                if (comp.name === componentName) { 
+					if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {	
+						Object.values(comp.schema.configurations).forEach(async (config) => {											
+							var IsDiscountCheckNeededAtt = Object.values(config.attributes).filter(IsDiscountCheckNeededAt =>{
+								return IsDiscountCheckNeededAt.name ===  attributeName; 
+							});
+							if(IsDiscountCheckNeededAtt && IsDiscountCheckNeededAtt[0] && IsDiscountCheckNeededAtt[0].value === true){
+								//CS.SM.updateConfigurationStatus(comp.name, config.guid, false, 'Please Click on "Generate Net Price" to update pricing of items in the basket');
+								//let activeSolution = await CS.SM.getActiveSolution();
+								//let component = await activeSolution.getComponentByName('IP Site');
+								let cnfg = await comp.getConfiguration(config.guid); 
+								cnfg.status = false;
+								cnfg.statusMessage = 'Please Click on "Generate Net Price" to update pricing of items in the basket';
+								skipsave = true;
+							}
+            				/*else
+                            {
+                                CS.SM.updateConfigurationStatus(comp.name, config.guid, true);
+                            }*/
+						});
+					}
+				}
+			});
+		}
+		return skipsave;
+	},
+	//////
+	//set
+	///// method to hide button in apart from commercial configuration ////
+	updateGenerateNetPriceButtonVisibility : function (buttonLabel) {
+		console.log('Insie updateGenerateNetPriceButtonVisibility');
+		var isCommNegAllowed = Utils.isCommNegotiationAllowed();
+		var isDefaultButton  =false;
+		Utils.updateComponentLevelButtonVisibility(buttonLabel, isCommNegAllowed, isDefaultButton);
+	},
+	/*********************************************Edge-Edge-143527 *********************************/
+	postMessageToPricing : async function(caller,solutionID,isDiscountcheckNeeded,IsRedeemFundCheckNeeded){
+		let mainSolution='';
+		let componentName='';
+		let attribbuteListforCLi=[];
+		let attribbuteListforDeviceCLi=[];// Added as part of EDGE-140967
+		callerName=caller;
+		let guidCompMap={};
+		console.log('postMessageToPricing caller ',caller );
+		if(caller==='Enterprise Mobility'){
+			mainSolution=ENTERPRISE_Mobility.mainSolution;
+			componentName=ENTERPRISE_Mobility.componentName;
+			attribbuteListforCLi=ENTERPRISE_Mobility.attribbuteListforCLi;
+			attribbuteListforDeviceCLi=ENTERPRISE_Mobility.attribbuteListforDeviceCLi// Added as part of EDGE-140967
+		}else if(caller === 'Devices'){
+			mainSolution=NEXTGENUC_DEVICE.mainSolution;
+			componentName=NEXTGENUC_DEVICE.componentName;
+			attribbuteListforCLi=NEXTGENUC_DEVICE.attribbuteListforCLi;
+		}else if(caller === 'Business Calling'){
+			mainSolution=NEXTGENUC_VOICE.mainSolution;
+			componentName=NEXTGENUC_VOICE.componentName;
+			attribbuteListforCLi=NEXTGENUC_VOICE.attribbuteListforCLi;
+		}
+        else if(caller === 'Accessories'){//added by Romil EDGE-144161
+			mainSolution=NEXTGENUC_Accessory.mainSolution;
+			componentName=NEXTGENUC_Accessory.componentName;
+			attribbuteListforCLi=NEXTGENUC_Accessory.attribbuteListforCLi;
+		}
+		else if(caller === 'Mobile Device'){
+			mainSolution=DOP_MOBILEDEVICE.mainSolution;
+			componentName=DOP_MOBILEDEVICE.componentName;
+			attribbuteListforCLi=DOP_MOBILEDEVICE.attribbuteListforCLi;
+		}
+		else if(caller === 'CWP'){ //Added by DPG-1512
+			mainSolution=CWP_Mobility.mainSolution;
+			componentName=CWP_Mobility.componentName;
+			attribbuteListforCLi=CWP_Mobility.attribbuteListforCLi;
+		}
+		else if(caller === 'Device'){//////////////// shubhi EDGE-148662
+			mainSolution=NextGen_Device.mainSolution;
+			componentName=NextGen_Device.componentName;
+			attribbuteListforCLi=NextGen_Device.attribbuteListforCLi;
+			attribbuteListforDeviceCLi=NextGen_Device.attribbuteListforDeviceCLi
+		}
+        console.log('Inside pricing pagelaod');
+		var ifrm = [];
+		let product = await CS.SM.getActiveSolution();
+		if (product.name.includes(mainSolution)) { 
+			if (product.components && Object.values(product.components).length > 0) {
+				Object.values(product.components).forEach((comp) => {
+					if (comp.name === componentName) {
+						if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {	
+							Object.values(comp.schema.configurations).forEach((config) => {
+								var guid=config.guid;
+								let attnameToattMap={};
+								var changeTypeVal='';
+								/////--------EDGE-151069 start------------/////
+								if(config && config.attributes){
+									var ChangeTypes= Object.values(config.attributes).filter(ChangeType =>{
+										return ChangeType.name === 'ChangeType' 
+									});	
+
+									if(ChangeTypes && ChangeTypes[0]){
+										changeTypeVal=ChangeTypes[0].value;
+									}	
+									//Object.values(config.attributes).forEach((att) => {
+									for(var att of Object.values(config.attributes)){
+										if(attribbuteListforCLi.includes(att.name)){
+											//attnameToattMap[att.name]=att;
+											if(changeTypeVal==='Cancel'&& (caller === 'Devices' || caller === 'Accessories' || caller ==='Device')){
+												if(att.name==='taxTreatmentETC'|| att.name==='taxTreatment' ){
+													var taxTreatment= Object.values(config.attributes).filter(attr =>{
+														return attr.name === 'taxTreatmentETC' 
+													});
+													if(taxTreatment && taxTreatment[0]){
+														var taxtreatmentAtt={
+															name:'taxTreatment',
+															value: taxTreatment[0].value
+									
+														}
+														attnameToattMap['taxTreatment']=taxtreatmentAtt;
+													}
+												}
+												else if(att.name==='OC'|| att.name==='EarlyTerminationCharge' ){
+													var etc= Object.values(config.attributes).filter(attr =>{
+														return attr.name === 'EarlyTerminationCharge' 
+													});
+													if(etc && etc[0]){
+														var etcAtt={
+															name:'OC',
+															value: etc[0].value
+														}
+														attnameToattMap['OC']=etcAtt;
+													}
+												}
+												else if(att.name==='PriceItemId'|| att.name==='ETCPriceItemID' ){
+													console.log('att.name-->'+att.name);
+													var priceItemAtt= Object.values(config.attributes).filter(attr1 =>{
+														return attr1.name === 'ETCPriceItemID' 
+													});
+									
+													console.log('priceItemAtt-->'+priceItemAtt);
+													if(priceItemAtt && priceItemAtt[0]){
+														var priceItemAttVal={
+															name:'PriceItemId',
+															value: priceItemAtt[0].value
+														}
+														attnameToattMap['PriceItemId']=priceItemAttVal;
+													}
+												}
+												else{
+                                                    var atttribute={
+                                                        name:att.name,
+                                                        value:att.value,
+                                                        displayvalue:att.displayValue
+                                                    };
+                                                    
+													attnameToattMap[att.name]=atttribute;
+												}
+											}else{
+												var atttribute={
+                                                    name:att.name,
+                                                    value:att.value,
+                                                    displayvalue:att.displayValue
+                                                };
+                                                
+                                                attnameToattMap[att.name]=atttribute;
+											}
+										}
+									}
+								}
+								//Edge-149830  start-----------------
+								var isChildApplicable=pricing_isChildApplicable.get(comp.name);
+								var changeTypeExcludedList=['Active','PaidOut','Pending'];
+								var changeTypeChild=redemption_changeTypeChild.get(comp.name);
+								// Added as part of EDGE-140967 || start
+								if(isChildApplicable===true && IsRedeemFundCheckNeeded && config.relatedProductList && config.relatedProductList.length > 0){
+									var attMapChild={};
+									for(var relatedProduct of config.relatedProductList){
+										var ChangeType_child = Object.values(relatedProduct.configuration.attributes).filter(obj => {
+												return obj.name ===changeTypeChild
+										});
+										var changetype='';
+										if(ChangeType_child && ChangeType_child[0] && ChangeType_child[0].value){
+											changetype=ChangeType_child[0].value
+										}else{
+											changetype='New';
+										}
+										var ischildApplicable={name:'ischildApplicable',value:'true'};
+										attMapChild['ischildApplicable']=ischildApplicable;
+										for(var att of Object.values(relatedProduct.configuration.attributes)){
+											if(attribbuteListforDeviceCLi.includes(att.name) && !changeTypeExcludedList.includes(changetype)){
+												attMapChild[att.name]=att;
+											}
+										}
+										guidCompMap[relatedProduct.guid]=attMapChild;
+									}
+								}
+								//Edge-149830  end --------------
+								// Added as part of EDGE-140967 || End
+								// Added as part of EDGE-140967 || start
+								/*if (product.name === 'Corporate Mobile Plus' && IsRedeemFundCheckNeeded && config.relatedProductList && config.relatedProductList.length > 0) {
+									config.relatedProductList.forEach((relatedProduct) => {
+										if (relatedProduct.name === ENTERPRISE_COMPONENTS.device && relatedProduct.type === 'Related Component') {
+											var ChangeTypeDeviceAttribute = Object.values(relatedProduct.configuration.attributes).filter(obj => {
+												return obj.name ==='ChangeTypeDevice' 
+											});
+											Object.values(relatedProduct.configuration.attributes).forEach((attribute) => {
+												if(attribbuteListforDeviceCLi.includes(attribute.name) && ChangeTypeDeviceAttribute[0].value === 'PayOut'){
+													attnameToattMap[attribute.name]=attribute;
+												}
+											});
+										}
+									});
+								}*/
+								// Added as part of EDGE-140967 || End
+								guidCompMap[guid]=attnameToattMap;
+							});
+						}
+					}
+				});
+			}
+		}
+				
+		//console.log('guidCompMap-->'+guidCompMap);
+		ifrm = document.getElementsByClassName('frame ng-star-inserted');
+			let iframepayload ={
+			command: solutionID,
+			data: guidCompMap,
+			caller: caller,
+			isDiscountcheckNeeded: isDiscountcheckNeeded,	
+			IsRedeemFundCheckNeeded: IsRedeemFundCheckNeeded					
+		};
+		if (ifrm.length > 0)					
+			ifrm[0].contentWindow.postMessage(iframepayload,'*');
+
+		return Promise.resolve(true);
+	},
+	//////////////////////////////////////////////////////////////////////////////////
+	postMessageToshowPromo : async function(caller,configId,iframeID){
+		let mainSolution='';
+		let componentName='';
+		let attribbuteListforCLi=[]; 
+		callerName=caller;
+		console.log('caller is ' + caller);
+		if(caller==='Enterprise Mobility'){
+			mainSolution=ENTERPRISE_Mobility.mainSolution;
+			componentName=ENTERPRISE_Mobility.componentName;
+			attribbuteListforCLi=ENTERPRISE_Mobility.attribbuteListforCLi;
+		}else if(caller === 'Devices'){
+			mainSolution=NEXTGENUC_DEVICE.mainSolution;
+			componentName=NEXTGENUC_DEVICE.componentName;
+			attribbuteListforCLi=NEXTGENUC_DEVICE.attribbuteListforCLi;
+		}else if(caller === 'Voice'){
+			mainSolution=NEXTGENUC_VOICE.mainSolution;
+			componentName=NEXTGENUC_VOICE.componentName;
+			attribbuteListforCLi=NEXTGENUC_VOICE.attribbuteListforCLi;
+		}
+        else if(caller === 'Accessories'){//added by Romil for EDGE-144161 
+			mainSolution=NEXTGENUC_Accessory.mainSolution;
+			componentName=NEXTGENUC_Accessory.componentName;
+			attribbuteListforCLi=NEXTGENUC_Accessory.attribbuteListforCLi;
+		}else if(caller === 'CWP'){ //DPG-1512
+			mainSolution=CWP_Mobility.mainSolution;
+			componentName=CWP_Mobility.componentName;
+			attribbuteListforCLi=CWP_Mobility.attribbuteListforCLi;
+		}
+		let attnameToattMap={};
+		
+        let product = await CS.SM.getActiveSolution();
+        if (product.name.includes(mainSolution)) { 
+            if (product.components && Object.values(product.components).length > 0) {
+				Object.values(product.components).forEach((comp) => {
+					if (comp.name === componentName) {
+						if (comp.schema && comp.schema.configurations && Object.values(comp.schema.configurations).length > 0) {	
+							Object.values(comp.schema.configurations).forEach((config) => {
+								if(configId==config.guid){												
+									Object.values(config.attributes).forEach((att) => {
+										if(attribbuteListforCLi.includes(att.name)){
+											attnameToattMap[att.name]=att;
+										}
+									});
+								}
+							});
+						}
+					}
+				});
+			}
+		}
+		console.log('postMessageToshowPromo');
+		var ifrme = document.getElementById(iframeID);
+		let iframepayload ={
+			command: configId,
+			data: attnameToattMap,
+			caller: caller
+		};
+		if (ifrme)					
+			ifrme.contentWindow.postMessage(iframepayload,'*');
+		
+		return Promise.resolve(true);
+	},
+	////////////////////////////////////////////////////////////////////////////////////
+    closeModalPopup: function(){
+        console.log('inside modal popup');
+        try {
+            var d = document.getElementsByClassName('mat-dialog-container');
+            if (d) {
+                for (var i = 0; i < d.length; i++) {
+                    //d[i].style.display = "none";
+                     //var ifram=document.getElementById("iframe-id");
+   					d[i].parentElement.removeChild(d[i]);
+                }
+            }
+            var el = document.getElementsByClassName('cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing');
+            if (el) {
+                for (var i = 0; i < el.length; i++) {
+                    //el[i].style.display = "none";
+					el[i].parentElement.removeChild(el[i]);
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+}

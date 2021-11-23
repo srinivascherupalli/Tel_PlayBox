@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Event template" >
+	<aura:attribute name="firedComponent" type="Integer"/>
+	<aura:attribute name="appDetails" type="Object"/>     
+</aura:event>

@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" description="selected address">
+    <aura:attribute name="addressAutoEvent" type="List"/>
+</aura:event>

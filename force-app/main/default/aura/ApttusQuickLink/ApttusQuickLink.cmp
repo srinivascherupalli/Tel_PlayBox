@@ -1,0 +1,18 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+	
+    <!-- Handlers -->
+    <aura:handler name="init" value="{! this }" action="{! c.init }" />
+
+    <div aura:id="container">
+       
+       
+        <p>
+            <lightning:formattedRichText value="&lt;a href=&quot;https://www.telstra.com.au/customer-terms/business-government&quot;&gt;Our Customer Terms (OCT)&lt;/a&gt;"></lightning:formattedRichText>
+        </p>
+        <p>
+            <lightning:formattedRichText variant="brand" value="&lt;a href=&quot;http://www.in.telstra.com.au/ism/technologyincentivefund/index.asp&quot;&gt;Fund Eligible Products and Services&lt;/a&gt;"></lightning:formattedRichText>
+        </p>
+       
+    </div>
+
+</aura:component>

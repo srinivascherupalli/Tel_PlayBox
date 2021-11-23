@@ -1,0 +1,291 @@
+<!--
+Created By : Team Hawaii
+Date : 25/02/2020
+Jira No : P2OB-4164
+Description: This component is invoked from AddToTeamMember flow
+Modified : P2OB-11748 ,P2OB-11378 ,P2OB-12585
+-->
+
+<aura:component controller="AddOpptyTeamController"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:availableForFlowScreens"
+    access="global">
+    <!--Aura Attribute for store Existing OpportunityTeamMember Object List as Array-->
+    <aura:attribute name="OpportunityTeamMember" type="Object[]" />
+    <!--Aura Attribute for storing Existing OpportunityTeamMember Object List as Array which needs to updated-->
+    <aura:attribute name="OpportunityTeamMemberUpdated" type="Object[]" />
+    <aura:attribute name="IndexMatch" type="List" />
+    <!--Aura Attribute to store error msg-->
+    <aura:attribute name="ErrorMsg" type="String" />
+    <!--Aura Attribute to store OpportunityAccessLevel picklist field values-->
+    <aura:attribute name="OpportunityAccessLevel" type="List" />
+    <!--Aura Attribute to store TeamMemberRole picklist field values-->
+    <aura:attribute name="MemberRoleList" type="List" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--Event handler for Add and Delete Row Event which is fire from Child Component-->
+    <aura:handler name="RowDeleteEvt" event="c:UserSearchEvent" action="{!c.removeDeletedRow}" />
+    <aura:handler name="AddRowEvt" event="c:UserSearchEvent" action="{!c.addNewRow}" />
+    <aura:handler name="User_ErrorEvt" event="c:UserSearchEvent" action="{!c.userSelected}" />
+    <aura:handler name="EventOnClear" event="c:UserSearchEvent" action="{!c.disableSave}" />
+    <!--Event handler for getting access level and team member role-->
+    <aura:handler name="GetAccessLevelAndRole" event="c:UserSearchEvent" action="{!c.getAccessLevelAndRole}" />
+    <!--Aura Attribute to store team member records that needs to create-->
+    <aura:attribute name="TeamMemberList" type="OpportunityTeamMember[]" />
+    <aura:attribute name="OpportunityId" type="String" />
+    <aura:attribute name="disableSaveButton" type="Boolean" default="false" />
+    <aura:attribute name="ListofTrueorFalse" type="List" />
+    <aura:attribute name="MapOfIndexAgainstValue" type="Map" default="{}" />
+    <!--Aura Attribute to store Error Msg-->
+    <aura:attribute name="UserError" type="String" />
+    <!--Aura Attribute to maintain error msg list-->
+    <aura:attribute name="UserErrorList" type="String[]" />
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false" />
+    <!--Aura Attribute to store record id of team member to be deleted-->
+    <aura:attribute name="oppTeamIdToBeDeleted" type="String" />
+    <!--Aura Attribute to display/hide User Default Opp Team Component SFO Changes P2OB-11748 ,P2OB-11378-->
+    <aura:attribute name="hideDefaultTeamComponent" type="Boolean" default="true"/>
+    <!--Aura Attribute to stores whether the logged in user Type SFO Changes P2OB-11748 ,P2OB-11378-->
+    <aura:attribute name="standardUser" type="Boolean" default="false" />
+
+    <!--Aura Attribute to store remove all is clicked SFO Changes P2OB-12585-->
+    <aura:attribute name="RemovaAllSelected" type="Boolean" default="false" />
+    <!--Aura Attribute to store account team details SFO Changes P2OB-12585-->
+    <aura:attribute name="AccountId" type="String" />
+    <aura:attribute name="accountTeamMemberList" type="OpportunityTeamMember[]" />
+    <aura:attribute name="accountTeamAlreadyPresent" type="Boolean" default="false"/>
+
+
+
+    <!--Modal Box Header-->
+    <!--This header box is always visible-->
+    <!--Component which display input screen to create Team Member Record-->
+    <!--This section display error msg-->
+    <aura:attribute name="isOpen" type="boolean" default="true" />
+    <!--SFO Changes P2OB-11748 ,P2OB-11378 Displays Users Default Team START-->
+    <aura:if isTrue = "{!v.hideDefaultTeamComponent}">
+    <!--SFO Changes P2OB-11748 ,P2OB-11378 Displays Users Default Team END-->
+    <aura:if isTrue="{!v.showConfirmDialog}">
+        <div class="slds-modal__container slds-delete--confirm_box" aura:id="confirmationbox">
+            <!--Modal Box Header Start-->
+            <header class="slds-modal__header">
+                <h1 class="slds-text-heading--medium">Record Delete Confirmation</h1>
+            </header>
+            <!--Modal Box Header End-->
+            <!--Modal Box Content Start-->
+            <div class="slds-modal__content slds-p-around--medium">
+                <center><b>Are you sure you want to delete this record?</b></center>
+            </div>
+            <!--Modal Box Content End-->
+            <!--Modal Box Button Start-->
+            <div class="slds-text-align_center">
+                <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}' />
+                <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}' />
+            </div>
+            <!--Modal Box Button End-->
+        </div>
+    </aura:if>
+    <!--SFO Changes P2OB-12585 Remove all confirmation pop up START-->
+    <aura:if isTrue="{!v.RemovaAllSelected}">
+        <div class="slds-modal__container slds-delete--confirm_box_RemoveAll" aura:id="confirmationboxforRemoveAll">
+            <!--Modal Box Header Start-->
+            <header class="slds-modal__header">
+                <h1 class="slds-text-heading--small">Remove team members?</h1>
+            </header>
+            <!--Modal Box Header End-->
+            <!--Modal Box Content Start-->
+            <div class="slds-modal__content slds-p-around--medium">
+                <center><b>You're about to remove all members from the opportunity team</b></center>
+            </div>
+            <!--Modal Box Content End-->
+            <!--Modal Box Button Start-->
+            <div class="slds-text-align_center">
+                <lightning:button name='CancelRemove' label='Cancel' onclick='{!c.handleConfirmDialogRemoveallCancel}' />
+                <lightning:button variant="destructive" name='Remove' label='Remove' onclick='{!c.handleConfirmDialogRemove}' />
+            </div>
+            <!--Modal Box Button End-->
+        </div>
+    </aura:if>
+    <!--SFO Changes P2OB-12585 END-->
+    <div aura:id="slds-oppty--teamList" class="slds-modal__content">
+        <aura:if isTrue="{!not(empty(v.ErrorMsg))}">
+            <div class="slds-align_absolute-center slds-theme-info--msg slds-p-around--small">
+                <lightning:icon iconName="utility:info" size="medium" alternativeText="Info" title="Info" />
+                <span class="slds-p-around--small">{!v.ErrorMsg}</span>
+            </div>
+            <!--This section is visible only when there are existing team member records-->
+            <aura:set attribute="else">
+                <!--Display Existing Team Member Record-->
+                <aura:if isTrue="{!not(empty(v.OpportunityTeamMember))}">
+                    <div class="slds-table_edit_container slds-is-relative">
+                        <table class="slds-table slds-table_bordered slds-table--opptyTeamMember" role="grid">
+                            <!-- slds-table-striped -->
+                            <thead>
+                                <tr class="slds-opportunity--teamMember slds-line-height_reset">
+                                    <th></th>
+                                    <th scope="col" class="slds-is-resizable slds-is-sortable"><a
+                                            class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                            role="button" tabindex="0">
+                                            <div
+                                                class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                <span class="slds-required">*</span><span
+                                                    class="slds-truncate">User</span></div>
+                                        </a></th>
+                                    <th scope="col" class="slds-is-resizable slds-is-sortable"><a
+                                            class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                            role="button" tabindex="0">
+                                            <div
+                                                class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                <span class="slds-required">*</span><span class="slds-truncate">Member
+                                                    Role</span></div>
+                                        </a></th>
+                                    <th scope="col" class="slds-is-resizable slds-is-sortable"><a
+                                            class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                            role="button" tabindex="0">
+                                            <div
+                                                class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                <span class="slds-required">*</span><span class="slds-truncate">Member
+                                                    Access</span></div>
+                                        </a></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.OpportunityTeamMember}" var="oppteam" indexVar="ind">
+                                    <tr class="slds-opportunity--teamMember slds-line-height_reset">
+                                        <td class="slds-cell-edit" role="gridcell">
+                                            <span class="slds-row-number slds-text-body--small"></span>
+                                        </td>
+                                        <td class="slds-cell-edit" role="gridcell">
+                                            <div class="slds-table--cell">
+                                                <a class="slds-opportunity--userName" onclick="{!c.handleClick}"
+                                                    data-record="{!oppteam.Id}" role="button">
+                                                    {!oppteam.UserName}
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td class="slds-cell-edit" role="gridcell">
+                                            <div class="slds-table--cell">
+                                                <!--{!oppteam.MemberRole}-->
+                                                <lightning:select name="{!ind}" aura:id="Id1"
+                                                    value="{!oppteam.TeamMemberRole}" onchange="{!c.updateRecord}">
+                                                    <aura:iteration items="{!v.MemberRoleList}" var="option">
+                                                        <option text="{!option.label}" value="{!option.id}"
+                                                            selected="{!option.value == oppteam.TeamMemberRole}" />
+                                                    </aura:iteration>
+                                                </lightning:select>
+                                            </div>
+                                        </td>
+                                        <td class="slds-cell-edit" role="gridcell">
+                                            <div class="slds-table--cell">
+                                                <!--{!oppteam.AccessLevel}-->
+                                                <lightning:select name="{!ind}" aura:id="Id2"
+                                                    value="{!oppteam.OpportunityAccessLevel}"
+                                                    onchange="{!c.updateRecord}">
+                                                    <aura:iteration items="{!v.OpportunityAccessLevel}" var="option">
+                                                        <option text="{!option.label}" value="{!option.value}"
+                                                            selected="{!option.value == oppteam.OpportunityAccessLevel}" />
+                                                    </aura:iteration>
+                                                </lightning:select>
+                                            </div>
+                                        </td>
+                                        <td class="slds-cell-edit" role="gridcell">
+                                            <div class="slds-table--cell">
+                                                <lightning:buttonIcon variant="error" iconName="utility:delete"
+                                                    size="small" alternativeText="icon" value="{!oppteam.Id}"
+                                                    onclick="{!c.deleteConfirmation}" />
+                                                <span class="slds-assistive-text">Delete Icon</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                                <!--Component which display input screen to create Team Member Record-->
+                                <aura:iteration items="{!v.TeamMemberList}" var="item" indexVar="index">
+                                    <c:DynamicRowItemForOpptyTeamMember OpptyId="{!v.OpportunityId}"
+                                        NumberOfExistingTestMember="{!v.OpportunityTeamMember.length}"
+                                        OpptyTeamMemberInstance="{!item}" rowIndex="{!index}"
+                                        UserErrorListFromParent="{!v.UserErrorList}" />
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--This section is visible only when there are no existing team member records-->
+                    <aura:set attribute="else">
+                        <div class="slds-table_edit_container slds-is-relative">
+                            <table aria-multiselectable="true"
+                                class="slds-table slds-table_bordered slds-table--opptyTeamMember" role="grid">
+                                <!-- slds-table-striped -->
+                                <thead>
+                                    <tr class="slds-opportunity--teamMember slds-line-height_reset">
+                                        <th></th>
+                                        <th scope="col" class="slds-is-resizable slds-is-sortable"><a
+                                                class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                                role="button" tabindex="0">
+                                                <div
+                                                    class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                    <span class="slds-required">*</span><span
+                                                        class="slds-truncate">User</span></div>
+                                            </a></th>
+                                        <th scope="col" class="slds-is-resizable slds-is-sortable"><a
+                                                class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                                role="button" tabindex="0">
+                                                <div
+                                                    class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                    <span class="slds-required">*</span><span
+                                                        class="slds-truncate">Member Role</span></div>
+                                            </a></th>
+                                        <th scope="col" class="slds-is-resizable slds-is-sortable"><a
+                                                class="slds-th__action slds-text-link_reset" href="javascript:void(0);"
+                                                role="button" tabindex="0">
+                                                <div
+                                                    class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                    <span class="slds-required">*</span><span
+                                                        class="slds-truncate">Member Access</span></div>
+                                            </a></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.TeamMemberList}" var="item" indexVar="index">
+                                        <c:DynamicRowItemForOpptyTeamMember OpptyId="{!v.OpportunityId}"
+                                            OpptyTeamMemberInstance="{!item}" rowIndex="{!index}"
+                                            UserErrorListFromParent="{!v.UserErrorList}" />
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                    </aura:set>
+                </aura:if>
+                <!--Modal Box Footer-->
+                <div class="slds-modal__footer slds-text-align_left">
+                    <button class="slds-button slds-button--neutral uiButton" onclick="{!c.addNewRow}">Add Row</button>
+                        <!--SFO Changes P2OB-11748 ,P2OB-11378 Button to Display Users Default Team  Only Visible for Standard UsersSTART-->
+                        <aura:if isTrue="{!v.standardUser}">
+                            <button class="slds-button slds-button--neutral uiButton" onclick="{!c.addDefaultTeam}">Add From Default Team</button>
+
+                             <!--P2OB-12585 Remove all and Add Account Team START-->
+                                <button class="slds-button slds-button--neutral uiButton" onclick="{!c.removeAllOppTeam}">Remove All Members</button>
+                            <button class="slds-button slds-button--neutral uiButton" onclick="{!c.saveDefAccTeam}">Add Account Team</button>
+                            <!--P2OB-12585 END-->
+
+                        </aura:if>
+                        <!--SFO Changes P2OB-11748 ,P2OB-11378 Button to Display Users Default Team Only Visible for Standard Users END-->
+                </div>
+                <!--Modal Box Footer-->
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--neutral uiButton" onclick="{!c.Cancel}">Cancel</button>
+                    <button class="slds-button slds-button--brand uiButton" disabled="{!v.disableSaveButton}"
+                        onclick="{!c.Save}">Save</button>
+                </div>
+            </aura:set>
+        </aura:if>
+    </div>
+        <!--SFO Changes P2OB-11748 ,P2OB-11378 Displays Users Default Team START-->
+        <aura:set attribute="else">
+
+        <div aura:id="slds-oppty--teamList--DefaultTeam" class="slds-modal__content">
+
+            <c:OpportunityDefaultTeamMember OpportunityId="{!v.OpportunityId}" TeamMemberRoleList="{!v.MemberRoleList}" OpportunityAccessList= "{!v.OpportunityAccessLevel}"/>
+        </div>
+        </aura:set>
+        <!--SFO Changes P2OB-11748 ,P2OB-11378 Displays Users Default Team END-->
+    </aura:if>
+</aura:component>

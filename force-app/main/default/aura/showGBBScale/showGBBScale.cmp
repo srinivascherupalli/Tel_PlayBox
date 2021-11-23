@@ -1,0 +1,38 @@
+<!--*******************************************************************
+Component   : Get Deal Score
+Description : Render DPR Offer level GBB Scale
+Author      : Shivaprasad Patil
+Edge		: EDGE-219478 EDGE-219744
+*********************************************************************-->
+
+<aura:component controller="GetDealScoreController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+    <aura:handler event="c:OfferLevelGbbRender" action="{!c.getOfferGBBScale}"/>
+    <aura:attribute name="showOfferLineGraph" type="Boolean" default="false"/>
+    <aura:attribute name="DPRId" type="string"/>
+    <aura:attribute name="TabId" type="string"/>
+    <aura:attribute name="DPROfferList" type="List"/>
+ 
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+        <div  class="slds-m-top_xx-small slds-p-bottom_x-small">
+            <div class="slds-grid slds-gutters_xx-small slds-wrap slds-p-left_small">
+                <div class="slds-col slds-size_1-of-9">
+                    <div class="slds-m-top_large">
+                            <canvas aura:id="GBBScale1" width="540" height="97"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+</aura:component>

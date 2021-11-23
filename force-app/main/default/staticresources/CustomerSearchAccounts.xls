@@ -1,0 +1,5 @@
+Name,Type,Customer_Status__c,Business_Unit__c,ACN__c,ABN__c,CIDN__c,Market_Segment__c,APTPS_Tier__c,Portfolio_Code__c,id
+Test Acc1,Sole Trader,ACTIVE,Business,879765256,10000000000,12345678,DHL Express,1,SNT39,1
+Test Acc2,Sole Trader,ACTIVE,Business,978765432,10000000000,65432783,DHL Express,2,SNT40,2
+Test Acc3,Residential,ACTIVE,Business,978765432,10000000000,87653453,DHL Express,1,SNT41,3
+Test Acc4,Residential,ACTIVE,Business,879765256,10000000000,90887655,DHL Express,3,SNT42,4

@@ -1,0 +1,79 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"  >
+	<aura:attribute name="recordId" type="String"  default=""/>
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="appDetailsSimple" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+    <aura:attribute name="appDetails" type="Object"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="ApplicationBooleanEvent" type="c:ApplicationBooleanEvent"/>  
+    <aura:attribute name="FieldsetName" type="String" default="Relationship_with_Govt"/>
+    <aura:attribute name="colors" type="String[]" default="Yes,No"/>
+     <aura:attribute name="pickyesno" type="boolean" default=""/>
+     <aura:attribute name="Investyesno" type="boolean" default=""/>
+    <aura:registerEvent name="closeModalEvent" type="c:closeModalEvent"/>
+    <aura:attribute name="LitigationYes" type="list" default="[{'label': 'Yes', 'value': 'Yes'},
+                                                          {'label': 'No', 'value': 'No'}]"/>
+     <aura:attribute name="value" type="String" /> 
+    <force:recordData aura:Id="ApplicantGovtdetails"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.appDetailsSimple}"
+                      targetFields="{!v.appDetails}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+    
+     <div class="slds-text-heading_large slds-text-align_center">
+        <h1>Third Party Agent Application Form</h1>
+        </div>
+          <div class="slds-text-body_regular slds-text-align_left">
+              <h3>Relationship with Governmental Organizations</h3>
+        </div>
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+    <div area-labelledby="newAppform">
+    <fieldset class="slds-box slds-theme--default">
+    <form class="slds-form--stacked"> 
+    <div class="slds-form-element slds-is-required">
+  
+            
+       <lightning:radioGroup name="a_opt" label="{!v.queAndAns[0].Question}" options="{!v.LitigationYes}" aura:Id="ownedId"
+        onchange="{!c.onSelectChange}" value="{!v.appDetails.Applicant_owned_whole_partly_by_a_govt__c}"  required="true" />
+        <br></br>
+            
+      	<aura:if isTrue="{!v.pickyesno}">
+            <Lightning:textarea label="{!v.queAndAns[1].Question}" required="true" name="GovtOwnership" value="{!v.appDetails.Name_of_govt_orgs_and_ownership__c}" aura:id="expenseform1"/>
+            <!--<Lightning:input label="{!v.queAndAns[1].Question}" required="true" name="GovtOwnership" value="{!v.appDetails.Prev_Current_relationships_with_Telstra__c}" aura:id="expenseform1" class="slds-hidden"/>-->
+              <br></br>
+            </aura:if>
+        
+         <lightning:radioGroup name="a_opt2" label="{!v.queAndAns[2].Question}" options="{!v.LitigationYes}" aura:Id="currentEmploy"
+        onchange="{!c.onSelectChange}" value="{!v.appDetails.Currently_employed_by_govt_political_par__c}"  required="true" />
+        <br></br>
+                   
+            <aura:if isTrue="{!v.Investyesno}">
+                <Lightning:textarea label="{!v.queAndAns[3].Question}" required="true" name="GovtOwnership" value="{!v.appDetails.Name_title_position_in_govt_party__c}" aura:id="expenseform2"/>
+            <!--<Lightning:input label="{!v.queAndAns[3].Question}" required="true" name="GovtOwnership" value="{!v.appDetails.Prev_Current_relationships_with_Telstra__c}" aura:id="expenseform2" class="slds-hidden"/>-->
+           
+       		</aura:if>
+        		<div>
+        	<aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+               <div class="slds-modal__footer">
+                <lightning:button label="Save" variant="brand" onclick="{!c.handleSaveRecord}" />
+    			<lightning:button label="Next" variant="brand" onclick="{!c.navigateToMyComponent}" />
+        </div>
+            </div>
+            </div>
+        </form>
+        </fieldset>
+    </div>
+</aura:component>

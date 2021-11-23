@@ -1,0 +1,143 @@
+<template>
+    <div class="spinner">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" class="spinss" variant="brand" size="large">
+             </lightning-spinner>
+        </template>
+    </div>
+    <div class="spinner1">
+        <template if:true={isBasketLoadingSingle}>
+             <lightning-spinner alternative-text="Loading" class="spins" variant="brand" size="large">
+             </lightning-spinner>
+        </template>
+    </div>
+    <div class="spinner2">
+        <template if:true={isBasketLoadingMultiple}>
+             <lightning-spinner alternative-text="Loading" class="spinsMultiple" variant="brand" size="large">
+             </lightning-spinner>
+        </template>
+    </div>
+    <div class="slds-page-header">
+        <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+        <div class="slds-media">
+        <div class="slds-media__figure">
+        </div>
+        <div class="slds-media__body">
+        <div class="slds-page-header__name">
+        <div class="slds-page-header__name-title">
+        <h1>
+            <p class="slds-page-header__title slds-truncate" title="">Solutions({solutionCount})</p><br/>
+        </h1>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+            <lightning-input  style="width: 50%;padding-left:100px;" placeholder="Search service number new, Subscription, Device ID" value={searchVal} type="search" onchange={handleSearch}></lightning-input>
+        </div>
+        <span class="slds-badge">Selected Solutions:{selectedRowCount}</span>
+        </div>
+    <div class="slds-box">
+       
+        <!--normal serach-->
+        <!-- Simple -->
+        <c-show-sub-cell-button-helper                         
+        columns = {solutionColums} 
+        data = {solutionData}
+        key-field = "id"
+        onrowselection = {handleRowSelection}
+        onshowpoponsub ={showpoponsub}
+        onrowaction={showSubscriptions}>                
+    </c-show-sub-cell-button-helper>
+    <div class="slds-float_right">
+        <lightning-button-group>
+            <button class="slds-button slds-button--neutral" onclick={handlePONR}>Check PONR</button>
+            <button class="slds-button slds-button--neutral" disabled={disableAmendButton} onclick={handleAmend}>Amend</button>
+         </lightning-button-group>
+    </div>
+    <br/>
+    <br/>
+    </div>
+
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+            <header class="slds-modal__header">
+            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeModal} title="Close">
+            <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+            </svg>
+            <span class="slds-assistive-text">Close</span>
+            </button>
+            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Subscriptions</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <div style="height: 300px;">
+                    <lightning-datatable
+                            key-field="Id"
+                            hide-checkbox-column = "true"
+                            data={subscriptionData}
+                            columns={subscriptionColumn}
+                            >
+                    </lightning-datatable>
+                </div>    
+            </div>
+            <footer class="slds-modal__footer">
+            <div align="right">
+                <button class="slds-button slds-button_brand"  onclick={closeModal}>Close</button>
+            </div>
+            </footer>
+            </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+     </template>
+
+    
+    <template if:true={genericError}>
+        <div style="position:absolute;top:5rem;left:1rem;right:1rem">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_default slds-box slds-box_small" style="border-color:red;" role="error">
+                <div class="slds-align_absolute-center">
+                    <h2 class="slds-text-heading_large" style="color:red;">
+                        <template if:true={visible}>
+                            Solution cannot be amended as all subscriptions have reached Point of No Return stage
+                        </template>
+                        <template if:true={showAmendMessage}>
+                            {amendResult}
+                        </template>
+                        <template if:true={cannotCheckPONR}>
+                            Order has now reached Point of No Return stage
+                        </template>
+                        <template if:true={showAmendError}>
+                            Please select solution before amend
+                        </template>
+                        <template if:true={showCaseRequestorError}>
+                            Requestor details are mandatory
+                        </template>
+                        <template if:true={showCaseNumberError}>
+                            Telstra Support Case Number is mandatory
+                        </template>
+                        <template if:true={amendTypeNotSelected}>
+                            Amend Type is mandatory
+                        </template>
+                        <template if:true={ponrApiError}>
+                            There has been an error while retrieving the latest PONR status. Please try again
+                        </template>
+                        <template if:true={dmcaterror}>
+                            The solution selected has offers which are not eligible for Amendment
+                        </template>
+                        <template if:true={amendRejectedError}> 
+                            Please select all the solutions before amend    
+                        </template>
+                        <template if:true={batchFailedError}> 
+                            Looks like there was an error. Please try again    
+                        </template>
+                    </h2>
+                    <lightning-icon icon-name="utility:error" alternative-text="error" variant="Error" size="small" ></lightning-icon>
+                </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

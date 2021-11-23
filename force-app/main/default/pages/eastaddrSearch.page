@@ -1,0 +1,3 @@
+<apex:page id="eastaddrSearch" title="Address Search" standardController="Account">
+    <c:AddressSearchComponent oId="{!account.Id}" oType="account"/>
+</apex:page>

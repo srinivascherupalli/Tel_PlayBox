@@ -1,0 +1,655 @@
+<aura:component controller="ShowSubscriptionsOnMACButtonController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride,forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable" access="global" >
+    <!-- This Component is create as Part of US EDGE-59956 -> To show subscription for Cancellation/Modification -->
+    <aura:dependency resource="markup://force:*" type="EVENT"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="selectedCount" type="integer" default="0"/>
+    <aura:attribute name="createdDate" type="date" />
+    <aura:attribute name="isListNotPresent" type="boolean" default="true"/>
+    <aura:attribute name="NoSearchRecord" type="boolean" default="false"/>
+    <aura:attribute name="acc" type="Account"/>
+    <aura:attribute name="searchPlaceHolder" type="String" default="Search here..."/>
+    <aura:attribute name="wrapList" type="SubWrapper[]"/>
+    <aura:attribute name="columns" type="List" default="[]"/>
+    <aura:attribute name="data" type="List" default="[]"/>
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="selectedCWPCount" type="Integer" default="0"/>
+    <aura:attribute name="selectedRows" type="List" default="[]"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="sortedBy" type="String"/>
+    <aura:attribute name="sortedDirection" type="String"/>
+    <aura:attribute name="defaultSortDirection" type="String"/>
+    <aura:attribute name="filteredData" type="List" />
+    <aura:attribute name="filter" type="String" />
+    <aura:attribute name="SelectedSubsID" type="List" default="[]"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="isError" type="boolean" default="false" />
+    <aura:attribute name="totalNumberOfCwpRows" type="Integer" default="0"/>
+    <aura:attribute name="totalNumberOfActiveCwpRows" type="Integer" default="0" description="Total number of Active CWP Subscription on Account"/>
+    <aura:attribute name="numberOfCwpRowsUnderModify" type="Integer" default="0"/>
+    <aura:attribute name="numberOfActiveCwpRowsUnderModify" type="Integer" default="0"/>
+    <aura:attribute name="nonCwpData" type="List" default="[]" description="This includes IP Network and UCE" />
+    <aura:attribute name="mobilityData" type="List" default="[]"/>
+    <aura:attribute name="numberOfMobilityProducts" type="Integer" default="0"/>
+    <aura:attribute name="flagAllCWPForCancel" type="boolean" default="false" description="Flag to check if all CWP subscriptions are selected for Cancellation"/>
+    <aura:attribute name="statusofIPNetwork" type="String"/>
+    <aura:attribute name="locationofIPNetworkinbasket" type="Boolean" default="false" description="True if IP Network is present in Basket after Modify/Cancel"/>
+    <aura:attribute name="ActiveIPNetwork" type="Id"/>
+    <aura:attribute name="statusofUCE" type="String"/>
+    <aura:attribute name="locationofUCEinbasket" type="Boolean" default="false" description="True if Unified Communication [] is present in Basket after Modify/Cancel"/>
+    <aura:attribute name="ActiveUCE" type="Id"/>
+    <aura:attribute name="CwpRowsUnderModifyInBasket" type="Integer" default="0"/>
+    <aura:attribute name="accountId" type="Id" />	
+    <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="renderCancelButton" type="Boolean" default="true"/>
+    <aura:attribute name="showCancellationModal" type="boolean" default="false" />
+    <aura:attribute name="showAlertforAllCWP" type="boolean" default="false" />
+    <aura:attribute name="proceedAfterAllCWPAlert" type="boolean" default="false"/>
+    <aura:attribute name="redirectToBasket" type="boolean" default="false" />
+    <aura:attribute name="showSpinner" type="boolean" default="false"/>
+    <aura:handler name="cancelReasonUpdated" event="c:cancellationReasonUpdate" action="{!c.handleCancelReasonUpdate}"/>
+    <aura:handler name="modifyReasonUpdated" event="c:modifyReasonUpdate" action="{!c.handleModifyReasonUpdate}"/>
+    <aura:handler name="alertCancelAllCWP" event="c:alertAllCWPCancel" action="{!c.handleAlertCancelAllCWP}"/>
+    <aura:attribute name="showModifyModal" type="boolean" default="false" />
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="assuranceProfileFlag" type="boolean" default="false"/>
+    <aura:attribute name="loggedinUserProfilename" type="String" default=""/>
+    <aura:attribute name="actionType" type="List" default="['Sim Replacement','Cancellation','Modify']"/>
+    <aura:attribute name="actionTypeSelected" type="string" default=""/>
+    <!--<aura:attribute name="reason" type="string" default=""/>--><!--DPG-4542(Commented)-->
+    <aura:attribute name="cobaReason" type="string" default=""/><!-- Added EDGE-205598 : CoBA Changes-->
+    <aura:attribute name="isActivePOR" type="string" default="Inactive"/><!-- EDGE-151597  --> 
+
+
+    <aura:attribute name="csmURL" type="string" default=""/><!-- EDGE-164004  -->
+    <aura:attribute name="kaURL" type="string" default=""/><!-- EDGE-164004  -->	
+     <aura:attribute name="AccountHomeURL" type="string" default=""/>
+     <aura:attribute name="AccountURL" type="string" default=""/>
+	 <aura:attribute name="accidVal" type="string" />
+
+     <!-- EDGE-98386 start  -->
+    <aura:attribute  name="marketOffer" type="List" default=""/><!-- Used to store selected subscription's market offer code  -->
+     <aura:attribute  name="Subs" type="List" default=""/><!-- Used to store selected subscription's SN-number  -->
+    <!-- EDGE-98386  end-->
+    
+    <!-- EDGE-77981 NBN Transfer Out Update - adhere for NBN transfer Out specific rules -->
+    <aura:handler name="change" value="{!v.actionTypeSelected}" action="{!c.handleActionTypeChange}"/>
+    
+    <aura:attribute name='isSimReplacementSelected' type="Boolean" default="false"
+                    description="to display sim replacemnt component"/>   
+    <aura:attribute name="showOnlyCancelNBN" type="boolean" default="false"/>
+    <aura:attribute name="oldData" type="List" default="[]"/>
+    <!-- EDGE-77981 AC4 start-->
+    <aura:attribute name="selectedCWPNBN" type="Integer" default="0"/>  
+    <aura:attribute name="allCWPData" type="List" default="[]"/>
+    <aura:attribute name='IsMobility' type="Boolean" default="false"/> <!--updated default value to true for EDGE-165866-->
+    <aura:attribute name="tNowCaseRef" type="String" default="" /> <!--EDGE-132715-->
+	<aura:attribute name="isTnowCaseRefValid" type="Boolean" default="false" />
+	<aura:handler name="change" value="{!v.tNowCaseRef}" action="{!c.handleTnowCaseRefChange}"/>    
+    <!-- EDGE-77981 AC4 end-->
+    
+    <!-- EDGE-107130  Start-->
+    <aura:attribute name='ShowReserveScrn' type="Boolean" default="false"/>
+    <!--EDGE-140733-Dheeraj Bhatt- Ability to lock/unlock NGUC subscription in SFDC/CS during number port out. -->
+    <aura:attribute name="SubActionType" type="string"  default="Active"/>
+    <!--<aura:attribute name="hasNgucPortOutPermission" type="Boolean" default="false"/>--><!--EDGE-140734-Dheeraj Bhatt- restrict Lock/Unlock of a subscription for users other than Telstra Wholesale team users. -->
+   <!-- <aura:handler name="sendfixednumdetails" event="c:FixedNumberDetailsEvent" action="{!c.handleFixedNumDetails}"/> -->
+    <aura:attribute name="MACD_ActionTypes" type="Map" access="PRIVATE"/> <!--EDGE-140756-->
+    <!-- EDGE-107130  End-->
+    <aura:attribute name="MACD_Reason" type="Map" access="PRIVATE"/><!--EDGE-166431-->
+	<aura:attribute name="Selectreason" type="string" default=""/><!--EDGE-166431-->
+	<aura:attribute name='replacementReson' type="Boolean" default="false"/>
+   
+    <!--DPG-4542 Start-->
+    <aura:attribute name="reasonMap" type="Map"/>
+    <aura:attribute name="selectedReason" type="Map"/>
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="popupHeading" type="String" />
+    <aura:attribute name="selectedRowId" type="String"/>
+    <aura:attribute name="applyToAllConfig" type="BOOLEAN"/>
+    <!--DPG-4542 End-->
+    <!--Header-->
+    <lightning:navigation aura:id="navService"/>
+    <!--lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/-->
+
+    <!--EDGE-205598 Start -->
+    <aura:attribute name="subids" type="List" default="[]"/>
+    <aura:attribute name="showBillingAcc" type="Boolean" />
+    <aura:attribute name="selectedContact" type="sObject" />
+    <aura:attribute name="Contactid" type="string" />
+    <aura:attribute name="billAcc" type="string" />
+    <aura:attribute name="pageSubids" type="List" default="[]"/>
+
+    <aura:attribute name="submitSubids" type="List" default="[]" />
+    <aura:attribute name="showSubmit" type="Boolean" default="true" />
+
+
+
+    <!--EDGE-205598 End -->
+
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="slds-spinner_container">
+            <lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isError}">
+        <c:customToast type="error" message="{!$Label.c.Error_Loading_Component}" title="Error title" />
+    </aura:if>
+    <div aura:id="container"/>
+        <aura:if isTrue="{! v.accountId != '' }">
+            <div class="slds-border_bottom slds-clearfix" style="padding: 0 .25rem; background-color:white">
+                <h4 class="slds-float_left" style="padding: 0 .25rem; font-size: x-large; color: #7d7d7d;">MACD Order</h4>
+                <div style="margin-top: 0.25rem;">
+
+                <lightning:button class="slds-float_right" label="Return to Account" iconName="utility:chevronleft"
+                    iconPosition="left" onclick="{!c.onCancel}" />
+
+                </div>
+            </div>
+        </aura:if>
+        <!--EDGE-205598 Start Added if condition to show only billing account page-->
+        <aura:if isTrue="{!v.showBillingAcc}">
+
+        <c:billingAccountChangeComp accountid="{!v.accountId}" onfinalSelectedEvnt="{!c.handleAutoRowSelection}"
+            reason="{!v.cobaReason}" subids="{!v.SelectedSubsID}" contactid="{!v.Contactid}"
+            onbillingaccEvnt="{!c.handleBillAcc}" />
+        <div class="slds-grid slds-grid_align-end">
+            <lightning:button onclick="{!c.handleBackButton}" label="Back" />
+            <lightning:button variant="brand" onclick="{!c.handlesubmitbtn}" label="Submit"
+                disabled="{!v.showSubmit}" />
+        </div>
+        <aura:set attribute="else">
+            <!--EDGE-205598 End -->
+
+    <!-- Edge 53882 sim replacement -->
+    <aura:if isTrue="{!v.isSimReplacementSelected}">
+        <div aura:id="cmpBody">
+            {!v.body}
+        </div>
+        <aura:set attribute="else">
+            <!-- EDGE-53863 ~ Alert for cancellation of mobility products when all CWP are selected for cancellation-->
+            <aura:if isTrue="{!and(v.showAlertforAllCWP,v.flagAllCWPForCancel)}">
+                <c:CancelAllCWPAlert basketId="{!v.basketId}" proceedToCancellation="{!v.proceedAfterAllCWPAlert}"/>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.showCancellationModal}">
+                <c:CancellationReason basketId="{!v.basketId}" accountId="{!v.accountId}" selectedLookUpRecord="{!v.selectedLookUpRecord}" redirectToBasket="{!v.redirectToBasket}" />
+            </aura:if>
+            
+            <aura:if isTrue="{!v.showModifyModal}">
+                <c:AdditionalMacInfo basketId="{!v.basketId}" accountId="{!v.accountId}" selectedLookUpRecord="{!v.selectedLookUpRecord}" redirectToBasket="{!v.redirectToBasket}" />
+            </aura:if>
+            
+            
+            <!-- EGDGE-87725 UX Changes-->
+            <aura:if isTrue="{!v.actionTypeSelected=='Sim Replacement'}">
+                <br/>
+                <div class="slds-page-header slds-page-header_record-home">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title">
+                            <div class="slds-media">
+                                <div class="slds-media__body">
+                                    
+                                    <div class="slds-page-header__name">
+                                        
+                                        <div class="slds-page-header__name-title">
+                                            <h1>
+                                                <span>Account</span>
+                                                <span class="slds-page-header__title slds-truncate" title="Account"><a href="{!'/one/one.app?#/sObject/'+ v.acc.Id + '/view'}" target="_blank">{!v.acc.Name}</a></span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-page-header__row slds-page-header__row_gutters">
+                        <div class="slds-page-header__col-details">
+                            <ul class="slds-page-header__detail-row">
+                                <li class="slds-page-header__detail-block">
+                                    <div class="slds-text-title slds-truncate" title="CIDN">CIDN</div>
+                                    <div class="slds-truncate" title="{!v.acc.CIDN__c}"><span>{!v.acc.CIDN__c}</span></div>
+                                </li>
+                                <li class="slds-page-header__detail-block">
+                                    <div class="slds-text-title slds-truncate" title="Telstra Account Owner">Telstra Account Owner</div>
+                                    <div class="slds-truncate" title="Telstra Account Owner Value">{!v.acc.Owner.Name}</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <aura:set attribute="else">
+                    <div class="slds-page-header">
+                        <nav role="navigation" aria-label="Breadcrumbs">
+                            <ol class="slds-breadcrumb slds-list_horizontal slds-wrap">
+                                <lightning:icon iconName="standard:account"  /> 
+                                <li class="slds-breadcrumb__item slds-text-title_caps"><a href="{!v.AccountURL}" target="_blank"> Accounts</a></li>
+                                <li class="slds-breadcrumb__item slds-text-title_caps"><a href="{!v.AccountURL}" target="_blank">{!v.acc.Name}</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </aura:set>
+            </aura:if>
+            <aura:if isTrue="{!v.isActivePOR=='Active'}"><!--EDGE-164004-->
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-10" style="width: 40px;"/>
+                    <div class="slds-col slds-size_8-of-10 slds-p-right_medium slds-p-bottom_medium"
+                         style="background-color:#F1F6FC; border-left-width: 4px; border-left-style: solid;
+                                border-left-color:#0064d2;width: 1225px;height: 170px;">
+                        <div style="padding-top: 32px;"/>
+						<p class="slds-p-left_medium"><strong style="font-family:akkuratBold;font-size:20px;color:#414141;
+                                       line-height: 25px; letter-spacing: -0.2px; text-align: left;">
+                                Can't find the change type you're looking for?</strong></p>   
+                            <div style="padding-top: 6px;"/>
+                        <p class="slds-p-left_medium" style="font-family:akkuratLight;
+                                                             font-size:18px;color:#414141;letter-spacing: -0.1px;
+                                                             line-height: 25px; text-align: left;">                            
+                            Some change types can't be performed through Telstra Partner Central.
+                            In this case, you must use 
+                            <a style="font-family:akkuratReg;font-size:18px;color:#0064d2;
+
+                                      line-height: 19px;letter-spacing: -0.5px;text-align: left;"
+                               href="{!v.csmURL}" target="_blank">
+                                Customer Service Management (CSM) 
+                                <lightning:icon class="incidentsIconconColor" iconName="utility:new_window" size="small">
+                                </lightning:icon>
+                            </a>                            
+                        </p>
+                            <div style="padding-top: 26px;"/>  
+                        <p class="slds-p-left_medium" style="font-family:akkuratLight;
+                                                             font-size:18px;color:#414141;letter-spacing: -0.1px;
+                                                             line-height: 25px; text-align: left;">
+                            To check what change types you can raise, and where to raise them, visit the 
+                        	<a style="font-family:akkuratReg;font-size:18px;color:#0064d2;
+                                      line-height: 19px;letter-spacing: -0.5px;text-align: left;"
+                               href="{!v.kaURL}"
+                               target="_blank">Knowledge Article.</a>
+                        </p>                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-10"/>
+                </div>
+			</aura:if>            
+            <!--select action type-->
+            <aura:if isTrue="{! v.showOnlyCancelNBN != true }">
+                <div class="slds-text-align_left">
+                    
+                    <div class="slds-m-around_x-small">
+                        <div class="slds-m-around_small slds-grid slds-gutters">
+                            
+                            <div class="slds-col slds-size_1-of-4" >
+                                <br/>
+                                <label class="slds-form-element__label" style="margin-right: 0.5rem;">Action Type *</label>
+                               <lightning:helptext content="Please select an action type to perform the transaction" class="customIcon"/> 
+                                <div class="selectListwidth">
+                                    <lightning:select aura:id="selectActionType" name="actionType" label="Action Type" variant="label-hidden" value="{!v.actionTypeSelected}" >
+                                        <option value="">Select Action</option> 
+                                         <aura:iteration items="{!v.MACD_ActionTypes}" var="option">
+                                             <option  value="{!option.key}">{!option.value}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>
+                                <aura:if isTrue="{! and(v.actionTypeSelected != '', v.assuranceProfileFlag) }"><!--EDGE-132715-->
+                                	<br/>
+                                    <lightning:input fieldLevelHelp="Enter in the format TNC000000000 or GESPO000000000 or TBAPO00000000"
+                                                     type="text" 
+                                                     name="tNowCaseRefNum"
+                                                     label="TelstraNow Case Reference Number*"
+                                     				 pattern="(TNC\d\d\d\d\d\d\d\d\d)|(tnc\d\d\d\d\d\d\d\d\d)|(GESPO\d\d\d\d\d\d\d\d\d)|(gespo\d\d\d\d\d\d\d\d\d) |(TBAPO\d\d\d\d\d\d\d\d\d)|(tbapo\d\d\d\d\d\d\d\d\d)"
+                                     				 messageWhenPatternMismatch="Enter in the format TNC000000000 or GESPO000000000 or TBAPO000000000"
+                                                     value="{!v.tNowCaseRef}"
+                                                     maxlength="14" />
+                                </aura:if>
+                            </div>
+                            <!--EDGE-166431 Read Replacment Reason picklist values || start-->
+                             <div class="slds-col slds-size_1-of-4" >
+                                <br/>
+
+                                <aura:if isTrue="{!v.actionTypeSelected == 'Sim Replacement'}">
+                                <label class="slds-form-element__label" style="margin-right: 0.5rem;">Reason</label>
+                                <div class="selectListwidth">
+                                    <lightning:select aura:id="selectReason" name="ReplacementReason" label="Reason" value="{!v.Selectreason}" variant="label-hidden" onchange="{!c.onResonSelection}">
+                                        <option value="">Select Reason</option> 
+                                         <aura:iteration items="{!v.MACD_Reason}" var="option">
+                                             <option  value="{!option.key}">{!option.value}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>
+								</aura:if>
+                            </div>
+                             <!--EDGE-166431 Read Replacment Reason picklist values || End-->
+                            <div class="slds-col slds-size_1-of-4" >
+                                
+                                <br/>
+                                <!--DPG-4542(Reason selection on every subscription) start commented-->
+                                <!--<aura:if isTrue="{!v.actionTypeSelected == 'Suspend'}">
+                                    <label class="slds-form-element__label" style="margin-right: 0.5rem;">Reason </label>
+             
+                                    <div class="selectListwidth">
+                                        <lightning:select aura:id="Reason" name="Reason" label="Reason" variant="label-hidden" value="{!v.reason}"> 
+                                            <option value="">Select Reason</option>
+                                            <option value="Requested by Customer">Requested by Customer</option>
+                                            <option value="Requested by Telstra">Requested by Telstra</option>                                
+                                        </lightning:select>
+                                    </div>
+                                </aura:if>-->
+                                <!--DPG-4542(Reason selection on every subscription) end commented-->
+                                <aura:if isTrue="{! v.actionTypeSelected == 'Change Of Mobile Number' }">
+                                    <br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <div class="slds-p-left_x-small" style="display:inline">Reason</div>
+                                    <p class="slds-p-top_xx-small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       <b><div class="slds-p-left_x-small" style="display:inline">Unwelcome Calls</div></b>
+                                    </p>
+                                </aura:if>
+                                <aura:if isTrue="{! v.actionTypeSelected == 'Change Fixed Number' }"> <!--EDGE 107130 --> 
+                                    <br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <div class="slds-p-left_x-small" style="display:inline">Reason</div>
+                                    <p class="slds-p-top_xx-small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       <b><div class="slds-p-left_x-small" style="display:inline">Unwelcome Calls</div></b>
+                                    </p>
+                                    
+                                </aura:if>
+                                <!--EDGE-140733-Dheeraj Bhatt- Ability to lock/unlock NGUC subscription in SFDC/CS during number port out. -->
+                                <aura:if isTrue="{!v.actionTypeSelected =='Port Out'}">
+                                    <label class="slds-form-element__label" style="margin-right: 0.5rem;">Sub Action Type *</label>
+                                    <div class="selectListwidth">
+                                        <lightning:select aura:id="SubActiontype" name="Sub Action type" label="Sub Action Type" variant="label-hidden" value="{!v.SubActionType}" onchange="{!c.onSubscriptionchange}"> 
+                                            <option value="Active">Lock</option>
+                                            <option value="Pending Port Out">Unlock</option>                                
+                                        </lightning:select>
+                                    </div>
+                                </aura:if>
+                                <!-- End- EDGE-140733-->
+                                <!-- Start EDGE-205597:Change of Billing Account -->
+                                    <aura:if isTrue="{!v.actionTypeSelected == 'Change of Billing Account'}">
+
+                                            <label class="slds-form-element__label"
+                                                style="margin-right: 0.5rem;">Reason</label>
+                                            <div class="selectListwidth">
+                                                <lightning:select aura:id="ReasonBAN" name="Change of Billing Account"
+                                                    label="Reason" variant="label-hidden" value="{!v.cobaReason}">
+                                                    <option value="none">--Select Reason--</option>
+                                                    <option value="Requested by Customer">Requested by Customer</option>
+                                                    <option value="Telstra error (incorrect BAN selected)">Telstra error
+                                                        (incorrect BAN selected)</option>
+                                                    <option value="Customer error (incorrect BAN selected)">Customer
+                                                        error (incorrect BAN selected)</option>
+
+                                            </lightning:select>
+                                        </div>
+                                    </aura:if>
+                                <!-- End EDGE-205597:Change of Billing Account -->
+                            </div>
+                            <aura:if isTrue="{! v.actionTypeSelected == 'Change Fixed Number' }"> <!--EDGE 107130 --> 
+                                <div class="slds-col slds-size_1-of-2" >
+                                   <!-- <c:FixedNumberSearch accId="{!v.accountId}" aura:id="ChangedFixednumber"/>-->
+                                </div>
+                            </aura:if>
+                        </div>
+                        
+                        <br/>
+                        <br/>
+                    </div>
+                </div>
+                
+                <aura:set attribute="else">
+                    <div class="slds-p-top_large slds-p-left_small slds-size_1-of-3 NBNActionTypeHide">
+                        <label class="slds-form-element__label" style="margin-right: 0.5rem;">Action Type *</label>
+                        <lightning:helptext content="Please select an action type to perform the transaction" class="customIcon"/> 
+                        <div class="selectListwidth">
+                            <lightning:select aura:id="selectActionType" name="actionType" label="Action Type" variant="label-hidden" value="{!v.actionTypeSelected}" >
+                                <option value="">Select Action</option>
+                                <option value="Cancellation">Cancellation</option>
+                            </lightning:select>
+                        </div>
+                    </div>
+                </aura:set>
+            </aura:if>
+            <!-- end -->
+            <!-- subscription table to be visible when we select action-->
+            <!--  EDGE-129540 Added "Modify or Cancel" condition-->
+            <aura:if isTrue="{!and(and(v.actionTypeSelected!='',v.actionTypeSelected !='Modify or Cancel'),v.actionTypeSelected !='Device Replacement') &amp;&amp;  v.actionTypeSelected !='Port Out'}">               
+                <aura:if isTrue="{!and(v.actionTypeSelected !='Change Fixed Number', v.actionTypeSelected !='Insolvency Cancel')}"><!--DIGI-9239--> <!--EDGE 107130 -->    
+                    <br/>
+                    <!--loading spinner-->
+                    <div class="slds-is-relative slds-p-left_small slds-p-right_small">
+                        <aura:if isTrue="{!v.Spinner}">
+                            <div aura:id="spinnerId" class="slds-spinner_container">
+                                <div class="slds-spinner--brand  slds-spinner slds-spinner--large " role="alert">
+                                    <span class="slds-assistive-text">Loading</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                        </aura:if>
+                        <p class="slds-page-header__title slds-truncate" title="">Subscriptions</p><br/>
+                        <span class="slds-badge">Selected Subscription:{!v.selectedRowsCount}</span><br/>
+                        <br/>
+                        <!-- Start EDGE-205597:Change of Billing Account -->
+                        <!--DIGI-17391 added order Condition to make  available for Manage Fixed Numbers,first line change-->
+                        <aura:if isTrue="{!or(v.actionTypeSelected=='Change of Billing Account',v.actionTypeSelected=='Manage Fixed Numbers')}">
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col">
+
+                                            <div class="slds-truncate .slds-align_absolute-center "> Requested By*
+                                            <lightning:helptext
+                                            content="{!$Label.c.Requested_by}" /> 
+                                            </div>
+                                            <c:customContactRoleLookup objectAPIName="{!v.accountId}"
+                                                selectedRecord="{!v.selectedContact}" />
+
+                                </div>
+                            </div>
+                        </aura:if>
+                        <br/> 
+                        <!-- End EDGE-205597:Change of Billing Account --> 
+
+                        <lightning:input type="search" onchange="{!c.filter}" value="{!v.filter}"  placeholder="{!v.searchPlaceHolder}" /><br/>   
+                        <br/> 
+                        <!-- // -->
+                        <!--- Subscriptions table--> 
+                        <div >
+
+                                <!--EDGE-205598 Start Show Table with pagination for Change of Billing Account-->
+                            <aura:if isTrue="{!v.actionTypeSelected =='Change of Billing Account'}">
+
+                                        <c:subscriptionTableComp subids="{!v.subids}"
+                                            onpageChangeEvt="{!c.handlePageChange}"
+                                            onrowselectionevt="{!c.handlerowselection}" checkbox="true" />
+                                        <aura:set attribute="else">
+                                            <!--EDGE-205598 End -->
+                            <lightning:datatable aura:id="subscriptionTable"                                
+                                                 columns="{! v.columns }"
+                                                 data="{! v.filteredData }"
+                                                 keyField="SubscriptionID"
+                                                 resizeColumnDisabled="{! v.resizeColumnDisabled }"
+                                                 sortedBy="{! v.sortedBy }"
+                                                 selectedRows ="{!v.selectedRows}"               
+                                                 sortedDirection="{!v.sortedDirection }"
+                                                 defaultSortDirection="{!v.defaultSortDirection }"
+                                                 onrowselection="{!c.updateSelectedText }"
+                                                 onsort="{!c.updateColumnSorting }"
+                                                 onrowaction="{!c.handleRecordAction}" 
+                                                 /><!--DPG-4542(Added onrowaction)-->
+
+
+                                    </aura:set>
+                                </aura:if>
+                            <aura:if isTrue="{!v.NoSearchRecord}">
+                                <span><b>There are no subscriptions that matches your search criteria.</b></span><br/>
+                            </aura:if>
+                        </div>
+                        <!--c:ChangeInMobileNumber></c:ChangeInMobileNumber-->
+                        <br/>
+                        <div class="slds-grid slds-grid--align-end">
+                            <aura:if isTrue="{!v.IsMobility}">
+                                
+                                
+                                <lightning:button class="slds-button slds-button_text" onclick="{!c.redirectToBasketOrAccount}" iconName="utility:error" iconPosition="left" label="Cancel" />
+                                <lightning:button class="slds-button slds-button--brand" onclick="{!c.handleChangeType}" disabled="{!v.selectedRowsCount==0}" iconName="action:approval" iconPosition="left" label="Finish" /><br/>
+                                
+                                <aura:set attribute="else">
+                                    <lightning:button class="slds-button slds-button_text" onclick="{!c.redirectToBasketOrAccount}" label="Back" />
+                                    <lightning:button class="slds-button slds-button--brand" onclick="{!c.handleChangeType}" disabled="{!or(v.selectedRowsCount==0,v.replacementReson==true, and(or(v.assuranceProfileFlag==true, v.assuranceProfileFlag=='true'), or(v.isTnowCaseRefValid==false, v.isTnowCaseRefValid=='false')))}" label="Next" /><br/>
+                                </aura:set>
+                            </aura:if>
+                            <!--  <aura:if isTrue="{!(v.actionTypeSelected=='Suspend')}">
+
+                                <lightning:button class="slds-button slds-button_text" onclick="{!c.redirectToBasketOrAccount}" label="Back" />
+                                <lightning:button class="slds-button slds-button-brand" onclick="{!c.handleChangeType}" disabled="{!v.selectedRowsCount==0}"  label="Next" /><br/>
+                       
+                        </aura:if>-->
+                            <!--button class="slds-button slds-button-brand" onclick="{!c.onCancel}">Testing</button--> 
+                        </div> 	
+                    </div>
+                </aura:if>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+    <br/>
+    <!--  EDGE-80869-Dheeraj Bhatt-device replacement -->
+    <aura:if isTrue="{!v.actionTypeSelected =='Device Replacement'}">
+        <c:DeviceReplacement accountId="{!v.accountId}" assuranceProfileFlag = "{!v.assuranceProfileFlag}" isTnowCaseRefValid = "{!v.isTnowCaseRefValid}" tNowCaseRef="{!v.tNowCaseRef}" aura:id="DeviceReplacement"/>
+    </aura:if><!--EDGE-132715 Added tNowCaseRef-->
+    <!-- End- EDGE-80869-->
+	<!--  EDGE-129540-Gnana-Merge Commercial and Non-Commercial MAC into one button -->
+	<aura:if isTrue="{!or(v.actionTypeSelected =='Modify or Cancel', v.actionTypeSelected =='Insolvency Cancel')}"><!--DIGI-9239-->
+        <c:ShowSolutionsOnMACButton basketId="{!v.basketId}" accountId="{!v.accountId}" renderCancelButton="{!v.renderCancelButton}" actionTypeSelected="{!v.actionTypeSelected}" tNowCaseRef="{!v.tNowCaseRef}"/>
+    </aura:if>
+    <!-- End- EDGE-129540-->
+    <!--EDGE-140733-Dheeraj Bhatt- Ability to lock/unlock NGUC subscription in SFDC/CS during number port out. -->
+     <aura:if isTrue="{!and(v.actionTypeSelected =='Port Out',v.SubActionType!='')}">
+        <c:subscriptionLockUnlock aura:id ="subscriptionLockUnlock" accountId ="{!v.accountId}" status ="{!v.SubActionType}" />
+    </aura:if>
+     <!-- End- EDGE-140733-->
+    <c:ChangeInMobileNumber isOpen="flase" aura:id="changeNumberView"/>
+    <c:SuspendMobileNumber isOpen="false" aura:id="SuspendNumberView"/>
+      
+    <!--EDGE 107130 Start-->
+    <aura:if isTrue="{!v.ShowReserveScrn}">
+       <!-- <c:FixedNumberSearchModal  aura:id="FixedNumberModal"/>-->
+    </aura:if> 
+    <!--EDGE 107130 End .-->
+     <!--EDGE-205903 DIGI-35918 Start -->
+    <aura:if isTrue="{!v.actionTypeSelected =='Manage Fixed Numbers'}">
+        <c:numberManagementMACD aura:id="lwcNumberManagementMACD" basketId="{!v.basketId}" accountId="{!v.accountId}" subscriptionID="{!v.SelectedSubsID}" contactId="{!v.Contactid}"></c:numberManagementMACD>
+    </aura:if>
+    <!--EDGE-205903 DIGI-35918 End-->
+    
+    <!--DPG-4542 start-->
+    <div class="slds-m-around_xx-large">
+        <!--Use aura:if tag to display/hide popup based on isModalOpen value-->  
+        <aura:if isTrue="{!v.isModalOpen}">
+             
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.popupHeading}</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <lightning:select aura:id="reasonPicklist" value="{!v.selectedReason}" onchange="{!c.handleReasonChange}" name="reasonPicklist" >
+                            <option value="">--Select--</option>
+                            <aura:iteration items="{!v.reasonMap}" var="option">
+                                <option  value="{!option.key}">{!option.value}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        
+                    </div>
+                        
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        
+                        
+                     <div class="demo-only demo-only--sizing slds-grid">
+                        <div class="slds-size_1-of-2">
+                            <lightning:input name="applyToAllConfig" type="toggle" checked="{!v.applyToAllConfig}" label="Apply to all selected configurations" /> 
+                        </div>
+                        <div class="slds-size_1-of-2">
+                            <lightning:button variant="neutral"
+                            label="Cancel"
+                            title="Cancel"
+                            onclick="{! c.closeModel }"/>
+                            <lightning:button variant="brand"
+                            label="Apply"
+                            title="OK"
+                            onclick="{!c.submitDetails}"/>
+                            </div>                       
+                     </div>
+                    </footer>
+                </div>
+                
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    </div>
+    <!--DPG-4542 end-->
+    
+    <!--DPG-4542 start-->
+    <div class="slds-m-around_xx-large">
+        <!--Use aura:if tag to display/hide popup based on isModalOpen value-->  
+        <aura:if isTrue="{!v.isModalOpen}">
+             
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.popupHeading}</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <lightning:select aura:id="reasonPicklist" value="{!v.selectedReason}" onchange="{!c.handleReasonChange}" name="reasonPicklist" >
+                            <option value="">--Select--</option>
+                            <aura:iteration items="{!v.reasonMap}" var="option">
+                                <option  value="{!option.key}">{!option.value}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                        
+                    </div>
+                        
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        
+                        
+                     <div class="demo-only demo-only--sizing slds-grid">
+                        <div class="slds-size_1-of-2">
+                            <lightning:input name="applyToAllConfig" type="toggle" checked="{!v.applyToAllConfig}" label="Apply to all selected configurations" /> 
+                        </div>
+                        <div class="slds-size_1-of-2">
+                            <lightning:button variant="neutral"
+                            label="Cancel"
+                            title="Cancel"
+                            onclick="{! c.closeModel }"/>
+                            <lightning:button variant="brand"
+                            label="Apply"
+                            title="OK"
+                            onclick="{!c.submitDetails}"/>
+                            </div>                       
+                     </div>
+                    </footer>
+                </div>
+                
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    </div>
+    <!--DPG-4542 end-->
+    </aura:set>
+        <!--EDGE-205598 -->
+    </aura:if>
+    <!--EDGE-205598 -->
+
+</aura:component>

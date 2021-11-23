@@ -1,0 +1,84 @@
+<!-- 
+* @Author : Lalit Motiray
+* @Description : Lightning component to display the Plan detail for SDWAN solution
+* @Date   : 28 OCT 2020
+* @Jira   : DPG-3110
+-->
+<aura:component controller="RateMatrixForSDWANController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="String" name="errorMessage" description = "Contains the error message" default=""/>
+    <aura:attribute type="String" name="planId" />
+    <aura:attribute type="List" name="columnHeaders" default="[]"/>
+    <aura:attribute type="List" name="columnValues" default="[]"/>
+    
+    
+	<div class="slds-p-around_x-small">
+		<div style="margin-bottom: 5px;padding :5px;border-bottom: 2px solid lightgrey">
+			<span style="font-size:x-large"> Plan Details  </span>
+		</div>
+		
+		<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped slds-table_col-bordered">
+			<thead>
+				<tr class="slds-line-height_reset">
+					<aura:iteration items="{!v.columnHeaders}" var="columnHeader">
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Name">{!columnHeader}</div>
+						</th>
+					</aura:iteration>
+				</tr>
+					
+						<!--
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Device">Device</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="License">License</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Maintenance">Maintenance</div>
+						</th>
+						<th class="" scope="col">
+							<div class="slds-truncate" title="Prisma Security Bandwidth(Mbps)">
+								Prisma Security Bandwidth(Mbps)
+							</div>
+						</th>-->                   	                             	      
+			</thead>
+			<tbody>
+				<!--<tr class="slds-hint-parent">
+					<td data-label="">
+						<div class="slds-truncate"> {!v.rateCardMap.planName} </div>
+					</td>
+					<td data-label="">
+						<div class="slds-truncate"> {!v.rateCardMap.device} </div>
+					</td>
+					<td data-label="">
+						<div class="slds-truncate"> {!v.rateCardMap.license} </div>
+					</td>
+					<td data-label="">
+						<div class="slds-truncate"> {!v.rateCardMap.maintenance} </div>
+					</td>
+					<td data-label="">
+						<div class="slds-truncate"> {!v.rateCardMap.prismaSecurity} </div>
+					</td>
+				</tr>-->
+
+				<tr class="slds-hint-parent">
+					<aura:iteration items="{!v.columnValues}" var="columnValue">
+						 <td data-label="">
+							<div class="slds-truncate"> {!columnValue} </div>
+						</td>
+					</aura:iteration>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+
+    <aura:if isTrue="{!v.errorMessage}">
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error >" style="height:5rem;margin-top:5px" role="alert">
+            <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" variant="inverse"/>
+            <h2>{!v.errorMessage}</h2>
+          </div>
+    </aura:if>
+</aura:component>

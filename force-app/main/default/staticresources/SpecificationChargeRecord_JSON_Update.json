@@ -1,0 +1,1 @@
+{ "code": "PS_000073_Billing", "name": "Managed Router_Billing", "description": "",  "cpqAttributes": {}, "attributes": {   "__targetSystem": {"value": "BILLING","type": "string"}}, "nonCommercialAttributes": []}

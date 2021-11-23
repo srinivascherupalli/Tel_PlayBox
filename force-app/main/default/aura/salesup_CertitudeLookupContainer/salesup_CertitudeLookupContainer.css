@@ -1,0 +1,14 @@
+.THIS .leftPaddingClass {
+    padding-left: 2rem;
+}
+ 
+.THIS .pillSize{
+ width:100%;
+}
+
+.THIS .ulClass{
+    max-inline-size :44rem;
+    left: 11rem; 
+    min-height:40px;
+    margin-top:0px;
+}

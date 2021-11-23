@@ -1,0 +1,27 @@
+<aura:component controller="RecordListController"  implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                access="global">
+    <aura:attribute name="sObjectName" type="String"  description="Input attribute to define which sObject to use" required="true"/>
+    <aura:attribute name="sObjectFieldsNames" type="List"  description="Input attribute to define which sObject fields to use" required="true"/>
+    <aura:attribute name="whereClause" type="String" description="Input attribute to define where clause" required="false"/>
+    <aura:attribute name="relationshipFields" type="String" description="Input attribute to define relationshipFields clause" required="false"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+        <aura:attribute name="loadMoreStatus" type="String" default=""/>
+      <aura:handler name="init" value="{!this }" action="{!c.init }"/>
+  <aura:attribute name="uiTheme" type="String" default="Theme3"/>
+	<aura:handler event="c:closeParentPopupFromThankYouScreen" action="{!c.closeFlow}"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+  <!--     <div align="Center" >
+       <lightning:button variant="brand" label="Create Contact Role" title="Create Contact Role" onclick="{!c.Updatecontactrole}" class="createCaseSupportBtn"/>
+        </div>-->
+<lightning:datatable data="{!v.data}" columns="{!v.columns}"
+    	keyField="id"
+        editable="true"
+    	hideCheckboxColumn="true"
+    	onsort="{!c.updateColumnSorting}"
+    	onrowaction="{! c.handleRowAction }"
+                     isLoading="false" />
+     
+  <lightning:flow aura:id="flowData" />
+</aura:component>

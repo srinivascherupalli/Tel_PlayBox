@@ -1,0 +1,7 @@
+<design:component label="Progress Step Indicator">
+    
+    <design:attribute name="stepNumber" label="Current Step Number" default="0"/>
+    <design:attribute name="numberOfSteps" label="Number of Steps" default="0"/>
+    <design:attribute name="stepName" label="Stage Name" default="Step"/>
+
+</design:component>

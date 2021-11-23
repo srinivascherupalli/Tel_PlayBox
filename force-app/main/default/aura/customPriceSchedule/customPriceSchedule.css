@@ -1,0 +1,10 @@
+.THIS {
+}
+.THIS .buttonsize{
+   font-size: medium;
+   padding-top: 6px;
+}
+.THIS .footerHeight{
+   height : 36px;
+   position : relative !important;
+}

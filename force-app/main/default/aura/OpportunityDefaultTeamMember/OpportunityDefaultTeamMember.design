@@ -1,0 +1,5 @@
+<design:component >
+    <design:attribute name="OpportunityId" label="Opportunity Id"/>
+    <design:attribute name="ErrorMsg" label="ErrorMsg"/>
+
+</design:component>

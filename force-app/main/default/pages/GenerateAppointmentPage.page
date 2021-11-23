@@ -1,0 +1,443 @@
+<!-- Author: Ila/Aishwarya/Jawahar/Ravi
+    Company: Tesltra 
+    Description: EDGE-66226/66239/66474/70304
+    History 
+    <Date> <Ila Verma> <Created the page to show appointmnet list will the ststus and other details> 
+    <2/5/2019> <Mahima Gandhe > <EDGE: 66437--Created Reschedule and Rebook section UI ready for seacrh functionality>
+    -->
+    <apex:page showHeader="false" sidebar="false" controller="GenerateAppointmentHandler" docType="html-5.0" language="en_AU" >
+        
+       <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+      <!--<link rel="stylesheet" href="/resources/demos/style.css"/>-->
+      <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      
+        <apex:includeScript value="{!$Resource.cscfga__jQuery_min}" />       
+        <apex:stylesheet value="{!$Resource.GenerateAppointmentCSS}"/>
+        
+       <style>
+       
+       </style>
+        
+        <script>
+           var maxDateGlobal; 
+                   
+           
+              
+           $(document).ready(function(){
+           debugger;
+            maxDateGlobal =new Date('{!JSINHTMLENCODE(TEXT(OrderStartDateForRescheduleAppointment))}');
+                  
+            var minSuggDate = new Date( $('[id$=startDate]').val());
+            console.log('minSuggDate>>' +minSuggDate);
+            
+            var month = minSuggDate.getMonth()+1;     
+            var day = minSuggDate.getDate();
+            var year = minSuggDate.getFullYear(); 
+          if(month < 10)
+                month = '0' + month.toString();
+            if(day < 10)
+                day = '0' + day.toString();
+            var maxDate = year + '-' + month + '-' + day;
+            var minDatecal= $('[id$=startDate]').val();
+            console.log('minDatecal>>' +minDatecal);
+            //EDGE-84930- Mahima Gandhe
+            if('{!JSENCODE(appointmentOperation)}'== 'Reschedule' || '{!JSENCODE(appointmentOperation)}'== 'FollowOn'){
+                 var dtToday = minSuggDate;
+            }
+            else {
+                var dtToday = new Date();
+            }
+            $( "#startDate" ).datepicker({                   
+                    dateFormat:"dd/mm/yy",
+                    minDate: minDatecal,  
+                    onSelect: function () {
+                           $('#startDate').val(this.value);
+                           //alert($('#startDate').val());
+                       }                    
+                });
+                 $( "#toDate" ).datepicker({                   
+                   dateFormat:"dd/mm/yy",
+                    minDate: minDatecal,
+                    maxDate: '+180D',   
+                    onSelect: function () {
+                           $('#toDate').val(this.value);
+                            //alert($('#toDate').val());
+                       }                    
+                });
+            
+            
+             console.log('dtToday>>' +dtToday);
+            var month2 = dtToday.getMonth()+ 7;
+            console.log('month2>>' +month2);        
+            var day2 = dtToday.getDate();
+            console.log('day2>>' +day2 );
+            var year2 = dtToday.getFullYear(); 
+            if(month2 < 10)
+                month2 = '0' + month2.toString();
+            if(day2 < 10)
+                day2 = '0' + day2.toString();   
+          var toMaxdate = year2 + '-' + month2 + '-' + day2;
+          console.log('toMaxdate>>' +toMaxdate);
+          
+          //$('[id$=startDate]').attr('min',maxDate);
+         // $('[id$=datepicker_from]').attr('min',maxDate);
+          
+          //$('[id$=toDate]').attr('min', maxDate);
+          //$('[id$=toDate]').attr('max',toMaxdate);
+          maxDateGlobal.setDate(minSuggDate.getDate());
+          
+           });
+           
+           function setValue(Id)
+           {
+              //alert($("#"+Id).val());
+              var dateObject = $("#"+Id).datepicker('getDate');
+              $("#"+Id).val(dateObject);
+           }
+           
+        function resetCounter() {
+            
+            document.getElementById("loadingSpinnerAppt").style.display = "none";
+            var cause  = '{!JSENCODE(isCauseEventText)}';
+            var check = true;
+            var currentVal =Date.parse($('[id$=startDate]').val());
+            var allowedDate=Date.parse(maxDateGlobal);
+            
+            if($('[id$=toDate]').val()!=''){
+                if(!($('[id$=toDate]').val() >= $('[id$=startDate]').val())){
+                    check = false;
+                }
+            }
+           
+            
+            
+            if( $('[id$=startDate]').val()!='' && check ){
+                
+                
+                document.getElementById("loadingSpinnerAppt").style.display = "none";
+                document.getElementById("divtime").style.display = "block";
+                var timeInMinutes = 5;
+                var minutes = 60 * timeInMinutes;
+                display = document.querySelector('#time');
+                for(i=0; i<10000; i++)
+                {
+                    window.clearInterval(i);
+                }
+                startTimer(minutes, display);
+            }
+            else{
+                
+               document.getElementById("divtime").style.display = "none";
+            }
+        }
+        function startTimeoutPoller(){
+            document.getElementById("timeoutMessage").style.display = "none";
+        }
+        function loadSpinnerAppt(){
+            document.getElementById("loadingSpinnerAppt").style.display = "block";
+            //document.getElementById("divtime").style.display = "none";
+            clearBottomSectionVF();
+        }
+        function checkMessagesAppt(hasMessage,errMsg) {
+            if (hasMessage == true || hasMessage == 'true') {
+                document.getElementById("msg_blockApt").style.display = "block";
+                document.getElementById("err_textApt").innerHTML = errMsg;
+            } else {
+                document.getElementById("msg_blockApt").style.display = "none";
+            }
+        }
+        function loadSpinnerConfirmAppt(){
+            $('.disableConfirmOnClick').attr('disabled', 'disabled');
+            $('.disableConfirmOnClick').addClass("submitButtonDisabled");
+            document.getElementById("loadingSpinnerAppt").style.display = "block";
+        }
+        //EDGE-66437
+        function loadReschedulaReason(selectedInitiator){
+           loadReschedulaReasonVF();    
+       }
+       ////EDGE-66437
+       function reloadSelectOptionStyle(){
+           $('select > option').addClass('slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-media_center');
+       }
+        function sendSlotID(val){
+            //alert("success");
+            //alert(val.value);
+            var inputs = document.getElementsByTagName("button");
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].id === 'submit-button') {
+                    inputs[i].disabled = false;
+                    inputs[i].classList.remove('disabledButton');
+                }
+            }
+            val.disabled=true;
+            val.classList.add('disabledButton');
+            sendSlotIDC(val.value);
+        }
+        function showPopup()
+        {
+            document.getElementById("loadingSpinnerAppt").style.display = "none";
+            document.getElementById("ModalPopup").style.display = "block";
+            
+        }
+         function hidePopup()
+        {   
+            document.getElementById("ModalPopup").style.display = "none";
+            
+                        
+        }
+        function submitSearch()
+        {
+            searchAppt($('#startDate').val(),$('#toDate').val());               
+        }
+        
+        // start timer
+        function startTimer(duration, display) {
+            var minutes = 0;
+            var seconds = 0;
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                
+                display.textContent = minutes + ":" + seconds;
+                
+                if (--timer < 0) {
+                    for(i=0; i<10000; i++)
+                    {
+                        window.clearInterval(i);
+                    }
+                     switchOffTimer();
+                     document.getElementById("timeoutMessage").style.display = "block";
+                }
+            }, 1000);
+            
+            
+        }
+        
+        </script>
+         <div id="ApptOperationTitle" class="apptOperationTitleStyle">
+                <span style="float:left;">{!appointmentTitle}</span>
+            </div>
+        <div id="msg_blockApt" style="display: none;margin-bottom:5px;">
+                <div id="err_wrapper"
+                     class="slds-notify slds-notify--alert slds-theme--{!alertType} slds-theme--alert-texture"
+                     role="alert">
+                    
+                    <h2>
+                        <div xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <svg aria-hidden="true"
+                                 class="slds-icon icon-text-email slds-icon--small slds-m-right--x-small" style="position:absolute;top:15%;left:1rem;">
+                                <use xlink:href="{!URLFOR($Resource.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#' + if(alertType = 'success','check','warning'))}"></use>
+                            </svg>
+                            <span id="err_textApt"></span>
+                        </div>
+                    </h2>
+                    <span style="position: absolute;right:1rem;color:#fff;cursor:pointer !important;" onclick="closeErrorAppt()">X</span>
+                </div>
+            </div>
+        
+        <apex:form id="form1">
+        <apex:actionFunction name="switchOffTimer" rerender="confirmBtn" action="{!switchOfTimerApex}">
+              </apex:actionFunction>
+              <apex:actionFunction name="sendSlotIDC" rerender="confirmBtn,ErrorSection,noslotErrorPanel,processingErrors" action="{!setSlotId}">
+                <apex:param name="selectedslotId" value="" assignTo="{!selectedSlotId}" />
+            </apex:actionFunction>
+        <apex:actionFunction name="clearBottomSectionVF" rerender="MainOP,op123" action="{!clearBottomSection}">
+            </apex:actionFunction>
+            
+            <apex:actionFunction name="loadReschedulaReasonVF" rerender="rescheduleReasonPanel" action="{!loadRescheduleReasonList}" oncomplete="reloadSelectOptionStyle()"/>
+        <!--mahima-->
+        <apex:actionFunction name="searchAppt" rerender="MainOP,ErrorSection,timerPanel,noslotErrorPanel,processingErrors" action="{!searchAppointments}" oncomplete="resetCounter(),startTimeoutPoller()">
+                <apex:param name="startDateP" value="" assignTo="{!startDateP}" />
+                 <apex:param name="toDateP" value="" assignTo="{!toDateP}" />
+            </apex:actionFunction>            
+            <apex:slds />
+            <apex:outputPanel id="SearchApp">
+                <apex:outputPanel rendered="{!NOT(isEnriched)}">
+                    <div class="slds-scope" id="div1">
+                        <div class="slds-box slds-theme--default" id="div2" style="border-color : #0070D2 !important; overflow:auto; height:500px;" >
+                            <div id="searchAppointment">
+                                <div id="pb1" >
+                                <!--EDGE-66437-start-->
+                                    <apex:outputPanel id="rescheduleReasonPanel" styleClass="pageBlockClassAppt">
+                                        <apex:outputPanel id="reschedulePanelDiv" rendered="{!renderReschedulePanel}">
+                                            <div style="padding-top: .25rem;padding-bottom: 0.25rem;">
+                                                <span class="slds-size_2-of-5" style="padding: .25rem .5rem;">Appointment ID</span>
+                                                <span class="slds-size_3-of-5" style="padding: .25rem .5rem;left: 16%;position: relative;">{!originalApptId}</span>
+                                            </div>
+                                            <table class="slds-table slds-no-row-hover">
+                                                <tr>
+                                                    <td class="slds-size_2-of-5"><span class="slds-truncate">Reschedule Appointment<b style="color:RED">&nbsp;*</b></span></td>
+                                                    <td class="slds-size_3-of-5">
+                                                        <apex:selectList size="1" value="{!selectedRescheduleInitiator}" onchange="loadReschedulaReason(this.value)" styleClass="slds-input slds-combobox__input slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid" style="width: 160px;height: 29px;position: relative;left:0px;z-index: 0;cursor:pointer;" >
+                                                                <apex:selectOptions value="{!rescheduleInitiators}"/>
+                                                        </apex:selectList>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="slds-size_2-of-5"><span class="slds-truncate">Reschedule Reason<b style="color:RED">&nbsp;*</b></span></td>
+                                                    <td class="slds-size_3-of-5">
+                                                        <apex:selectList id="reasonList" size="1" value="{!selectedRescheduleReason}" styleClass="slds-input slds-combobox__input slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid" style="width: 160px;height: 29px;position: relative;left:0px;z-index: 0;cursor:pointer;" >
+                                                                <apex:selectOptions value="{!rescheduleReasons}"/>    
+                                                        </apex:selectList>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel id="rebookPanelDiv" rendered="{!renderRebookPanel}">
+                                            <div style="padding-top: .25rem;padding-bottom: 0.25rem;">
+                                                <span class="slds-size_2-of-5" style="padding: .20rem .4rem;">Parent Appointment ID</span>
+                                                <span class="slds-size_3-of-5" style="padding: .25rem .5rem;left: 11%;position: relative;">{!parentApptId}</span>
+                                            </div>
+                                            </apex:outputPanel>
+                                       </apex:outputPanel>
+                                     <table class="slds-table slds-no-row-hover">
+                                        
+                                    </table>
+                                    <!--EDGE-66437-end-->
+                                    <h1><b>&nbsp;&nbsp;<span style="text-decoration:underline;">Select a date range to search available appointments</span></b></h1>
+                                    
+                                    <table class="slds-table slds-no-row-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td class="slds-size_2-of-5"><span class="slds-truncate">From Date<b style="color:RED">&nbsp;*</b></span>
+                                                    <span class="help-icon ">i<span class="help-popup"><p>Search for available appointments no earlier than this date.</p></span></span>
+                                                </td>
+                                                <td class="slds-size_3-of-5">
+                                               
+                                                <input type="text" id="startDate" placeholder="dd/mm/yyyy" style="z-index: 0;cursor:pointer;width:150px"  value="{!startDateDisplay}" class="date form-control unstyled slds-datepickercustom slds-input slds-combobox__input"/>
+                                               <!-- <apex:input type="date" id="startDate" value="{!sugDate}" styleClass="date form-control unstyled slds-datepickercustom slds-dropdown-trigger slds-dropdown customDatePickerSldsAdjust slds-input slds-combobox__input" style="z-index: 0;cursor:pointer;"/>-->
+                                               </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slds-size_2-of-5"><span class="slds-truncate">Latest Date</span>
+                                                    <span class="help-icon ">i<span class="help-popup"><p>Search for available appointments no later than this date.</p></span></span>
+                                                </td>
+                                                <td class="slds-size_3-of-5">
+                                                <input type="text" id="toDate" placeholder="dd/mm/yyyy" style="z-index: 0;cursor:pointer;width:150px"  value="{!toDateDisplay}" class="date form-control unstyled slds-datepickercustom slds-input slds-combobox__input"/>
+                                                <!--<apex:input type="date" id="toDate" value="{!toDate}" styleClass="date form-control unstyled slds-datepickercustom slds-dropdown-trigger slds-dropdown customDatePickerSldsAdjust slds-input slds-combobox__input" style="z-index: 0;cursor:pointer;"/>
+                                                --></td>
+                                              </tr>
+                                        </tbody>
+                                    </table>
+                                    <!--mahima- modified Button-->
+                                    <apex:commandButton value="Search" styleClass="submitButton posearch" rerender="MainOP,ErrorSection,timerPanel,noslotErrorPanel,processingErrors,op123,pb2"   onclick="loadSpinnerAppt(),submitSearch()"/> 
+                                </div>
+                                <div class="demo-only" style="height: 6rem; display:none;"  id="loadingSpinnerAppt">
+                                    <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand" style="position: relative;">
+                                        <span class="indicatorMessage">Loading</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                                </div>
+                                <apex:outputPanel id="noslotErrorPanel" >
+                                    <div rendered ="{!NOT(areSlotsAvailable)}">
+                                        <!--<apex:pageMessages ></apex:pageMessages>-->        
+                                    </div>
+                                </apex:outputPanel>
+                                <apex:outputPanel id="MainOP" styleClass="pageBlockClassAppt" >
+                                    <apex:pageBlock id="op123" rendered="{!displayOP}">
+                                        <div Id="pb2" rendered="{!displayPb2}" class="squeeze">
+                                            <h1><b>&nbsp;&nbsp;Select one appointment from the list below</b></h1>
+                                            <br/>
+                                            <div id="timeoutMessage">
+                                                <span class = "timeoutError">Time for reserving the appointment slot has expired. Please search for slots and reserve suitable one.</span>
+                                            </div>
+                                            <table class="slds-table slds-no-row-hover">
+                                                <thead>
+                                                    <tr class="slds-text-title">
+                                                        <th  scope="col">
+                                                            <span style="float:right">
+                                                                <label style="font-family:'Salesforce Sans',Arial,sans-serif; font-size:13px;color:black;">Notes for the selected slot :</label>
+                                                            </span>
+                                                        </th>
+                                                        <th  scope="col">
+                                                            <!-- EDGE-87717- Increased character limit for textArea-->
+                                                            <apex:inputTextarea html-maxlength="500" html-placeholder="Enter up to 500 characters" styleClass="slds-textarea" style="width:50%;overflow-y: auto; resize: none; margin-top: 5px;" value="{!notes}"/>
+                                                            <span style="top: -20px; position: relative;" id="confirmBtnWrapper">
+                                                            <apex:commandButton id="confirmBtn" value="Confirm" StyleClass="{!IF(selectedSlotId!=NULL && NOT(blockConfirmBtn),'submitButton disableConfirmOnClick','submitButtonDisabled')}" disabled="{!IF(selectedSlotId!=NULL && NOT(blockConfirmBtn),false,true)}" action="{!confirmAppointment}" onclick="loadSpinnerConfirmAppt()" rerender="ModelPopup,processingErrors" oncomplete="showPopup()"/> 
+                                                            </span>
+                                                            
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <apex:repeat value="{!finalSlotWrapperList}"  var="iter">
+                                                        <tr>
+                                                            <td>
+                                                                <apex:outputLabel styleClass="shape" value="{!iter.startDate}" ></apex:outputLabel>
+                                                            </td>
+                                                        </tr>
+                                                        <apex:repeat value="{!iter.slotDetail}" var="slot">
+                                                            <tr>
+                                                                <td></td>
+                                                                <td>
+                                                                    <apex:outputLabel value="{!iter.slotDetail[slot]}" style=""></apex:outputLabel>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <button type="button" id="submit-button" value="{!slot}" class="submitbtn" style="cursor: pointer;" onclick="sendSlotID(this); return false;">Select</button>
+                                                                </td>
+                                                            </tr>
+                                                        </apex:repeat>
+                                                    </apex:repeat>
+                                                </tbody></table>
+                                        </div>
+                                    </apex:pageBlock>
+                                    
+                                </apex:outputPanel> 
+                                <apex:outputPanel id="timerPanel" >
+                                 <apex:outputPanel rendered="{!areSlotsAvailable}" >   
+                                   
+                                         <div id="divtime" style="cursor: default; background-color: rgb(250, 250, 249); text-decoration: underline; "><b>Please select a slot within <span id="time">05:00</span> minutes!</b></div> 
+                                  </apex:outputPanel>  
+                                </apex:outputPanel>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+           <apex:outputPanel id="processingErrors">
+                    <script type="text/javascript">
+                    var hasMessage = '{!JSENCODE(hasMessageString)}';
+                    var errMsg = '{!JSENCODE(apptErrorMsg)}';
+                    //if(hasMessage!=''){
+                        checkMessagesAppt(hasMessage,errMsg);     
+                    //}
+                    </script>
+            </apex:outputPanel>
+        </apex:form> 
+        <div id = "ModalPopup" class ="modal">
+            <div class='modal-content'>
+                <apex:outputPanel id="ModelPopup">
+                    <apex:form >
+                        <div>
+                            <h1><b>{!popupTitle}</b></h1>    
+                        </div>
+                        <div>
+                            <span>{!popupMessage}</span>    
+                        </div>
+                        <center>
+                        <apex:commandButton styleClass="submitbtn modalOkButton" value="OK" onclick="hidePopup()" reRender="SearchApp" oncomplete="hidePopup(),parent.iFrameCallbackAppt();"/>
+
+                        </center>
+                    </apex:form>
+                </apex:outputPanel>
+            </div>
+        </div>
+        <!--<apex:outputPanel id="AppDetail">
+            <apex:pageBlock id="AppDetail22" rendered="{!isEnriched}" >
+                <div class="apptDetailBlock">
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputText label="Appointment ID" value="{!appDetails['SlotId']}" id="appointmentId"/>
+                        <apex:outputText label="Category" value="{!appDetails['Category']}"/>
+                        <apex:outputText label="Date" value="{!appDetails['Date']}" id="appStartDte"/>
+                        <apex:outputText label="Start Time" value="{!appDetails['StartTime']}"/>
+                        <apex:outputText label="End Time" value="{!appDetails['EndTime']}"/>
+                    </apex:pageBlockSection>
+                </div>    
+            </apex:pageBlock>      
+        </apex:outputPanel>-->
+    </apex:page>

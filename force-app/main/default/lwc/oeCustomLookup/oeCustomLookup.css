@@ -1,0 +1,14 @@
+.slds-pill-container {
+    display: flex;
+    padding: .125rem;
+    border: 1px solid #dddbda;
+    border-radius: .25rem;
+    background-color: #fff;
+}
+.pillSize {
+    width: 100%;
+}
+.overflowList{
+    height: 80px; 
+    overflow: visible;
+}

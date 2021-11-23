@@ -1,0 +1,14 @@
+<!-- 
+Created By          :   Sravanthi
+Created Date        :   26-August-2021
+Story               :   TEAM SFO Sprint 21.12 DIGI-8926
+Desc                :   This is invokes lwc component accountTeamCmp,and is used in account team member 'Manage Team'custom button 
+-->
+<aura:component implements = "lightning:isUrlAddressable,flexipage:availableForAllPageTypes" >
+
+<aura:attribute name="AccountId" type="String"/>
+
+<aura:handler name="init" value="{!this}" action="{!c.doinit}"/>
+<aura:handler name="change" value="{!v.pageReference}" action="{!c.onPageReferenceChange}"/>
+<c:accountTeamCmp accountId = "{!v.AccountId}"></c:accountTeamCmp>
+</aura:component>

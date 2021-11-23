@@ -1,0 +1,11 @@
+.THIS .headerColor {
+    color:Grey;
+}
+
+.THIS .margin10{
+    margin:10px
+}
+
+.THIS .slds-button_icon-bare{
+display: none;
+}

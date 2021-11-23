@@ -1,0 +1,40 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                controller="NewBasketButtonController">
+    <aura:handler name="init" value="{!this}" action="{!c.redirectTo}" default="true"/>
+    <aura:attribute name="warning" type="boolean"/>
+    <!--Added by Ayush(Hawaii) for P2OB-8462    -->
+    <aura:attribute name="approvalPending" type="boolean"/>
+    <aura:attribute name="isDelegatedPricing" type="boolean" default="false"/><!--EDGE-177925 added by team amsterdam-->
+    <aura:attribute name="approvalPendingMessage" type="String"/>
+   <!--   <aura:attribute name="showWarning" type="boolean"/>-->
+   
+ <!--  <c:Notification aura:id="notifyAlert"/> -->
+	
+
+ <!--     <lightning:notificationsLibrary aura:id="notifLib"/>
+    <aura:handler name="init" value="{!this}" action="{!c.redirectTo}" default="true"/>
+    <aura:attribute name="showError" type="boolean"/>
+    <aura:attribute name="ErrorMap" type="string"/> -->
+
+      <aura:if isTrue="{!and(v.warning==true,v.isDelegatedPricing==false)}">
+
+   	     	 <c:Notification aura:id="notifyAlert" Warning="{!v.approvalPendingMessage}"/> 
+  </aura:if>
+    
+    <!--EDGE-177925 added by team amsterdam-->
+    <aura:if isTrue="{!and(v.warning==true,v.isDelegatedPricing==true)}">
+        <c:Notification aura:id="notifyAlert" Warning="{!v.approvalPendingMessage}"/>
+
+  </aura:if>
+    
+    <!--EDGE-177925 added by team amsterdam-->
+    <aura:if isTrue="{!and(v.warning==true,v.isDelegatedPricing==true)}">
+        <c:Notification aura:id="notifyAlert" Warning="{!v.approvalPendingMessage}"/>
+    </aura:if>
+    
+    <!--Added by Ayush(Hawaii) for P2OB-8462    -->
+    <aura:if isTrue="{!v.approvalPending==true}">
+   	     	 <c:Notification Warning="{!v.approvalPendingMessage}" aura:id="notifyAlert" /> 
+    </aura:if> 
+    
+  </aura:component>

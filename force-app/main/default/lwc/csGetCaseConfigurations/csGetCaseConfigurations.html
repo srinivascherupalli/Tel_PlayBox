@@ -1,0 +1,45 @@
+<!--Author: Nilima Borse, Team: Jaipur, P2OB-10399
+ Date: 22/02/2021 ,
+ Description: LWC for showing the Request Support via the new UX-->
+ <template>
+    <div class="csBackColour">
+        <lightning-combobox
+            name="progress"
+            label="Select a support category"
+            value={value}
+            placeholder="Select Topic"
+            options={caseTypeList}
+            onchange={handleChange}
+            required >
+        </lightning-combobox>
+        <template if:true={caseSubTypeList}>
+            <c-cs-case-keyword-search case-sub-type-list = {caseSubTypeList} oncasesubtypechange = {handleSearch} value = {value} record-id-var = {record}>                
+            </c-cs-case-keyword-search>
+        </template>
+        <template if:false={showEmptyMessage}>
+            <div class="csPaddingForRadio">
+                <template for:each={caseSubTypeList} for:item="op" for:index="key">
+                    <div key={op.label} class="csRadioBorder">
+                        <lightning-radio-group key={op.label}
+                                            name="\{'radioGroup' + key}"
+                                            label={op.label}
+                                            options={op.value}
+                                            value={radioValue}
+                                            required
+                                            type="radio"
+                                            variant="label-hidden"
+                                            class="radioBold"
+                                            onchange={handleRadioChange}>
+                        </lightning-radio-group>
+                        <p key={op.label} class="txtColour">{op.description}</p>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template if:true={showEmptyMessage}>
+            <div class = "slds-align_absolute-center csCenterAlign">
+                No Category found
+            </div>
+        </template>    
+    </div>
+</template>

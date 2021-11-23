@@ -1,0 +1,67 @@
+<aura:component controller="FNNAvailabilityController" implements="force:appHostable,force:lightningQuickAction">
+    <ltng:require styles="/resource/SLDS/assets/styles/salesforce-lightning-design-system-vf.css"/>
+    <aura:attribute name="fnns" type="Object[]" access="global"/>
+
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    
+  <div class="slds-page-header">
+  <div class="slds-media">
+    <div class="slds-media__figure">
+      <span class="slds-icon_container">
+        <c:svgIcon svgPath="/resource/SLDS/assets/icons/action-sprite/svg/symbols.svg#clone" category="action" size="small" name="clone" />
+      </span>
+    </div>
+    <div class="slds-media__body">
+      <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="FNN Portability Check">{!$Label.c.FNNPortabilityCheck_PageHeader}</h1>
+    </div>
+  </div>
+</div>
+ 
+<div class="slds-page-header">
+         
+<div class="slds-media__body">
+	<h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Customer FNNs">{!$Label.c.FNNPortabilityCheck_BodyHeader}</h1>
+</div>
+    
+    
+    <table class="borderCls">
+        <aura:iteration items="{!v.fnns}" var="fnn" >
+        <tr class="fnn-table-row">
+        	<div class="slds-form-element slds-media__figure slds-grid">
+                <span class="fnn-text-icon-container">
+                <div class="">
+                    <ui:inputText class="slds-input slds-text-body_regular fnn-text" value="{!fnn.Name}" required="true" maxlength="10" keyup="{!c.validateFNNNumber}" updateOn="keyup" />
+                </div> 
+                <div class="">
+                    <aura:if isTrue="{!and(fnn.Code == 'SUCCESS',fnn.Indicator =='N')}">
+                        <span style="display:inline-flex;" class="">
+                    		<div class="slds-col slds-size--1-of-2">
+                        	<c:svgIcon svgPath="/resource/SLDS/assets/icons/action-sprite/svg/symbols.svg#close" class="fnn-availability-icon" category="action" size="xx-small" name="close" />
+                            </div>
+                        </span>
+                    </aura:if>
+                    <aura:if isTrue="{!and(fnn.Code == 'SUCCESS',fnn.Indicator =='Y')}" >
+                        <span style="display:inline-flex;" class="">
+                    		<div class="slds-col slds-size--1-of-2">
+                            	<c:svgIcon svgPath="/resource/SLDS/assets/icons/action-sprite/svg/symbols.svg#approval" class="fnn-availability-icon" category="action" size="xx-small" name="approval" />
+                            </div>
+                        </span>
+                    </aura:if>
+                </div>
+                <div class="slds-col slds-size--2-of-5">
+                    	<span class="fnn-reason"><p>{!fnn.Reason}</p></span>    
+				</div>
+                </span>
+            </div>
+        </tr>   
+        </aura:iteration>        
+    </table>
+    <div class="slds-form-element fnn-add-button">
+        <ui:button label="Add" press="{!c.addFNN}" class="slds-button" />
+    </div>   
+    
+    <div class="slds-form-element fnn-check-button">
+    <ui:button label="Check" press="{!c.validateFNN}" class="slds-button-check" />
+    </div> 
+   </div>
+</aura:component>

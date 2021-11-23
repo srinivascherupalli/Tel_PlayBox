@@ -1,0 +1,45 @@
+<!--
+-----------------------------------------------------------------------------------------------------------------------------
+Name        : TransferHardwareRepaymentVF
+Description : Transfer Hardware Repayments UX Enhancements 
+Author      : Aman Soni
+Story       : EDGE-191076 (Sprint 21.01) || New Component
+====================================================================
+S.No.  Developer         Date            Story            Sprint  Description
+1.     Aman Soni         25/01/2021      EDGE-191076      21.02   Added category as param to send it to LWC
+2.     Aman Soni         2/02/2021       EDGE-191077      21.02   Added legacyBAN,instanceIDString,contractType as param to send it to LWC
+3.     Aman Soni         5/02/2021       EDGE-194029      21.02   Added solutionId as param to send it to LWC
+4.     Aman Soni         26/05/2021      EDGE-203822      21.07   Removed code to make 'Search by List' searchbox working
+-----------------------------------------------------------------------------------------------------------------------------
+-->
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:includeLightning />
+    <div id="lightningTrans"></div>
+    <script>
+    let basketId="{!JSENCODE($CurrentPage.parameters.basketId)}";
+    let offerId="{!JSENCODE($CurrentPage.parameters.offerId)}";
+    let billingAccountNumber="{!JSENCODE($CurrentPage.parameters.billingAccountNumber)}";
+    let category="{!JSENCODE($CurrentPage.parameters.category)}";
+    let contractType="{!JSENCODE($CurrentPage.parameters.contractType)}";
+    let legacyBAN="{!JSENCODE($CurrentPage.parameters.legacyBAN)}";
+    let solutionId="{!JSENCODE($CurrentPage.parameters.solutionId)}";
+    let instanceIDString="{!JSENCODE($CurrentPage.parameters.instanceIDString)}";
+    $Lightning.use("c:transferHardwareRepaymentApp", function () {
+        $Lightning.createComponent(
+        "c:transferHardwareRepayment", 
+        {
+        "basketId":basketId,
+        "billingAccountNumber":billingAccountNumber,
+        "category":category,
+        "legacyBAN":legacyBAN,
+        "solutionId":solutionId,
+        "contractType":contractType,
+        "instanceIDString":instanceIDString
+        },
+        "lightningTrans",
+        function (cmp) {
+            console.log("Component created!");
+        });
+    });
+    </script>
+</apex:page>

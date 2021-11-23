@@ -1,0 +1,47 @@
+<!-- 
+* @Author : Shubhi
+* @Date : 12 March 2020
+* @Jira : Edge-133882 new component
+* @Jira : EDGE-185639 new sios is added
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description 
+1           shubhi              30/3/2020   EDGE-140157
+2           Shubhi              22/4/2020     EDge-120919
+3           Gokul               04/11/2020  EDGE-185639
+
+===============================================================================================================================
+-->
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:slds />
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+    <apex:includeLightning />
+    <script type="text/javascript">
+        var CallingPlan = "{!JSENCODE($CurrentPage.parameters.CallingPlan) }";
+        var Mode = "{!JSENCODE($CurrentPage.parameters.Mode) }";//<!---EDge-120919 -->
+        var offerid = "{!JSENCODE($CurrentPage.parameters.offerid) }";
+        var solutionId="{!JSENCODE($CurrentPage.parameters.solutionId) }";
+    //EDGE-185639
+    var jsonSios="{!JSENCODE($CurrentPage.parameters.Jsonsio)}";
+    var guid="{!JSENCODE($CurrentPage.parameters.guid) }";//EDGE-140157
+    var changeType="{!JSENCODE($CurrentPage.parameters.changeType) }";//EDGE-140157
+    var basketStage="{!JSENCODE($CurrentPage.parameters.basketStage) }";//EDGE-140157
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+          $Lightning.createComponent(
+                                        "c:RateDiscountCardForNGUC",
+                                        {   "CallingPlan": CallingPlan,
+                                            "offerid": offerid,
+                                            "SolutionID":solutionId,
+                                             "changeType": changeType,//EDGE-140157
+                                             "guid": guid,//EDGE-140157
+                                             "jsonsoi": jsonSios.replace(/'/g,"\""),//EDGE-185639
+                                             "Mode":Mode, //<!-- Edge-120919 -->
+                                             "basketStage" :basketStage
+                                        },
+                                        "lightning",
+                                        function(cmp){
+                                            console.log("Component created!");
+                                        });
+      });
+      </script>
+      <div id="lightning" ></div>
+</apex:page>

@@ -1,0 +1,5 @@
+<apex:page extensions="APTPS_SentByESignatureController" standardController="Apttus__APTS_Agreement__c"  action="{!updateAgreementAndRedirect}">
+   <!-- Begin Default Content REMOVE THIS -->
+   This is your new Page
+   <!-- End Default Content REMOVE THIS -->
+</apex:page>

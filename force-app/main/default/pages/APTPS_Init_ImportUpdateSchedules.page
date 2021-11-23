@@ -1,0 +1,70 @@
+<apex:page extensions="APTPS_Import_UpdateSchedulesController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+
+     <apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+     <script>
+    $(document).ready(function(){
+      hideWrapperOnReady();  
+    });
+    function showWrapper()
+    {
+   	  	$('#myWrapper').show();
+    	$('#progressBarOuter').show();
+    }
+     
+    function hideWrapper(displayError)
+    {
+        if(displayError == 'true')
+        {
+   	  		$('#myWrapper').show();
+    		$('#progressBarOuter').show();
+        }
+    }
+    
+    function hideWrapperOnReady()
+    {
+        $('#myWrapper').hide();
+    	$('#progressBarOuter').hide();
+    }
+
+         
+     </script>
+   <apex:sectionHeader subtitle="{!agreementName}" ></apex:sectionHeader>
+    <h5> <b>Select the CSV file for Inserting or Updating the Schedules</b></h5>
+    <apex:form >
+        
+       
+        <apex:pagemessages />
+        <apex:pageBlock >
+          <!--  <apex:pageBlockSection> -->
+            <div id="dvFileSelection"  style="float:left;">
+                  <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/> 
+                  <br/>
+                  <br/>
+                  <apex:commandButton value="Upload Schedules" action="{!importUpdateCSVFile}" onclick="showWrapper()" />
+                  <apex:commandButton value="{!cancelButtonName}" action="{!cancel}"  style="margin-left:1%" ></apex:commandButton>
+                  <br/>
+                  <br/>
+                 
+                  
+           </div>
+                  <br/>
+              
+            
+            
+        </apex:pageBlock>
+        <br/>
+        
+          <div id="myWrapper" style=" position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+            </div>
+            <div id= "progressBarOuter" style=" position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 20% 42%;width: 17%;background-color: white;
+             text-align:center; height: 140px; " class="rcorners">
+                
+                <apex:image id="theImage" style="margin-top:20px;margin-bottom:11px;" value="{!$Resource.APTS_WaitImage}" width="77" height="77"/>
+                <div>
+                        <span id="statusSpan" style="margin-top:10px;font-weight:bold; font-size:13px;">Processing. Please wait...</span>
+                </div>
+            </div>
+        
+        
+   </apex:form>
+</apex:page>

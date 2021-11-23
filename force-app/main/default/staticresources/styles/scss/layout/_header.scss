@@ -1,0 +1,11 @@
+.selfServiceUserProfileMenu .login .linkLabel {
+    font-weight: 400 !important;
+    font-size: 0.875rem !important;
+    font-family: Arial;
+    max-width: 100%;
+    padding: 5px 10px;
+    color: #414141 !important;
+}
+.cPcThemeLayout .header-inner #prmSeachNotifyProfile > div.slds-col:empty {
+  display: none;
+}

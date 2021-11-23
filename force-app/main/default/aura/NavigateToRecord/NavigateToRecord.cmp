@@ -1,0 +1,4 @@
+<aura:component implements="force:lightningQuickAction,lightning:availableForFlowActions">
+	<!-- SFO P2OB-5923 : This Component can be used for redirect the record page-->
+   <aura:attribute name="recordId" type="String" />
+</aura:component>

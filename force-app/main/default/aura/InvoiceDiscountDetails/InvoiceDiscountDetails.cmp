@@ -1,0 +1,61 @@
+<!-- **************************************************************************
+EDGE        -163367
+component   -InvoiceDiscountDetails
+Description -This Component is used to show the Discount details of a particular Invoice Line Item record based on
+			  Is Discount Drillable attribute to True.
+Author      -Manjunath Ediga
+Team        -Osaka
+Sr.No. Author 		 Date			Story number 	Description
+1     Monali          14/10/2021    DIGI-16909    Billing assurance upliftment for discountname
+********************************************************************************* -->
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="UsageSummaryHandler">
+	<!-- Below attributes to be displayed on UI based on Discount details response -->
+    <aura:attribute type="Integer" name="cataloguePrice"/>
+    <aura:attribute type="Integer" name="discountApplied"/>
+    <aura:attribute type="Integer" name="discountedPriceExGST"/>
+    <aura:attribute type="Integer" name="discountedPriceIncGST"/>
+    <aura:attribute type="String" name="discountName"/>
+    <aura:attribute type="String" name="errorMessage"/>
+    <aura:attribute name="LineItemRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    
+   <force:recordData aura:id="recordLoader"
+    recordId="{!v.recordId}"
+    fields="Charge_Id__c,Invoice_Line_Number__c,Invoice_Transaction_ID__c,Invoice__r.Name"
+    targetFields="{!v.LineItemRecord}"
+    targetError="{!v.recordLoadError}"
+    recordUpdated="{!c.getDiscountDetails}" 
+    />
+           
+    <div class="slds-section__title-action" style="padding:7px;" onclick="{!c.sectionDiscounts}">
+        <section class=" slds-text-align--left">
+            <div class="slds-float--left ">
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevronright" size="x-small" />
+                <lightning:icon class="slds-show" aura:id="section" iconName="utility:chevrondown" size="x-small" />
+            </div>
+            <div class="slds-m-left--large slds-text-heading_small "> Discounts  <aura:if isTrue="{!v.errorMessage!=null}">
+            <lightning:icon class="iconColorChange"  iconName="utility:warning" size="x-small"/>
+            <b style="color:red;">{!v.errorMessage}</b> 
+				  </aura:if>
+            </div>
+        </section>
+    </div>
+    <!-- Displaying columns -->
+    <div class="slds-grid slds-wrap " aura:id="section"><br/>
+        <div class="slds-size_1-of-2 " style="padding-left:25px;line-height:0;">
+      <lightning:input type="number" formatter="currency" currencyCode="USD" class="slds-m-around_x-small underLineLength" readonly="true" label="Catalogue Price (Ex. GST)" value="{!v.cataloguePrice}" />
+        </div>
+        <div class="slds-size_1-of-2 " style="padding-left:10px;line-height:0;" >
+        <lightning:input type="number" formatter="currency" currencyCode="USD" class="slds-m-around_x-small underLineLength" readonly="true" label="Discount Applied (Ex. GST)" value="{!v.discountApplied}" />
+        </div>
+        <div class="slds-size_1-of-2 " style="padding-left:25px;line-height:0;">
+        <lightning:input type="number" formatter="currency" currencyCode="USD" class="slds-m-around_x-small underLineLength" readonly="true" label="Discounted Price (Ex. GST)" value="{!v.discountedPriceExGST}" />
+        </div>
+        <div class="slds-size_1-of-2 " style="padding-left:10px;line-height:0;" >
+       <lightning:input type="number" formatter="currency" currencyCode="USD" class="slds-m-around_x-small underLineLength" readonly="true" label="Discounted Price (Inc. GST)" value="{!v.discountedPriceIncGST}" />
+        </div>
+        <div class="slds-size_1-of-2 " style="padding-left:25px;line-height:0;">
+        <lightning:input type="text" class="slds-m-around_x-small underLineLength" readonly="true" label="Discount Name" value="{!v.discountName}" />
+        </div>        
+    </div>
+</aura:component>

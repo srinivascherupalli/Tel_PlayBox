@@ -1,0 +1,11 @@
+<!--ComponentName: SiteBulkUpload
+****Called from: Bulk Upload button on Site object
+****Created By: Nitin as a part of DIGI-332 
+***************************************************-->
+<aura:component implements="lightning:isUrlAddressable,force:hasRecordId" >
+    <aura:attribute name="accRecordId" type="String"/>
+    <aura:attribute name="refreshPage" type="Boolean" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.onPageReferenceChanged}" />
+    <c:uploadSiteData  accRecordId="{!v.accRecordId}"/>
+</aura:component>

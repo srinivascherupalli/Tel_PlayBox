@@ -1,0 +1,7 @@
+<design:component>
+    <!--Added by Team Hawaii for P2OB-9099-->
+	<design:attribute name="mailTo" label="Mail To" />
+    <design:attribute name="showCaseStudy" label="Show Case Study"/>
+    <design:attribute name="showHappyToHelp" label="Show Happy To Help"/>
+    <design:attribute name="showSuggestions" label="Show Feedback"/>
+</design:component>

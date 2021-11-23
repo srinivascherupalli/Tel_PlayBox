@@ -1,0 +1,6 @@
+<aura:component implements="lightning:actionOverride,flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction">
+	
+    <!--<ui:button label="Associate" press="{!c.associateUsages}"></ui:button>-->
+    <aura:handler name="init" value="{!this}" action="{!c.associateUsages}"/>
+
+</aura:component>

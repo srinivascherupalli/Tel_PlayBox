@@ -1,0 +1,162 @@
+<!-- 
+Name : PpvComponent
+Description : Lightning UI for Post verificatio of numbers 
+Author: Kalashree Borgaonkar
+Story: EDGE-90327
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                controller="PpvComponentController">
+    <aura:attribute name="AccountName"
+                    type="String" 
+                    default="AccountName"/>
+    <aura:attribute name="BasketName"
+                    type="String" 
+                    default="BasketName"/>
+    <aura:attribute name="basket_Id"
+                    type="String" 
+                    />
+    <aura:attribute name="defaultContact"
+                    type="String" 
+                    />
+    <aura:attribute name = "searchContact" 
+                    type="String"/>
+    <aura:attribute name = "searchPortNum" 
+                    type="String"/>
+    <aura:attribute name="detailWrapper" 
+                    type="PpvComponentController.BasketDetailsWrapper" 
+                    />
+    <aura:attribute name="listOfContactRecords" 
+                    type="List" />
+    <aura:attribute name="listOfPortNumbers" 
+                    type="List" />
+    <aura:attribute name="loadingSpinner" 
+                    type="Boolean" 
+                    default="false" />
+    <aura:attribute name="isSaveDisabled" 
+                    type="Boolean" 
+                    default="true" />
+    <aura:handler name="init" 
+                  value="{!this}" 
+                  action="{!c.doInit}" />
+    <aura:handler name="oSelectedContactEvent" 
+                  event="c:selectedContactEvent" 
+                  action="{!c.handleContactEvent}" />
+    <aura:handler name="oSelectedPortEvent" 
+                  event="c:selectedPortEvent" 
+                  action="{!c.handlePortEvent}" />
+    <aura:handler event="c:NavigateToCAF" 
+                  action="{!c.handleEvent}" />
+     <aura:registerEvent name="sampleComponentEvent" 
+                         type="c:parentComponentEvent"/>
+    <aura:handler event="c:PpvUpdateEvent" 
+                  action="{!c.handlePpvEvent}" />
+    <div aura:id="parentcontainer"/> 
+    <div aura:id="maincontainer">
+        
+        <aura:if isTrue="{!v.loadingSpinner}"> 
+            <div>
+                <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+            </div>
+        </aura:if>
+        <div style="background-color:white;">
+            <div class="slds-border_bottom headercomp"> Pre-Port Verification (PPV) </div>
+            <div class="slds-grid" style="margin:15px;">
+                <div aura:id="accountName" class="slds-form-element slds-col slds-size--1-of-2">
+                    <label class="slds-form-element__label" for="creditamount">Account Name</label>
+                    <div class="slds-form-element__control slds-p-bottom_small ">  
+                        {!v.detailWrapper.accountName}		                  
+                    </div>
+                </div>
+                <div aura:id="basketNumber" class="slds-form-element slds-col slds-size--1-of-2">
+                    <label class="slds-form-element__label" for="creditamount">Basket Name</label>
+                    
+                    <div class="slds-form-element__control slds-p-bottom_small ">
+                        {!v.detailWrapper.basketNumber}	
+                        <!--{!v.BasketName}	-->	                  
+                    </div>
+                </div>
+            </div>
+            <div class="slds-grid" style="margin:15px;">
+                <div aura:id="activeCAF" class="slds-form-element slds-col slds-size--1-of-2">
+                    <label class="slds-form-element__label" for="creditamount">Request ID</label>
+                    <div class="slds-form-element__control slds-p-bottom_small ">  
+                        {!v.detailWrapper.activeCAF}		                  
+                    </div>
+                </div>
+                <div class="slds-col slds-size--1-of-2"></div>
+            </div> 
+            <div class="slds-grid" style="margin:15px;">
+                <div  aura:id="searchRes3"  class="slds-col slds-size--1-of-2 slds-lookup slds-is-close">
+                    <div  onkeyup="{! c.getContactsForInput }"> 
+                        <label class="slds-form-element__label" for="text-input-id-1">
+                            
+                            Customer PPV approver 
+                        </label>
+                        <lightning:helptext content="{!$Label.c.PpvApproverHelpText}" />
+                        
+                        <lightning:input
+                                         type="search"
+                                         aura:id="searchContact"
+                                         class="slds-p-around--none lookupWidth hideLabel"
+                                         value="{!v.searchContact}"
+                                         label="Customer PPV approver" 
+                                          onblur="{!c.handleOnblur}"
+                                         placeholder="Search Authorised Contacts..."/> 
+                    </div>
+                    <div class="slds-lookup__menu slds lookupWidth" aura:id="lookupContact">
+                        <ul class="slds-lookup__list" role="listbox">
+                            <aura:iteration items="{!v.listOfContactRecords}" var="singleRec">
+                                <c:customLookupResult oContact="{!singleRec}" /> 
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </div>
+                <div aura:id="searchRes4" class="slds-col slds-size--1-of-2 slds-lookup slds-is-close">
+                    <div  onkeyup="{! c.getPortNumForInput }" > 
+                        <label class="slds-form-element__label" for="text-input-id-1">
+                            
+                            PPV approver Mobile  
+                        </label>
+                        <lightning:helptext content="{!$Label.c.PpvMobileApprover}" />
+                        <lightning:input
+                                         type="search"
+                                         aura:id="searchPortNum"
+                                         class="slds-p-around--none lookupWidth hideLabel"
+                                         value="{!v.searchPortNum}"
+                                         label="PPV approver Mobile"
+                                         onblur="{!c.handleOnblur}"
+                                         placeholder="Select from Port-in Numbers..."/> 
+                    </div>
+                    <div class="slds-lookup__menu slds lookupWidth" aura:id="lookupPort" >
+                        <ul class="slds-lookup__list" role="listbox">
+                            <aura:iteration items="{!v.listOfPortNumbers}" var="singleRec">
+                                <c:customLookupResult oPort="{!singleRec}" /> 
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </div>      
+            </div>
+            <br/>
+            <div class="headercomp">
+                <b>Can't see the contact you are looking for?</b> From the <a href="{!'/one/one.app?#/sObject/'+ v.detailWrapper.accountid + '/view'}" target="_blank">Account</a> screen, you can edit Contact Roles, or add a new Role
+                <br/><br/>
+                <div class="slds-truncate slds-float_right " >
+                    <lightning:button
+                                      aura:id ="saveBtn"
+                                      disabled="{!v.isSaveDisabled}"
+                                      variant="brand"
+                                      label="Send PPV SMS"  
+                                      onclick="{!c.handleSave}"
+                                      />
+                </div>	
+                    <lightning:button variant="Neutral" 
+                                      label="Cancel" 
+                                      class="buttonAlign"
+                                      onclick="{!c.handleClose}"/>
+
+            </div >    
+            
+        </div>
+    </div>
+</aura:component>

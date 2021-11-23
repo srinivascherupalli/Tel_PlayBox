@@ -1,0 +1,76 @@
+<apex:page controller="SCSQCheckController" id="SCSQCheckPage" lightningStylesheets="true" sidebar="false" showHeader="false">   
+    <apex:includeLightning />
+
+    <script>
+        console.log('Inside Initiate SQ Check Page');  
+        var sqResponsesData = [];
+        function sqCheckClose() {
+            window.parent.postMessage("close", '*') ;
+            sessionStorage.setItem("close", "close");
+        }
+        
+        function sqCheckOnClick() {
+            document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:startSQCheckButton}").disabled = true;
+            document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:sqCheckCancelButton}").disabled = true;
+            document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:notificationLabel}").innerHTML  = "&nbsp;&nbsp;Updating ...";  
+        }
+        
+        function sqCheckOffClick() {
+            document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:startSQCheckButton}").disabled = false;
+            document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:sqCheckCancelButton}").disabled = false;
+            document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:notificationLabel}").innerHTML  = ""; 
+        }
+        
+        function updateSQResult() {
+            var sqCheckEnabled = document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:sqCheckPB:sqCheckDetails:sqCheckEnabled}").value;
+            var sqCheckCompleted = document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:sqCheckPB:sqCheckDetails:sqCheckCompleted}").value;
+            var sqResponsesStr = document.getElementById("{!$Component.SCSQCheckPage:sqCheckForm:sqCheckPB:sqCheckDetails:sqResponse}").value;
+            console.log('sqResponsesStr', sqResponsesStr);
+            if (sqResponsesStr) {
+                var sqResponses = JSON.parse(sqResponsesStr);
+                console.log('sqResponses', sqResponses);
+                if (sqResponses) {
+                    for (var i = 0; i < sqResponses.length;  i++) {
+                        console.log('sqResponsesData.push: ', sqResponses[i].siteId, sqResponses[i].siteName, sqResponses[i].siteAddress, sqResponses[i].siteAdborId, sqResponses[i].configGUID, sqResponses[i].sqResponseInfo.nbnAvailability, sqResponses[i].sqResponseInfo.nbnRFSDate, sqResponses[i].sqResponseInfo.nbnTechnologyType, sqResponses[i].sqResponseInfo.nbnTechnologyTypeAcrnym, sqResponses[i].sqResponseInfo.nbnMaxDownloadSpeed, sqResponses[i].sqResponseInfo.nbnMaxUploadSpeed, sqResponses[i].sqResponseInfo.copperPairIndicator, sqResponses[i].sqResponseInfo.nbnCompatibility, sqResponses[i].sqResponseInfo.nbnServiceabilityClass);
+                        sqResponsesData.push({siteId: sqResponses[i].siteId, siteName: sqResponses[i].siteName, siteAddress: sqResponses[i].siteAddress, adborID: sqResponses[i].siteAdborId, configGUID: sqResponses[i].configGUID, nbnAvailability: sqResponses[i].sqResponseInfo.nbnAvailability, nbnRFSDate: sqResponses[i].sqResponseInfo.nbnRFSDate, nbnTechnologyType: sqResponses[i].sqResponseInfo.nbnTechnologyType, nbnTechnologyTypeAcrnym: sqResponses[i].sqResponseInfo.nbnTechnologyTypeAcrnym, nbnMaxDownloadSpeed: sqResponses[i].sqResponseInfo.nbnMaxDownloadSpeed, nbnMaxUploadSpeed: sqResponses[i].sqResponseInfo.nbnMaxUploadSpeed, copperPairIndicator: sqResponses[i].sqResponseInfo.copperPairIndicator, nbnCompatibility: sqResponses[i].sqResponseInfo.nbnCompatibility, nbnServiceabilityClass: sqResponses[i].sqResponseInfo.nbnServiceabilityClass});
+                    }
+                }
+            }
+            console.log('sqResponsesData', sqResponsesData);
+            var payload =
+            {
+                command: 'MACSQRESPONSE',
+                data: sqResponsesData
+            };
+            if (sqCheckEnabled === 'Yes' && sqCheckCompleted === 'Yes') {
+                window.parent.postMessage(payload, '*') ;
+                window.parent.postMessage("close", '*') ;
+                sessionStorage.setItem("payload", JSON.stringify(payload));
+                sessionStorage.setItem("close", "close");
+            } else {
+                sqCheckOffClick();
+            }
+        }
+    </script>
+   
+    <apex:form id="sqCheckForm">
+        <apex:pageBlock title="SQ Check" id="sqCheckPB">
+            <apex:pageMessages id="sqCheckPgMsgs"/>
+            <apex:pageBlockSection title="SQ Check Details" id="sqCheckDetails" columns="1">
+                <apex:inputHidden value="{!sqCheckEnabled}" id="sqCheckEnabled" />
+                <apex:inputHidden value="{!sqCheckCompleted}" id="sqCheckCompleted" /> 
+                <apex:inputHidden value="{!sqResponsesString}" id="sqResponse" />
+                <apex:pageBlockTable value="{!siteDetails}" var="site" id="siteData" cellpadding="2" cellspacing="2"  width="100%" columnsWidth="40%,50%,10%">
+                    <apex:column headerValue="SITE NAME" value="{!site.siteName}"  />
+                    <apex:column headerValue="SITE ADDRESS" value="{!site.siteAddress}" />               
+                    <apex:column headerValue="SQ Status" value="{!site.sqDisplayStatus}" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <div align="right" draggable="false" style="margin:10px" >
+            <apex:commandButton value="Cancel" id="sqCheckCancelButton" onclick="sqCheckClose()"  />
+            <apex:commandButton value="Update SQ Check" id="startSQCheckButton" action="{!initiateSQCheck}" onclick="sqCheckOnClick()" oncomplete="updateSQResult()" rerender="sqCheckPgMsgs,sqCheckDetails,sqResponse"/>
+            <apex:outputLabel value="" id="notificationLabel" style="font-weight: bold" /> 
+        </div>
+    </apex:form>
+</apex:page>

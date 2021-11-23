@@ -1,0 +1,114 @@
+<!--
+   *  Description of the purpose of the method.
+   *  @name PrmMACDPOR
+   *  @description               : This LWC is to Create or Modify Partner of Record and POR Domain in PRM.
+   *  @param                     : Partner of Record Record Id.
+   *  @return 				 	 : - 
+   *  @Jira Story Ref            : EDGE-210146
+   *  @createdBy  				 : Purushottama Sahu, Alexandria
+   *  ** Change Log **
+   *  Sl. No.   Developer Name      Date            Story           Description
+   *  1.        Pooja               12/05/2021      EDGE-202803     UI Domain View - Multi POR in TPC view # 1
+   *  2.        Ajith Kumar         22/06/2021      EDGE-216822     Removed fileUpload functionality 
+-->
+<template>
+    <template if:true={isLoaded}>
+        <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+    </template>
+    <div class="slds-card__body slds-p-horizontal_small flowruntimeBody" data-aura-class="flowruntimeBody">
+        <template if:false={isModifyFlow}>
+        <h4>New Partner of Record agreement</h4>
+        <p>
+            Start a new Partner of Record agreement with a customer.
+            </br>
+            </br>
+            A partner of record is an agreement between a partner, customer and Telstra for that Partner to represent
+            the customer in their dealings related to services with Telstra.
+            </br>
+            </br>
+            Upon submission, the customer and partner will be requested to sign and agree with Docusign.
+        </p>
+        </br>
+        </template>
+        <template if:true={isModifyFlow}>
+            <h4>Modify Partner of Record agreement</h4>
+            <p>
+                Modify an existing Partner of Record agreement with a customer. You can modify an existing agreement to add a new 
+                domain, remove an existing domain or change the agreement end date.
+                </br>
+                </br>
+                A partner of record is an agreement between a partner, customer and Telstra for that Partner to represent
+                the customer in their dealings related to services with Telstra.
+                </br>
+                </br>
+                Upon submission, the agreement will be sent to the Account Owner to review and approve before being sent to the customer and partner to sign and agree via Docusign.
+            </p>
+        </template>
+        <b style="font-size: 16px;">Customer Details</b>
+        </br>
+        <c-lwc-lookup lookup-label="*Customer Account" make-readonly={isAccReadOnly} object-api-name="account"
+            icon-name="standard:account" selected-record-id={accountRecordId} selected-value={accountName} search-fields={accountFields}
+            help-text="Select Customer Account/CIDN" onrecordselection={onAccountSelection} name="lookupAcc"
+            records-list={resList} filter-string={accountfilterStr}></c-lwc-lookup>
+        <label style="font-size: 11px;color:rgb(194, 57, 52);">This field is a mandatory requirement</label>
+
+        <c-lwc-lookup records-list={resConList} lookup-label="*Customer Contact" object-api-name="contact"
+            icon-name="standard:contact" selected-record-id={contactId} selected-value={contactName}
+            help-text="Select Full Authority Contact" onrecordselection={onContactSelection}
+            filter-string={contactfilterStr}></c-lwc-lookup>
+
+        <label style="font-size: 11px;color:rgb(194, 57, 52);">This field is a mandatory requirement</label>
+        <!--Removed the file upload :EDGE-216822-->
+        </br></br>
+
+        <b style="font-size: 16px;">Agreement Details</b>
+        </br>
+        <!--Start:EDGE-202803-->
+        <fieldset class="slds-form-element">
+            <legend class="slds-form-element__legend slds-form-element__label">
+                <abbr class="slds-required" title="required">*</abbr> Product Domain
+            </legend>
+            <div class="slds-form-element__control">
+                <template for:each={optionsDomain} for:item="domainName">
+                    <div key={domainName.key} class="slds-grid slds-border_bottom">
+                        <input class="product-domain slds-col slds-size_1-of-10 slds-medium-size checkboxClass" type="checkbox" checked={domainName.check} name={domainName.key} value={domainName.key} onclick={domainChange} />
+                        <lightning-accordion class ="slds-col slds-size_9-of-10 slds-small-size accordionClass" aura:id="accordion" allow-multiple-sections-open>
+                            <lightning-accordion-Section name={domainName.key} label={domainName.key}>
+                                <template for:each={domainName.value} for:item="value">
+                                    <p key={value} class="accordionValue">{value}</p>
+                                </template>
+                            </lightning-accordion-Section>
+                        </lightning-accordion>
+                    </div>
+                </template>                    
+            </div>
+        </fieldset>
+        <!--End:EDGE-202803-->
+        <lightning-radio-group name="agreementDuration"
+                           label="Agreement Duration"
+                           options={optionsDuration}
+                           value={durationValue}
+                           onchange={durationChange}
+                           required
+                           type="radio"></lightning-radio-group>
+    </br>
+       
+     <p><b style="font-size: 16px;">Your Details</b></p>
+        <div class="flowruntimeRichTextWrapper flowruntimeDisplayText"
+            data-aura-class="flowruntimeRichTextWrapper flowruntimeDisplayText">
+            <div dir="ltr" class="uiOutputRichText" data-aura-class="uiOutputRichText">
+                <p>Partner Account:</p>
+                <p>{partnerAccountName}</p>
+            </div>
+        </div>
+        </br>
+        <div dir="ltr" class="uiOutputRichText" data-aura-class="uiOutputRichText">
+            <p>Partner Contact:</p>
+            <p><span style="background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);">{partnerContactName}</span></p>
+        </div>
+        </br>
+        <div style="text-align:center;">
+            <lightning-button disabled={disableButton} variant="brand" label="Save" title="Primary action" onclick={handleSave} class="slds-m-left_x-small"></lightning-button>
+        </div>
+    </div>
+</template>

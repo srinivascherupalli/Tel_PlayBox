@@ -1,0 +1,465 @@
+<!-- 
+/*******************************************************************
+@Author : Cloudsense
+@Description : VF holds GetDealsScorecmp component and used to fire events between lightning and Frame agreement page
+@Created Date :   12-Aug-2020
+*********************************************************************/
+-->
+<apex:page sidebar="false" showHeader="false" Controller="GetPriceScheduleControllerCommon">
+    <!--Added lightningStyleSheets attribute to page - by Samish for EDGE-132203 on 8-2-2020-->
+    <apex:includeLightning />
+    <apex:includeScript value="{!$Resource.cometd}"/>
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!$Resource.json2}"/>
+    <apex:includeScript value="{!$Resource.jquery_cometd}"/>
+    <apex:includeScript value="{!$Resource.cometdReplayExtension}"/>    
+    <apex:slds /><!--Added by Samish for EDGE-132203 on 8-2-2020-->
+<style>
+        #lightningApp {
+            background-color: transparent;
+        }
+    </style>
+    <div id="lightningApp"></div>
+    <script>
+    let queryString=window.location.search;
+    let urlParams = new URLSearchParams (queryString);
+    let FrameId = urlParams.get('FrameId');
+    console.log('FrameId <><>'+FrameId);
+        $Lightning.use("c:getDealScoreApp", function () {
+        $Lightning.createComponent("c:GetDealScorecmp",
+        {
+           FrameId:FrameId
+        },
+        "lightningApp",
+        function (cmp) {
+            console.log('Basket overiew Page loaded');
+        });
+    });
+    </script>
+<script type='text/javascript'>
+
+    
+    let cometd;
+    let subscribedToChannel;
+    let isExtensionEnabled;
+    let metaConnectListener;
+    let metaDisconnectListener;
+    let metaHandshakeListener;
+    let metaSubscribeListener;
+    let metaUnSubscribeListener
+    let metaUnSucessfulListener;
+    let topicsubscription = false; 
+    let REPLAY_FROM_KEY = 'replay';
+    let _connected = false;
+    var correlationId='';
+    var IsDiscountCheckNeededJsonData='';
+    var IsRedeemFundCheckNeededJsonData='';
+    let hexid='';
+    let solutionName="{!JSENCODE($CurrentPage.parameters.solutionName)}";
+    let callerName="{!JSENCODE($CurrentPage.parameters.callerName)}";
+    let solutionId="{!JSENCODE($CurrentPage.parameters.SolutionId)}";
+    let basketId ="{!JSENCODE($CurrentPage.parameters.basketId)}"; 
+    let accountId="{!JSENCODE($CurrentPage.parameters.accountId)}";
+    let basketNum="{!JSENCODE($CurrentPage.parameters.basketNum)}";
+    let IsDiscountCheckNeeded="{!JSENCODE($CurrentPage.parameters.IsDiscountCheckNeeded)}";
+    let IsRedeemFundCheckNeeded="{!JSENCODE($CurrentPage.parameters.IsRedeemFundCheckNeeded)}";
+    let DiscountApplicableStatus='';
+    let notApplicableGuidList='';
+    let ApplicableGuidList='';
+    var secondsInRequest = "";       //Added by Samish for EDGE-132203
+    var secondsInResponse = "";       //Added by Samish for EDGE-132203
+    var TIMEOUT_SECONDS = '{!$Label.PriceScheduleTimeoutValueInSec}'; //Added by Samish for EDGE-132203
+    hexid="{!JSENCODE($CurrentPage.parameters.hexid)}";   
+    // to pass control to js for page load message             
+    getTest($);
+    
+    // Edge-143527 start-------------------------------------------------
+    let pageloadPayload={
+        command: 'pageLoad'+callerName ,
+        data: solutionId,
+        caller: 'TestTest' }; 
+    window.parent.postMessage(pageloadPayload, '*') ;
+    
+    // pageLoad end 
+    //event listner start ----------
+    window.addEventListener('message', function(event) {     
+        if (event.data != '' && event.data['command'] && event.data['command']==solutionId && event.data['caller'] && event.data['caller']==callerName) {
+            console.log('Inside vf listner');
+            //window.removeEventListener('message',event);
+            if(event.data['data']){
+                let mapJsonString=JSON.stringify(event.data['data']);
+                IsDiscountCheckNeeded=JSON.stringify(event.data['isDiscountcheckNeeded']);
+                if(event.data['IsRedeemFundCheckNeeded'])
+                    IsRedeemFundCheckNeeded=JSON.stringify(event.data['IsRedeemFundCheckNeeded']);
+                else
+                    IsRedeemFundCheckNeeded='false';
+                console.log('IsDiscountCheckNeeded-->'+IsDiscountCheckNeeded);
+                console.log('IsRedeemFundCheckNeeded-->'+IsRedeemFundCheckNeeded);
+                Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.GetPriceScheduleControllerCommon.onLoadMethod}',
+                mapJsonString,basketId,accountId,solutionId,IsDiscountCheckNeeded,solutionName,basketNum,IsRedeemFundCheckNeeded,
+                function(result, event){
+                    if(event.type === 'exception') {
+                        handleError();
+                    } else if(event.status) { 
+                        if(result){
+                            let correlationIdJsonString = JSON.stringify(result["CorrelationId"]);
+                            if(correlationIdJsonString)
+                                correlationId=JSON.parse(correlationIdJsonString);
+                            let IsDiscountCheckNeededJsonString = JSON.stringify(result["IsDiscountCheckNeeded"]);
+                            if(IsDiscountCheckNeededJsonString)
+                                IsDiscountCheckNeededJsonData=JSON.parse(IsDiscountCheckNeededJsonString);
+                            let IsRedeemFundCheckNeededJsonString = JSON.stringify(result["IsRedeemFundCheckNeeded "]);
+                            if(IsRedeemFundCheckNeededJsonString )
+                                IsRedeemFundCheckNeededJsonData=JSON.parse(IsRedeemFundCheckNeededJsonString );
+                            let DiscountAppStatusJsonString=JSON.stringify(result["DiscountApplicableStatus"]);
+                            if(DiscountAppStatusJsonString)
+                                DiscountApplicableStatus=JSON.parse(DiscountAppStatusJsonString);
+                            let notApplicableGuidListString='';
+                            notApplicableGuidListString=JSON.stringify(result["notApplicableGuidList"]);
+                            if(notApplicableGuidListString)
+                                notApplicableGuidList=JSON.parse(notApplicableGuidListString).toString();
+                                
+                            let ApplicableGuidListString='';
+                            ApplicableGuidListString=JSON.stringify(result["ApplicableGuid"]);
+                            if(ApplicableGuidListString)
+                               ApplicableGuidList=JSON.parse(ApplicableGuidListString).toString();
+                            console.log('ApplicableGuidList>>>>>>'+ApplicableGuidList);
+                            console.log('correlationId##############'+correlationId);
+                            console.log('DiscountApplicableStatus##############'+DiscountApplicableStatus);
+                            try {
+                               if(DiscountApplicableStatus && DiscountApplicableStatus=='Discount Applicable')
+                               subscribe('/event/Delegated_Pricing__e');
+                            }
+                            catch(err) {
+                              //document.getElementById("demo").innerHTML = err.message;
+                              handleError();
+                            }                                       
+                            passCorrelationIdToEMJs();
+                            if(notApplicableGuidList && notApplicableGuidList!=null){
+                                console.log('Inside notApplicableGuidList---');
+                                validateNotApplicableConfigsVF();
+                            }
+                            if(DiscountApplicableStatus && DiscountApplicableStatus=='No discount applicable'){
+                                unlockbasketAndValidateBasket();
+                                validateNotApplicableConfigsVF();
+                                document.getElementById("loader").style.visibility="hidden";
+                                document.getElementById("priceScheduleInitiated").style.visibility="hidden";
+                                document.getElementById("afterResult").innerHTML = "There are no applicable charges for current configurations";
+                            }else if(DiscountApplicableStatus && DiscountApplicableStatus=='Already triggered'){        
+                                document.getElementById("loader").style.visibility="hidden";
+                                document.getElementById("priceScheduleInitiated").style.visibility="hidden";
+                                document.getElementById("afterResult").innerHTML = "Net Price already generated";
+                                let payload ={
+                                    command: 'Already triggered',
+                                    data: 'Already triggered',
+                                    caller: callerName
+                                };
+                                window.parent.postMessage(payload, '*') ;
+                                sessionStorage.setItem("payload", JSON.stringify(payload));
+                                //window.parent.postMessage("close", '*') ;        
+                                //setInterval(function(){sessionStorage.setItem("close", "close");},100000);
+                            }else if(DiscountApplicableStatus && DiscountApplicableStatus=='Initial'){
+                                handleError();
+                                document.getElementById("loader").style.visibility="hidden";
+                                document.getElementById("priceScheduleInitiated").style.visibility="hidden";
+                            }
+                        }else{
+                            handleError();
+                        }
+                    }else{
+                        handleError();
+                    }
+                });
+            }           
+        }
+    
+    }); 
+
+    ///eventlistner end----- Edge-143527 end-------------------------
+    
+    function unlockbasketAndValidateBasket(){
+        let payload ={
+            command: 'unlockBasket',
+            data: notApplicableGuidList,
+            caller: callerName
+        };
+        window.parent.postMessage(payload, '*') ;
+        ///window.parent.postMessage("close", '*') ;        
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        ///setInterval(function(){sessionStorage.setItem("close", "close");},60000);
+    } 
+    function validateNotApplicableConfigsVF(){
+        let payload ={
+            command: 'validNotApplicableConfigs',
+            data: notApplicableGuidList,
+            caller: callerName
+        };
+        window.parent.postMessage(payload, '*') ;
+        //window.parent.postMessage("close", '*') ;
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        // sessionStorage.setItem("close", "close");
+        //setInterval(function(){sessionStorage.setItem("close", "close");},30000);
+    }             
+    
+    function getTest($){
+      $(document).ready(function(){       
+        cometd = $.cometd;
+        let REPLAY_FROM = '-1';
+        let channel = '/event/Delegated_Pricing__e';
+        let replayExtension = new cometdReplayExtension();
+        replayExtension.setChannel(channel);
+        replayExtension.setReplay(-1);  
+        console.log('callerName-->'+callerName);         
+        console.log('replayExtension-->'+replayExtension);
+                       
+        if(isExtensionEnabled) {
+            replayExtension.setExtensionEnabled(isExtensionEnabled);
+        }
+        cometd.registerExtension(REPLAY_FROM, replayExtension);     
+
+        // ensure extension isn't already registered
+        if (cometd.getExtension(REPLAY_FROM) != null) {
+            cometd.registerExtension(REPLAY_FROM, replayExtension);
+        }
+        // unsubscribe if you have already subscribed
+        if(subscribedToChannel) {
+            cometd.unsubscribe(subscribedToChannel, null, function(unsubscribeReply) {
+                subscribedToChannel = subscribe(channel); 
+            });
+        }        
+        //let _connected = false;
+        if(!metaConnectListener) {
+            metaConnectListener = cometd.addListener('/meta/connect', function(message) {        
+                if (cometd.isDisconnected()) {
+                    $('#content').append('Disconnected: '+JSON.stringify(message)+'<br><br>');
+                    return;
+                }
+          
+                let wasConnected = _connected;
+                let topic='/event/Delegated_Pricing__e';
+                _connected = message.successful;
+                //------------------Added by Samish for EDGE-132203 START------------------//
+                var currtime = new Date().toISOString();
+                console.log('currtime in listener==='+currtime);
+                var time = currtime.split("T")[1]; //e.g "08:06:10Z" (hh:mm:ss)
+                var timeFractions = time.split(":"); //e.g "08","06","10Z"
+
+                //Minutes are worth 60 seconds. Hours are worth 60 minutes
+                
+                var secondsInListener = (+timeFractions[0]) * 60 * 60 + (+timeFractions[1]) * 60 + (+timeFractions[2].split("Z")[0]);
+                secondsInListener = parseInt(secondsInListener);
+                console.log('secondsInListener===='+secondsInListener+', secondsInRequest==== '+secondsInRequest+', secondsInResponse==== '+secondsInResponse);
+
+                if((secondsInRequest!=null && secondsInRequest!="") && (secondsInResponse=="" || secondsInResponse==null) && secondsInRequest < secondsInListener){
+                    var differenceInListenerAndRequestSeconds = secondsInListener - secondsInRequest;
+                    console.log('elapsed time(sec) after request===='+differenceInListenerAndRequestSeconds);
+                    if(differenceInListenerAndRequestSeconds > parseInt(TIMEOUT_SECONDS)){
+                        console.log('timeOut occurred::::elapsed time(sec)=== '+differenceInListenerAndRequestSeconds);
+                        timeoutOccurred();
+                    }
+                }
+                    
+                    //   --------------------*-------------------------
+                if (!wasConnected && _connected) {
+                    $('#content').append('DEBUG: Connection Successful : '+JSON.stringify(message)+'<br><br>');
+                    console.log('topic : '+topic+'<br>');
+                    subscribe(topic);                       
+                } else if (wasConnected && !_connected) {
+                    $('#content').append('DEBUG: Disconnected from the server'+JSON.stringify(message)+'<br><br>');
+                }
+            }); 
+        }                       
+        if(!metaDisconnectListener) {
+            metaDisconnectListener = cometd.addListener('/meta/disconnect', function(message) {  
+                $('#content').append('DEBUG: /meta/disconnect message: '+JSON.stringify(message)+' <br><br>');
+            });
+        }    
+        if(!metaHandshakeListener) {
+            metaHandshakeListener = cometd.addListener('/meta/handshake', function(message) {
+                if (message.successful) {
+                    $('#content').append('<br><br> DEBUG: Handshake Successful: '+JSON.stringify(message)+' <br><br>');                            
+                    
+                    if (message.ext && message.ext[REPLAY_FROM_KEY] == true) {
+                        isExtensionEnabled = true;
+                    }                    
+                    subscribedToChannel = subscribe(channel);
+                } else
+                    $('#content').append('DEBUG: Handshake Unsuccessful: '+JSON.stringify(message)+' <br><br>');
+            });
+        }        
+        if(!metaSubscribeListener) {
+            metaSubscribeListener = cometd.addListener('/meta/subscribe', function(message) {  
+                if (message.successful) {
+                    $('#content').append('DEBUG: Subscribe Successful '+channel+': '+JSON.stringify(message)+' <br><br>');
+                } else {
+                    $('#content').append('DEBUG: Subscribe Unsuccessful '+channel+': '+JSON.stringify(message)+' <br><br>');                
+                }    
+            });
+        }        
+        if(!metaUnSubscribeListener) {
+            metaUnSubscribeListener = cometd.addListener('/meta/unsubscribe', function(message) {  
+                if (message.successful) {
+                    $('#content').append('DEBUG: Unsubscribe Successful '+JSON.stringify(message)+' <br><br>');
+                } else {
+                    $('#content').append('DEBUG: Unsubscribe Unsuccessful '+JSON.stringify(message)+' <br><br>');                
+                }
+            });    
+        }
+        // notifies any failures
+        if(!metaUnSucessfulListener) {
+            metaUnSucessfulListener = cometd.addListener('/meta/unsuccessful', function(message) {  
+                $('#content').append('DEBUG:  /meta/unsuccessful Error: '+JSON.stringify(message)+' <br><br>');
+            });
+        }             
+        cometd.websocketEnabled = false;      
+       // Connect to the CometD endpoint
+        cometd.configure({
+            url: window.location.protocol+'//'+window.location.hostname+ (null != window.location.port ? (':'+window.location.port) : '') +'/cometd/37.0/',
+            requestHeaders: { Authorization: 'OAuth {!$Api.Session_ID}'},
+            appendMessageTypeToURL : false
+        });        
+        cometd.handshake();         
+      });
+    }(jQuery)    
+    function subscribe(topic) {  
+        if(_connected) {
+        if (topic == null || name.topic == 0) {
+            console.log('<br>Please enter a topic<br>');
+            return;
+        }   
+        channel = topic;
+        console.log('channel :::::'+channel);
+        topicsubscription = cometd.subscribe(channel,'',receive); 
+        } else {
+            console.log('<br>DEBUG: Cannot subscribe due to unsuccessful connection<br>');
+        }                
+    }            
+
+    function unsubscribe() {
+        if(topicsubscription) {
+            cometd.unsubscribe(topicsubscription);
+        }
+        topicsubscription = null;
+    }
+    function passDataToEMJs(){
+        let payload ={
+            command: 'ResponseReceived',
+            data: correlationId,
+            caller: callerName,
+            IsDiscountCheckAttr:IsDiscountCheckNeededJsonData,
+            IsRedeemFundCheckAttr:IsRedeemFundCheckNeededJsonData,
+            ApplicableGuid:ApplicableGuidList
+        };
+        window.parent.postMessage(payload, '*') ;
+       // window.parent.postMessage("close", '*');
+        //sessionStorage.setItem("payload", JSON.stringify(payload));
+        // sessionStorage.setItem("close", "close");
+        //setInterval(function(){sessionStorage.setItem("close", "close");},60000);
+        //disconnect();
+    }
+    function passCorrelationIdToEMJs(){
+        let payload ={
+            command: 'correlationId',
+            data: correlationId,
+            caller: callerName
+        };
+        window.parent.postMessage(payload, '*') ;           
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        
+    }
+    //------------------ Added by Samish for EDGE-132203 on 10-02-2020 START ------------------//
+    function timeoutOccurred(){
+        let payload ={
+            command: 'timeout',
+            data: 'timeout',
+            caller: 'Enterprise Mobility'
+        };
+        window.parent.postMessage(payload, '*') ;
+        window.parent.postMessage("close", '*');
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        sessionStorage.setItem("close", "close");
+    }
+    //------------------ Added by Samish for EDGE-132203 on 10-02-2020 END ------------------//
+    function handleError(){
+        let payload ={
+            command: 'ErrorInResponse',
+            data: 'ErrorInResponse',
+            caller: callerName
+        };
+        
+        window.parent.postMessage(payload, '*') ;
+        window.parent.postMessage("close", '*') ;
+        sessionStorage.setItem("payload", JSON.stringify(payload));
+        sessionStorage.setItem("close", "close");
+        disconnect();       
+    }
+    function receive(message) {
+        data = message.data;        
+        let responseData = JSON.parse(JSON.stringify(data));
+        console.log(responseData);
+        console.log('On receive event');
+        console.log(responseData.eventType__c);
+        console.log('Response Data' +JSON.stringify(responseData));
+        let payload;
+        if(responseData.payload != undefined){
+              payload = responseData.payload;  
+        }
+        fireEvent(payload);
+        if(correlationId === responseData.payload.CorrelationId__c && responseData.payload.eventType__c.toLowerCase()=='response'){
+            unsubscribe();
+            passDataToEMJs();
+            document.getElementById("loader").style.visibility="hidden";
+            document.getElementById("afterResult").innerHTML = "Response Received";
+            document.getElementById("priceScheduleInitiated").style.visibility="hidden";
+        }else if(correlationId === responseData.payload.CorrelationId__c && responseData.payload.eventType__c.toLowerCase()=='error'){
+            unsubscribe();
+            handleError();
+            document.getElementById("loader").style.visibility="hidden";
+            document.getElementById("afterResult").innerHTML = "Response Received";
+            document.getElementById("priceScheduleInitiated").style.visibility="hidden";
+        }
+    }
+    function disconnect() {
+        if (cometd) {
+            cometd.removeListener(metaConnectListener);
+            cometd.removeListener(metaDisconnectListener);
+            cometd.removeListener(metaHandshakeListener);
+            cometd.removeListener(metaSubscribeListener);
+            cometd.removeListener(metaUnSubscribeListener);
+            cometd.unsubscribe(subscribedToChannel);
+            cometd.disconnect();
+        }
+    } 
+    function fireEvent(payloadString)
+    {
+        var myExternalEvent = $A.get("e.c:PREResponseEvt");
+        myExternalEvent.setParams({
+                           stopSpinner:false,
+                           payload : payloadString
+                        });
+        myExternalEvent.fire();
+        console.log('<><><>StopSpinnerEventFired');
+        
+        let pageloadPayload={
+        command: 'pageLoad'+callerName ,
+        data: payloadString,
+        caller: 'TestTest' };  
+          
+        window.parent.postMessage(pageloadPayload, '*') ;
+    }
+    window.addEventListener("message", function(event) {
+        
+        // Handle message
+        console.log(event);
+        let pageloadPayload={
+        command: event.data.type,
+        data: event.data.displayMsg,
+        caller: 'GetDealScoreVF' };  
+          
+        window.parent.postMessage(pageloadPayload, '*') ;
+    }, false);
+    window.onbeforeunload = disconnect;
+</script>
+
+</apex:page>

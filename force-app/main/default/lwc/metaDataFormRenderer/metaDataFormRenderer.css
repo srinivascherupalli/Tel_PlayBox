@@ -1,0 +1,22 @@
+.row {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  position: relative;
+  padding: 20px;
+}
+
+.body-wrapper {  
+  width: 100%;
+}
+.errors-list {
+  display: none;
+}
+
+.has-error {
+  color: red;
+}

@@ -1,0 +1,1471 @@
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-button-group button.slds-button.slds-button_icon:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group button.slds-button:before,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group button.slds-button:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-dropdown-trigger button.slds-button:before,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-dropdown-trigger button.slds-button:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list div.slds-form-element__control:after,
+.cPcThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink div.triggerLinkTextAndIconWrapper:after,
+.cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link span.profileName:after,
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper:before,
+.cPcThemeLayout .header-inner button.unsNotificationsCounter.slds-global-actions__notifications:before {
+	font-family: 'telstra_icons' !important;
+    color: #414141;
+}
+
+.cPcThemeLayout .dashboardView .dashboardHeader .slds-icon-standard-dashboard svg,
+.cPcThemeLayout .firstHeaderRow .slds-icon img, 
+.cPcThemeLayout force-highlights-icon .highlights-icon-container img {
+	display: none;
+}
+.cPcThemeLayout .dashboardView .dashboardHeader .slds-icon-standard-dashboard:after,
+.cPcThemeLayout .firstHeaderRow .slds-icon:after, 
+.cPcThemeLayout force-highlights-icon .highlights-icon-container:after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 32px;
+  background: url(images/TelstraLogo.png) no-repeat center center;
+  background-size: cover;
+}
+.slds-tabs_default__item:after {
+    height: 80% !important;
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: auto;
+    width: 1px;
+    display: none;
+    left: 0px;
+    background: #cccccc !important;
+  }
+  
+  .slds-tabs_default__item[data-tab="true"] + .slds-tabs_default__item[data-tab="true"]:after {
+    display: block;
+  }
+  
+  .slds-tabs_default__link {
+    height: 80px;
+  }
+  
+  .slds-is-active .slds-tabs_default__link {
+    color: #0070D2;
+    font-weight: normal !important;
+  }
+  
+  .slds-is-active .slds-icon-text-default {
+    fill: #0070D2;
+  }
+  
+  .slds-tabs__left-icon {
+    display: block;
+    text-align: center;
+  }
+
+.cPcThemeLayout .slds-card {
+  margin-bottom: 20px;
+}
+
+.leads-grid {
+  padding: 10px;
+}
+
+.leads-col {
+  padding: 10px;
+  border: #ddd 1px solid;
+}
+
+.leads-col + .leads-col {
+  border-left: none;
+}
+
+.leads-col-title {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #797979;
+}
+
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard {
+  margin-bottom: 20px !important;
+}
+
+.runtime_sales_pipelineboardPipelineViewColumn .listContent {
+  border-color: #eee !important;
+}
+.runtime_sales_pipelineboardPipelineViewColumnHeader {
+  border-bottom: none;
+}
+
+.runtime_sales_pipelineboardPipelineViewCardStencil .showActionsButton,
+.forceListViewManagerHeader .slds-button_icon,
+.forceListViewManagerHeader .slds-button_icon-border-filled {
+  border: none !important;
+}
+
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCardInnerWrapper {
+  border: #c5c5c5 1px solid !important;
+  border-radius: 0 !important;
+}
+
+.forceListViewManager .slds-page-header {
+  border: none !important;
+  border-radius: 0 !important;
+}
+.slds-input[name="Lead-search-input"],
+.slds-input[name="Opportunity-search-input"],
+.slds-input[name="Case-search-input"],
+.slds-input[name="PartnerFundClaim-search-input"] {
+  border-radius: 0;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  padding-left: 0 !important;
+  color: #414141;
+}
+.slds-input[name="Lead-search-input"] + lightning-primitive-icon .slds-input__icon,
+.slds-input[name="Opportunity-search-input"] + lightning-primitive-icon .slds-input__icon,
+.slds-input[name="Case-search-input"] + lightning-primitive-icon .slds-input__icon{
+  left: auto;
+  right: 2px;
+}
+
+.cPcThemeLayout .runtime_sales_pipelineboardPipelineView .recordTypeTabSetContainer~.container {
+  margin-top: 0;
+}
+
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .runtime_sales_pipelineboardPipelineViewCardItemStencil .outputLookupLink, 
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .runtime_sales_pipelineboardPipelineViewCardItemStencil {
+    color: #414141 !important;
+}
+
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable tbody tr td.errorColumn.cellContainer,
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable thead tr th.errorColumnHeader,
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable thead tr th.actionColumnHeader,
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable thead tr th.selectionColumnHeader,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-breadcrumb .slds-breadcrumb__item .forceBreadCrumbItem.uiOutputText,
+.runtime_sales_pipelineboardPipelineView .container .pipelineColumn .pipelineAggregateHeader.aggregateColumn,
+.runtime_sales_pipelineboardPipelineViewCardStencil.forceRecordLayout .pipelineViewCard .pipelineViewCardInnerWrapper div.hasAlert,
+.runtime_sales_pipelineboardPipelineViewMultipleRecordTypeTabSet .recordTypeTabSet,
+.runtime_sales_pipelineboardPipelineViewMultipleRecordTypeTabSet .iconContainer,
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable tbody tr td:nth-child(2),
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group button.slds-button lightning-primitive-icon,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group .inlineEditTooltipButton button.slds-button:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group button.slds-button:not(.slds-button_icon):after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-dropdown-trigger button.slds-button lightning-primitive-icon,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar lightning-primitive-icon,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .forceListViewManagerDisplaySwitcher .slds-button-group button.slds-button.slds-button_icon:after,
+.cPcThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink .triggerLinkTextAndIconWrapper .downIcon,
+.cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link .profileIcon,
+.cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link .triggerDownArrow.down-arrow,
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput .contentWrapper .slds-input__icon.inputIcon,
+.cPcThemeLayout .header-inner .unsNotificationsCounter .headerButtonBody .slds-global-header__icon.slds-icon-utility-notification, 
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group lightning-button-icon.forceInlineEditButton::after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar div.slds-button-group .forceRefreshButton button.slds-button::after,
+.cPcThemeLayout .article-details .articleContent .articleContentRight {
+    display: none !important;
+}
+
+.forceListViewManager .slds-page-header.forceListViewManagerHeader button.slds-button {
+    border: none !important;
+    margin: 0 15px;
+    padding: 0;
+	background: none;
+	outline: none;
+	box-shadow: none;
+}
+
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-grid .slds-col.slds-shrink {
+    order: 2;
+}
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable tbody tr {
+	line-height: 2.5;
+}
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable tbody tr th,
+.forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable tbody tr td {
+    border-bottom: 1px solid #C5C5C5;
+    border-top: 0;
+}
+.forceListViewManager .listViewContainer .slds-table_header-fixed_container::before, 
+.forceListViewManager .listViewContainer .slds-table--header-fixed_container::before {
+    border-bottom: 1px solid #C5C5C5;
+}
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper * {
+	font-family: akkuratLight,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+}
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .primaryDisplayField .outputLookupLink{
+    overflow: visible;
+    white-space: normal;
+	font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+	font-size: 1rem;
+}
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper p.runtime_sales_pipelineboardPipelineViewCardItemStencil > a.outputLookupLink {
+	font-size: 1rem;
+}
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper p.runtime_sales_pipelineboardPipelineViewCardItemStencil > span {
+    font-size: 0.875rem;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar],
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar > div.slds-m-left_xx-small,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar > div > div.slds-button-group:last-child {
+    margin-left: 0;
+}
+.pipelineColumn.runtime_sales_pipelineboardPipelineViewColumn .runtime_sales_pipelineboardPipelineViewColumnHeader .stageHeader.pipelineHeader {
+    font-size: 0.875rem;
+    letter-spacing: 0.4px;
+    font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+    background: none !important;
+    border-bottom: #eee 1px solid !important;
+    border-radius: 0 !important;
+    color: #AAAAAA !important;
+}
+.recordTypeTabSetContainer.runtime_sales_pipelineboardPipelineViewMultipleRecordTypeTabSet .tabs__nav li.tabs__item.uiTabItem {
+	max-width: 100% !important;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-status-info span.countSortedByFilteredBy {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 65px;
+    float: left;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-status-info {
+    color: #757575;
+    font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-status-info > div {
+    padding: 0px 10px 14px;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar > div > div.slds-button-group:first-child,
+.cPcThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header] > div.ui-widget:nth-child(2) {
+    float: right;
+}
+.cPcThemeLayout .uiTabset.forceCommunityTabset .tabs__item.uiTabItem a.tabHeader span:not(.title) {
+    display: none;
+}
+.comm-page-home .cPcThemeLayout .body-inner .uiTabset--default>.uiTabBar .uiTabItem .tabHeader:hover, 
+.comm-page-home .cPcThemeLayout .body-inner .uiTabset--default>.uiTabBar .uiTabItem .tabHeader:focus {
+    color: inherit;
+}
+.cPcThemeLayout .body-inner .forceCommunityRecordListStandard .viewAllLink {
+    text-align: center;
+    font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+    font-size: 0.875rem;	
+}
+.cPcThemeLayout .body-inner .forceCommunityRecordListStandard .viewAllLink a {
+    border: 2px solid #0064D2;
+    padding: 0.75rem 1.5rem;
+    display: inline-block;
+	transition: ease-in 450ms;
+	font-family: akkuratBold,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+}
+.cPcThemeLayout .body-inner .forceCommunityRecordListStandard .viewAllLink a:hover,
+.cPcThemeLayout .body-inner .forceCommunityRecordListStandard .viewAllLink a:focus,
+.cPcThemeLayout .slds-config-header--section button:hover,
+.cPcThemeLayout .slds-config-header--section button:focus,
+.cPcThemeLayout .branding-actions.slds-button-group.oneActionsRibbon.forceActionsContainer li a.forceActionLink:hover,
+.cPcThemeLayout .branding-actions.slds-button-group.oneActionsRibbon.forceActionsContainer li a.forceActionLink:focus,
+.cPcThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton:hover,
+.cPcThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton:focus,
+.cPcThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button.slds-button.uiButton:hover,
+.cPcThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button.slds-button.uiButton:focus,
+.cPcThemeLayout .body-inner .slds-button_brand:hover {
+    background: #0064D2;
+    color: #fff;
+    text-decoration: none;
+    transition: ease-out 450ms;
+}
+.cPcThemeLayout .pipelineColumn.runtime_sales_pipelineboardPipelineViewColumn .forceRecordLayout.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCardInnerWrapper {
+    border: 1px solid #C5C5C5;
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 3px 0 rgba(197,197,197,0.5);
+}
+.cPcThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink {
+    padding: 7px 0 0;
+}
+.cPcThemeLayout .uiButton.forceHeaderButton.unsNotificationsCounter {
+    padding: 5px 0 25px;
+    margin: 0 8px;
+}
+.cPcThemeLayout .branding-actions.slds-button-group.oneActionsRibbon.forceActionsContainer li a.forceActionLink {
+    padding: 0 20px;
+	transition: ease-in 450ms;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar div.slds-button-group .forceRefreshButton button.slds-button:before {
+	content: "\e90e";
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group .chartButton button.slds-button:before {
+	content: "\e90b";
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .forceListViewSettingsMenu .slds-dropdown-trigger button.slds-button:before {
+	content: "\e908";
+    font-size: 1rem;
+    color: #000;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .forceListViewManagerDisplaySwitcher .slds-dropdown-trigger button.slds-button:before {
+	content: "\e90d";
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .slds-button-group .filterButton button.slds-button:before {
+	content: "\e907";
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list div.slds-form-element__control:after {
+	content: "\e909";
+    position: absolute;
+    right: 0;
+    padding: 5px;
+}
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper:before {
+    content: "\e909";
+    position: absolute;
+    left: 25px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper .inputWrapper .autocompleteWrapper {
+    min-width: 0;
+}
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper .inputWrapper .autocompleteWrapper .uiInputTextForAutocomplete {
+    text-align: center;
+    padding-right: 0;
+	padding: 0;
+	padding-top: 2px;
+}
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper .inputWrapper .autocompleteWrapper input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    font-weight: 400;
+    font-size: 0.875rem;
+    font-family: Arial;
+	color: #414141;
+}
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper .inputWrapper .autocompleteWrapper input::-moz-placeholder { /* Firefox 19+ */
+    font-weight: 400;
+    font-size: 0.875rem;
+    font-family: Arial;
+	color: #414141;
+}
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper .inputWrapper .autocompleteWrapper input:-ms-input-placeholder { /* IE 10+ */
+    font-weight: 400;
+    font-size: 0.875rem;
+    font-family: Arial;
+	color: #414141;
+}
+.cPcThemeLayout .header-inner .slds-global-header__item.slds-global-header__item--search.forceCommunityGlobalSearchInput div.contentWrapper .inputWrapper .autocompleteWrapper input:-moz-placeholder { /* Firefox 18- */
+    font-weight: 400;
+    font-size: 0.875rem;
+    font-family: Arial;
+	color: #414141;
+}
+.cPcThemeLayout .header-inner #prmSeachNotifyProfile > div.slds-col {
+	border-right: 1px solid #D8D8D8;
+}
+.cPcThemeLayout .header-inner #prmSeachNotifyProfile > div.slds-col:last-child, 
+.cPcThemeLayout .header-inner #prmSeachNotifyProfile > div.slds-col:empty  {
+    border-right: none;
+}
+
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-dropdown-trigger button.slds-button:after,
+.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-button-group button.slds-button.slds-button_icon:after,
+.cPcThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink div.triggerLinkTextAndIconWrapper:after,
+.cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link span.profileName:after {
+	content: "\e90a";
+    font-size: 0.5rem;
+    padding: 5px;
+    vertical-align: middle;
+}
+.cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link span.profileName {
+    font-weight: 400;
+    font-size: 0.875rem;
+    font-family: Arial;
+    max-width: 100%;
+    margin: 5px 0;
+    display: inline-block;
+}
+.cPcThemeLayout .header-inner button.unsNotificationsCounter.slds-global-actions__notifications:before {
+    content: "\e90c";
+	font-size: 1.125rem;
+    font-weight: bold;
+    color: #231F20;
+	padding-top: 15px;
+}
+.cPcThemeLayout .forceListViewManager .slds-page-header.forceListViewManagerHeader .forceListViewManagerDisplaySwitcher {
+    z-index: auto;
+	margin-left: 0;
+    order: 1;
+}
+.cPcThemeLayout .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .listViewManagerHeaderButton.filterButton button.slds-button,
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader .firstHeaderRow .slds-media__figure,
+.cPcThemeLayout .body-inner force-highlights-icon .highlights-icon-container.slds-avatar.slds-m-right_small.icon {
+    margin-right: 0;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] {
+    width: 17rem;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] div.slds-form-element__control[lightning-input_input] input.slds-input::-webkit-input-placeholder {
+    font-size: 1rem;
+	font-family: akkuratLight,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+	color: #9c9c9c;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 85px;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] div.slds-form-element__control[lightning-input_input] input.slds-input::-webkit-input-placeholder {
+    font-size: 1rem;
+	font-family: akkuratLight,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+	color: #9c9c9c;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 85px;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] div.slds-form-element__control[lightning-input_input] input.slds-input::-webkit-input-placeholder {
+    font-size: 1rem;
+	font-family: akkuratLight,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+	color: #9c9c9c;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 85px;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] div.slds-form-element__control[lightning-input_input] input.slds-input::-webkit-input-placeholder {
+    font-size: 1rem;
+	font-family: akkuratLight,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+	color: #9c9c9c;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 85px;
+}
+
+.cPcThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header] > div.ui-widget,
+.cPcThemeLayout .body-inner .siteforceSldsOneColLayout .slds-config-header--section {
+    margin-bottom: 0;
+}
+.cPcThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header] {
+    margin-bottom: -15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+body.comm-page-home .uiTabset--default>.uiTabBar {	
+	margin-bottom: 3rem;
+	margin-top: 1rem;
+}
+.cPcThemeLayout .body-inner .forceCommunityRecordHeadline .forceHighlightsStencilDesktop .primaryFieldRow,
+.cPcThemeLayout .body-inner .forceCommunityRecordHeadline .forceHighlightsStencilDesktop .slds-page-header__detail-row {
+	z-index: auto;
+}
+.comm-page-home .cPcThemeLayout .forceCommunityReportChart .reportChartFrameWrapper .analyticsEmbeddedReportChart .reportFooter .asOfDate {
+    font-size: 0.875rem;
+    color: #0064D2;
+	font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+}
+.cPcThemeLayout .header-inner .forceCommunityGlobalNavigation {
+    background-color: transparent;
+}
+/**********************   Anchor & Button styles ************************/
+.cPcThemeLayout .body-inner .forceRecordLayout.uiVirtualDataGrid a,
+.comm-page-home .cPcThemeLayout .body-inner .uiTabset.forceCommunityTabset .tabs__item.active.uiTabItem a.tabHeader,
+.comm-page-home .cPcThemeLayout .body-inner .uiTabset.forceCommunityTabset .tabs__item.active.uiTabItem a.tabHeader span,
+.cPcThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink .triggerLinkTextAndIconWrapper,
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .primaryDisplayField .outputLookupLink:hover,
+.runtime_sales_pipelineboardPipelineViewCardStencil .pipelineViewCard .pipelineViewCardInnerWrapper .primaryDisplayField .outputLookupLink:focus,
+.cPcThemeLayout .body-inner .forceRecordLayout.uiVirtualDataTable a,
+.cPcThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink div.triggerLinkTextAndIconWrapper:after,
+.forceCommunityTabset .tabs__content.active.uiTab .forceListViewManager .slds-page-header__title.listViewTitle a {
+	color: #0064D2;
+}
+.cPcThemeLayout .slds-page-header.forceListViewManagerHeader .forceListViewPicker.triggerLink .triggerLinkTextAndIconWrapper {
+	font-family: akkuratReg,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+    font-size: 1.125rem;
+}
+.cPcThemeLayout table.forceRecordLayout.uiVirtualDataGrid *,
+.cPcThemeLayout table.forceRecordLayout.uiVirtualDataTable * {
+	color: #414141;
+	font-size: 0.875rem;
+    letter-spacing: normal;
+    font-weight: normal;
+}
+.cPcThemeLayout .body-inner .forceRecordLayout.uiVirtualDataGrid a,
+.comm-page-home .cPcThemeLayout .body-inner .uiTabset.forceCommunityTabset .tabs__item.uiTabItem .tabHeader span.title,
+.cPcThemeLayout .body-inner .forceRecordLayout.uiVirtualDataTable a:not(.slds-th__action),
+.cPcThemeLayout .body-inner .forceChatterRecommendationBig .cuf-bodyActionGroup .forceChatterActionLinkGroup button.cuf-platformAction,
+.cPcThemeLayout .body-inner .forceCommunityRecommendations .forceChatterRecommendationBig .cuf-recommendationDisplayLabel {
+	font-family: akkuratBold,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif;
+}
+.cPcThemeLayout c-card-list-view h2,
+.cPcThemeLayout .body-inner .slds-config-header--section .slds-config-h2Tag,
+.cPcThemeLayout .body-inner .forceCommunityCreateRecordForm .headerLabel,
+.cPcThemeLayout .body-inner .forceCommunityCreateRecordForm h1,
+.cPcThemeLayout .body-inner  .forceCommunityRecommendations h2.rec-cardHeader {
+    font-size: 2.125rem !important;
+}
+.cPcThemeLayout .body-inner .slds-config-header--section .slds-config-pTag {
+    font-size: 1.375rem !important;
+	letter-spacing: -0.3px;
+}
+.cPcThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton,
+.cPcThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button,
+.cPcThemeLayout .body-inner .slds-button_brand {
+    font-size: inherit;
+    transition: ease-in 450ms;
+}
+.comm-page-article .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .article-details .helpNtraining-result.singleTile .search-result__item .articleInfo .search-result__readMore .slds-button_brand{
+    font-size: 1rem;
+    background-color: #0063d2;
+    color: #ffffff;
+    border-radius: 4px;
+    font-family: "akkuratLight";
+    height: 32px;
+}
+.cPcThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton,
+.cPcThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button {
+    min-width: 350px;
+}
+.cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item a, 
+.cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item button {
+    font-size: 0.875rem;
+}
+.cPcThemeLayout .header-inner div[data-region-name=profileMenu].login-wrapper.selfServiceUserProfileMenu .login .linkLabel {
+	color: #414141;
+}
+body.comm-page-article .cPcThemeLayout .slds-accordion__content a, 
+body.comm-page-custom-category-landing .cPcThemeLayout .slds-accordion__content a,
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] lightning-input[force-listviewmanagersearchbar_listviewmanagersearchbar] button[data-element-id=searchClear] lightning-primitive-icon {
+    display: block !important;
+}
+/*.comm-page-home .cPcThemeLayout div[data-region-name=sidebar] div.ui-widget:first-child:last-child {
+    margin-top: 9.5rem !important;
+}*/
+/*.comm-page-home .cPcThemeLayout .body-inner{
+    max-width: max-content;
+    padding: 0;
+    margin: 0;
+}
+.comm-page-home .cPcThemeLayout .body-inner .siteforceContentArea .slds-grid .comm-layout-column{
+    padding-left: 12%;
+}*/
+.comm-page-home .cPcThemeLayout .body-inner .siteforceContentArea .comm-content-footer .ui-widget{
+    display: flex;
+    flex-direction: row;
+}
+.comm-page-home .cPcThemeLayout .body-inner .siteforceContentArea .comm-content-footer .ui-widget .forceCommunityHtmlBlock .uiOutputRichText .forceCommunityCreateRecordButton .uiButton{
+    padding: .5rem 3rem;
+}
+@media (max-width: 767px){
+    .comm-page-home .cPcThemeLayout .body-inner .siteforceContentArea .slds-grid .comm-layout-column{
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .comm-page-home .cPcThemeLayout .body-inner .siteforceContentArea .comm-content-footer .ui-widget{
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+.comm-page-home .cPcThemeLayout div[data-region-name=sidebar] div.ui-widget:nth-child(2) {
+    margin-top: 1.5rem !important;
+}
+.comm-page-home .cPcThemeLayout div[data-region-name=sidebar] div.ui-widget:first-child {
+    margin-bottom: 1.5rem !important;
+}
+.comm-page-home .cPcThemeLayout div[data-region-name=sidebar] div.ui-widget:first-child:empty {
+    margin-bottom: 9.5rem !important;
+}
+.comm-page-home .cPcThemeLayout .body-inner div[data-region-name=sidebar] div.ui-widget:first-child .createRecordWrapper.forceCommunityCreateRecordButton .actionButton.uiButton {
+    margin: 3rem 0;
+    background: transparent;
+    outline: 0;
+    box-shadow: none;
+	border: 0;
+    font-size: 1rem;
+    padding: 0;
+}
+.cPcThemeLayout .createRecordWrapper.forceCommunityCreateRecordButton .subMenu.popupTargetContainer.uiPopupTarget.uiMenuList.visible li.subMenuItem.uiMenuItem {
+    text-align: left;
+}
+.cPcThemeLayout .createRecordWrapper.forceCommunityCreateRecordButton .subMenu.popupTargetContainer.uiPopupTarget.uiMenuList.visible li.subMenuItem.uiMenuItem:hover {
+	border-left: #0064d2 4px solid;
+}
+/*.comm-page-home .cPcThemeLayout div[data-region-name=sidebar] div.ui-widget:nth-child(2) div.cPRMItemstoApproval {
+    margin-top: 8rem !important;
+}*/
+.cPcThemeLayout div[data-region-name="newFooter"] footer.cPcFooter {
+    margin-top: 60px;
+}
+.cPcThemeLayout footer:not(.cPcFooter) {
+    margin-top: 0 !important;
+}
+.forceListViewManager .slds-page-header.forceListViewManagerHeader button.slds-button.slds-button_icon-border-filled.slds-is-selected {
+	background: none;
+	outline: none;
+	box-shadow: none;
+}
+.cPcThemeLayout .forceListViewManager table.forceRecordLayout.uiVirtualDataGrid thead th a, 
+.cPcThemeLayout .forceListViewManager table.forceRecordLayout.uiVirtualDataTable thead th a {
+    text-transform: uppercase;
+}
+.cPcThemeLayout .body-inner .cGenericNewComponent .slds-button.slds-button--brand {
+    background: transparent;
+    border: 2px solid rgb(25, 100, 200);
+    border-radius: 0;
+    color: rgb(25, 100, 200);
+    font-family: 'akkuratBold','Helvetica Neue','Arial Narrow',Helvetica,Arial,sans-serif;
+    display: inline-block;
+    padding: 1rem 2rem;
+    width: 100%;
+}
+body:not(.comm-page-home).cPcThemeLayout .siteforceDesignTimeComponent .actualNode .slds-m-around--xx-large {
+    margin: 0;
+}
+.cPcThemeLayout .createRecordWrapper.forceCommunityCreateRecordButton .menuItem.uiMenu .triggerLink {
+    text-align: center;
+}
+
+.flowruntimeBody flowruntime-flow-screen-input abbr.flowruntime-required.slds-required {
+    margin: 0;
+    font-size: 0.8125rem !important;
+    vertical-align: top;
+    display: inline-block;
+    width: 8.5px;
+    font-weight: bold;
+}
+.flowruntimeBody flowruntime-flow-screen-input .flowruntime-input.slds-form-element {
+    padding: 0;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] lightning-input[force-listviewmanagersearchbar_listviewmanagersearchbar] .slds-input__icon-group.slds-input__icon-group_right > button.slds-input__icon {
+    margin: 0;
+    right: 5px;
+    margin-top: -9px;
+    height: 1rem;
+}
+.cPcThemeLayout .body-inner .helpNtraining-wrapper .helpNtraining-result .search-result__item--title {
+    height: 27px;
+    -webkit-line-clamp: 1;
+	word-break: break-word;
+}
+.cPcThemeLayout .body-inner .helpNtraining-wrapper .helpNtraining-result .search-result__item--desc {
+    height: 64px;
+}
+.cPcThemeLayout .body-inner .helpNtraining-wrapper .helpNtraining-result .search-result__cat {
+    height: 21px;
+	word-break: break-word;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+}
+.cPcThemeLayout .body-inner .helpNtraining-wrapper c-prm-pagination-comp .searchPaging,
+body.null.comm-page-detail .cPcThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header],
+body:not(.comm-page-home) .cPcThemeLayout .createRecordWrapper.forceCommunityCreateRecordButton > * {
+	display: block;
+	float: none;
+}
+.cPcThemeLayout .body-inner .helpNtraining-wrapper c-prm-pagination-comp .searchPaging ul {
+    max-width: 100%;
+    overflow-x: auto;
+}
+.cPcThemeLayout .header-inner div[data-region-name="profileMenu"] .uiMenu.selfServiceUserProfileMenu .uiMenuList.visible {
+    right: auto;
+}
+.cPcThemeLayout .body-inner .helpNtraining-wrapper .helpNtraining-result .search-result__readMore {
+    font-size: 0.875rem;
+}
+.cPcThemeLayout .body-inner .slds-config-header--section span.slds-raiseCase--img {
+    background-image: url('images/RaiseACase.png');
+    background-repeat: no-repeat;
+    width: 265px;
+    height: 200px;
+    display: block;
+    margin: 0 auto;
+    background-size: contain;
+}
+.cPcThemeLayout .body-inner .slds-config-header--section.slds-stillNeedHelp--block .slds-button--desc {
+    display: block;
+    text-align: center;
+	margin: 0.875rem auto 0;
+	font-size: 1rem;
+}
+.cPcThemeLayout .body-inner .slds-config-header--section.slds-stillNeedHelp--block .slds-raiseCase--button {
+    margin: 1rem auto;
+    width: 300px;
+    font-size: 1rem;
+    display: block;
+    border: 2px solid #0064D2;
+    padding: 1rem 2rem;
+    border-radius: 0;
+	transition: ease-in 450ms;
+	font-family: akkuratBold;
+}
+.cPcThemeLayout .body-inner .slds-config-header--section.slds-stillNeedHelp--block .slds-raiseCase--button:hover {
+	background: #0064D2;
+	text-decoration: none;
+	color: #fff;
+	transition: ease-out 450ms;
+}
+.cPcThemeLayout .body-inner .test-listViewManager.slds-card.slds-card_boundary.forceListViewManager {
+    border: 0;
+}
+.cPcThemeLayout .body-inner .test-listViewManager.forceListViewManager .slds-page-header.forceListViewManagerHeader {
+    background: transparent;
+    padding: 1rem 0;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader .test-listViewSettingsMenu.forceListViewSettingsMenu button.slds-button {
+    margin-right: 0px;
+    line-height: normal;
+}
+.cPcThemeLayout .body-inner .helpNtraining-wrapper .helpNtraining-result .search-result__readMore a svg {
+    width: 1rem;
+    margin-top: -2px;
+}
+.cPcThemeLayout .body-inner .forceCommunityRecordHeadline .forceRecordLayout.slds-page-header {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+body.siteforce-Modal-Open .uiModal .slds-modal .modal-container.slds-modal__container .slds-modal__content {
+    max-height: none !important;
+}
+body.siteforce-Modal-Open .uiModal .slds-modal .modal-container.slds-modal__container .slds-modal__content lightning-dual-listbox div[lightning-duallistbox_duallistbox].slds-dueling-list__column span[lightning-duallistbox_duallistbox].slds-truncate {
+	overflow: visible; 
+	white-space: normal;
+}
+c-prm-article-details .article-details .articleContent .articleContentLeft {
+    flex: 1;
+    padding-right: 0;
+}
+.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] lightning-input[force-listviewmanagersearchbar_listviewmanagersearchbar] button[data-element-id=searchClear] lightning-primitive-icon svg.slds-button__icon {
+    width: 1rem;
+    height: 1.125rem;
+}
+.cPcThemeLayout div[data-region-name="profileMenu"] .selfServiceUserProfileMenu .menuList .myAccount.uiMenuItem {
+    display: none;
+}
+.cPcThemeLayout c-card-list-view .leads-listing lightning-card .slds-card__body .card-data {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.comm-page-home .cPcThemeLayout .forceCommunityTabset .tabs__nav li span.title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cPcThemeLayout c-prm-knolwedge-category .helpNtraining-wrapper .searchPaging lightning-combobox.slds-form-element .slds-combobox__input {
+    width: 35px;
+}
+.cPcThemeLayout c-prm-knolwedge-category .helpNtraining-wrapper .search-result__listing[c-prmKnowledgeArtclSrchRcmnd_prmKnowledgeArtclSrchRcmnd] {
+    overflow-x: hidden;
+    max-height: 1300px;
+    overflow-y: auto;
+}
+
+/***********************  Knowledge Newsletter Format ***************************/
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent *,
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent {
+    font-family: inherit !important;
+	font-size: 1rem;
+}
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent * td, 
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent td {
+    padding: .5em;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .htmlContent b,
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .htmlContent h1,
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .htmlContent h2 {
+	font-family: akkuratBold !important;
+}
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_contentRegion .leftContainer,
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_contentRegion .rightContainer {
+    width: 45%;
+    float: left;
+}
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_contentRegion .leftContainer {
+    margin-right: 2rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_contentRegion {
+	display:block;
+	overflow: hidden;
+}
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_mainContainer h1 {
+	color: #570066;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent table.MsoNormalTable tr:first-child td {
+	border: solid windowtext 1px;
+	background: #FF0066;
+	padding: 0cm 5.4pt 0cm 5.4pt;
+	color: white;
+    font-weight: bold;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent table.MsoNormalTable tr:first-child td:not(:first-child) {
+	border-left: none;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent table.MsoNormalTable tr:not(:first-child) td:first-child {
+	border: solid windowtext 1.0pt;
+	border-top: none;
+	padding: 0cm 5.4pt 0cm 5.4pt;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent table.MsoNormalTable tr:not(:first-child) td:not(:first-child) {
+	border-top: none;
+	border-left: none;
+	border-bottom: solid windowtext 1.0pt;
+	border-right: solid windowtext 1.0pt;
+	padding: 0cm 5.4pt 0cm 5.4pt;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .htmlContent h1 {
+    font-size: 1.75rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_mainContainer .TPC_Kn_gradientSep img {
+	width: 100%;
+    margin: 2rem 0;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent table.MsoNormalTable tr td {
+    width: 250px;
+    text-align: center;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .htmlContent .TPC_Kn_contentRegion h1 {
+    font-size: 1.5rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_mainContainer > img {
+    margin-bottom: 4rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .TPC_Kn_footContainer img {
+	margin-top: 2rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent table {
+	margin: 1rem;
+}
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent ul {
+	margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent.tabArticleHtmlContent .contentHTML h5 ~ div,
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent.tabArticleHtmlContent .contentHTML h5 ~ ul,
+.cPcThemeLayout c-prm-article-details div.article-details .articleContent .htmlContent.tabArticleHtmlContent .contentHTML h5 ~ h6 {
+    display: none;
+    padding-left: 1rem;
+}
+
+/********************************** Cloudsense overrides ******************************/
+.comm-page-sfdcpage .cPcThemeLayout #prmMainContentArea,
+.comm-page-detail-00O .cPcThemeLayout #prmMainContentArea {
+    max-width: 100%;
+    padding: 0;
+}
+
+/********************************* Recommendations Component ***********************************/
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceChatterRecommendationBig a.notInterestedLink {
+    overflow: hidden;
+    max-height: 24px;
+    color: transparent;
+    font-size: 1rem;
+    text-align: center;
+    width: 40%;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel a.notInterestedLink:before {
+    content: "Dismiss notification";
+    display: block;
+    color: rgb(25, 100, 200);
+	text-decoration: underline;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel a.notInterestedLink:hover:before {
+	cursor: pointer;
+	text-decoration: none;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceAsyncCarouselIndicator {
+    background: transparent;
+    height: auto;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceAsyncCarouselIndicator ul.nav-container li a.tab.selected:focus {
+	outline: 0;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceChatterRecommendationBig {
+    max-width: none;
+    min-height: 325px;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceChatterRecommendationBig .cuf-appImage {
+    width: 550px;
+    object-fit: cover;
+    max-height: 100%;
+    max-width: 100%;
+}
+.cPcThemeLayout .body-inner .uiCarousel > .carousel-body > .scroller > section.carousel-page,
+.cPcThemeLayout .body-inner .forceChatterRecommendationCarousel .uiScroller.scroller-wrapper.scroll-vertical.native,
+.cPcThemeLayout .body-inner .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceChatterRecommendationBig .cuf-body.cuf-nonEntityRecBody.defaultFlavor {
+    overflow: visible;
+}
+.cPcThemeLayout .body-inner .forceChatterRecommendationBig .cuf-bodyActionGroup .forceChatterActionLinkGroup button.cuf-platformAction {
+    border-radius: 0;
+    background: transparent;
+    border: #0064d2 2px solid;
+    width: 190px;
+    height: 60px;
+    font-size: 1rem;
+}
+.cPcThemeLayout .body-inner .forceChatterRecommendationBig .cuf-bodyActionGroup .forceChatterActionLinkGroup button.cuf-platformAction:hover {
+    background: #0064d2;
+    color: #fff;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .cuf-body > div.cuf-recommendationDisplayLabel {
+    line-height: 1.25;
+    font-size: 1.5rem;
+    padding-top: 1.675rem;
+    height: 90px;
+    overflow: hidden;
+}
+.cPcThemeLayout .body-inner .forceChatterRecommendationCarousel .forceAsyncCarouselIndicator .dot-indicator {
+    width: 30px;
+    height: 2px;
+    padding: 0 16px;
+    border-radius: 0;
+}
+.cPcThemeLayout .body-inner .forceCommunityRecommendations h2.rec-cardHeader {
+	margin-bottom: 2rem;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .cuf-body > div.cuf-recommendationSummary {
+    margin-bottom: 20px;
+    display: -webkit-box;
+    height: 70px;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+	font-size: 1rem;
+}
+/**************************************  Flexi Page Accordion changes *****************************************/
+.cPcThemeLayout .forceListViewManager .listViewContainer .slds-table.forceRecordLayout.uiVirtualDataTable thead .slds-resizable .slds-resizable__handle,
+body.comm-page-article .slds-accordion__summary-heading lightning-primitive-icon .slds-icon, 
+body.comm-page-custom-category-landing .slds-accordion__summary-heading lightning-primitive-icon .slds-icon {
+    display: none;
+}
+body.comm-page-article .cPcThemeLayout .slds-accordion__section .slds-accordion__summary-heading button[aria-expanded="false"] lightning-primitive-icon::before, 
+body.comm-page-custom-category-landing .cPcThemeLayout .slds-accordion__section .slds-accordion__summary-heading button[aria-expanded="false"] lightning-primitive-icon::before {
+    content: "+";
+}
+body.comm-page-article .cPcThemeLayout .slds-accordion__section.slds-is-open .slds-accordion__summary-heading button[aria-expanded="true"] lightning-primitive-icon::before, 
+body.comm-page-custom-category-landing .slds-accordion__section.slds-is-open .slds-accordion__summary-heading button[aria-expanded="true"] lightning-primitive-icon::before {
+    content: "-";
+}
+body.comm-page-article .slds-accordion__summary-heading lightning-primitive-icon, 
+body.comm-page-custom-category-landing .slds-accordion__summary-heading lightning-primitive-icon {
+    -webkit-box-ordinal-group: 2;
+    order: 1;
+}
+body.comm-page-article .slds-accordion__summary-heading lightning-primitive-icon:before, 
+body.comm-page-custom-category-landing .slds-accordion__summary-heading lightning-primitive-icon:before {
+    margin-left: 10px;
+    font-size: 1.2rem;
+}
+body.comm-page-article h3.slds-accordion__summary-heading, 
+body.comm-page-custom-category-landing h3.slds-accordion__summary-heading {
+    font-family: "akkuratReg";
+    color: #0064d2;
+}
+body.comm-page-article .slds-accordion__list-item, 
+body.comm-page-custom-category-landing .slds-accordion__list-item {
+    border: none;
+    margin-bottom: 10px;
+}
+body.comm-page-article .slds-accordion__content a,
+body.comm-page-custom-category-landing .slds-accordion__content a {
+    margin: 20px 0 0 30px;
+    display: inline-block;
+}
+
+/********************** Production Issue Fix for P2OB-9250 ************************/
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ol {
+    list-style: decimal;
+}
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ol ol{
+    list-style-type:lower-alpha;
+}
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ul {
+    margin-left: var(--lwc-spacingLarge,1.5rem);
+    list-style: disc;
+}
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ul ul{
+    margin-left: var(--lwc-spacingLarge,1.5rem);
+    list-style: circle;
+}
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ol {
+    margin-left: var(--lwc-spacingLarge,1.5rem);
+}
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ol ol{
+    margin-left: var(--lwc-spacingLarge,1.5rem);
+}
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ol ul{
+    margin-left: var(--lwc-spacingLarge,1.5rem);
+    list-style: circle;
+}
+body.comm-page-article .cPcThemeLayout .article-details .articleContent ul ol{
+    margin-left: var(--lwc-spacingLarge,1.5rem);
+}
+/************************** Retail Live overrides **************************/
+/* body.comm-page-article .cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft div.tabArticleHtmlContent h5 ~ div, p, ul, ol{
+    padding-left: 1rem;
+}
+body.comm-page-article .cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft div.tabArticleHtmlContent h5 ~ h1, h2, h3, h4, h6 {
+    padding-left: 1rem;
+}*/
+.cPcThemeLayout .article-details .articleContent div.htmlContent h5 {
+    background: #ffffff;
+    border-radius: 0;
+    padding: 0.5rem 0.5rem 0.5rem 0.2rem;
+    padding-top: 1.28rem;
+    color: #515151;
+    margin: 1rem 0;
+    border-top: 1px solid #efeff0;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent h5::after {
+    content: "";
+    border: solid #0071dd;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 5px;
+    float: right;
+    transform: rotate(45deg);
+    transition: 0.3s ease-in;
+    margin-top: 8px;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent h5.toggled::after {
+    transform: rotate(225deg);
+    transition: 0.3s ease-out;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent h5:hover {
+    color: #0071dd;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent div.articleTab {
+	color: #515151;
+    display: inline-block;
+    padding: 0.5rem 2rem;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+    margin: 0;
+    border-bottom: 2px solid #d8dadc;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent div.articleTab:hover {
+	cursor: pointer;
+    color: #0064d2;
+    background: #fff;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent div.articleTab.active {
+    background: #fff;
+    border-bottom: 4px solid #0064D2;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent div.articleTab:first-child {
+    margin-left: 0;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent div.articleTab ~ div.tabContent {
+    display: none;
+}
+.cPcThemeLayout .article-details .articleContent div.htmlContent div.contentHTML {
+    display: block !important;
+    margin: 0.5rem 0; 
+}
+
+/********************** Knowledge Font overrides ******************************/
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h1,
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h2,
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h3,
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h4,
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h5,
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h6 {
+	font-weight: bold;
+	font-family: akkuratBold !important;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h1 {
+	font-size: 1.875rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h2 {
+	font-size: 1.75rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h3 {
+	font-size: 1.625rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h4 {
+	font-size: 1.5rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h5 {
+	font-size: 1.25rem;
+}
+.cPcThemeLayout c-prm-article-details .article-details .articleContent .articleContentLeft .htmlContent h6 {
+	font-size: 1.125rem;
+}
+.cPcThemeLayout .slds-truncate--text {
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/*************************  Navigation Menu Tile *************************/
+.cPcThemeLayout .comm-tile-menu__image-preview[community_navigation-tileMenuItemUnifiedLayout_tileMenuItemUnifiedLayout] {
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+    height: 250px;
+    transition: none;
+	background-size: 100%;
+}
+.cPcThemeLayout .comm-tile-menu__item-title[community_navigation-tileMenuItemBanner_tileMenuItemBanner] {
+    background-color: transparent;
+    color: rgb(51, 51, 51);
+    font-family: 'akkuratBold','Helvetica Neue','Arial Narrow',Helvetica,Arial,sans-serif;
+}
+.cPcThemeLayout community_navigation-tile-menu-ui.comm-tile-menu__ui {
+    justify-content: left;
+}
+.cPcThemeLayout .comm-tile-menu_item-overlay[community_navigation-tileMenuItemUnifiedLayout_tileMenuItemUnifiedLayout] {
+    position: relative;
+}
+.cPcThemeLayout .comm-tile-menu__item-banner[community_navigation-tileMenuItemUnifiedLayout_tileMenuItemUnifiedLayout] {
+    height: auto;
+    margin-top: 0.5rem;
+    z-index: 3;	
+}
+.cPcThemeLayout .comm-tile-menu__item-tile:focus[community_navigation-tileMenuItemUnifiedLayout_tileMenuItemUnifiedLayout], 
+.cPcThemeLayout .comm-tile-menu__item-tile:hover[community_navigation-tileMenuItemUnifiedLayout_tileMenuItemUnifiedLayout] {
+    box-shadow: none;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .article-details h1.title{
+    text-align: center;
+    border-bottom: 1px solid #eaeaea;
+    margin: 0 auto;
+    width: 540px;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss .awardcssContentPara{
+    text-align: center;
+    margin-bottom: 45px;
+    font-size: 1rem;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss:first-child{
+    margin-top: 0.3rem;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss{
+    margin-top: 2.8125rem;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss h2{
+    padding-left: 0.4375rem;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table{
+    margin: 0;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td{
+    vertical-align: top;
+    padding: 1rem;
+    padding-bottom: 0.9375rem;
+    padding-top: 0.9375rem;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table tr td:first-child{
+    padding-left: 0.5625rem;
+    }
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td span:first-child{
+    width: 100%;
+    display: block;
+    background-color: #0063d2;
+    color: #ffffff;
+    padding-left: 0.4375rem;
+    line-height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 363px;
+    font-weight: 600;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td img{
+    height: 175px;
+    align-items: center;
+    object-fit: contain;
+    max-width: 363px;
+    width: 100%;
+    padding: 45px;
+    border: 1px solid #f5f5f5;
+}
+body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td span:last-child{
+    font-family: akkuratBold !important;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    display: block;
+    text-align: center;
+    Margin-bottom: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 363px;
+    background-color: #f5f5f5;
+}
+body.comm-page-custom-manage-users .cPcThemeLayout .body-inner .test-listViewManager.forceListViewManager .slds-page-header.forceListViewManagerHeader{
+    padding-top: 0;
+}
+body.comm-page-custom-manage-users .cPcThemeLayout .body-inner .ui-widget .cb-section .cb-section_row .cb-section_column .ui-widget{
+    margin-bottom: 0;
+}
+body.comm-page-custom-manage-users .cPcThemeLayout .body-inner .ui-widget .cb-section .cb-section_row .cb-section_column .ui-widget .genericButton{
+    display: flex;
+    flex-direction: row-reverse;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+body.comm-page-custom-manage-users .cPcThemeLayout .body-inner .ui-widget .cb-section .cb-section_row .cb-section_column .ui-widget .genericButton button.slds-button_brand{
+    transition: ease-in 0ms;
+}
+body.comm-page-custom-manage-users .siteforcePanelsContainer .slds-modal__container .slds-modal__footer button[title="Save & New"]{
+    display: none;
+}
+
+.cPcThemeLayout .forceCommunityGlobalNavigation .slds-list_horizontal>.slds-list__item+.slds-list__item {
+    margin-left: 2rem;
+}
+@media only screen and (max-width: 1540px) and (min-width: 1500px) {
+    .cPrmContactRecordEditForm .modalClass {
+        height: -webkit-fill-available !important;
+        max-height: -webkit-fill-available !important;
+    }
+    .cPrmContactRecordEditForm .modal-container {
+        height: -webkit-fill-available !important;
+        margin-bottom: 1rem;
+    }
+}
+@media only screen and (min-width: 1140px) {
+	.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceChatterRecommendationBig .cuf-recommendationIcon {
+		padding: 0;
+		float: left;
+		margin: 0 4rem !important;
+		position: absolute;
+    }
+}
+@media only screen and (max-width: 1280px) {
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list_horizontal>.slds-list__item+.slds-list__item {
+        margin-left: 1rem;
+    }
+}
+@media only screen and (min-width: 1024px) {
+	.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .cuf-body > div:not(.cuf-recommendationIcon) {
+		text-align: left;
+		width: 40%;
+		float: right;
+		clear: both;
+	}
+	.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .forceChatterRecommendationBig .cuf-recommendationIcon {
+		padding: 0;
+		float: left;
+		margin: 0 1rem;
+		position: absolute;
+	}
+	.cPcThemeLayout c-card-list-view {
+		float: right;
+		display: block;
+	    width: 90%;
+	}
+	.cPcThemeLayout community_navigation-tile-menu-ui.comm-tile-menu__ui community_navigation-tile-menu-item.comm-tile-menu__item {
+		width: 33.33%;
+		margin-bottom: 3rem;
+	}
+	.cPcThemeLayout .forceListViewManager .slds-page-header.forceListViewManagerHeader .forceListViewManagerDisplaySwitcher button.slds-button {
+		margin-left: 10px;
+		line-height: inherit;
+	}
+	.cPcThemeLayout .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar .listViewManagerHeaderButton.chartButton button.slds-button {
+		margin-right: 5px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+	.cPcThemeLayout .header-inner div[data-region-name="profileMenu"] .uiMenu.selfServiceUserProfileMenu a.trigger-link span {
+		display: inline-block;
+		max-width: 75px;
+		margin-top: 7px;
+	}
+	.cPcThemeLayout .header-inner div[data-region-name="profileMenu"] .uiMenu.selfServiceUserProfileMenu .uiMenuList.visible {
+		left: -15px;
+		box-shadow: 1px 1px 1px 1px #b1afaf;
+	}
+	.cPcThemeLayout .body-inner .helpNtraining-wrapper.recommended .helpNtraining-result .search-result__readMore a {
+		font-size: 1rem;
+	}
+	.cPcThemeLayout .body-inner .helpNtraining-wrapper.recommended .helpNtraining-result .search-result__readMore a svg {
+		width: 1rem;
+		margin-left: 10px;
+	}
+	.comm-page-home .cPcThemeLayout .forceCommunityTabset .tabs__content div[data-region-name="1"] .ui-widget {
+		flex: unset;
+	}
+	.cPcThemeLayout footer.cPcFooter div.body-inner > div {
+		display:block;
+		overflow: hidden;
+	}
+	.cPcThemeLayout footer.cPcFooter div.body-inner > div > div.slds-col.slds-col-fixed-width {
+		width: 50%;
+		float: left;
+	}
+	.cPcThemeLayout .body-inner div[data-region-name=header] > div.ui-widget .createRecordWrapper.forceCommunityCreateRecordButton button.slds-button.actionButton.uiButton,
+	.cPcThemeLayout .body-inner .forceCommunityCreateRecordForm .buttonWrapper button,
+	.cPcThemeLayout .body-inner .slds-button_brand {
+		min-width: 100%;
+	}
+	.cPcThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header] {
+		display: block;
+	}
+	.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-button-bar > div > div.slds-button-group:first-child, 
+	.cPcThemeLayout .body-inner .siteforceSldsOneColLayout div[data-region-name=header] > div.ui-widget:nth-child(2) {
+		float: none;
+	}
+	.forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-status-info > div {
+		display: none;
+	}
+	.forceListViewManager .slds-page-header.forceListViewManagerHeader .slds-grid .slds-col.slds-shrink {
+		order: unset;
+		padding: 10px 0px 0;
+	    margin-bottom: 2rem;
+	}
+	.cPcThemeLayout .body-inner .test-listViewManager.forceListViewManager .slds-page-header.forceListViewManagerHeader div.slds-grid:last-child div.slds-col:last-child {
+		position: absolute;
+		margin-top: 0.5rem;
+	}
+	.cPcThemeLayout .body-inner .forceListViewManager .slds-page-header.forceListViewManagerHeader force-list-view-manager-search-bar .search-in-list[force-listViewManagerSearchBar_listViewManagerSearchBar] {
+		width: 20rem;
+	}
+	.cPcThemeLayout .forceListViewManager .slds-page-header.forceListViewManagerHeader .forceListViewManagerDisplaySwitcher button.slds-button {
+		margin-left: 20px;
+    }
+    body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .article-details h1.title{
+        margin: 0 auto;
+        width: 100%;
+    }
+    body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td {
+        display: flex;
+        flex-direction: column;
+    }
+    body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td img{
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td span:first-child{
+        max-width: 100%;
+    }
+    body.comm-page-custom-partner-awards .cPcThemeLayout .body-inner .siteforceContentArea .ui-widget .articleContent .awardcss table td span:last-child{
+        max-width: 100%;
+    }
+}
+
+/* header css */
+input#dNavToggle{
+    display: none;
+}
+@media only screen and (max-width: 1280px) and (min-width: 1240px){
+    .cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link span.profileName{
+        white-space: nowrap;
+        width: 76px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+@media only screen and (max-width: 1239px) and (min-width: 768px){
+    .cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link{
+        padding: 14px 0px;
+    }
+    .cPcThemeLayout .header-inner .uiMenu.selfServiceUserProfileMenu a.trigger-link span.profileName{
+        white-space: nowrap;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cPcThemeLayout .header-inner{
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    .cPcThemeLayout .header-inner div:first-child div{
+        position: relative;
+    }
+    .cPcThemeLayout .header-inner div:first-child div a#prmLogo{
+        top: -60px;
+    }
+    .cPcThemeLayout .header-inner div:first-child div#prmMainNavigation{
+        border-top: 1px solid #e7e7e7;
+        position: absolute;
+        width: 100%;
+    }
+    .cPcThemeLayout .header-inner #prmSeachNotifyProfile{
+        display: flex;
+        flex-direction: row;
+        align-self: flex-end;
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+}
+@media only screen and (max-width: 910px) and (min-width: 800px){
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item button .slds-icon_container{
+        margin-left: 0.3125rem;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item a, .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item button {
+        white-space: nowrap;
+        width: 128px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item:first-child a{
+        width: 44px;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item:nth-child(2) button{
+        width: 64px;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item:nth-child(3) button{
+        width: 100px;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item .comm-navigation__item ul.slds-list_vertical a{
+        white-space: nowrap;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list_horizontal>.slds-list__item+.slds-list__item {
+        margin-left: 0.75rem !important
+    }
+}
+@media only screen and (max-width: 799px) and (min-width: 768px){
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item button .slds-icon_container{
+        margin-left: 0.5rem;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item a, .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item button {
+        white-space: nowrap;
+        width: 116px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item:first-child a{
+        width: 44px;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item:nth-child(2) button{
+        width: 64px;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item:nth-child(3) button{
+        width: 100px;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list__item .comm-navigation__item ul.slds-list_vertical a{
+        white-space: nowrap;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cPcThemeLayout .forceCommunityGlobalNavigation .slds-list_horizontal>.slds-list__item+.slds-list__item {
+        margin-left: 0.875rem !important;
+    }
+}
+body.comm-page-custom-manage-users .cPrmContactRecordEditForm .slds-modal__container .slds-modal__header button.closeButton{
+    font-family: var(--c-telstraFontBold,'akkuratBold','Helvetica Neue','Arial Narrow',Helvetica,Arial,sans-serif);
+    font-size: 1.8rem;
+}
+body.comm-page-home .cPcThemeLayout .body-inner .carousel-body .forceChatterRecommendationBig .cuf-bodyActionGroup .forceChatterActionLinkGroup button.secondaryButton[title="NA"], button.secondaryButton[title="Na"], button.secondaryButton[title="na"], button.secondaryButton[title="NONE"], button.secondaryButton[title="None"], button.secondaryButton[title="none"]{
+    display: none;
+}
+.cPcThemeLayout .forceCommunityGlobalNavigation .slds-list_vertical .slds-list__item a {
+    padding: 1rem 1rem !important;
+}
+.cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .cuf-body > div.cuf-recommendationSummary {
+    height: 116px !important;
+    -webkit-line-clamp: 5 !important;
+}
+@media only screen and (max-width: 1024px){
+    .cPcThemeLayout .forceCommunityRecommendations .uiCarousel.forceChatterRecommendationCarousel .cuf-body > div.cuf-recommendationSummary {
+        height: 70px !important;
+        -webkit-line-clamp: 3 !important;
+    }
+}

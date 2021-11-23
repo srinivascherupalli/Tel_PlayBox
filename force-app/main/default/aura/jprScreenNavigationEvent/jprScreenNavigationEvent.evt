@@ -1,0 +1,9 @@
+<!--Shreyansh Sharma, Team Jaipur, P2OB-10675
+ Date: 2/1/2021,
+ Description:Application Event published on button Click from jprCsFloNavigation component-->
+<aura:event type="APPLICATION" description="Event template">
+<aura:attribute name="isPrevious" type="String" />
+<aura:attribute name="Origin" type="String" />
+<aura:attribute name="CaseId" type="String" />
+    
+</aura:event>

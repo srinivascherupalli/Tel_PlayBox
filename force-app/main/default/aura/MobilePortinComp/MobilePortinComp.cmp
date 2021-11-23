@@ -1,0 +1,260 @@
+<!--************************************************************ 
+    EDGE        -88791
+    Class       -MobilePortIn
+    Description -UI enhancement to support customer authorization and pre-port verification for mobile portin
+    Author      -Aishwarya Yeware
+    *****************************************************************-->
+<aura:component
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"
+                controller="MobilePortinController"
+                >  
+    <aura:attribute name="basketid" type="Id" />
+    <aura:attribute name="isOpen" type="boolean" default="True"/>
+    <aura:attribute name="areNumQualified" type="Boolean" default="true" />
+    <aura:attribute name="isnumSelected" type="Boolean" default="true"/>
+    <aura:attribute name="isActive" type="Boolean" default="false"/>
+  
+    <aura:attribute name="detailWrapper" 
+                    type="MobilePortinController.BasketDetailsWrapper" 
+                    />
+    <aura:attribute name="AccountName"
+                    type="String" 
+                    default="AccountName"/>
+    <aura:attribute name="BasketName"
+                    type="String" 
+                    default="BasketName"/>
+    <aura:attribute name = "searchContact" 
+                    type="String"/>
+    <aura:attribute name = "searchCustContact" 
+                    type="String"/>
+    <aura:attribute name = "searchPortNum" 
+                    type="String"/>
+    <aura:attribute name="portSelectionList" type="Object[]" />
+    <aura:attribute name="listOfContactRecords" 
+                    type="List" />
+    <aura:attribute name="listOfPortNumbers" 
+                    type="List" />
+    <aura:attribute name="listOfCustContactRecords" 
+                    type="List" />
+    <aura:attribute name="listOfContact" 
+                    type="List" />
+    <aura:attribute name="caform" type="Object"/>
+    <aura:attribute name="recordId" type="String"/>   
+    <aura:attribute name="pageNo" type="Integer" default="1" />
+  <aura:attribute name="PageSize" type="Integer" default="10" />
+  <aura:attribute name="CurrentPage" type="Integer" default="1" />
+  <aura:attribute name="TotalPages" type="Integer" default="1" />
+    <aura:attribute name="dispList" type="Object[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="oSelectedContactEvent" 
+                  event="c:selectedContactEvent" 
+                  action="{!c.handleContactEvent}" />
+    <aura:handler name="oSelectedPortEvent" 
+                  event="c:selectedPortEvent" 
+                  action="{!c.handlePortEvent}" />
+    <aura:registerEvent name="paginationEvent" type="c:paginationEvent" />
+  <aura:handler event="c:paginationEvent" action="{!c.changeData}" />
+    <aura:registerEvent name="closeModalEvent" type="c:FixedPortinModalcloseEvent"/>
+    <div aura:id="showToastMessage"/>
+    <div class="slds-m-around_xx-large">
+        
+        
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                
+                <header class="slds-modal__header">
+                    <div class="slds-truncate slds-float_right">
+                        <lightning:buttonIcon
+                                              variant="Inverse"
+                                              iconName="utility:close"
+                                              title="Cancel"
+                                              value="close"
+                                              alternativeText="close"
+                                              onclick="{!c.closeModel}"
+                                              />
+                    </div>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Customer Authorisation and Pre-Port Verification</h2>
+                </header>
+               
+                
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <aura:If isTrue="{!v.isActive}">
+                     <div class="headercomp">
+                    <b>Existing CA form </b> From the <a href="{!'/one/one.app?#/sObject/'+ v.recordId + '/view'}" target="_blank">{!v.recordId}</a> will be deactivated<br/> and new form will be generated
+                    </div>
+                    </aura:If>
+                    <h3 class="slds-section-title--divider">Select Numbers to be Included in CA form</h3>
+                    
+                    <div class="slds-grid" style="margin:15px;">
+                        
+                        <aura:if isTrue="{!v.areNumQualified}">
+                            <table class="slds-table slds-table_cell-buffer ">
+                                <tbody>
+                                    <aura:iteration
+                                                    items="{!v.portSelectionList}"
+                                                    var="num"
+                                                    indexVar="index"
+                                                    >
+                                        <tr>
+                                            <td scope="col">
+                                                <lightning:input
+                                                                 type="checkbox"
+                                                                 label="{!num.qualifiedMsisdn}"
+                                                                 name="{!num.qualifiedMsisdn}"
+                                                                 checked="{!num.isSelected}"
+                                                                 
+                                                                 />
+                                                <!--{!num.qualifiedMsisdn}-->
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                            
+                            <aura:set attribute="else">
+                                <p>There are no qualified numbers for this product basket.</p>
+                            </aura:set>
+                        </aura:if>
+                         
+                    
+                    </div> 
+                    <!-- pagination button replacement As feedback given by harika-->
+                    <c:paginationCmp
+          PageSize="{!v.PageSize}"
+          data="{!v.portSelectionList}"
+          columns="{!v.columns}"
+          TotalPages="{!v.TotalPages}"
+        />
+                    <br/><br/>
+                    <h3 class="slds-section-title--divider">Customer Authority Contact</h3>
+                    <div class="slds-grid" style="margin:15px;">
+                        <div aura:id="accountName" class="slds-form-element slds-col slds-size--1-of-2">
+                            <label class="slds-form-element__label" for="creditamount">Account Name</label>
+                            <div class="slds-form-element__control slds-p-bottom_small ">  
+                                {!v.detailWrapper.accountName}		                  
+                            </div>
+                        </div>
+                        <div aura:id="basketNumber" class="slds-form-element slds-col slds-size--1-of-2">
+                            <label class="slds-form-element__label" for="creditamount">Basket Name</label>
+                            
+                            <div class="slds-form-element__control slds-p-bottom_small ">
+                                {!v.detailWrapper.basketNumber}	
+                                <!--{!v.BasketName}	-->	                  
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid" style="margin:15px;"> 
+                        <div  aura:id="searchRes2"  class="slds-col slds-p-right_x-small slds-size--1-of-2 slds-lookup slds-is-close">
+                            <div  onkeyup="{! c.getContactsForCAFInput }"> 
+                                <label style="color:DarkRed">*</label>
+                                <label class="slds-form-element__label" for="text-input-id-1">
+                                    
+                                    Customer Authority Form Signatory
+                                </label>
+                                <lightning:helptext content="{!$Label.c.PpvApproverHelpText}" />
+                                
+                                <lightning:input
+                                                 type="search"
+                                                 aura:id="searchContact1"
+                                                 class="slds-p-around--none lookupWidth hideLabel"
+                                                 value="{!v.searchCustContact}"
+                                                 required="true"
+                                                 label="Customer Authority Form Signatory" 
+                                                 onblur="{!c.handleOnblur}"
+                                                 name="test1"
+                                                 placeholder="Search Authorised Contacts..."/> 
+                            </div>
+                            <div class="slds-lookup__menu slds lookupWidth" aura:id="cuslookupContact">
+                                <ul class="slds-lookup__list" role="listbox">
+                                    <aura:iteration items="{!v.listOfCustContactRecords}" var="singleRec">
+                                        <c:customLookupResult oContact="{!singleRec}" isSignatory="true"/> 
+                                    </aura:iteration>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size--1-of-2"></div>
+                    </div>
+                    <h3 class="slds-section-title--divider">Pre-Port Verification Contact</h3>
+                    <div class="slds-grid" style="margin:15px;">
+                        <div  aura:id="searchRes3"  class="slds-col slds-p-right_x-small slds-size--1-of-2 slds-lookup slds-is-close">
+                            <div  onkeyup="{! c.getContactsForInput }"> 
+                                <label style="color:DarkRed">*</label>
+                                <label class="slds-form-element__label" for="text-input-id-1">
+                                    
+                                    Customer PPV approver 
+                                </label>
+                                <lightning:helptext content="{!$Label.c.PpvApproverHelpText}" />
+                                
+                                <lightning:input
+                                                 type="search"
+                                                 aura:id="searchContact"
+                                                 class="slds-p-around--none lookupWidth hideLabel"
+                                                 value="{!v.searchContact}"
+                                                 label="Customer PPV approver" 
+                                                 required="true"
+                                                  name="test"
+                                                 onblur="{!c.handleOnblur}"
+                                                 placeholder="Search Authorised Contacts..."/> 
+                            </div>
+                            <div class="slds-lookup__menu slds lookupWidth" aura:id="lookupContact">
+                                <ul class="slds-lookup__list" role="listbox">
+                                    <aura:iteration items="{!v.listOfContactRecords}" var="singleRec">
+                                        <c:customLookupResult oContact="{!singleRec}"  isSignatory="false"/> 
+                                    </aura:iteration>
+                                </ul>
+                            </div>
+                        </div>
+                        <div aura:id="searchRes4" class="slds-col  slds-p-left_x-small slds-size--1-of-2 slds-lookup slds-is-close">
+                            <div  onkeyup="{! c.getPortNumForInput }" > 
+                                <label style="color:DarkRed">*</label>
+                                <label class="slds-form-element__label" for="text-input-id-1">
+                                    
+                                    PPV approver Mobile  
+                                </label>
+                                <lightning:helptext content="{!$Label.c.PpvMobileApprover}" />
+                                <lightning:input
+                                                 type="search"
+                                                 aura:id="searchPortNum"
+                                                 class="slds-p-around--none lookupWidth hideLabel"
+                                                 value="{!v.searchPortNum}"
+                                                 label="PPV approver Mobile"
+                                                 required="true"
+                                                 onblur="{!c.handleOnblur}"
+                                                 placeholder="Select from Port-in Numbers..."/> 
+                            </div>
+                            <div class="slds-lookup__menu slds lookupWidth" aura:id="lookupPort" >
+                                <ul class="slds-lookup__list" role="listbox">
+                                    <aura:iteration items="{!v.listOfPortNumbers}" var="singleRec">
+                                        <c:customLookupResult oPort="{!singleRec}" /> 
+                                    </aura:iteration>
+                                </ul>
+                            </div>
+                        </div>      
+                    </div>
+                    <br/>
+                    <br/>
+                    <div class="headercomp">
+                        <b>Can't see the contact you are looking for?</b> From the <a href="{!'/one/one.app?#/sObject/'+ v.detailWrapper.accountid + '/view'}" target="_blank">Account</a> screen, you can edit<br/> Contact Roles, or add a new Role
+                    </div>
+                    <br/>
+                    <br/>
+                   
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      value="close"
+                                      onclick="{! c.closeModel }"/>
+                    <lightning:button variant="brand" 
+                                      label="Save"
+                                      title="Save"
+                                      onclick="{! c.saveDetails }"/>
+                </footer>
+            </div>
+        </section>
+         <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+</aura:component>

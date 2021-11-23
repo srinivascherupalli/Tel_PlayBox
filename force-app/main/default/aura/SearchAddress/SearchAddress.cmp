@@ -1,0 +1,166 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickAction,lightning:actionOverride,force:hasRecordId,force:hasSObjectName" controller="SearchAddressController" access="global" >
+	<ltng:require styles="{!$Resource.slds + '/assets/styles/salesforce-lightning-design-system-vf.css'}"/>
+    
+    <aura:attribute name="addresses" type="AddressSummary[]" access="global"/>
+    <aura:attribute name="nbnAddresses" type="AddressResponseDTO" access="global"/>
+    <aura:attribute name="addressSearch" type="Boolean" default="true" />
+    <aura:attribute name="eastResponse" type="Boolean" default="false" />
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="inputAddress" type="String" access="global"/>
+    <aura:attribute name="inputAdborID" type="String" access="global"/>
+    <aura:attribute name="searchBy" type="String" access="global" default="address"/>
+    <aura:attribute name="toggleFlag" type="Boolean" access="global" default="true"/>
+    <aura:attribute name="searchByAddressFlag" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="searchByAdboridFlag" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="space" type="String" access="global" default=" "/>
+    <aura:attribute name="addressIdUrl" type="String"/>
+    <aura:attribute name="sourceSystemUrl" type="String"/>
+    <aura:attribute name="addressRecordId" type="String"/>
+    <aura:attribute name="errorMsg" type="String" access="global"/>
+    
+    
+    
+    <aura:attribute name="hiddenSiteName" type="String" access="global"/> 
+    <aura:attribute name="hiddenStatus" type="String" access="global"/> 
+    <aura:attribute name="hiddenAccountId" type="String" access="global"/> 
+    <aura:attribute name="hiddenContactId" type="String" access="global"/>
+    <aura:attribute name="hiddenAddressId" type="String" access="global"/>
+    <aura:attribute name="hiddenNavigator" type="String" access="global"/>
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.addressSearch}">
+       
+            <div class="slds-page-header">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <p class="slds-page-header__title slds-truncate"><strong>Search Address</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        	<body class="slds-page-header">
+            <div class="slds slds-grid full ">
+                <div class="slds-has-flexi-truncate">
+                    <div class="slds-form-element__control">
+                        <span class="slds-form--inline">
+                            <ui:inputRadio aura:id="address" name="radio" value="{!v.toggleFlag}" text="address" change="{!c.disableTextBox}"/>
+                     		<ui:inputText aura:id="inputAddress" value="{!v.inputAddress}" label="Address:" updateOn="keyup"/>    
+                        </span>
+                        <div>
+                            &nbsp;
+                        </div>
+                        <span class="slds-form--inline">
+                            <ui:inputRadio aura:id="adborid" name="radio" text="adborid" change="{!c.disableTextBox}"/>      
+                     		<ui:inputText aura:id="inputAdborID" value="{!v.inputAdborID}" label="AdborID:"  updateOn="keyup" 
+                                          placeholder="Please enter only numeric values for adborid" keyup="{!c.validateAdborIDInput}" disabled="{!v.toggleFlag}"/>
+                        </span>
+                    </div>
+                    <div align="Center" draggable="false" style="padding-top: 20px">
+                        <lightning:button variant="brand" disabled="false" label="Search" aura:id="ValidateButton" onclick="{!c.validateAddress}" />
+                        <lightning:button variant="brand" disabled="false" label="Cancel" aura:id="CancleButton" onclick="{!c.navigateToSiteCreate}" />    
+                    </div>  
+                </div>
+            </div>
+        </body> 
+                
+    </aura:if> 
+   
+     <aura:if isTrue="{!v.eastResponse}">
+         <div class="slds-page-header"> 
+                <div class="slds-media"> 
+                    <div class="slds-media__body"> 
+						<aura:if isTrue="{!v.searchByAddressFlag}"> 
+  							<p class="slds-page-header__title slds-truncate"><strong>Search Result for {!v.inputAddress} </strong> 
+                        	</p>
+                        </aura:if>
+						<aura:if isTrue="{!v.searchByAdboridFlag}"> 
+                        	<p class="slds-page-header__title slds-truncate"><strong>Search Result for {!v.inputAdborID} </strong> 
+                        	</p>
+                        </aura:if>
+                    </div> 
+                </div> 
+            </div> 
+     <div class="slds" style="padding-top: 20px">
+      <div align="Center" draggable="false" style="padding-bottom: 20px">
+        <lightning:button variant="brand" disabled="false" label="Cancel" aura:id="CancleButton" onclick="{!c.navigateToSiteCreate}" />
+        <lightning:button variant="brand" disabled="false" label="Back" aura:id="BackButton" onclick="{!c.BackToSearchAddress}" />    
+      </div>
+      <aura:if isTrue="{!v.searchByAddressFlag}">
+  	 <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+            <tr class="slds-text-heading--label">
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Address ID</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Address</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Locality</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">State</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Postcode</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Status</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">NBN Status</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Type</strong></div></th>
+				<th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Action</strong></div></th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.addresses}" var="ad">
+                <tr>
+                    <td class="cell">{!ad.addressId}</td>
+                    <td class="cell">{!ad.addressLine}</td>
+                    <td class="cell">{!ad.locality}</td>
+                    <td class="cell">{!ad.state}</td>
+                    <td class="cell">{!ad.postcode}</td>
+                    <td class="cell">{!ad.status}</td>
+                    <td class="cell">{!ad.nbnStatus}</td>
+                    <td class="cell">{!ad.addressType}</td>
+                    <td class="cell" >
+                        <aura:if isTrue="{!(ad.addressId!=null)}">
+                        <lightning:button variant="brand" disabled="false" label="Select" name="{!ad.addressId}"  aura:id="{!ad.addressId}" onclick="{!c.saveAddress}" />
+                        </aura:if>
+                        </td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+        </table>
+         </aura:if>
+         
+     <aura:if isTrue="{!v.searchByAdboridFlag}">
+  	 <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+            <tr class="slds-text-heading--label">
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Address ID</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Address</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Locality</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">State</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Postcode</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Status</strong></div></th>
+                <th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Type</strong></div></th>
+				<th scope="col" class="head"><div class="slds-truncate"><strong class="headerText">Action</strong></div></th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    <td class="cell">{!v.nbnAddresses.data.unstructuredAUPost.addresses.addressId}</td>
+                    <td class="cell">{!v.nbnAddresses.data.structured.addresses.streetName} {!v.space} {!v.nbnAddresses.data.structured.addresses.streetType}</td>
+                    <td class="cell">{!v.nbnAddresses.data.unstructuredAUPost.addresses.localityName}</td>
+                    <td class="cell">{!v.nbnAddresses.data.unstructuredAUPost.addresses.state}</td>
+                    <td class="cell">{!v.nbnAddresses.data.unstructuredAUPost.addresses.postcode}</td>
+                    <td class="cell">{!v.nbnAddresses.data.unstructuredAUPost.addresses.confirmed}</td>
+                    <td class="cell">{!v.nbnAddresses.data.unstructuredAUPost.addresses.addressType}</td>
+                    <td class="cell">
+                        <aura:if isTrue="{!(v.nbnAddresses.data.unstructuredAUPost.addresses!=null)}">
+                        <lightning:button variant="brand" disabled="false" label="Select" name="{!v.nbnAddresses.data.unstructuredAUPost.addresses.addressId}"  
+                                          aura:id="{!v.nbnAddresses.data.unstructuredAUPost.addresses.addressId}" onclick="{!c.saveAddress}" />
+                         </aura:if>
+                    </td>
+                </tr>
+        </tbody>
+        </table>
+         </aura:if>
+         </div>
+     </aura:if>
+    
+</aura:component>

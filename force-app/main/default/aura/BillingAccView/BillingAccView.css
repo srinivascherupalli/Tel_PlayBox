@@ -1,0 +1,17 @@
+.THIS .statusdisable{
+    background-color: rgb(236, 235, 234);
+    border-color: rgb(201, 199, 197);
+    cursor: not-allowed;
+}
+
+.THIS .uiInput--default .form-element__help {
+   float: left;
+}
+
+.THIS .slds-pill-container {
+    background : rgb(236, 235, 234) !important;
+}
+.THIS .slds-pill{
+   background : rgb(236, 235, 234) !important;
+    border : none;
+}

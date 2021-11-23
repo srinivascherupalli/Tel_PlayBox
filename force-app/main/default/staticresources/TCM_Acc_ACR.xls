@@ -1,0 +1,3 @@
+Name,Pref_Comm_Method__c,CIDN__c,Parent_CIDN__c,parentId,Id,Type
+testacr,B2B,12345,0000B1,,1,Sole Trader
+Test Account 1,B2B,,,,2,Sole Trader

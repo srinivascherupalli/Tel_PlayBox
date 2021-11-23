@@ -1,0 +1,97 @@
+<aura:component controller="SendEmailToCaseAssignee" implements="force:lightningQuickAction,force:hasRecordId,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
+    
+    <aura:attribute name="IsSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="commentPrevious" type="string" />
+    <aura:attribute name="commentsData" type="case" />
+    <aura:attribute name="cmmtField" type="Boolean" default="false"/>
+    <aura:attribute name="myMap" type="Map" />
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute type="list" name="data"/>
+    <aura:attribute name="columns" type="string[]"/>
+    <aura:handler name="init" value="{! this }" action="{! c.doinit }"/>
+    
+    <aura:if isTrue="{!v.IsSpinner}">
+        <lightning:spinner variant="brand"  size="medium" />
+    </aura:if>
+    
+    <lightning:card iconName="standard:case" title="Notify Internal User">
+        
+        <lightning:recordEditForm aura:id="accForm"
+                                  recordId="{!v.recordId}"
+                                  objectApiName="Case"     
+                                  onsubmit="{!c.handleOnSubmit}"
+                                  onsuccess="{!c.handleOnSuccess}">
+            
+            <lightning:messages/>
+            <lightning:inputField fieldName="AssignedUser__c" aura:id="assgndname"/>
+            <!--lightning:inputField fieldName="Comments" aura:id="cmmtname"/-->
+            <lightning:inputField fieldName="Internal_Comments_Capture__c" aura:id="cmmtname"/>
+            
+            <aura:if isTrue="{!v.cmmtField}">
+                <lightning:inputField fieldName="Internal_Case_Comments__c" aura:id="cmmtprv"/>
+            </aura:if>
+            <table>
+                <tr>
+                    <td>
+                        <lightning:button variant="brand"
+                                          label="View Internal Comments"
+                                          title="View Internal Comments"
+                                          onclick="{! c.showAllComments }" />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <lightning:button  variant="brand" label="Submit" type="submit" />
+                    </td>
+                </tr>
+            </table>
+        </lightning:recordEditForm>
+        
+        <aura:if isTrue="{!v.isModalOpen}">
+            
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container ">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Internal Comments</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    
+                    <!--lightning:datatable
+                   keyField="id"
+                   data="{! v.data }"
+                   columns="Comment History"
+                   hideCheckboxColumn="true"/-->
+                    <div style="overflow-x:auto;overflow-y:auto;">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" >
+                                        <div class="slds-truncate" title="Category">Comment</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.data}" var="dol" indexVar="index">
+                                    <tr>
+                                        <td style="word-wrap: break-word">
+                                            <div class="slds-truncate">{!dol}</div>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+        
+        
+    </lightning:card>
+</aura:component>

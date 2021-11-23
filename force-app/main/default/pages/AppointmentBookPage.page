@@ -1,0 +1,452 @@
+<apex:page showHeader="false" sidebar="false" controller="AppointmentBookPageHandler" docType="html-5.0">
+    
+    <apex:includeScript value="{!$Resource.cscfga__jQuery_min}" />
+    <apex:includeScript value="{!$Resource.cscfga__cs_messaging}"/>  
+    <style type="text/css">
+        .unstyled::-webkit-inner-spin-button,.unstyled::-webkit-calendar-picker-indicator {
+    				  -webkit-appearance: none;
+		}
+        .squeeze {
+        overflow-y: scroll;
+        height: 250px;
+        }
+        .slds-datepickercustom{
+        width: 160px;
+        }
+        .submitbtn{
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        text-decoration: none;
+        margin: 0 15px;
+        border:1px solid rgb(221, 219, 218);
+        padding-left: 1rem;
+        padding-right: 1rem;
+        }
+        .shape{
+        text-align:center;
+        width:150px;
+        height:40px;
+        line-height:40px;
+        float: left;
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        }
+        
+        .submitButton{  
+        
+        height: 30px;
+        width: 100px;
+        background: #005fb2 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        text-decoration: none;
+        margin: 0 15px !important;
+        border:1px solid rgb(221, 219, 218) !important;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        }
+        .submitButtonDisabled{
+        height: 30px;
+        width: 100px;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        color: #fff !important;
+        text-decoration: none;
+        margin: 0 15px !important;
+        cursor: not-allowed !important;
+    	background: #e8e8e9 !important;
+        }
+         .posearch{
+			position: relative;
+            top: -33px;
+			right: -500px;
+		}
+        
+        
+        .hsonuc{
+        width:400px;
+        top:350px;
+        right:50%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        }
+        
+        .hsbtn{
+        width:100px;
+        top:400px;
+        right:50%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        }      
+        
+        .hstimer{
+        width:400px;
+        top:250px;
+        right:60%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        } 
+        .timeoutError{
+        color:red;
+        }
+        
+        .hsip{
+        top:170px;
+        right:73%; /* Positions 50% from right (right edge will be at center) */
+        margin-right:200px; /* Positions 200px to the left of center */
+        }
+        
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        
+        /* Modal Content */
+        .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 3px solid #888;
+        width: 80%;
+        }
+        
+        .disabledButton{
+        cursor: not-allowed !important;
+        background : #e8e8e9 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        }
+        .disableConfirmButton{
+        display:none !important;
+        background : #e8e8e9 !important;
+        border-radius: 0.25rem 0.25rem 0.25rem 0.25rem !important;
+        }
+        ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          color: #aaa !important;
+        }
+        .messageTable > tbody > tr > td:first-child {
+            width:40px !important;
+        }
+        .messageCell{
+            width:825px !important;
+        }
+        .errorM3{
+            margin-left: 2px;
+    		width: 841px;
+        }
+        .modalOkButton{
+        	width:35px !important;
+        }
+    </style>
+    
+    <script>
+       
+        // example of successCallback
+        function getAttributeCallbackSuccess(value) {// write custom logic here when message result is received
+            console.log('getAttrbuteCallback received value : ' + value); 
+        }
+        // example of errorCallback
+        function getAttrbuteCallbackError(errorMsg) {// write custom logic here when error message is received
+            console.log('getAttrbuteCallbackError received error : ' + errorMsg); 
+        }
+        var winOrigin = parent;
+        CSMSG.setConfiguratorWindow(winOrigin);
+        var maxDateGlobal;
+    $(document).ready(function(){
+         maxDateGlobal =new Date();
+         if({!JSENCODE(isEnrichedText)} == 'true'){
+            
+           }else{
+        document.getElementById("divtime").style.display = "none";
+        hidePopup();
+        var dtToday = new Date();
+        var newDate = new Date();
+        var startMaxDate = new Date();
+        newDate.setDate(dtToday.getDate() + AddWeekDays({!JSENCODE(TEXT(daysAhead))})+2); 
+        if(newDate.getDay()===6){
+            newDate.setDate(newDate.getDate()+2);
+        }
+        else if(newDate.getDay()===0){
+            newDate.setDate(newDate.getDate()+1);
+		}             
+        //newDate.setDate(AddWeekDays({!JSENCODE(TEXT(daysAhead))}));   
+        startMaxDate.setDate(dtToday.getDate() + AddWeekDays(180)); 
+        
+        var month = newDate.getMonth()+1;     
+        var day = newDate.getDate();
+        var year = newDate.getFullYear();
+        if(month < 10)
+            month = '0' + month.toString();
+        if(day < 10)
+            day = '0' + day.toString();
+        maxDate = year + '-' + month + '-' + day;
+        
+        var month2 = startMaxDate.getMonth()+1;     
+        var day2 = startMaxDate.getDate();
+        var year2 = startMaxDate.getFullYear();
+        if(month2 < 10)
+            month2 = '0' + month2.toString();
+        if(day2 < 10)
+            day2 = '0' + day2.toString();
+        var maxDate2 = year2 + '-' + month2 + '-' + day2;
+        $('[id$=startDate]').attr('min', maxDate);
+        $('[id$=startDate]').attr('max', maxDate2);
+        $('[id$=toDate]').attr('min', maxDate);
+         maxDateGlobal.setDate(newDate.getDate());
+        function AddWeekDays(weekDaysToAdd) {
+            var daysToAdd = 0;
+            var mydate = new Date();
+            var day = mydate.getDay();
+            weekDaysToAdd = weekDaysToAdd - (5 - day);
+            if ((5 - day) < weekDaysToAdd || weekDaysToAdd == 1) {
+                daysToAdd = (5 - day) + 2 + daysToAdd;
+            } else { // (5-day) >= weekDaysToAdd
+                daysToAdd = (5 - day) + daysToAdd;
+            }
+            while (weekDaysToAdd != 0) {
+                var week = weekDaysToAdd - 5;
+                if (week > 0) {
+                    daysToAdd = 7 + daysToAdd;
+                    weekDaysToAdd = weekDaysToAdd - 5;
+                } else { // week < 0
+                    daysToAdd = (5 + week) + daysToAdd;
+                    weekDaysToAdd = weekDaysToAdd - (5 + week);
+                }
+            }
+            return daysToAdd;
+        }
+               }
+    });    
+    function showPopup()
+    {
+        document.getElementById("ModalPopup").style.display = "block";
+    }
+    function hidePopup()
+    {   
+        CSMSG.setAttribute('Appointment_Start_Date_0', $('[id$=appStartDte]').text());
+        CSMSG.setAttribute('Appointment_ID_0', $('[id$=appointmentId]').text());
+        document.getElementById("ModalPopup").style.display = "none";
+    }
+    
+    // start timer
+    function startTimer(duration, display) {
+        var minutes = 0;
+        var seconds = 0;
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+            
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            
+            display.textContent = minutes + ":" + seconds;
+            
+            if (--timer < 0) {
+                for(i=0; i<10000; i++)
+                {
+                    window.clearInterval(i);
+                }
+                switchOffTimer();
+                document.getElementById("timeoutMessage").style.display = "block";
+            }
+        }, 1000);
+    }
+    
+    function resetCounter() {
+        var cause  = '' + {!JSENCODE(isCauseEventText)};
+        var check = true;
+        var currentVal =Date.parse($('[id$=startDate]').val());
+        var allowedDate=Date.parse(maxDateGlobal);
+        if($('[id$=toDate]').val()!=''){
+        	if(!($('[id$=toDate]').val() >= $('[id$=startDate]').val())){
+            	check = false;
+            }
+        }
+        if(cause == 'false' && $('[id$=startDate]').val()!='' && check && currentVal  >= (allowedDate)){
+             document.getElementById("divtime").style.display = "block";
+            var timeInMinutes = 5;
+            var minutes = 60 * timeInMinutes;
+            display = document.querySelector('#time');
+            for(i=0; i<10000; i++)
+            {
+                window.clearInterval(i);
+            }
+            startTimer(minutes, display);
+        }else{
+           document.getElementById("divtime").style.display = "none";
+        }
+    }
+    function startTimeoutPoller(){
+        document.getElementById("timeoutMessage").style.display = "none";
+    }
+    
+    function sendSlotID(val){
+        var inputs = document.getElementsByTagName("button");
+        for (var i = 0; i < inputs.length; i++) {
+            
+            if (inputs[i].id === 'submit-button') {
+                inputs[i].disabled = false;
+                inputs[i].classList.remove('disabledButton');
+            }
+        }
+        val.disabled=true;
+        val.classList.add('disabledButton');
+        sendSlotIDC(val.value);
+    }
+    </script>
+    
+    <apex:form id="form1">
+        <apex:actionFunction name="switchOffTimer" rerender="confirmBtn" action="{!switchOfTimerApex}">
+          </apex:actionFunction>
+        <apex:actionFunction name="sendSlotIDC" rerender="confirmBtn" action="{!setSlotId}">
+            <apex:param name="selectedslotId" value="" assignTo="{!selectedSlotId}" />
+        </apex:actionFunction>
+        <apex:slds />
+        <apex:outputPanel id="ErrorSection" styleClass="Width:200px;">
+            <apex:pageMessage severity="Error" strength="2" summary="Latest Date must be greater than From Date" rendered="{!FirstSection}"/>
+			 <apex:pageMessage severity="Error" strength="2" summary="From Date is mandatory for search" rendered="{!fromDateValidation}"/>
+        </apex:outputPanel>
+        <apex:outputPanel id="SearchApp">
+            <apex:outputPanel rendered="{! NOT(isEnriched)}">
+                <div class="slds-scope" id="div1">
+                    <div class="slds-box slds-theme--default slds-container--large" id="div2">
+                        <div id="searchAppointment">
+                            <div id="pb1" >
+                                 <table class="slds-table slds-no-row-hover">
+                                    <tr>
+                                        <td style="padding-right: 23px;"><span class="slds-truncate">Category</span></td>
+                                        <td>
+                                            <apex:selectList size="1" value="{!selectedname}" styleClass="slds-combobox-picklist" disabled="true" style="color: #aaa !important;width: 160px;height: 24px;" >
+                                                <apex:selectOption itemvalue="Telstra Installation"/>
+                                            </apex:selectList>
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <h1><b>&nbsp;&nbsp;Select a date range to search available appointments</b></h1>
+                                
+                                
+                                <table class="slds-table slds-no-row-hover">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="slds-truncate">From Date<b style="color:RED">*</b></span></td>
+                                            <td><apex:input type="date" id="startDate" value="{!fromDate}"   styleClass="date form-control unstyled slds-datepickercustom slds-dropdown-trigger slds-is-open"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="slds-truncate">Latest Date</span></td>
+                                            <td><apex:input type="date"  id="toDate" value="{!toDate}" styleClass="unstyled slds-datepickercustom slds-dropdown-trigger slds-is-open"/></td>
+                                          </tr>
+                                    </tbody>
+                                </table>
+                              
+                                    <apex:commandButton value="Search" styleClass="submitButton posearch" rerender="MainOP,ErrorSection" action="{!searchAppointments}"  oncomplete="resetCounter(),startTimeoutPoller()"/>
+                                
+                                
+                            </div>
+                            <apex:outputPanel id="MainOP">
+                                <apex:outputPanel id="op123" rendered="{!displayOP}" layout="block" >
+                                    <apex:pageMessages ></apex:pageMessages>
+                                    <div Id="pb2" rendered="{!displayPb2}" class="squeeze">
+                                        <h1><b>&nbsp;&nbsp;Select one appointment from the list below</b></h1>
+                                        <br/>
+                                        <div id="timeoutMessage">
+                                            <span class = "timeoutError">Sorry, the appointment search request has timed out. Please search available appointments again.</span>
+                                        </div>
+                                        <table class="slds-table slds-no-row-hover">
+                                            <thead>
+                                                <tr class="slds-text-title">
+                                                    <th  scope="col">
+                                                        <span style="float:right">
+                                                            <label style="font-family:'Salesforce Sans',Arial,sans-serif; font-size:13px">Notes for the selected slot :</label>
+                                                        </span>
+                                                    </th>
+                                                    <th  scope="col">
+                                                        <apex:inputTextarea html-placeholder="Enter upto 255 characters" styleClass="slds-textarea" style="width:50%;overflow-y: auto; resize: none; margin-top: 5px;" value="{!notes}"/>
+                                                        <span style="top: -20px; position: relative;" id="confirmBtnWrapper">
+                                                            <apex:commandButton id="confirmBtn" value="Confirm" StyleClass="{!IF(selectedSlotId!=NULL && NOT(blockConfirmBtn),'submitButton','submitButtonDisabled')}" disabled="{!IF(selectedSlotId!=NULL && NOT(blockConfirmBtn),false,true)}" action="{!confirmAppointment}" oncomplete="showPopup()" reRender="ModelPopup"/> 
+                                                        </span>
+                                                        
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <apex:repeat value="{!finalSlotWrapperList}"  var="iter">
+                                                    <tr>
+                                                        <td>
+                                                            <apex:outputLabel styleClass="shape" value="{!iter.startDate}" ></apex:outputLabel>
+                                                        </td>
+                                                    </tr>
+                                                    <apex:repeat value="{!iter.slotDetail}" var="slot">
+                                                        <tr>
+                                                            <td></td>
+                                                            <td>
+                                                                <apex:outputLabel value="{!iter.slotDetail[slot]}" style=""></apex:outputLabel>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" id="submit-button" value="{!slot}" class="submitbtn" style="cursor: pointer;" onclick="sendSlotID(this); return false;">Select</button>
+                                                                
+                                                            </td>
+                                                        </tr>
+                                                    </apex:repeat>
+                                                </apex:repeat>
+                                            </tbody></table>
+                                    </div>
+                                </apex:outputPanel>
+                                
+                            </apex:outputPanel>
+                            <div id="divtime" style="cursor: default; background-color: rgb(250, 250, 249); text-decoration: underline;"><b>Please select a slot within <span id="time">05:00</span> minutes!</b></div>
+                        </div>
+                    </div>
+                </div>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:form>
+    
+    <div id = "ModalPopup" class ="modal">
+        <div class='modal-content'>
+            <apex:outputPanel id="ModelPopup">
+                <apex:form >
+                    <div>
+                        <h1><b>{!popupTitle}</b></h1>    
+                    </div>
+                    <div>
+                        <span>{!popupMessage}</span>    
+                    </div>
+                    <center>
+                        <apex:commandButton styleClass="submitbtn modalOkButton" value="OK" onclick="hidePopup()" reRender="AppDetail,SearchApp" oncomplete="hidePopup()"/>
+                    </center>
+                </apex:form>
+            </apex:outputPanel>
+        </div>
+    </div>
+    <apex:outputPanel id="AppDetail">
+        <apex:pageBlock id="AppDetail22" rendered="{!isEnriched}">
+            <apex:pageBlockSection columns="1">
+                <apex:outputText label="Appointment ID" value="{!appDetails['SlotId']}" id="appointmentId"/>
+                <apex:outputText label="Category" value="{!appDetails['Category']}"/>
+                <apex:outputText label="Date" value="{!appDetails['Date']}" id="appStartDte"/>
+                <apex:outputText label="Start Time" value="{!appDetails['StartTime']}"/>
+                <apex:outputText label="End Time" value="{!appDetails['EndTime']}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>  
+    </apex:outputPanel>
+    <script>
+         // example of successCallback
+        function getAttributeCallbackSuccess(value) {// write custom logic here when message result is received
+            console.log('getAttrbuteCallback received value : ' + value); 
+        }
+        // example of errorCallback
+        function getAttrbuteCallbackError(errorMsg) {// write custom logic here when error message is received
+            console.log('getAttrbuteCallbackError received error : ' + errorMsg); 
+        }
+        var winOrigin = parent;
+        CSMSG.setConfiguratorWindow(winOrigin);
+        var previousOnload = window.onload; window.onload = function() { if (previousOnload) { previousOnload(); } CSMSG.setAttribute('Appointment_Start_Date_0', $('[id$=appStartDte]').text()); CSMSG.setAttribute('Appointment_ID_0', $('[id$=appointmentId]').text());}
+    </script>
+</apex:page>

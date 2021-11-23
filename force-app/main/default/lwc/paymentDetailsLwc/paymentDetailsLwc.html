@@ -1,0 +1,124 @@
+<!--@Created Date : 20-05-2021 -->
+<!--@Created By : Kamlesh Kumar -->
+<!--@Breif : EDGE - 212793. Displays the payment information -->
+
+<template>   
+    <template if:true={openModal}>  
+      <div class="slds-modal slds-fade-in-open slds-backdrop">  
+            <div class="slds-modal__container">  
+              <!------HEADER Section-->  
+              <div class="slds-modal__header">   
+                    <h2 class="popupHeader">{paymentInfoData.paymentType}</h2>  
+              </div>  
+              <!------Body Section-->  
+              <div class="slds-modal__content slds-p-around_medium">  
+                    <template if:true={showLoading}>
+                      <div class="slds-modal__container ">
+                            <div class="slds-p-around--medium slds-is-relative">
+                                <div class="slds-spinner_container">
+                                    <div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+                                        <span class="slds-assistive-text">Loading...</span>
+                                        <div class="slds-spinner__dot-a"></div>
+                                        <div class="slds-spinner__dot-b"></div>
+                                    </div>
+                                </div>
+                            </div>
+                      </div>
+                    </template>
+                    <!--Error Message Display : Starts here-->
+                    <template if:true ={errorInfoData.message}>
+                      <div class="slds-text-align_center slds-text-heading_medium" >
+                            <lightning-icon icon-name="utility:error" alternative-text="Error!" title="Error"></lightning-icon>
+                            Error : {errorInfoData.message}
+                      </div>
+                    </template>
+                    <!--Error Message Display : End here-->
+                    <!--Payment Transaction Detailed information: Starts Here-->
+                    <template if:true={enabledTransactionDetails}>
+                      <div class="slds-grid slds-wrap center slds-p-left_x-large">
+                          <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                              <span class="titleClass">Transaction Id</span></br>
+                              <span class="valueClass">{paymentInfoData.transactionId}</span>
+                          </div>
+                          <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium"> 
+                              <span class="titleClass">Case Number</span></br>
+                              <span class="valueClass">{paymentInfoData.caseNumber}</span>
+                          </div>
+                          <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                              <span class="titleClass">Payment Date</span></br>
+                              <span class="valueClass">{paymentInfoData.paymentDate}</span>
+                          </div>
+                          <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                              <span class="titleClass">Payment Amount</span></br>
+                              <span class="valueClass">{paymentInfoData.paymentAmount}</span>
+                          </div>
+                          <template if:true={paymentInfoData.fromBillingAccount}>
+                              <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                                  <span class="titleClass">From Billing Account</span></br>
+                                  <span class="valueClass">{paymentInfoData.fromBillingAccount}</span>
+                              </div>
+                          </template>
+                          <template if:true={paymentInfoData.toBillingAccount}>
+                              <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                                  <span class="titleClass">To Billing Account</span></br>
+                                  <span class="valueClass">{paymentInfoData.toBillingAccount}</span>
+                              </div>
+                          </template>
+                          <template if:true={paymentInfoData.comments}>
+                              <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                                  <span class="titleClass">Comments</span></br>
+                                  <span class="valueClass">{paymentInfoData.comments}</span>
+                              </div>
+                          </template>
+                          <template if:true={paymentInfoData.reason}>
+                              <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                                  <span class="titleClass">Reason</span></br>
+                                  <span class="valueClass">{paymentInfoData.reason}</span>
+                              </div>
+                          </template>
+                          <template if:true={Reversed}>
+                                  <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                                      <span class="titleClass">Reversal Date</span></br>
+                                      <span class="valueClass">{paymentInfoData.reversalDate}</span>
+                                  </div>
+                                  <div class="slds-col slds-size_6-of-12 slds-m-bottom_medium slds-p-left_medium">
+                                      <span class="titleClass">Reversal Reason</span></br>
+                                      <span class="valueClass">{paymentInfoData.reversalReason}</span>
+                                  </div>
+                          </template>
+                      </div>
+                      <template if:true={paymentInfoData.paymentApplicationDetails}>
+                          <div>
+                              <lightning-datatable
+                                      key-field="id"
+                                      data={invoiceData}
+                                      columns={columns}
+                                      hide-checkbox-column="true">
+                              </lightning-datatable>
+                              <div class="slds-table customTableBorder">
+                                  <div class="slds-col slds-grid">
+                                      <span class="customTable slds-size--2-of-3" style="font-weight: bold;">Total Applied</span>
+                                      <span class="customTable" style="font-weight: bold;">{paymentInfoData.paymentAppliedAmount}</span>
+                                  </div>
+                              </div>
+                              <div class="slds-table customTableBorder">
+                                  <div class="slds-col slds-grid">
+                                      <span class="customTable slds-size--2-of-3">Unapplied Amount</span>
+                                      <span class="customTable">{paymentInfoData.paymentUnappliedAmount}</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </template>
+                  </template>
+                  <!--Payment Transaction Detailed information: Starts Here-->
+              </div> 
+              <!------Body Section : End-->
+              <!------Footer Section-->  
+              <div class="slds-modal__footer">  
+                    <button class="slds-button slds-button_outline-brand" onclick={handleReturnPayment}>Return to Payment</button>
+              </div>  
+              
+            </div>  
+      </div>  
+    </template>  
+</template>

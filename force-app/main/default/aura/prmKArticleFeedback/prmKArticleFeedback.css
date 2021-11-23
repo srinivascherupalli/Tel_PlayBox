@@ -1,0 +1,40 @@
+.THIS header.slds-card__header {
+    padding-top:0;
+}
+
+.THIS .slds-hr{
+    margin-bottom: 1rem;
+}
+
+.THIS .slds-likeicon {
+    flex: 0.25;
+    border: 1px solid #cecece;
+    text-align: center;
+    border-radius: 0;
+    margin: 0.5rem 0.5rem 0;
+}
+
+.THIS .slds-likeicon svg.slds-icon {
+    fill: #000;
+    padding: 0.125rem;
+}
+
+.THIS .icon1{
+    width: 100px;
+    height: 100px;     
+}
+
+.THIS .slds-card__footer.actionButtonBar .slds-button.slds-button_brand {
+    overflow: hidden;
+    height: 2rem;
+    display: inline-block;
+}
+
+.THIS .slds-card__footer.actionButtonBar .slds-button.slds-button_brand::before {
+    content: "Submit";
+    display: block;  
+}
+.THIS .raiseCaseIcon:after{
+ content:'\2794';
+ padding-left: 7px;
+}

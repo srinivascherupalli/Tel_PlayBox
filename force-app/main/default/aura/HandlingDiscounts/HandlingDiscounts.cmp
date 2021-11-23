@@ -1,0 +1,40 @@
+<!--
+* @Author : Shubhi
+* @Date : 26 Nov 2019
+* @Desc : Discount DTO
+* @Jira : Edge-120132
+* updated for bug -EDGE-143741
+* @Jira : EDGE-143527 - Added by Aman Soni for EM and Shubhi for Telstra Collaboration
+-->
+
+<aura:component controller="ShowPromotionAndDiscountContoller" implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="String" name="accountId" />
+    <aura:attribute type="String" name="basketId" />
+    <aura:attribute type="String" name="solutionId" />
+    <aura:attribute type="String" name="accessMode" />
+    <aura:attribute type="String" name="customAttribute"/>
+    <aura:attribute type="String" name="configId"/>
+    <aura:attribute type="String" name="tabName"/>
+    <aura:attribute type="List" name="discountDataList"/>
+    <aura:attribute type="String" name="solutionName"/>
+    <aura:attribute type="String" name="mapJsonString"/><!--EDGE-143741-->
+    <div style="border-bottom: 2px solid lightgrey">
+        <span style="font-size:large">Promotions and Discounts</span><br/><br/>
+    </div>
+    <aura:if isTrue="{!v.solutionName=='Unified Communication Device'}"><!--Edge-EDGE-143741-->
+           <c:showPromotionAndDiscountNGUC accountId="{!v.accountId}" basketId ="{!v.basketId}" solutionId="{!v.solutionId}" configId="{!v.configId}" tabName = "Devices" solutionName = "{!v.solutionName}" mapJsonString="{!v.mapJsonString}"/><!--EDGE-143741-->
+        <aura:set attribute="else">
+            <lightning:tabset selectedTabId="promotionDiscount">
+            <lightning:tab label="Plan" id="promotionDiscount">	 
+                <aura:if isTrue="{!v.customAttribute=='viewDiscounts'}">
+                  <c:ShowPromotionAndDiscount accountId="{!v.accountId}" basketId ="{!v.basketId}" solutionId="{!v.solutionId}" configId="{!v.configId}" tabName= "PromotionAndDis" mapJsonString="{!v.mapJsonString}"/><!--EDGE-143741-->
+              </aura:if>   
+            </lightning:tab>
+            <lightning:tab label="Addons" id="addons">
+                 <c:ShowPromotionAndDiscount accountId="{!v.accountId}" basketId ="{!v.basketId}" solutionId="{!v.solutionId}" configId="{!v.configId}" tabName = "AddOn" mapJsonString="{!v.mapJsonString}"/><!--EDGE-143741-->
+            </lightning:tab>
+            </lightning:tabset>
+        </aura:set>
+    </aura:if>   
+</aura:component>

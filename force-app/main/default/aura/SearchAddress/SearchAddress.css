@@ -1,0 +1,10 @@
+.THIS label span {
+    color: #54698d;
+    font-weight: bold;
+}
+.THIS .headerText{
+    color: #16325c;
+}
+.THIS .forceToastMessage.slds-notify--toast{
+    background-color : #407216;
+}

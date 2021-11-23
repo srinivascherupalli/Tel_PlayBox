@@ -1,0 +1,35 @@
+<!--
+===============================================================================================================================
+Class : progressRing
+Developer Name : Rohit
+COntroller Class : NA
+===============================================================================================================================
+Sr.No.    Developer Name       	Modified  Date          Story Description
+1.        Shubhi ,Harsh,Rohit   23/5/2019     			CheckEligibilitySolution (EDGE-66570 ,EDGE-72453,EDGE-73521)
+2.        Mladen                no changes              leaving a comment for deployment for EDGE-77981 the NBN story 
+===============================================================================================================================
+-->
+<aura:component >
+    <aura:attribute name="value" type="Integer" default="0" description="To store number of sites Processed for Eligibilty Check" />
+    <aura:attribute name="variant" type="String" description="Variable to set Variant for Icon"/>
+    <aura:attribute name="valuemax" type="Integer" default="0" description="To store number of sites Triggered for Eligibilty Check" />
+
+    <aura:attribute name="hasVariant" type="Boolean" access="private" default="{!false}" />
+    <aura:attribute name="ringClass" type="String" access="private" />
+    <aura:attribute name="iconName" type="String" access="private" />
+    <aura:attribute name="altText" type="String" access="private" />
+    <aura:attribute name="msg" type="String" access="private" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.updateView}" />
+    <aura:handler name="change" value="{!v.value}" action="{!c.updateView}" description="It will handle the Value change event"/>
+    <aura:handler name="change" value="{!v.valuemax}" action="{!c.updateView}" description="It will handle the ValueMax change event"/>
+
+    <div class="{!v.ringClass}">
+        <div id="progressContainer" class="slds-progress-ring__progress" role="progressbar" aria-valuemin="0" aria-valuemax="{!v.valuemax}" aria-valuenow="{!v.value}">
+            
+        </div>
+        <div class="slds-progress-ring__content">
+        </div>
+        <li > {!v.msg} </li>
+    </div>
+</aura:component>

@@ -1,0 +1,17 @@
+<aura:component  implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" controller="PortOutReversalController">
+<aura:attribute type="String" name="basket_id" />
+<aura:attribute type="String" name="solutionname" />
+
+<aura:registerEvent name="UpdatePortOut" type="c:updatePortOutattributes"/> <!-- Added for EDGE-174219-->
+
+<div aura:id="container"/> 
+<div class="slds-m-around_small">
+<c:portOutReversalParentComp onselect="{!c.handleClosePopup}"
+                                     basketid="{!v.basket_id}"
+
+                             		 solutionnameval="{!v.solutionname}"
+                             		oncallVFEvent = "{!c.handleCallVFEvent}"
+                             /> <!-- Added for EDGE-174219-->
+
+</div>
+</aura:component>

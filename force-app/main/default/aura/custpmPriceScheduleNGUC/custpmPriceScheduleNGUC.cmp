@@ -1,0 +1,64 @@
+<!--
+* @Author : Shubhi
+* @Date : 12 March 2020
+* @Desc : RateMatrixForNGUCController for display rate and discount data   
+* @Jira : EDGE-140157 new component 
+* @testclass : RateMatrixForNGUCControllerTest
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description 
+1           shubhi              30/3/2020   EDGE-140157
+===============================================================================================================================
+*/-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="customPriceScheduleController">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="configId" type="String" />
+    <aura:attribute name="contractType" type="String" />
+    <aura:attribute name="unitPrice" type="String" />
+    <aura:attribute name="contractTerm" type="String" />
+    <aura:attribute name="lstActivity" type="list" />
+    <aura:attribute name="noDevice" type="boolean" default="false"/>
+    <aura:attribute name="BussinessId_Addon" type="String" />
+    <aura:attribute name="BussinessId_PI" type="String" />
+    <aura:attribute name="deviceDetails" type="list" />
+    <div style="border-bottom: 2px solid lightgrey">
+        <span style="font-size:large">Price Schedule</span><br/><br/>
+    </div>
+    
+    <aura:if isTrue="{!v.noDevice}">
+        <span>
+            <center>
+                <b>No Discounts.</b><br/>Currently there are no available discounts for chosen configuration.<br/>Check again later
+            </center> 
+        </span>
+        <aura:set attribute="else">
+            <article class="slds-border_bottom slds-timeline__item_details">
+                <div >
+                    <span style="font-size:large">Device</span>
+                </div>
+                
+                <ul class="slds-timeline">        
+                    <!--iterate all activity records in child component-->
+                    <article class="slds-border_bottom slds-border_top slds-timeline__item_details slds-theme_shade slds-m-top_x-small">
+                        <span style="font-size:medium">{!v.contractType}</span> 
+                        <div class="slds-float_right">
+                            <span style="font-size:medium">Unit Price: ${!v.unitPrice}</span> 
+                        </div>
+                        <br/><br/>
+                        <span style="font-size:medium">Term: {!v.contractTerm} Months</span> 
+                    </article>
+                    <br/>
+                    <article class="slds-border_bottom slds-border_top slds-timeline__item_details slds-theme_shade slds_box">
+                        <aura:iteration items="{!v.deviceDetails}" var="task">
+                            <c:customPriceScheduleChild activity="{!task}"/>
+                        </aura:iteration>
+                    </article>
+                </ul>
+                
+                <div class="slds-docked-form-footer slds-float_left">
+                    <span style="font-size:small">Price Schedule may change if Plan and Add-Ons are modified.</span>
+                </div>
+            </article>
+        </aura:set>
+    </aura:if>
+    
+</aura:component>

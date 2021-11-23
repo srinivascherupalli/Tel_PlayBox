@@ -1,0 +1,2 @@
+Tag Type,Product Family (agreement sub-category),Related Service Schedule (agreement sub-type),Product,Tag,Translates to field,Field Type,Value,Billing code
+Head Terms,Cover sheet,Head terms,,Cust_CIDN,CIDN,Integer,11111111111,

@@ -1,0 +1,189 @@
+/*lightning-formatted-url a {
+    font-family: akkuratBold,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif !important;
+}*/
+.hidemodel{
+    display: none;
+}
+h2.listTitle {
+    font-size: 34px;
+    text-transform: unset;
+}
+ .recordListStandard {
+    padding-bottom: 18px;
+}
+.emptyContent {
+    outline: 0;
+    min-height: 100px;
+}
+ .emptyContentInner {
+    height: 5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+ 
+}
+.emptyContentInner p{
+    margin: 0
+}
+
+.buttonText {
+  font-family: akkuratBold,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif !important;
+}
+
+.urlText {
+  font-family: akkuratBold,Helvetica Neue,Arial Narrow,Helvetica,Arial,sans-serif !important;
+}
+
+.myDIVClass { 
+    background: aqua;
+    width: 100%;
+}
+
+.myCustomTwoClass { 
+    font-size: 12px!important;
+    #font-family: serif;
+	font-weight: bold;
+    padding: 4px 16px 4px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    #font-size: 15px;
+    color: #333;
+    line-height: 1.5;     
+}
+.myCustomClassHdr { 
+    #font-family: sans-serif;
+	font-weight: bold;
+    padding: 4px 16px 4px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;    
+}
+.mylabelclass { 
+ 
+    width: 16%!important;   
+}
+.mylabelTwoclass { 
+ 
+    width: 15.3%!important;
+    
+}
+
+.myDlClass {
+     
+    #border-left-color: blue;
+    #border-left-width: thin;
+    #border-left-style: groove;
+    #height: 100px;
+    width: 2px;
+	background: linear-gradient(180deg, #00C0F3 0%, #BD8CBF 60.56%, #5F84C2 100%);    
+}
+.myCustomFooClass { 
+    #font-size: 12px!important;
+    #font-family: sans-serif;
+	#font-weight: bold;
+    #padding: 4px 16px 4px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-size: 10.5px;
+    color: #333;
+    #line-height: 1.5;     
+}
+.services-for-inclusi {
+  color: #414141;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 34px;
+  font-weight: bold;
+  letter-spacing: -0.64px;
+  line-height: 43px;
+}
+.save-button-li{
+      border-width: 0px!important;
+    border-style: solid!important;
+  border-color: white!important;
+    #border-radius: 0.25rem!important;
+}
+.ss-button-label {
+  color: #0064D2;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: -0.5px;
+  line-height: 19px;
+  text-align: center;
+}
+.ss-button-li{
+       border-width: 1px!important;
+    border-style: solid!important;
+  border-color: blue!important;
+    border-radius: 0.25rem!important;
+}
+.sow-includedcheck-label {     
+    display: inline-flex!important;
+}
+.included-label {
+  text-align: right; 
+  color: #414141;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+  line-height: 19px;
+}
+
+.sow-name {
+  color: #414141;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: -0.2px;
+  line-height: 25px;
+}
+.sow-description {
+  color: #414141;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: -0.15px;
+  line-height: 25px;
+}
+.pick-deliverable-label {
+  color: #414141;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: -0.1px;
+  line-height: 20px;
+}
+.commitment-label {
+  color: #414141;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: -0.1px;
+  line-height: 20px;
+}
+.save-button-label {
+  color: #0064D2;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+  line-height: 34.9px;
+  border-width: 0px solid!important;
+  border-color: white!important;
+  text-decoration: underline;
+}
+.assistive-text {
+  color: #757575;
+  font-family: "Telstra Akkurat", sans-serif;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  line-height: 20px;
+}
+.selection {
+    text-shadow: none;
+    border-color:white;
+    color: white;
+    background: white;
+}
+h3.listTitle {
+    font-size: 18px;
+    text-transform: unset;
+}

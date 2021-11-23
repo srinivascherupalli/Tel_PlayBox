@@ -1,0 +1,50 @@
+<!--Shreyansh Sharma, Team Jaipur, P2OB-11419
+ Date: 2/4/2021,
+ Description:Custom footer for flow screens-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowScreens,forceCommunity:availableForAllPageTypes" 
+                access="global" >
+        
+   <!-- Determine which actions are available -->
+   <aura:attribute name="canPause" type="Boolean" />
+   <aura:attribute name="canBack" type="Boolean" />
+   <aura:attribute name="can_go_back" type="Boolean" default="true"/>
+    
+   <aura:attribute name="canNext" type="Boolean" />
+   <aura:attribute name="canFinish" type="Boolean" />
+
+   <aura:attribute name="firstScreen" type="Boolean" default="false"/>
+
+   <aura:handler name="init" value="{!this}" action="{!c.init}" />
+   <aura:attribute name="availableActions" type="String[]" />
+   
+        
+   <div aura:id="actionButtonBar" class="slds-clearfix slds-p-top_medium">
+      <!-- If Previous is available, display to the left -->
+      <div class="slds-float_left">
+          <aura:if isTrue="{!v.firstScreen}">
+              <div class ="firstScreen">
+              <c:jprCsFlowNavigation Can_Go_Back="{!v.can_go_back}"/>
+              </div>
+          </aura:if>
+         <aura:if isTrue="{!v.canBack}">
+            <lightning:button aura:id="BACK" label="Previous"
+               variant="neutral" onclick="{!c.onButtonPressed}" />
+         </aura:if>
+      </div>
+      <div class="slds-float_right">
+         <!-- If Pause, Next, or Finish are available, display to the right -->
+         <aura:if isTrue="{!v.canPause}">
+            <lightning:button aura:id="PAUSE" label="Pause"
+               variant="neutral" onclick="{!c.onButtonPressed}" />
+         </aura:if>
+         <aura:if isTrue="{!v.canNext}">
+            <lightning:button aura:id="NEXT" label="Next" 
+               variant="brand" onclick="{!c.onButtonPressed}" />
+         </aura:if>
+         <aura:if isTrue="{!v.canFinish}">
+            <lightning:button aura:id="FINISH" label="Done"
+               variant="brand" onclick="{!c.onButtonPressed}" />
+         </aura:if>
+      </div>
+   </div>
+</aura:component>

@@ -1,0 +1,12 @@
+<apex:page controller="InvoiceComponentHandler" lightningStylesheets="true" showHeader="false" sidebar="true" action="{!getInvoice}" >
+    <apex:includeLightning />
+    <apex:slds />
+    <apex:form id="form" >
+        <apex:iframe height="1000px" width="100%" src="{!data}" rendered="{!isShowPDF}"  />  
+        <apex:outputPanel rendered="{!NOT(isShowPDF)}" >
+            <div Class="slds-panel">
+                <b>{!errorMessage}</b>
+            </div>  
+        </apex:outputPanel>
+    </apex:form> 
+</apex:page>

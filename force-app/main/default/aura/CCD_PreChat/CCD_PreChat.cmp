@@ -1,0 +1,149 @@
+<aura:component implements="lightningsnapin:prechatUI" description="Custom Minimized UI" controller="VisitorCountController">
+    
+    <!-- Handler for when this component is initialized -->
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+ 
+    <!-- Contains methods for getting pre-chat fields, starting a chat, and validating fields -->
+    <lightningsnapin:prechatAPI aura:id="prechatAPI"/>
+    <lightningsnapin:settingsAPI aura:id="settingsAPI"/>
+    
+    <!-- Pre-chat field components to render -->
+    <aura:attribute name="initialpage" type="boolean" default="true"/>
+    <aura:attribute name="isIncidents" type="boolean" default="false"/>
+    <aura:attribute name="haveIncidents" type="boolean" default="false"/>
+    <aura:attribute name="showStart" type="boolean" default="false"/>
+    <aura:attribute name="isBack" type="boolean" default="false"/>
+    <aura:attribute name="enquiryType" type="String" default=""/>
+    <aura:attribute name="incidentNumber" type="String" default=""/>
+    
+    <aura:attribute name="prechatFieldComponents" type="Object[]" description="An array of objects representing the pre-chat fields specified in pre-chat setup."/>
+    <aura:attribute name="customerror" type="boolean" default="false"/>
+    <aura:attribute name="errormessage" type="String" default=""/>
+    
+    <!-- First landing page of PreChat !-->
+    <aura:if isTrue="{!v.initialpage}">
+        
+        <div class="greeting">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="welcomeMessage">
+                        Hey there,<br/><br/>
+                        <span>What do you want to chat about today?</span>
+                    </div>
+                </lightning:layoutItem>
+                <BR/><BR/>
+                <lightning:layoutItem padding="around-small" size="12">
+                        <lightning:button class="dialogButton dialog-button-0 startButtonPrechat embeddedServiceSidebarButton" variant="brand" label="Incidents" onclick="{!c.handleIncidents}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                        <lightning:button class="dialogButton dialog-button-0 startButtonPrechat embeddedServiceSidebarButton" variant="base" label="General support enquiries" aura:id="generalButton" onclick="{!c.handleStartButtonClick}"/>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+         
+    </aura:if>
+    
+    <!-- Section to render the Prechat page only on click of Enterprise button -->
+    <aura:if isTrue="{!v.isIncidents}">
+        <div class="greeting">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="welcomeMessage">
+                        <span>Have you already raised the incident in Telstra Connect?</span>
+                    </div>
+                </lightning:layoutItem>
+                
+                <lightning:layoutItem padding="around-small" size="12">
+                    <lightning:button class="dialogButton dialog-button-0 startButtonPrechat embeddedServiceSidebarButton" variant="brand" label="Yes, I have" onclick="{!c.sendIncidentToAgent}"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                    <lightning:button class="dialogButton dialog-button-0 startButtonPrechat embeddedServiceSidebarButton" variant="base" label="No, help me to raise it" onclick="{!c.logIncident}"/>
+                </lightning:layoutItem>
+                <br/>
+                <div class="slds-float_left"  style="text-align: left">
+                <lightning:layoutItem padding="around-small" size="4">
+                    <lightning:button class="back goBack" label="Go back" onclick="{!c.handleBackClick }"/>
+                </lightning:layoutItem>
+                </div>
+            </lightning:layout>
+        </div>
+    </aura:if>
+    
+    <!-- Section to render the Prechat page only on click of Incidents button -->
+    <aura:if isTrue="{!v.haveIncidents}">
+        <div class="greeting">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="welcomeMessage">
+                        <span>What is the incident number?</span>
+                    	<lightning:input name="incidentNumber" style="background: transparent;border: none;border-bottom: 1px solid #000000;" placeholder="SNIXXXXXXX" value="{!v.incidentNumber}"/>
+                    </div>
+                    <div class="infoMessage">
+                        <BR/>
+                        <span>You can retrieve the incident number from incident section where you raised it previously.</span>
+                    </div>
+                </lightning:layoutItem>
+                <br/>
+                <div class="slds-clearfix">
+                    <div class="slds-float_left"  style="float: left">
+                	    <div class="buttonWrapper2 embeddedServiceSidebarForm" data-aura-rendered-by="263:0" data-aura-class="embeddedServiceSidebarForm">
+                            <lightning:button class="back goBack" label="Go back" onclick="{!c.handleBackClick }"/>
+                        </div>
+                    </div>
+                    <div class="slds-float_right"  style="float:right">
+                        <aura:if isTrue="{!v.incidentNumber}">
+                            <ui:button aura:id="startButton" class="chatStart dialogButton dialog-button-0 startButtonPrechat embeddedServiceSidebarButton" label="Start chat" press="{!c.handleStartButtonClick}"/>   
+                            <aura:set attribute="else">
+                                <ui:button aura:id="startButton" class="chatStart dialogButton dialog-button-0 startButtonPrechat embeddedServiceSidebarButton" disabled="true" label="Start chat"/>   
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                </div>
+            </lightning:layout>
+        </div>
+    </aura:if>
+    
+    <!-- Section to render the Prechat page only on click of Enterprise button 
+    <aura:if isTrue="{!v.isFaults}">
+        
+        <lightning:layout multipleRows="true">
+           
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="rectangle">
+                    <lightning:select aura:id="faultchat" name="select" label="Have you already raised your Fault in Telstra Connect?" onchange="{! c.onChangeFaultType}">
+                        <option value="">-None-</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </lightning:select>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isFaultThere}">
+        
+        <lightning:layout multipleRows="true">
+           
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="rectangle">
+                    <a href="https://dev.connectapp.telstra.com/app/customer-support/new-enquiry">Raise Fault</a>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showStart}">
+        <div class="prechatUI">
+            
+            <div class="startButtonWrapper">
+                <ui:button aura:id="startButton" class="startButton" label="{!$Label.LiveAgentPrechat.StartChat}" press="{!c.handleStartButtonClick}"/>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.isBack}">
+    	
+        <div class="buttonWrapper2 embeddedServiceSidebarForm" data-aura-rendered-by="263:0" data-aura-class="embeddedServiceSidebarForm">
+                <lightning:button class="back" label="Back" onclick="{!c.handleBackClick }"/>
+            </div>
+    </aura:if>-->
+</aura:component>

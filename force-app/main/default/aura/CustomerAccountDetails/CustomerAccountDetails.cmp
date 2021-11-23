@@ -1,0 +1,34 @@
+<!-- Adedd part of EDGE-150892 for Managging Custom lookup in flow: Create POR flow-->
+<aura:component implements="lightning:availableForFlowScreens,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global">
+    <aura:attribute name="CustomerAccountId" type="String" access="global"  default="" />
+    <aura:attribute name="CustomerContactId" type="String" access="global"  default="" />
+
+    <aura:handler name="oSelectedRecordEvent" event="c:salesup_CertitudeLookupEvent" action="{!c.handleComponentEvent}"/>
+ 
+<div>
+     <a href=''></a> <!--this is added to avoid default tooltip when control coming to first element of form-->
+    <c:salesup_CertitudeLookupContainer isFetchAccount="true" 
+                                        objectAPIName="Account" 
+                                        label="Customer Account" 
+                                        selectedRecordId="{!v.CustomerAccountId}" 
+                                        isLookUpMandatory="true"
+                                        IconName="standard:account"
+                                        SOQLFilter="Recordtype.Name= \'Enterprise\'"
+                                        helpMessage="Select Customer Account"/>
+    <div aura:id="container">
+      <c:salesup_CertitudeLookupContainer isFetchAccount="false" 
+                                        objectAPIName="contact" 
+                                        label="Customer Contact" 
+                                        accountId="{!v.CustomerAccountId}" 
+                                        selectedRecordId="{!v.CustomerContactId}" 
+                                        isLookUpMandatory="true"
+                                        IconName="standard:contact"
+                                        SOQLFilter="( Authority__c= \'Full Authority\') AND Contact_Status__c=\'Active\'"
+                                       helpMessage="Select Full Authority Contact"
+                                          />
+    </div>
+    
+</div>
+
+</aura:component>

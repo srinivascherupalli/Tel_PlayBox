@@ -1,0 +1,26 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                access="global">
+    <lightning:notificationsLibrary aura:id="notifLib" />
+    <aura:method name="callServer" action="{!c.callApex}">
+        <aura:attribute name="component" type="Aura.Component" />
+        <aura:attribute name="controllerMethod" type="String" />
+        <aura:attribute name="params" type="Object" />
+    </aura:method>
+    <aura:method name="showToast" action="{!c.showToast}">
+        <aura:attribute name="component" type="Aura.Component" />
+        <aura:attribute name="params" type="Object" />
+    </aura:method>
+    <aura:method name="showNotice" action="{!c.showNotice}">
+        <aura:attribute name="component" type="Aura.Component" />
+        <aura:attribute name="nHeader" type="String" />
+        <aura:attribute name="nVariant" type="String" />
+        <aura:attribute name="syserr" type="String" />
+    </aura:method>
+    <aura:method name="handleComponentError" action="{!c.handleComponentError}">
+                <aura:attribute name="component" type="Aura.Component" />
+
+        <aura:attribute name="nHeader" type="String" />
+        <aura:attribute name="nVariant" type="String" />
+        <aura:attribute name="syserr" type="String" />
+    </aura:method>
+</aura:component>

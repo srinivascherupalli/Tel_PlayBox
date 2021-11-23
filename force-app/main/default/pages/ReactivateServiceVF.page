@@ -1,0 +1,45 @@
+<!---------------------------------------------------------------------
+Name : ReactivateServiceVF
+Description : Vf page 
+Author: Shubhi
+Story: EDGE-185011
+----------------------------------------------------------------------->
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+  <apex:form >
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <apex:includeLightning />
+    <script>
+        let subscriptionNumber="{!JSENCODE($CurrentPage.parameters.subscriptionNumber)}";
+        let offerId="{!JSENCODE($CurrentPage.parameters.offerId)}";
+        let alreadyPresentMisdns="{!JSENCODE($CurrentPage.parameters.alreadyPresentMisdns)}";
+        let searchString="{!JSENCODE($CurrentPage.parameters.searchString)}"; 
+        let category="{!JSENCODE($CurrentPage.parameters.category)}";
+        let caller="{!JSENCODE($CurrentPage.parameters.caller)}";
+		$Lightning.use("c:LightningAppDependencyHandler", function () {
+			$Lightning.createComponent(
+			"c:reactivateServiceSC", 
+			{
+				"subscriptionNumber":subscriptionNumber,
+				"offerId":offerId,
+				"alreadyPresentMisdns":alreadyPresentMisdns,
+				"searchString":searchString, 
+				"category":category
+			},
+			"lightning",
+			function (cmp) {
+
+                console.log("Component created!"+Date.now());
+
+                document.getElementById("loader").style.visibility="hidden";
+			});
+		});
+    </script>
+   <apex:outputPanel >
+        <div id="loader" role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+        </div>
+    </apex:outputPanel>
+    <div id="lightning"></div>
+  </apex:form>
+</apex:page>

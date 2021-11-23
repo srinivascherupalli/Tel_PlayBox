@@ -1,0 +1,65 @@
+<!--
+1.  18/09/2020      Shubhi Vijayvergia   EDGE-173803(new )
+2.  03/06/2021      Rashmi K             EDGE-219789
+3.  06/10/2021      Puneeth Kamath       DIGI-27409
+**************************************************************************************************/
+-->
+<aura:component controller="RelListOfNumberOnSubscriptionContoller" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="listOfNumber" type="Number__c[]"/>
+	<aura:attribute name="columns" type="List" />
+    <aura:attribute name="keyField" type="String" default="Id"/>  
+    <aura:attribute name="isViewAll" type="Boolean" default="false"/> 
+    <aura:attribute name="subscriptionId" type="String"/>    
+    <aura:attribute name="listofphone" type="String"/> 
+    <aura:attribute name="listofSearch" type="Number__c[]"/>   
+    <aura:attribute name="isViewSearch" type="Boolean" default="false"/> 
+    <aura:attribute name="title" type="String" default="Number"/>
+    
+    <lightning:card aura:id="lightCard" class="slds-card_boundary" variant="narrow">   
+        <div class="slds-grid slds-gutters" style="padding-left:10px">
+          <div class="slds-col">
+            <lightning:icon iconName="standard:event" size="small"/>
+                <span style="padding-left:10px;font-weight:bold ;font-size: medium;">{! v.title }</span>
+          </div>
+          <div class="slds-col">
+            <aura:if isTrue="{!v.isViewSearch}" >
+              <lightning:input type="text" name="searchKey" class="searchStyle"  style="padding-right:10px"
+               aura:id="searchKey" onchange="{!c.searchKeyNumber}" placeholder="Search number.."   />  
+            </aura:if>
+          </div>
+        </div>
+ 
+        <br/>
+    <aura:if isTrue="{!v.isViewSearch}" >
+    <div class="slds-grid slds-grid_vertical">       
+        <div class="slds-col slds-card_boundary"> 
+             <!-- the container element determine the height of the datatable -->
+            <aura:if isTrue="{!v.isViewAll ==false}" > 
+             <div style="height: 300px">
+                <lightning:datatable
+                  columns="{! v.columns }"
+                  data="{! v.listOfNumber }"
+                  keyField="{! v.keyField }"
+                />
+			</div>    
+            <div class="slds-card__footer">
+			<a href="javascript:void(0)" onclick="{!c.navigateToMyComponent}">
+				View All
+			</a>
+			</div>
+           <aura:set attribute="else">
+               <div>
+                <lightning:datatable
+                  columns="{! v.columns }"
+                  data="{! v.listOfNumber }"
+                  keyField="{! v.keyField }"
+                    />
+				</div>          
+           </aura:set>
+        </aura:if>
+        </div>      
+	   </div>      
+       </aura:if>    	
+    </lightning:card>   
+</aura:component>

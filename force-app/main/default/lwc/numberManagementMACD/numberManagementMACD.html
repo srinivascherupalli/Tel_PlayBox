@@ -1,0 +1,62 @@
+<template>
+    <template if:true={isModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon> 
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Number Management - MACD
+                    </h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p><b>I would like to</b></p>
+                    <lightning-radio-group name="actionType" label="" options={actionTypeOptions} value={actionType}
+                        type="button" onchange={handleActionTypeSelected}></lightning-radio-group>
+                    <lightning-layout multiple-rows="true">
+                        <!--DIGI-35918-->
+                        <template if:true={isAddNewNumber}>
+                            <lightning-layout-item padding="around-small" size="12">
+                                <c-add-new-numbers-m-a-c-d id="lwcAddNewNum" subscription-id={subscriptionID} basket-id={basketId} account-id={accountId} 
+                                contact-id={contactId}>
+                                </c-add-new-numbers-m-a-c-d>                             
+                            </lightning-layout-item>
+                        </template>
+                        <!--DIGI-35918-->
+                        <template if:true={isPortNumbers}>
+                            <lightning-layout-item padding="around-small" size="12">
+                                <c-port-out-numbers id="portOut" subscription-id={subscriptionID} basket-id={basketId} account-id={accountId}
+                                contact-id={contactId}>
+                                </c-port-out-numbers>
+                            </lightning-layout-item>
+                        </template>
+                        <!--DIGI-35918-->
+                        <lightning-layout-item padding="around-small" size="12"> 
+                            <template if:true={isRemoveNumbers}>
+                                <c-remove-number-n-g-u-c  subscriptionid={subscriptionID} accountid={accountId}  contact-id={contactId}>
+                                </c-remove-number-n-g-u-c>                           
+                        </template>                       
+                        </lightning-layout-item>
+						<lightning-layout-item padding="around-small" size="12"> 
+                                    <template if:true={isLockNumbers}>
+                                        <c-locknumbers-n-g-u-c  subscriptionid={subscriptionID} accountid={accountId}>
+                                        </c-locknumbers-n-g-u-c>
+                                   
+									</template>
+                        </lightning-layout-item> 
+						
+						
+                    </lightning-layout>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

@@ -1,0 +1,41 @@
+.THIS.slds-modal__container{
+    max-height: 400px !important;
+    height:100px !important;
+        
+}
+.THIS .slds-th__action .slds-th__action-button { display: none; }
+.THIS .headercomp {
+  	padding:15px;
+    text-align: center;
+    background-color:white;
+    font-weight:bold;
+}
+
+.THIS .tableHeader{
+    background-color:#D2CECD;
+    
+    font-size: 15px;
+}
+
+/*EDGE-119454. Kalashree Borgaonkar. Display Spinner*/
+.THIS .slds-spinner_container {
+    position:fixed;
+}
+
+.THIS .nostocklabel {
+    text-align: center;
+    background-color:red;
+    font-weight:bold;
+    color:white;
+}
+
+.THIS .checkstockbrand {
+    text-align: center;
+    padding-left: 45px;
+    padding-right: 45px;
+    font-size:medium;
+}
+.THIS .iconColorChange svg{
+    fill:red;
+    font-weight:bold;
+}

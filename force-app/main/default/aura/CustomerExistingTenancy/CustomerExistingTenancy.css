@@ -1,0 +1,38 @@
+input[type=checkbox].THIS{
+    display:none;
+}
+
+input[type=checkbox].THIS + label.THIS {
+    background: #999;
+    height: 16px;
+    width: 16px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+input[type=checkbox]:checked.THIS + label.THIS {
+    background: #0080FF;
+    height: 16px;
+    width: 16px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+/*Added by Purushottam as a part of EDGE -145320 || Start*/
+.THIS .slds-modal__close {
+    top: 1px;
+    right: 1%;
+}
+
+.THIS .slds-modal__content{
+    height:72% !important; 
+}
+
+.THIS td,.THIS th  {
+    background-color: rgb(255,255,255)!important;
+    color:rgb(34, 34, 34)!important
+}
+
+.THIS h2, .THIS .fontclass{
+    color: rgb(8, 7, 7)!important;
+}
+/*Added by Purushottam as a part of EDGE -145320 || End*/

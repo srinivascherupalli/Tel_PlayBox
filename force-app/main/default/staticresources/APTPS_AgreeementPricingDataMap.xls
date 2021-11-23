@@ -1,0 +1,81 @@
+APTPS_Tag_Type__c,APTPS_Product_Family__c,Related_Service_Schedule__c,APTPS_Product__c,Tag__c,APTPS_Translates_To_Field__c,Field_Type__c,APTPS_Fund_Type__c,APTPS_Field_Name__c,Object_Name__c
+Head Terms,,,,PriceReview_specialterms,Are there any non standard Terms and Conditions for the review?,Text,,APTPS_Non_Standard_Pricing__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Benchmarker_CostSharing,Is the cost of the Benchmarker to be shared equally?,,,APTPS_Benchmark_Equally_Shared__c,Apttus__APTS_Agreement__c
+Head Terms,,,,EPM_no,EPM number,,,APTPS_EPM_Number__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Exclusivity,Has Exclusivity been approved?,,,APTPS_Exclusivity__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Imputation_Testing,Has an imputation test been conducted?,,,APTPS_Imputation_Testing__c,Apttus__APTS_Agreement__c
+Head Terms,,,,MAXIM_ID,MAXIM No.,,,APTPS_Legacy_opportunity_ID__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Other_Conditions,What other conditions are relevant to this agreement?,,,APTPS_Other_Pricing_Condition__c,Apttus__APTS_Agreement__c
+Head Terms,,,,PriceReview_Divestment,Has a price review been approved in the event that the Customer sells or divests its business?,,,APTPS_PA_for_Sell_or_Divest__c,Apttus__APTS_Agreement__c
+Head Terms,,,,PriceReview_when,When will the review happen within the contract term?,,,APTPS_Pricing_Review_Term__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Reselling,Will the Customer be reselling services to its customers?,,,APTPS_Reseller__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Unrelated_Companies,Will any Unrelated Companies receive the pricing?,,,APTPS_Unrelated_Companies__c,Apttus__APTS_Agreement__c
+Head Terms,,,,WOB_Contingent,WOB contingent offer,,,APTPS_WOB_Contingent_Offer__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Contract_Value,,,,Apttus__Total_Contract_Value__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Benchmark_AllProducts,,,,APTPS_All_Service_Benchmarked__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Contract_Term,,,,Apttus__Term_Months__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Outside_Skeletal,,,,APTPS_Outside_Skeletal__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Cust_Spec_Tariff,,,,APTPS_Pricing_Proposal_Completed_in_EPM__c,Apttus__APTS_Agreement__c
+Head Terms,,,,External_Benchmarker,,,,APTPS_External_Benchmarker_Approved__c,Apttus__APTS_Agreement__c
+Funds,,,,GF_F4_Unif_Com,Unified Communications,Text,Growth,APTPS_Unified_Communications__c,Fund__c
+Funds,,,,GF_F4_Cloud_S,Cloud Services,Text,Growth,APTPS_Cloud_Services__c,Fund__c
+Funds,,,,GF_F4_MDN,Managed Data Networks,Text,Growth,APTPS_Managed_Data_Networks__c,Fund__c
+Funds,,,,GF_F4_Ind_Sol,Digital Media,Text,Growth,APTPS_Industry_Solutions_DigitalMedia__c,Fund__c
+Funds,,,,GF_F4_DIP_Iterra,Iterra Satelitte,Text,Growth,APTPS_Iterra_Satelitte__c,Fund__c
+Funds,,,,GF_F4_Mob_C_Tablet,Connected Tablets,Text,Growth,APTPS_Mobility_Connected_Tablets__c,Fund__c
+Funds,,,,GF_F4_DIP_Cl_D_Con,Cloud Direct Connect,Text,Growth,APTPS_Cloud_Direct_Connect__c,Fund__c
+Funds,,,,GF_F4_Prac_Serv,Practice Services,Text,Growth,APTPS_Practice_Services__c,Fund__c
+Funds,,,,GF_F4_Bill_Exp,Billing and Expense Management,Text,Growth,APTPS_Billing_and_Expense_Management__c,Fund__c
+Funds,,,,GF_F4_Telstra_App_Ms,Telstra Apps - Messaging,Text,Growth,APTPS_Telstra_Apps_Messaging__c,Fund__c
+Funds,,,,GF_F4_Mob_Prof_Serv,Professional and Consulting Services,Text,Growth,APTPS_Professional_Consulting_Services__c,Fund__c
+Funds,,,,OC_F4_install_or_lumpsum,Is Loyalty Fund available as a Lump Sum or Accrued?,Text,Other,APTPS_Accrual_Method__c,Fund__c
+Funds,,,,MBRS_F3_install_or_lumpsum,Is MBRS Fund available as a Lump Sum or Accrued?,Text,MBRS,APTPS_Accrual_Method__c,Fund__c
+Funds,,,,TIF_F3_install_or_lumpsum,Is TIF available as a Lump Sum or Accrued?,Text,TIF,APTPS_Accrual_Method__c,Fund__c
+Head Terms,,,,Other_Price_Review,Has any other pricing review construct been approved?,Text,,APTPS_Other_Price_Review_Construct__c,Apttus__APTS_Agreement__c
+Funds,,,,MOTIF_F5_install_or_lumpsum,Is MOTIF available as a Lump Sum or Accrued?,Text,MOTIF,APTPS_Accrual_Method__c,Fund__c
+Head Terms,,,,Benchmarker_CostPortion,The percentage of the benchmarking costs to be paid by the Customer,Decimal,,APTPS_Benchmark_Cost_Portion__c,Apttus__APTS_Agreement__c
+Head Terms,,,,Benchmark_Exception,List products excluded from benchmark,Text,,APTPS_Services_Excluded_from_Benchmark__c,Apttus__APTS_Agreement__c
+Head Terms,,,,PriceReview_Annually,Has a price review been approved?,Text,,APTPS_Price_Review_Been_Approved__c,Apttus__APTS_Agreement__c
+Funds,,,,GF_F3_install_or_lumpsum,Is Growth Fund available as a Lump Sum or Accrued?,Text,Growth,APTPS_Accrual_Method__c,Fund__c
+Head Terms,,,,EnterpriseWork,,,,APTPS_Enterprise_Work__c,Apttus__APTS_Agreement__c
+Minimum Spend,Data and IP,Data Services,Business IP,Min_Spend_Value_Business IP,Minumum spend value,Decimal,,APTPS_Product_Minimum_Spend__c,Apttus__AgreementLineItem__c
+Schedule,Data and IP,Data Services,Business IP,BIP_F81_IPH_EONBN_Install,Business IP Ethernet over NBN connection install,Decimal,,,
+Schedule,Data and IP,Data Services,Business IP,BIP_F74_IPH_DSDA_Z1Z2_Rental,,Decimal,,,
+Schedule,Data and IP,Data Services,Business IP,BIP_F83_IPH_PRICELIST,,Decimal,,,
+Funds,Data and IP,Data Services,Business IP,GROWTH_Year1_Excl_Business IP,Year 1 (GST exclusive),Decimal,Growth,APTPS_Year_1__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,GROWTH_Year2_Excl_Business IP,Year 2 (GST exclusive),Decimal,Growth,APTPS_Year_2__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,GROWTH_Year3_Excl_Business IP,Year 3 (GST exclusive),Decimal,Growth,APTPS_Year_3__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,GROWTH_Year4_Excl_Business IP,Year 4 (GST exclusive),Decimal,Growth,APTPS_Year_4__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,GROWTH_Year5_Excl_Business IP,Year 5 (GST exclusive),Decimal,Growth,APTPS_Year_5__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,LOYALTY_Year1_Excl_Business IP,Year 1 (GST exclusive),Decimal,Other,APTPS_Year_1__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,LOYALTY_Year2_Excl_Business IP,Year 2 (GST exclusive),Decimal,Other,APTPS_Year_2__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,LOYALTY_Year3_Excl_Business IP,Year 3 (GST exclusive),Decimal,Other,APTPS_Year_3__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,LOYALTY_Year4_Excl_Business IP,Year 4 (GST exclusive),Decimal,Other,APTPS_Year_4__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,LOYALTY_Year5_Excl_Business IP,Year 5 (GST exclusive),Decimal,Other,APTPS_Year_5__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MBRS_Year1_Excl_Business IP,Year 1 (GST exclusive),Decimal,MBRS,APTPS_Year_1__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MBRS_Year2_Excl_Business IP,Year 2 (GST exclusive),Decimal,MBRS,APTPS_Year_2__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MBRS_Year3_Excl_Business IP,Year 3 (GST exclusive),Decimal,MBRS,APTPS_Year_3__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MBRS_Year4_Excl_Business IP,Year 4 (GST exclusive),Decimal,MBRS,APTPS_Year_4__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MBRS_Year5_Excl_Business IP,Year 5 (GST exclusive),Decimal,MBRS,APTPS_Year_5__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MOTIF_Year1_Excl_Business IP,Year 1 (GST exclusive),Decimal,MOTIF,APTPS_Year_1__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MOTIF_Year2_Excl_Business IP,Year 2 (GST exclusive),Decimal,MOTIF,APTPS_Year_2__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MOTIF_Year3_Excl_Business IP,Year 3 (GST exclusive),Decimal,MOTIF,APTPS_Year_3__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MOTIF_Year4_Excl_Business IP,Year 4 (GST exclusive),Decimal,MOTIF,APTPS_Year_4__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,MOTIF_Year5_Excl_Business IP,Year 5 (GST exclusive),Decimal,MOTIF,APTPS_Year_5__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,PCMS_Business IP,PCMS code,Text,,APTPS_PCMS_Code__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,TIF_Year1_Excl_Business IP,Year 1 (GST exclusive),Decimal,TIF,APTPS_Year_1__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,TIF_Year2_Excl_Business IP,Year 2 (GST exclusive),Decimal,TIF,APTPS_Year_2__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,TIF_Year3_Excl_Business IP,Year 3 (GST exclusive),Decimal,TIF,APTPS_Year_3__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,TIF_Year4_Excl_Business IP,Year 4 (GST exclusive),Decimal,TIF,APTPS_Year_4__c,Fund_Product__c
+Funds,Data and IP,Data Services,Business IP,TIF_Year5_Excl_Business IP,Year 5 (GST exclusive),Decimal,TIF,APTPS_Year_5__c,Fund_Product__c
+Minimum Spend,Data and IP,Data Services,Business IP,Min_Spend_Frequency_Business IP,Minumum spend frequency,Text,,APTPS_frequency__c,Apttus__AgreementLineItem__c
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F1_Approval_Y,GMD approval received for this customer (VAR-MVAR),Text,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F1_Dir_Cust,Direct customer,Text,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F1_MVAR,Master Value Added Reseller,Text,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F1_VAR,Value Added Reseller,Text,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F100_M2M_Group_Pl_150MB_10Min,150MB  M2M  Data+ Plan (10min Voice),Bookmark,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F125_M2M_Group_Da_Pl_50KB_PayG,50KB M2M Group Data+ Plan (PAYG Voice),Bookmark,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F184_L_S_AYCE,AYCE option,Text,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F185_L_S_PAYG,PAYG option,Text,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F30_M2M_Data_Pl_50KB,50KB M2M Data Plan,Bookmark,,,
+Schedule,Mobile,Telstra Wireless M2M Control Centre,Wireless M2M Control Centre,WM2MCC_F49_M2M_Group_Pl_50KB,50KB M2M Group Data Plan,Bookmark,,,

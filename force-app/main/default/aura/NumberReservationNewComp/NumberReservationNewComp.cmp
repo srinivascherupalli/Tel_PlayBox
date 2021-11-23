@@ -1,0 +1,296 @@
+<!--//EDGE -93081
+Name: NumberReservationNewComp
+Description: Display New number resvation UI for Product Basket 
+Author:Ila/Mahima -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader"
+                access="global"  controller = "NumberReservationNewCompHandler">
+    <aura:attribute type="Integer" name="reqPattern" default="" />
+    <aura:attribute type="Integer" name="reqQuantity" default="" />
+        <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+     <aura:attribute type="String" name="basket_id"/>
+    <aura:handler event="c:addtoReservationPool" action="{!c.handleEvent}"/>
+    <aura:attribute name="numList" type="NumberReservationNewCompHandler.LRMWrapper[]" />
+    <aura:attribute name="fixednumList" type="NumberReservationNewCompHandler.LRMWrapper[]" />
+
+     <aura:attribute name="columnsNumNew" type="List" />
+    <aura:attribute name="SelectedNumNew" type="List" />
+    <!--EDGE-100661 Begin-->
+    <aura:attribute name="deliveryAddress" type="sobject"  />
+    <aura:attribute name="enableAreaCode" type="Boolean" default="true"/>
+    <!--END-->
+    <aura:attribute name="accountId" type="string"/>
+    <aura:attribute type="String" name="selectedTabId"/>
+     <aura:attribute name="isReserve" type="String" />
+     <aura:attribute name="isExpired" type="Boolean" default="false" />
+    
+    <aura:attribute name="endTime" type="String"/>
+	<aura:attribute name="timeLeft" type="String"/>
+    <aura:attribute name="timerPretext" type="String"/>
+    <aura:attribute name="timerPosttext" type="String"/>
+    
+    <aura:attribute name="patternList" type="List" /><!--List for Pattern type values-->
+	 <aura:attribute name="selectedSearchType" type="String" default="Non-Contiguous" /><!--List for Pattern type values-->
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    <div aura:id="container"/> 
+    <aura:if isTrue="{!v.loadingSpinner}"> 
+        <div>
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <div class="margin5">
+        <aura:if isTrue="{!if(v.selectedTabId=='Mobile',true,false)}">
+        <div>
+            <h3 class="slds-section-title--divider">Search Numbers</h3>
+            <div class="slds-form margin5" role="list">
+                <div style="height:35px" >
+                    <div class="slds-float_right">
+                        <button class="slds-button  slds-button_brand "  label="Auto Reserve"  onclick="{!c.autoReserve}" >Auto Reserve</button>                                  
+                     
+                    </div>  
+                </div>
+                <div class="slds-form__row">
+                    <div class="slds-form__item" role="listitem">
+                        <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Search Quantity:</label>
+                            <div class="slds-form-element__control">
+                                <lightning:input type="number" aura:id="searchQty"  value="{!v.reqQuantity}"/>
+                            </div>
+                        </div>
+                       
+                    </div>
+                   <div class="slds-form__item" role="listitem"></div>
+                </div>
+                <div class="slds-form__row">
+                    <div class="slds-form__item" role="listitem">
+                        <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Search Type:</label>
+                            <div class="slds-form-element__control">
+                              
+                                <lightning:select aura:id="selectSearchType">
+                                    <option text="RANDOM" value="RANDOM"></option>
+                                    <option text="CONTINUOUS" value="CONTINUOUS"></option>
+                                </lightning:select>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form__item" role="listitem">
+                        <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Pattern: 614 - </label>
+                            <div class="slds-form-element__control">
+                                <!--<span>  <input type="number" aura:id="searchPattern" class="slds-input" maxlength="8" value = "{!v.reqPattern}"/></span>
+                                 -->
+                                <span>  <lightning:input type="text" aura:id="searchPattern"  maxlength="8" value = "{!v.reqPattern}"/></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="height:30px" >
+                    <div class="slds-float_right">
+                        <button class="slds-button  slds-button_neutral"   label="Clear" onclick="{!c.ResetForm}" >Clear</button>                                  
+                        <button class="slds-button  slds-button_brand"   label="Search"  onclick="{!c.searchNumbers}" >Search</button>                                  
+                        
+                    </div>  
+                </div>
+            </div>
+            
+        </div>
+        <div style="margin-top:5px">
+            <h3 class="slds-section-title--divider">Search Result</h3>
+            <div class="margin5" role="list">
+                <div class="slds-grid slds-wrap ">
+                    <div class="slds-col slds-size_9-of-12">
+                        <div aura:id="Mobile">
+                            <lightning:datatable
+                                columns="{!v.columnsNumNew}"
+                                data="{!v.numList}"
+                                keyField="numberList" 
+                                onrowselection="{!c.handleRowSelectionNew}"/>
+                            
+                            
+                        </div>
+						 
+                    </div>
+                    <div class="slds-col slds-size_3-of-12">
+                        <div style="height:30px" >
+                            <div class="slds-float_right">
+                                <button class="slds-button  slds-button_brand"   label="Reserve Selected" onclick="{!c.reserveNumbers}"  >Reserve Selected</button>                                                         
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+        </aura:if>
+        <!--EDGE:59982 Starts -->
+         <aura:if isTrue="{!if(v.selectedTabId=='Fixed',true,false)}">
+         <lightning:tile aura:id="timerBlock"  class="timerblock" >
+       <div style="text-decoration: underline;"><b > {!v.timerPretext} <span style="color:red;" >{!v.timeLeft}</span> {!v.timerPosttext}</b></div> 
+    </lightning:tile>
+          <div>
+		  <h3 class="slds-section-title--divider">Search Numbers</h3>
+            <div class="slds-form margin5" role="list">
+               
+                <div class="slds-form__row">
+                    <div class="slds-form__item" role="listitem">
+                        <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Quantity:</label>
+                            <div class="slds-form-element__control">
+                                <lightning:input type="number" aura:id="searchQty"  value="{!v.reqQuantity}"/>
+                            </div>
+                        </div>
+                       
+                    </div>
+                   <div class="slds-form__item" role="listitem"></div>
+                </div>
+           <div class="slds-form__row">
+                    <div class="slds-form__item" role="listitem">
+                        <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Search Type:</label>
+                            <div class="slds-form-element__control">
+                                <lightning:select aura:id="SearchType" onchange="{! c.renderPatternTypeOptions }" value="{!v.selectedSearchType}">
+                                    <option text="Non-Contiguous" value="Non-Contiguous"></option>
+                                    <option text="Contiguous" value="Contiguous"></option>
+                                    
+                                </lightning:select>
+                                
+                            </div>
+                        </div>
+                    </div>
+               		<div class="slds-form__item" role="listitem"></div>
+                </div>
+                <div class="slds-form__row">
+                   <div class="slds-form__item" role="listitem">
+                        <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Pattern Type:</label>
+                            <div class="slds-form-element__control">
+                                <lightning:select aura:id="selectPatternType">
+                                  <!--  <option text="None" value="None"></option>
+                                    <option text="Starts With" value="Begins With"></option>
+                                    <option text="Contains" value="Contains"></option>
+                                    <option text="Ends With" value="Ends With"></option>-->
+                                    <!-- EDGE-126317 Kalashree Borgaonkar. Render picklist values dynamically start-->
+                                    <aura:iteration items="{!v.patternList}" var="pattern">
+           								 <option value="{!pattern.value}" text="{!pattern.label}"></option>
+       								 </aura:iteration>
+                                    <!-- EDGE-126317 Kalashree Borgaonkar. Render picklist values dynamically end--> 
+                                </lightning:select>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form__item" role="listitem">
+                        <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Pattern: </label>
+                            <div class="slds-form-element__control">
+                                <!--<span>  <input type="number" aura:id="searchPattern" class="slds-input" maxlength="8" value = "{!v.reqPattern}"/></span>
+                                 -->
+                                <span>  <lightning:input type="number" aura:id="searchPattern"  max="9999999" value = "{!v.reqPattern}" /></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+             </div>
+             <!--EDGE-100661 Start-->
+             <div>
+             <h3 class="slds-section-title--divider">Geo Params</h3>
+                 <lightning:layout >
+            <lightning:layoutItem size="1" class="slds-p-vertical_xx-small">
+                <lightning:input type="radio" name="options" checked="{!v.enableAreaCode}" aura:id="area" onchange="{!c.changeAddrRadio}"/>
+                     </lightning:layoutItem>
+                     <lightning:layoutItem size="6">
+                         <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                            <label class="slds-form-element__label" >Area Code:</label>
+                            <div class="slds-form-element__control">
+                                <lightning:select aura:id="AreaCode" disabled="{! !v.enableAreaCode}">
+                                    <option text="" value=""></option>
+                                    <option text="02" value="02"></option>
+                                    <option text="03" value="03"></option>
+                                    <option text="07" value="07"></option>
+									 <option text="08" value="08"></option>
+                                   
+                                </lightning:select>
+                                
+                            </div>
+                        </div>
+                     </lightning:layoutItem>
+                 </lightning:layout>
+                 <lightning:layout>
+                      <lightning:layoutItem size="1" class="slds-p-vertical_xx-small">
+                		<lightning:input type="radio" name="options" checked="{! !v.enableAreaCode}" aura:id="addr" onchange="{!c.changeAddrRadio}"/>
+                     </lightning:layoutItem>
+                     <lightning:layoutItem size="6">
+                         <label class="slds-form-element__label" for="unique-id-of-input">Address</label>
+                                    <c:customDeliveryLookup aura:id="addrComp" objectAPIName="{!v.accountId}" isDisabled="{!v.enableAreaCode}" isContact="False" isAddress="true" selectedRecord="{!v.deliveryAddress}" />
+                                 <lightning:button variant="base" disabled="{!v.enableAreaCode}" label="Add Address" title="Add Address" onclick="{! c.addAddress }" iconName="utility:add" iconPosition="left"/>
+                     </lightning:layoutItem>
+                     
+                 </lightning:layout>
+                 <lightning:layout>
+                     <lightning:layoutItem size="7"> </lightning:layoutItem>  
+                 <lightning:layoutItem size="5">
+                		<lightning:input type="checkbox" aura:id="sameExchange" disabled="{!v.enableAreaCode}" label="Numbers Under same Exchange" name="sameExchange" />
+                     </lightning:layoutItem>
+                 </lightning:layout>
+                 <div style="height:30px" >
+                    <div class="slds-float_right">
+                        <button class="slds-button  slds-button_neutral"   label="Clear" onclick="{!c.ResetForm}" >Clear</button>                                  
+                        <button class="slds-button  slds-button_brand"   label="Search"  onclick="{!c.searchNumbersFNN}" >Search</button>                                  
+                        
+                    </div>  
+                </div>
+            <!--<div class="slds-form margin5" role="list">
+                    
+				<div class="slds-form__row">
+                    <div class="slds-form__item" role="listitem">
+                        
+                    </div>
+					<div class="slds-form__item" role="listitem">
+                        
+                        
+                    </div>
+				 
+ 				</div>
+                
+            </div>-->
+            
+        </div>
+             <!--EDGE-100661 END-->
+        <div style="margin-top:5px">
+            <h3 class="slds-section-title--divider">Search Result</h3>
+            <div class="margin5" role="list">
+                <div class="slds-grid slds-wrap ">
+                    <div class="slds-col slds-size_9-of-12">
+                        <div  aura:id="SearchResult" >
+                            <lightning:datatable
+                                columns="{!v.columnsNumNew}"
+                                data="{!v.fixednumList}"
+                                keyField="numberList" 
+                                onrowselection="{!c.handleRowSelectionNew}"/>
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_3-of-12">
+                        <div style="height:30px" >
+                            <div class="slds-float_right">
+                                <button class="slds-button  slds-button_brand"   label="Reserve Selected" onclick="{!c.reserveFNNNumbers}" disabled="{!V.isExpired}" >Reserve Selected</button>                                                         
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+             
+        </aura:if>
+        <!--EDGE:59982 Ends -->
+    </div>
+    
+</aura:component>

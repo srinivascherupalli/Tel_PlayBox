@@ -1,0 +1,11 @@
+.THIS.grey svg{
+    fill:grey !important;
+}
+
+.THIS.grey {
+    background-color:grey !important;
+}
+
+.THIS.black svg{
+    fill: black;
+}

@@ -1,0 +1,44 @@
+<!-- 
+Updates : 
+1. Ritika Jaiswal : 07-10-2020 : Team Hawaii - P2OB-7544 - Replaced Link with Custom-Labels 
+-->
+<aura:component implements="lightning:availableForFlowScreens">
+	  <div width = "100%">
+          <ul>
+              <a style = "font-size:18px;color:black;"> &#x2756; </a>
+              <a style="text-decoration:none;color:black;font-size:12px;font-family: Arial;line-height: 3.5;"> &nbsp; Do you have a contract to be submitted to billing for pricing implementation?</a> <br/> 
+              <p style="font-size:12px;font-family: Arial; margin-left: 50px;"> 
+                  <a style="text-decoration:none;color:black;line-height: 1.5;">Billing implement pricing and discounting for Panel Agreements, PET generated contracts and contracts generated from Pricing Approvals created by Enterprise Pricing. Billing do not implement contracts for modular products. </a> <br/> 
+                  <a style="text-decoration:none;color:black;line-height: 3.5;">If “yes”, send your contract implementation Request to Customer Billing Solutions via PET or the </a>
+                  <a href="{!$Label.c.CBS_Request_Form_Link}" style="text-decoration:underline;color:blue;line-height: 3.5;" target="_blank">CBS Request Form</a> <br/> 
+              </p>  
+                  
+          </ul>
+          <ul>
+              <a style = "font-size:18px;color:black;"> &#x2756; </a> 
+              <a style="text-decoration:none;color:black;font-size:12px;font-family: Arial;line-height: 3.5;"> &nbsp; Do you need to submit a sales order request? </a> <br/>
+              <!--<p style="font-size:12px;font-family: Arial;margin-left: 30px;">-->
+                                                  <ol>
+                  <p style="text-decoration:none;color:black;font-size:12px;font-family: Arial;margin-left: 28px;">Follow product-specific processes to submit the sales order. Note – Modular product sales orders are submitted through the product basket.</p> <br/>
+                  <li style="text-decoration:none;color:black;list-style-type:lower-alpha;font-size:12px;font-family: Arial;margin-left: 40px;line-height: 1.5;">Internal Sales Teams can create and submit a SFD Order Request in Phoenix </li>
+                  <a href="{!$Label.c.QRG_to_Create_and_Submit_a_SFD_Order_Request}" style="text-decoration:underline;color:blue;font-size:12px;font-family: Arial;margin-left: 40px;" target="_blank">How to Create and Submit a SFD Order Request QRG</a> <br/> <br/>
+                 <li style="text-decoration:none;color:black;list-style-type:lower-alpha;font-size:12px;font-family: Arial;margin-left: 40px;">Advise the customer of order submission, provide reference numbers and set expectations</li> <br/>
+                  <a style="text-decoration:underline;color:black;font-size:12px;font-family: Arial;margin-left: 30px;">For Partners only - </a> <br/> <br/> 
+                  <li style="text-decoration:none;color:black;list-style-type:lower-alpha;font-size:12px;font-family: Arial;margin-left: 40px;line-height: 1.5;">Sales Opportunity must be closed as Won in Telstra Partner Central prior to order submission in Partner Portal. The Won Opportunity in Telstra Partner Central must match the same CIDN used in Partner Portal.</li>
+                  <a href="{!$Label.c.QRG_for_Closing_Opportunities_as_Won}" style="text-decoration:underline;color:blue;font-size:12px;font-family: Arial;margin-left: 40px;" target="_blank">Refer to Closing Opportunities as Won QRG</a> <br/> <br/>
+              </ol>
+                                                 <!-- </p> -->
+          </ul>
+          <ul>
+              <a style = "font-size:18px;color:black;"> &#x2756; </a>
+              <a style="text-decoration:none;color:black;font-size:12px;font-family: Arial;line-height: 3.5;"> &nbsp; For Custom Deals only – Do the delivery and service teams have access to the custom deal handover artefacts? </a> <br/> 
+              <p style="font-size:12px;font-family: Arial; margin-left: 28px;">
+              <a style="text-decoration:none;color:black;line-height: 1.5;">Custom deals have non-standard solutions and a meeting must occur to handover the opportunity and artefacts to delivery and service. Attach Handover Artefacts to the opportunity and provide access to delivery resources </a><br/> 
+              </p>
+              <p style="text-decoration:underline;color:blue;font-size:12px;font-family: Arial;margin-left: 28px;line-height: 2.0;">
+              <a href="{!$Label.c.ORG_for_Deal_Handover}" style="text-decoration:underline;color:blue;font-size:12px;font-family: Arial;" target="_blank">Deal Handover QRG</a> <br/><br/>
+              </p>
+          </ul>
+            <a style="text-decoration:none;color:black;font-size:12px;font-family: Arial;"> Click on the Next button and the opportunity will be closed. </a>
+    </div>
+</aura:component>

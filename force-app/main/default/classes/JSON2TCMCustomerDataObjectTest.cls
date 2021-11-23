@@ -1,0 +1,98 @@
+@isTest
+public class JSON2TCMCustomerDataObjectTest {
+    
+    static testMethod void Json2TCMCustomerContactInittest() {
+        Test.startTest();
+        JSON2TCMCustomerDataObject jcco = new JSON2TCMCustomerDataObject();
+                jcco.id =''; 
+                jcco.href =''; 
+                jcco.cidn ='';
+                jcco.cac ='';
+                jcco.title ='';
+                jcco.firstName ='';
+                jcco.lastName ='';
+                jcco.birthDate ='';
+                jcco.abn ='';
+                jcco.acn ='';
+                jcco.phoneNumber ='';
+                jcco.faxNumber ='';
+                jcco.emailAddress ='';
+                jcco.accountUuid ='';
+                jcco.businessUnit ='';
+                jcco.customerManagedFlag ='';
+                jcco.customerType ='';
+                jcco.marketSegment ='';
+                jcco.priorityAssistFlag ='';
+                jcco.accountStatus ='';
+                jcco.address = new List<JSON2TCMCustomerDataObject.Address>();
+                jcco.contacts = new List<JSON2TCMCustomerDataObject.Contacts>();
+	
+          JSON2TCMCustomerDataObject.Contacts jc = new JSON2TCMCustomerDataObject.Contacts();
+          		jc.id='';
+				jc.href ='';
+                jc.title ='';
+                jc.firstName ='';
+                jc.middleName ='';
+                jc.lastName ='';
+                jc.birthDate ='';
+                jc.endDate ='';
+                jc.contactType ='';
+                jc.contactUsage ='';
+                jc.preferredMethod ='';
+          		jc.homeContact = new JSON2TCMCustomerDataObject.HomeContact();
+          		jc.workContact = new JSON2TCMCustomerDataObject.HomeContact();
+           JSON2TCMCustomerDataObject.HomeContact jhc = new JSON2TCMCustomerDataObject.HomeContact();
+                jhc.emailAddress ='';
+                jhc.faxNumber ='';
+                jhc.phoneNumber ='';
+                jhc.mobileNumber ='';
+          JSON2TCMCustomerDataObject.HomeContact jwc = new JSON2TCMCustomerDataObject.HomeContact();
+                jwc.emailAddress ='';
+                jwc.faxNumber ='';
+                jwc.phoneNumber ='';
+                jwc.mobileNumber ='';
+		JSON2TCMCustomerDataObject.Address add = new  JSON2TCMCustomerDataObject.Address();
+                add.state ='';
+                add.streetTypeCode ='';
+                add.addressId ='';
+                add.statusCode ='';
+                add.streetTypeSuffixCode ='';
+                add.postCode ='';
+                add.registeredPlan ='';
+                add.streetNumberStart ='';
+                add.subAddress= new JSON2TCMCustomerDataObject.SubAddress();
+                add.streetType ='';
+                add.internationalState ='';
+                add.isPrimary ='';
+                add.status ='';
+                add.streetNumberStartSuffix='';
+                add.streetName='';
+                add.addressType ='';
+                add.additionalInfo ='';
+       			add.country ='';
+                add.internationalPostcode ='';
+                add.addressTypeCode ='';
+                add.streetTypeSuffix ='';
+                add.streetNumberEnd ='';
+                add.deliveryPointId ='';
+                add.streetNumberEndSuffix ='';
+                add.locality ='';
+        		add.addressLines= new List<string>();
+        JSON2TCMCustomerDataObject.SubAddress sadd = new  JSON2TCMCustomerDataObject.SubAddress();
+                sadd.propertyName ='';
+                sadd.privateStreetType ='';
+                sadd.privateStreetName ='';
+                sadd.details= new List<JSON2TCMCustomerDataObject.Details>();
+                sadd.numberStart ='';
+               	sadd.buildingName ='';
+                sadd.numberEnd ='';
+                sadd.privateStreetTypeCode ='';
+         JSON2TCMCustomerDataObject.Details dtl = new  JSON2TCMCustomerDataObject.Details();
+                dtl.detailType ='';
+                dtl.value ='';
+                dtl.detailTypeCode ='';
+        Test.stopTest();
+        system.assertEquals('', jcco.id);
+    }
+
+}

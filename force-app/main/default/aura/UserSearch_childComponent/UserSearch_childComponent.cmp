@@ -1,0 +1,37 @@
+<!--
+Created By : Team Hawaii
+Date : 27/02/2020
+Jira No : P2OB-4164
+Description: This component is Child Component for Lightning component "UserSearch".This Component contains 
+UI for displaying search result list and selection of records.
+Modified Date : 20/11/2020 - P2OB-10711 - Added Account name associated with the user in user list
+-->
+
+<aura:component
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+    <!--Attribute to store selected record-->
+    <aura:attribute name="oRecord" type="sObject" />
+    <aura:attribute name="IconName" type="string" />
+
+    <!--Register the component level event-->
+    <aura:registerEvent name="UserSearchEvent" type="c:UserSearchEvent" />
+    <!--<aura:registerEvent name="appEvent" type="c:UserSearchApplicationEvent"/>-->
+    <li role="presentation" class="slds-listbox__item" onclick="{!c.selectRecord}">
+        <span id="listbox-option-unique-id-01"
+            class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+            role="option">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col" title='{!v.oRecord.Name}'
+                    style="padding-right: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;width: 8.25rem;">
+                    {!v.oRecord.Name}
+                </div>
+                <!--Added account name field in user search list-->
+                <div class="slds-col" title='{!v.oRecord.Account.Name}'
+                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 5.375rem;">
+                    {!v.oRecord.Account.Name}
+                </div>
+            </div>
+        </span>
+    </li>
+</aura:component>

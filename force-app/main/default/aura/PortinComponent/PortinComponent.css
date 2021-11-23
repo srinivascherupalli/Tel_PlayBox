@@ -1,0 +1,44 @@
+.THIS {
+}
+.THIS .headercomp {
+  	
+    text-align: center;
+    background-color:white;
+}
+
+.THIS .info {
+  	margin:15px;
+    background-color: #f4f5f7;
+    border-style: none;
+    border-radius:initial;
+}
+
+.THIS .customRadioCls .slds-form-element__control .slds-radio{
+    display : inline-block !important;
+    padding:15px;
+}
+.THIS .buttonAlign{
+    float:right;
+    margin-right : 10px;    
+}
+.THIS .buttonAlign1{
+    float:right;
+      
+}
+
+.THIS .hideLabel label{
+    display:none;
+}
+.THIS .inputWidth {
+  	width:80%;
+}
+.THIS .alingLeft {
+  	float:left;
+}
+.THIS .slds-spinner_container {
+    position:fixed;
+}
+
+.THIS .iconSize svg {
+    height:16px;
+}

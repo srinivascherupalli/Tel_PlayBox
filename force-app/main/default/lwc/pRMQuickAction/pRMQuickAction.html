@@ -1,0 +1,20 @@
+<template>
+    <ul class="quickActions">
+        <li class="close">
+            <a onclick={toggleQuickCreate}>Quick Create
+                <lightning-icon icon-name="utility:chevrondown" alternative-text="Utility image"></lightning-icon>
+            </a>
+            <ul>
+                <!-- <li>
+                    <a onclick={newLeadRecord}>Lead</a>
+                </li> -->
+                <li>
+                    <a data-id="Opportunity" onclick={newRecord}>Opportunity</a>
+                </li>
+                <li>
+                    <a data-id="Case" onclick={newRecord}>Case</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</template>

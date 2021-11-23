@@ -1,0 +1,100 @@
+<!--
+* @Author   :   Manish Berad
+* @Date     :   23 june 2020
+* @Desc     :   EDGE-153347  Lightning components linked to "Customer Pre-Authorisation" button 
+*				 on CS Basket to capture Pre-Authorisation details for MACD Orders
+* -->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global" controller="ContractAuthorisationFileUploadHandler">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="profileName" type="String" default="" /><!--EDGE-164560-->
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+    <aura:attribute name="isPreauthorisation" type="Boolean" default="false" />
+    <aura:attribute name="basketId" type="Id" default=""/>
+    <aura:attribute name="OppId" type="Id" default=""/>
+    <aura:attribute name="isSubmitDisable" type="Boolean" default="true" />
+    <aura:attribute name="contentDocId" type="String" default="" />
+    <aura:attribute name="showSpinner" type="Boolean"/>
+    <aura:attribute name="placeholder" type="String" access="global" default="Add your description e.g. Emailed authorisation to me on &lt;date&gt;"/>
+    <aura:attribute name="errorMsg" type="String" access="global"/>
+    <aura:attribute name="toastClass" type="String" default="slds-theme_success" />
+    <aura:attribute name="toastIcon" type="String" default="success" />
+    
+    <!-- error handling	-->
+    <div class="toggle" style="width: 50%; margin-left:25%;" aura:id="errorMsgId">
+        <div class="{!'slds-notify slds-notify_alert slds-theme_alert-texture ' + v.toastClass}" role="alert">
+            <span class="slds-assistive-text">error</span>
+            <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small" title="Description of icon when needed">
+                <lightning:icon iconName="{!'utility:' + v.toastIcon}" size="small" />
+            </span> 
+            <h2>{!v.errorMsg}.</h2>
+            <div class="slds-notify__close">
+                <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" onclick="{!c.toggle}"  data-closeBtm ="ErrorClose">
+                    <lightning:icon iconName="utility:close" size="small" />
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- error handling	-->
+    
+    <aura:if isTrue="{!v.showSpinner}">
+        <div class="outer-div">
+            <lightning:spinner aura:id="Spinner" alternativeText="Loading" variant="brand" class="spinner" />
+        </div>
+    </aura:if>
+    
+    <div class="slds-grid slds-grid_vertical slds-m-left_x-large slds-m-right_x-large">
+        <div class="slds-col slds-m-top--x-small">
+            <span><br/>
+                <p style="color:black;">If you’ve received prior authorisation from the customer to complete this order and they don’t require a quote, indicate this below.</p><br/>
+                <p style="color:black;">This skips the need for a digital signature and processes the order automatically.</p>
+            </span>
+        </div><br/>
+        <div class="slds-col slds-m-top--x-small">
+            <div class="row">
+                <div class="column">
+                    <span style="color:red;">*</span>
+                </div>
+                <div class="column">
+                    <span>
+                        <lightning:input type="checkbox"  
+                                 checked="{!v.isPreauthorisation}"  value="" 
+                                 onchange="{!c.handleChange}" aura:id="checkboxId" 
+                                 label="I have received pre-authorisation from the customer to submit this order">
+                </lightning:input>
+                    </span>
+                </div>
+            </div>
+        </div><br/>
+        <div class="slds-col slds-m-top--x-small">
+            
+             <p class="slds-text-color_weak" style="font-family: 'Salesforce Sans',Arial,sans-serif; font-size: .75rem;">
+                 Attach proof of pre-authorisation. You can also do this later by uploading a file to the Opportunity.</p>
+            <div class="slds-align_absolute-center">
+                <span>
+                <lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="File Upload:"  multiple="false"/>
+                    <div aura:id="fileNameId" class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>
+                <!--use aura:if for show-hide the loading spinner image--> 
+                <aura:if isTrue="{!v.showLoadingSpinner}">
+                    <div class="slds-text-body_small slds-text-color_error">Uploading... 
+                        <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+                    </div>
+                </aura:if>
+             </span>
+            </div>    
+        </div>
+        <div class="slds-col slds-m-top--x-small">
+            <span>
+                <lightning:input type="text" aura:Id="NotesId" label="How did the customer approve this order?" labelVisible="true" value="" placeholder="{!v.placeholder}"/>
+            </span>
+        </div>
+        <div class="slds-col slds-m-top--x-small">
+            <span class="slds-float_right">
+                <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{! c.cancelModel }"/>
+                <lightning:button variant="brand" label="Save" title="Save " disabled="{!v.isSubmitDisable}" onclick="{! c.submitAndClose }"/>
+            </span>
+        </div>
+    </div>
+</aura:component>

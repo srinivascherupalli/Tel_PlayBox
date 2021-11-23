@@ -1,0 +1,102 @@
+<!--Shreyansh Sharma, Team Jaipur, P2OB-10676
+ Date: 2/4/2021,
+ Description:Case Confirmation Screen
+
+Modified : 
+1. 3/11/2021 : DIGI-10033 Adding text for displaying MAC oppty 
+-->
+
+<aura:component controller = "salesup_ThankYouScreenController" implements="lightning:availableForFlowScreens,force:appHostable,force:lightningQuickAction">
+    
+
+    <aura:attribute name="isOpen" type="boolean" default="true"/>
+    <aura:attribute name="showClickHereLink" type="boolean" default="true"/>
+    <aura:attribute name="caseNumber" type="String" />
+    <aura:attribute name="caseCategory" type="String" />
+    <aura:attribute name="caseSubCategory" type="String"/>
+    <aura:attribute name="linkedCases" type="boolean" default="false" />
+    <aura:attribute name="caseRecordId" type="string"/>
+    <aura:attribute name="showModal" type="boolean" default ="true"/>
+    <aura:attribute name="successMsg" type="string"/>
+    <aura:attribute name="successMsg1" type="string"/>
+    <aura:attribute name="accountId" type="string"/>	
+	<aura:attribute name="relatedOpportunityId" type="string"/>
+	<aura:attribute name="relatedOpportunityNumber" type="string"/>
+
+
+    <aura:attribute name="currentUser" type="User"/>
+    <aura:attribute name="communityBaseURL" type="string"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}" fields="UserType" targetFields="{!v.currentUser}"/>
+
+
+
+
+    <aura:registerEvent name="jprScreenNavigationEvent" type="c:jprScreenNavigationEvent"/>
+    <aura:if isTrue="{!v.showModal}">
+        <div class="reqSub">
+            <h2>{!v.successMsg}</h2>
+            <h2>{!v.successMsg1}</h2>
+            
+            <br/>
+            <br/>
+        </div>
+        <!-- <div class="background">-->
+        <br/>
+        <div class="caseNoHeader">
+            <h1><b>Case Number</b></h1>
+            
+            <div class="caseNo">
+
+
+
+                <aura:if isTrue="{!v.currentUser.UserType =='PowerPartner'}">
+                    <!-- <a href="{!'/case/'+v.caseRecordId+'/view'}" target="_blank">{!v.caseNumber}</a> -->
+                    <a href="{!v.communityBaseURL+'/case/'+ v.caseRecordId}"  target="_blank">{!v.caseNumber}</a>
+                    <aura:set attribute="else">
+                        <a href="{!'/one/one.app?#/sObject/'+v.caseRecordId+'/view'}" target="_blank">{!v.caseNumber}</a>
+                	</aura:set>
+                </aura:if>
+
+
+
+            </div>
+            
+            <h3>{!v.caseCategory} :  {!v.caseSubCategory}</h3>
+            <aura:if isTrue="{!not(empty(v.relatedOpportunityId))}">
+				<div class="slds-text-color_success">
+                	<h3>In Contract opportunity <a href="{!'/one/one.app?#/sObject/'+v.relatedOpportunityId+'/view'}" target="_blank">{!v.relatedOpportunityNumber}</a> is successfully created.</h3>
+            	</div>
+            </aura:if>
+
+
+
+        </div> 
+        <br/>
+        <br/>
+        <aura:if isTrue="{!v.showClickHereLink}">
+        <div class="link">
+
+
+
+              <aura:if isTrue="{!v.linkedCases}">
+                
+            
+            <p>Want to Create another Case <a onclick="{!c.evtSub}" >Click here</a></p>
+                  </aura:if>
+
+
+
+        </div>
+        </aura:if>
+        <br/>
+        <div class="button">
+            
+            <lightning:button variant="neutral" 
+                              label="Done"
+                              title="Done"
+                              onclick="{!c.closeModal }" class="slds-button_brand"/>
+        </div>
+        
+    </aura:if>
+</aura:component>

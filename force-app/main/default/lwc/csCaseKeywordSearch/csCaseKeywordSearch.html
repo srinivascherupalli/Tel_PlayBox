@@ -1,0 +1,25 @@
+<!--Author: Nilima Borse, Team: Jaipur, P2OB-10970
+ Date: 12/02/2021 ,
+ Description: LWC to enable Keyword based Case Category Search
+-->
+<!--
+    Jaipur :: Mofit Pathan
+    Sprint & US: 21.09 & P2OB-14511
+    Description: Disabled autofill for search input 
+ -->
+ <template>
+    <div onkeyup={handleSearchKeyword}>
+        <lightning-input
+            name="enter-search"
+            label="Search support types"
+            type="search"
+            autocomplete="off"
+        ></lightning-input>
+    </div>
+        {labelValue} :&nbsp; 
+        <template  for:each={recentList} for:item="recent" for:index="key">
+            <lightning-button key={recent} variant="base" label={recent} onclick={handleRecentSearch} value={recent}></lightning-button>
+            <template  if:true={showComma}>,</template>&nbsp; 
+        </template>
+    
+</template>

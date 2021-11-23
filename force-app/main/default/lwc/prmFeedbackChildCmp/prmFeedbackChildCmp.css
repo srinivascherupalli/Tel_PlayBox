@@ -1,0 +1,52 @@
+.feedbackError.slds-text-body_small.slds-text-color_error{
+    position: absolute;
+    max-width: 175px;
+    overflow: hidden;
+    padding-left: 0.7rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@media (max-width: 1024px){
+    .feedbackError.slds-text-body_small.slds-text-color_error{
+        position: relative;
+    }
+}
+
+@media (max-width: 1367px){
+    .feedbackError.slds-text-body_small.slds-text-color_error{
+        position: relative;
+    }
+}
+
+.realignInput {
+    top: -25px;
+    left: 50px;
+}
+.feedbackFormDetails{
+    align-items: center;
+    font-size: 0.8rem;
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+    margin: 0.45rem 0rem 0.45rem 0rem;
+}
+.realignInput1 {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-family: var(--lwc-fontFamilyHeader,akkuratBold);
+    margin-right: 0.3rem;
+}
+
+@media (max-width: 1367px){
+    .feedbackFormDetails{
+        align-items: baseline;
+    }
+    .realignInput1 {
+        align-items: baseline;
+    }
+}
+
+.feedbackAsterisk lightning-formatted-text:before{
+    content: '*';
+    color: #c23934;
+    padding-right: 6px;
+}

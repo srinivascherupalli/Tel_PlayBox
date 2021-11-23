@@ -1,0 +1,49 @@
+<aura:component implements="force:appHostable,force:hasRecordId,force:lightningQuickActionWithoutHeader" controller="ReplicatorManager" access="global">
+	
+    <aura:attribute name="offers" type="String[]" access="global"/>
+    <aura:attribute name="selectedOffer" type="String[]" access="global"/>
+    <aura:attribute name="selectedSite" type="String[]" access="global"/>
+    <aura:attribute name="siteName" type="String" access="global"/>
+    <aura:attribute name="oppId" type="String" access="global"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+        <div class="slds">
+            <div class="slds-page-header">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <p class="slds-page-header__title slds-truncate"><b>Get Offer</b>
+                        </p>
+                    </div>
+                </div>
+            </div>
+         </div>
+     <div class="slds">
+     <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+            <tr class="slds-text-heading--label">
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>Select</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>Offer</b></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.offers}" var="offerList" indexVar="idx">
+                <tr>
+                    <td class="cell">
+                         <fieldset id="radio">
+                        <div onchange="{!c.onSelectOffer}" data-value="{!offerList}" data-record="">
+                            <ui:inputRadio name="radio"/>
+                        </div>
+                        </fieldset>
+                    </td>
+                    <td class="slds-size_1-of-8">{!offerList}</td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+         
+         <div align="Center" draggable="false" style="padding-top: 20px">
+        <lightning:button variant="brand" label="Back" aura:id="Back" onclick="{!c.navigateToGetServices}"/>
+        <lightning:button variant="brand" disabled="true" label="Generate Basket" aura:id="generateBasket" onclick="{!c.onGenerateBasket}" />
+        <lightning:button variant="brand" label="Close" aura:id="Close" onclick="{!c.navigateToAccountPage}"/>
+        </div>
+    </div>
+</aura:component>

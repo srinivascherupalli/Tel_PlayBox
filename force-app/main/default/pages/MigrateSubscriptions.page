@@ -1,0 +1,9 @@
+<apex:page id="MigrateSubscriptions" controller="MigrateSubscriptionsController" sidebar="false">
+    <apex:slds />
+    <!--<c:SolutionConsoleAPI appMode="API" standaloneMode="false" />-->
+    <c:MigrateSubs standaloneMode="false" appMode="ui" loadScripts="true"/>
+    <!-- My page -->
+
+    <csutil:CustomResources resources="{!commonContainerPageResources}" />
+   
+</apex:page>

@@ -1,0 +1,81 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes">
+    <footer>
+        <div class="body-inner slds-p-bottom_xx-large">
+            <div class="slds-p-bottom_large slds-p-horizontal_small slds-p-top_xx-large slds-m-top_medium slds-grid slds-gutters">
+                <div class="slds-col slds-col-fixed-width">
+                    <h1 class="slds-text-heading_medium slds-m-bottom_x-large">Help</h1>
+                    <ul>
+                        <li class="slds-p-bottom_small"><a data-url="/partner-resources/" onclick="{!c.navTo}">Knowledge Base</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="/case/Case/Default/" onclick="{!c.navTo}">Raise a Case</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://outages.telstra.com/" onclick="{!c.navTo}">Check for outages</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/business-enterprise/self-service/telstra-connect" onclick="{!c.navTo}">Telstra Connect</a></li>
+                    </ul>
+                </div>
+                <div class="slds-col slds-col-fixed-width">
+                    <h1 class="slds-text-heading_medium slds-m-bottom_x-large">About</h1>
+                    <ul>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/aboutus" onclick="{!c.navTo}">About us</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstraglobal.com/" onclick="{!c.navTo}">Careers</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/partners-and-causes" onclick="{!c.navTo}">Partners and causes</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/aboutus/investors" onclick="{!c.navTo}">Investors</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/sitemap" onclick="{!c.navTo}">Sitemap</a></li>
+                    </ul>
+                </div>
+                <div class="slds-col slds-col-fixed-width">
+                    <h1 class="slds-text-heading_medium slds-m-bottom_x-large">Privacy and terms</h1>
+                    <ul>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/help/critical-information-summaries" onclick="{! c.navTo }">Critical Information summaries</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/customer-terms" onclick="{! c.navTo }">Our customer terms</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/consumer-advice/your-information" onclick="{! c.navTo }">Your information</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/privacy" onclick="{! c.navTo }">Privacy</a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstra.com.au/terms-of-use" onclick="{! c.navTo }">Our website terms</a></li>
+                    </ul>
+                </div>
+                <div class="slds-col slds-col-fixed-width">
+                    <h1 class="slds-text-heading_medium slds-m-bottom_x-large">Other Telstra sites</h1>
+                    <ul>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstrawholesale.com.au/" onclick="{! c.navTo }">Telstra Wholesale <span class="iconTelstra icon-newWindow"></span></a></li>
+                        <li class="slds-p-bottom_small"><a data-url="http://media.telstra.com.au/home" onclick="{! c.navTo }">Telstra Media <span class="iconTelstra icon-newWindow"></span></a></li>
+                        <li class="slds-p-bottom_small"><a data-url="https://www.telstrahealth.com/" onclick="{! c.navTo }">Telstra Health <span class="iconTelstra icon-newWindow"></span></a></li>                    </ul>
+                </div>
+            </div>
+            <div class="slds-p-around_small">
+                <h1 class="slds-text-heading_medium slds-m-bottom_large">Find us</h1>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="slds-p-horizontal_small slds-m-right_medium">
+                        <a data-url="https://www.facebook.com/Telstra24x7" onclick="{! c.navTo }">
+                            <img src="{! $Resource.pcIcons + '/pcIcons/icon-social-facebook.png' }"/>
+                            <span class="slds-m-left_x-small">Facebook</span>
+                        </a>
+                    </div>
+                    <div class="slds-p-horizontal_small slds-m-right_medium">
+                        <a data-url="https://twitter.com/telstra" onclick="{! c.navTo }">
+                            <img src="{! $Resource.pcIcons + '/pcIcons/icon-social-twitter.png' }"/>
+                            <span class="slds-m-left_x-small">Twitter</span>
+                        </a>
+                    </div>
+                    <div class="slds-p-horizontal_small slds-m-right_medium">
+                        <a data-url="https://www.instagram.com/telstra" onclick="{! c.navTo }">
+                            <img src="{! $Resource.pcIcons + '/pcIcons/icon-social-instagram.png' }"/>
+                            <span class="slds-m-left_x-small">Instagram</span>
+                        </a>
+                    </div>
+                    <div class="slds-p-horizontal_small slds-m-right_medium">
+                        <a data-url="https://www.youtube.com/user/TelstraCorp" onclick="{! c.navTo }">
+                            <img src="{! $Resource.pcIcons + '/pcIcons/icon-social-youtube.png' }"/>
+                            <span class="slds-m-left_x-small">YouTube</span>
+                        </a>
+                    </div>
+                    <div class="slds-p-horizontal_small slds-m-right_medium">
+                        <a data-url="https://crowdsupport.telstra.com.au/" onclick="{! c.navTo }">
+                            <img src="{! $Resource.pcIcons + '/pcIcons/icon-social-crowdsupport.png' }"/>
+                            <span class="slds-m-left_x-small">CrowdSupport®</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- P2OB-5311 adding new component to display as floating feedback button across TPC-->
+        <c:PRM_TPCFeedbackWrapper/>
+    </footer>
+</aura:component>

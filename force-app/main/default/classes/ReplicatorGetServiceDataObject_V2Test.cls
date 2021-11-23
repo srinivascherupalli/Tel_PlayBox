@@ -1,0 +1,64 @@
+@IsTest
+public class ReplicatorGetServiceDataObject_V2Test{
+    static testMethod void parseTest() {
+        String json = '{"Source_System_Id":"Replicator","site":[{"siteName":null,"productList":[{"serviceList":[{"Service_Type":"Voice","service":[{"User_Type":"","serviceExtension":[{"Services_To":"7836518762","Services_From":"7836518752","eligibilityStatus":"Eligible","eligibilityReason":"","disableCheck":null,"checkValue":true}],"Service_Type":"Voice","Service_Id":"7836518752","IsInflight":null,"In_Flight_Order_Id":"","In_Flight_Legacy_System":"AXIS","In_Flight_Flag":"N","eligibilityStatus":"Eligible","eligibilityReason":"","disableCheck":null,"Directory_Option":null,"checkValue":false,"Association_Type":"","Association_Role":""}],"disableCheck":null,"checkValue":false}],"Product_Type":"PSTN","eligibilityStatus":"Eligible","eligibilityReason":null,"disableCheck":null,"checkValue":false},{"serviceList":[{"Service_Type":"Voice","service":[{"User_Type":"","serviceExtension":[{"Services_To":"9508637503","Services_From":"9508637493","eligibilityStatus":"Ineligible","eligibilityReason":"All Numbers are not available","disableCheck":null,"checkValue":false}],"Service_Type":"Voice","Service_Id":"9508637493","IsInflight":null,"In_Flight_Order_Id":"","In_Flight_Legacy_System":"AXIS","In_Flight_Flag":"N","eligibilityStatus":"","eligibilityReason":"","disableCheck":null,"Directory_Option":null,"checkValue":false,"Association_Type":"","Association_Role":""}],"disableCheck":null,"checkValue":false}],"Product_Type":"ISDN","eligibilityStatus":"Not valid for assessment","eligibilityReason":null,"disableCheck":null,"checkValue":false},{"serviceList":[{"Service_Type":"Voice","service":[{"User_Type":"","serviceExtension":[{"Services_To":"2913852477","Services_From":"2913852467","eligibilityStatus":"Ineligible","eligibilityReason":"All Numbers are not available","disableCheck":null,"checkValue":false},{"Services_To":"2913852497","Services_From":"2913852487","eligibilityStatus":"Ineligible","eligibilityReason":"All Numbers are not available","disableCheck":null,"checkValue":false}],"Service_Type":"Voice","Service_Id":"2913852467","IsInflight":null,"In_Flight_Order_Id":"","In_Flight_Legacy_System":"AXIS","In_Flight_Flag":"N","eligibilityStatus":"","eligibilityReason":"","disableCheck":null,"Directory_Option":null,"checkValue":false,"Association_Type":"","Association_Role":""}],"disableCheck":null,"checkValue":false}],"Product_Type":"ISDN2DID","eligibilityStatus":"Ineligible","eligibilityReason":null,"disableCheck":null,"checkValue":false}],"Error_Description":"","Error_Code":"","ADBOR_Id":"401432055"}],"serviceCount":2,"Error_Description":"","Error_Code":"","Correlation_Id":"SFDC_REP_GETSERVICE82cfb97b7581e661a0","CIDN":"5829086067"}';
+        Test.startTest();
+        ReplicatorGetServiceDataObject_V2 obj1 = ReplicatorGetServiceDataObject_V2.parse(json);
+        Test.stopTest();
+        ReplicatorGetServiceDataObject_V2 obj2 = new ReplicatorGetServiceDataObject_V2 ();
+        obj2.Source_System_Id = 'Replicator';
+        obj2.Correlation_Id = 'SFDC_REP_GETSERVICEa5f369527219745b8c';
+        obj2.CIDN = '6892971200';
+        obj2.Error_Code = '';
+        obj2.Error_Description = '';
+		obj2.serviceCount=1;
+        ReplicatorGetServiceDataObject_V2.SiteDTO_V2 site = new ReplicatorGetServiceDataObject_V2.SiteDTO_V2();
+        site.ADBOR_Id = '266049834';
+        site.Error_Code = '';
+        site.Error_Description = '';
+        site.siteName='';
+        ReplicatorGetServiceDataObject_V2.productListDTO productListDTO = new ReplicatorGetServiceDataObject_V2.productListDTO();
+        productListDTO.Product_Type = 'ISDN-BRA';
+        productListDTO.checkValue = false;
+        productListDTO.disableCheck = false;
+        productListDTO.eligibilityStatus='';
+        productListDTO.eligibilityReason='';
+        ReplicatorGetServiceDataObject_V2.ServiceDTO_V2  ServiceDTO_V2  = new ReplicatorGetServiceDataObject_V2.ServiceDTO_V2 ();
+        ServiceDTO_V2 .Service_ID = '0387681299';
+        ServiceDTO_V2 .Service_Type = 'Voice';
+        ServiceDTO_V2 .disableCheck = false;
+        ServiceDTO_V2 .checkValue = false;
+        ServiceDTO_V2.IsInflight=false;
+        ServiceDTO_V2.In_Flight_Order_Id='';
+        ServiceDTO_V2.In_Flight_Legacy_System='';
+        ServiceDTO_V2.In_Flight_Flag='N';
+		ServiceDTO_V2.User_Type='';
+		ServiceDTO_V2.Directory_Option='';
+		ServiceDTO_V2.Association_Type='';
+		ServiceDTO_V2.Association_Role='';
+		ServiceDTO_V2.eligibilityStatus='';
+		ServiceDTO_V2.eligibilityReason='';
+        ReplicatorGetServiceDataObject_V2.ServiceExtensionDTO_V2  serviceExtensionDTO = new ReplicatorGetServiceDataObject_V2.ServiceExtensionDTO_V2 ();
+        ServiceDTO_V2.serviceExtension  = new List<ReplicatorGetServiceDataObject_V2.ServiceExtensionDTO_V2  >();
+        serviceExtensionDTO.Services_To='';
+        serviceExtensionDTO.Services_From=''; 
+        serviceExtensionDTO.checkValue=false;
+        serviceExtensionDTO.disableCheck=false;
+		serviceExtensionDTO.eligibilityStatus='';
+		serviceExtensionDTO.eligibilityReason='';
+        ServiceDTO_V2.serviceExtension.add(serviceExtensionDTO);
+        ReplicatorGetServiceDataObject_V2.serviceListDTO serviceListDTO=new ReplicatorGetServiceDataObject_V2.serviceListDTO();
+        serviceListDTO.Service_Type='Voice';
+        serviceListDTO.service =new List<ReplicatorGetServiceDataObject_V2.ServiceDTO_V2>();
+        serviceListDTO.service.add(ServiceDTO_V2);
+        serviceListDTO.checkValue=false;
+        serviceListDTO.disableCheck=false;
+        productListDTO.serviceList = new List<ReplicatorGetServiceDataObject_V2.serviceListDTO>();
+        productListDTO.serviceList.add(serviceListDTO);
+        site.productList= new List<ReplicatorGetServiceDataObject_V2.ProductListDTO>();
+        site.productList.add(productListDTO);
+        obj2.site= new List<ReplicatorGetServiceDataObject_V2.SiteDTO_V2>();
+        obj2.site.add(site);        
+        System.assert(!obj1.equals(obj2), 'Error during JSON parsing');
+    }
+}

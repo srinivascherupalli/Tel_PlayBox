@@ -1,0 +1,91 @@
+.THIS.slds-modal__content {
+    margin: -1.75rem;
+}
+.THIS.slds-modal__content .slds-table_edit_container {
+    margin: 0 0;
+}
+.THIS.slds-modal__content .slds-table_edit_container table tbody tr td:first-child{
+    padding-left: 0.5rem;
+}
+.THIS.slds-modal__content .slds-table_edit_container .slds-table {
+    border: 0;
+}
+.THIS .slds-theme-info--msg {
+    background-color: #f4f6f9;
+}
+.THIS .slds-table--opptyTeamMember td.slds-cell-edit:not(:last-child) .slds-table--cell {
+    border: 1px solid #dddbda;
+    border-radius: 5px;
+}
+.THIS .slds-table--opptyTeamMember .slds-table--cell .slds-opportunity--userName {
+    display: inline-block;
+    padding: 0.375rem 0.5rem;
+}
+.THIS .slds-table--opptyTeamMember .slds-table--cell label.slds-form-element__label, 
+.THIS .slds-table--opptyTeamMember .slds-table--cell div.slds-select_container:before {
+    display: none;
+}
+.THIS .slds-table--opptyTeamMember .slds-table--cell .slds-select_container select {
+    border: 0;
+    height: calc((1.5rem) + (1px));
+    line-height: 1.25;
+}
+.THIS .slds-table--opptyTeamMember .slds-table--cell div.slds-select_container:after {
+	bottom: calc((1.75rem / 2) - 5px);
+}
+.THIS .slds-table--opptyTeamMember .slds-opportunity--teamMember td.slds-cell-edit {
+    padding: 0.25rem 0.1rem;
+}
+.THIS .slds-table--opptyTeamMember .slds-opportunity--teamMember .slds-table--cell input.slds-lookup__search-input {
+    min-height: 0;
+    border-width: 0;
+    height: 25px;
+    width: 270px;
+}
+.THIS .slds-table--opptyTeamMember .slds-opportunity--teamMember .slds-table--cell .cUserSearch .slds-icon-utility-search svg.slds-icon_x-small,
+.THIS .slds-table--opptyTeamMember .slds-opportunity--teamMember .slds-table--cell .cUserSearch .slds-icon-utility-search svg.slds-icon--x-small {
+    width: 1rem;
+    height: 0.875rem;
+}
+.THIS .slds-table--opptyTeamMember thead .slds-opportunity--teamMember th {
+    padding: 0;
+}
+.THIS .slds-table--opptyTeamMember .cUserSearch .slds-pill-container {
+    border: 0;
+    padding: 0;
+    min-height: 0;
+}
+.THIS .slds-modal__footer {
+    padding: 0.5rem;
+}
+.THIS.slds-delete--confirm_box {
+    border: 1px solid #cdcdcd;
+    background: #fff;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 5;
+    padding: 0;
+    max-height: 160px;
+}
+.THIS.modal-container.slds-show--wrapper:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 9;
+    background: rgba(0,0,0,.5);
+}
+
+.THIS.slds-delete--confirm_box_RemoveAll {
+    border: 1px solid #cdcdcd;
+    background: #fff;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 5;
+    padding: 0;
+    max-height: 170px;
+}

@@ -1,0 +1,81 @@
+<template>
+   
+        <template if:true={loadspinner}>
+            <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+          </template>
+    
+    <c-lwc-custom-toast title = {toasttitle} 
+    message = {toastmsg}
+    variant = {toastvariant} 
+    auto-close="true" ></c-lwc-custom-toast>
+    <!--
+    <div class="slds-col slds-size_2-of-2 slds-border_bottom" style="background:white;height: 3.5rem;">
+        <div >
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title" style="text-align: center;">
+                    <h1>
+                        <span
+                              class="slds-page-header__title slds-truncate"
+                              title="Number Management">Number Management</span>
+                    </h1>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <lightning-icon icon-name="utility:close" 
+                            alternative-text="Error!" 
+                            title="Close" onclick={closePopup}></lightning-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div> -->
+    <div>
+        <c-validate-number-component 
+        pcid={pcid}  
+        onrefreshcreatenumber={handleDataRefreshandFireEvent}
+        imsi={imsi}
+        solutionnameval = {solutionnameval} ></c-validate-number-component>
+        <!--Added handleDataRefreshandFireEvent for EDGE 174219-->
+
+        <!--As part of EDGE-166187, Duplicated the LWC Database component based on the solution. Also added solutionnameval attribute in Validate Number component -->
+        <template if:false={enablesimtype}>
+        <template if:true={recordata}>
+            <c-lwc-datatable recordata={recordata} columns={columns} showbutton="true" onrefresh={handleDatatableRefresh}></c-lwc-datatable>
+        </template>
+        </template>
+
+        <template if:true={enablesimtype}>
+            <template if:true={recordata}>
+                <c-lwc-datatable recordata={recordata} columns={column} showbutton="true" onrefresh={handleDatatableRefresh}></c-lwc-datatable>
+            </template>
+        </template>
+
+        <template if:false={recordata}>
+            <div>No data found</div>
+        </template> 
+        <br/>
+        <c-customer-authority-form-file-upload basketid={basketid} ontoast={customTostEvent}></c-customer-authority-form-file-upload> 
+    </div>
+    <div class="slds-col slds-size_2-of-2" style="background:white;height: 3.5rem;">
+        <div class="slds-page-header slds-page-header_related-list">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title" style="text-align: center;">
+                    
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <lightning-button label="Finish" 
+                            title="Finish" 
+                            onclick={handleFinish} 
+                            variant="brand"
+                            class="slds-m-left_x-small"></lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

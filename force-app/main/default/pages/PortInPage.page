@@ -1,0 +1,59 @@
+<apex:page standardController="Account" showHeader="false" sidebar="false">
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <apex:slds />
+     <script>
+        
+        var basketId = "{!JSENCODE($CurrentPage.parameters.basketID) }";
+       
+        var userTheme="{!$User.UITheme}"
+        var loggedinUserProfilename="{!$Profile.Name}"
+        console.log("basketId:" + basketId);
+        console.log("loggedinUserProfilename:" + loggedinUserProfilename);
+        
+    //EDGE-117585 Kalashree Borgaonkar. Adding showQualifiedMsisdnList attribute
+        $Lightning.use("c:LightningAppDependencyHandler", function() {
+            $Lightning.createComponent(
+                "c:PortinComponent",
+                {"basketId": basketId,"showQualifiedMsisdnList":true},
+                 "sub",
+                function(cmp) {
+                    $A.eventService.addHandler({
+                      event: 'force:navigateToSObject',
+                      handler: function(event) {
+                        console.log('vfp event: ' + event.getParam("recordId"));
+                        console.log('theme'+userTheme);
+                        
+                        if(userTheme =='Theme4t' ){
+                            // Salesforce app navigation
+                            console.log('inside sf1');
+                            sforce.one.navigateToSObject(event.getParam("recordId"));
+                        }
+                        else if(userTheme =='Theme3' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside prm');
+                            var recordId = event.getParam("recordId");
+                            if(loggedinUserProfilename.includes("PRM")){
+                                window.location.href = '/partners/' + recordId;
+                            }else
+                                window.location.href = '/' + recordId;
+                        }
+                        else if(userTheme =='Theme4d' ){
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside lightning');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }else{
+                            // Set the window's URL using a Visualforce expression
+                             console.log('inside classic');
+                            var recordId = event.getParam("recordId");
+                            window.location.href = '/' + recordId;
+                        }
+                        
+                      }
+                    });
+                });
+            });
+    </script>
+    <div id="sub"></div>
+
+</apex:page>

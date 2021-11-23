@@ -1,0 +1,157 @@
+<aura:component controller="CancellationReasonController" implements="flexipage:availableForAllPageTypes">
+    <!-- This Component is create as Part of US EDGE-59956 -> To Show Pop up for capturing 
+		Cancellation Reason Cancel Order	 	
+Added Changes to Accomodate Solution Console Flow 
+1.Sandhya		23/12/2020		INC000094617257 Fix
+
+-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="opportunityId" type="Id" />
+	<aura:attribute name="accountId" type="Id" />
+    <aura:attribute name="redirectToBasket" type="Boolean" default="true"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="objContact" type="contact" default="{'sobjectType':'contact'}"/>
+    <aura:attribute name="showSpinner1" type="boolean" default="false"/>
+    <aura:registerEvent name="cancelReasonUpdated" type="c:cancellationReasonUpdate"/>
+    <aura:registerEvent name="modifyReasonUpdated" type="c:modifyReasonUpdate"/>
+    <aura:attribute name="isError" type="boolean" default="false" description="Field to raise Error If contact Role is not Entered"/>
+    <aura:attribute name="isEmpty_CancelReason" type="boolean" default="false" description="Field to raise error if cancellation reason is not entered"/>
+    <aura:attribute name="isEmpty_Competitor" type="boolean" default="false" description="Field to raise error if Competitor is not entered for Lost to Competitor Cancellation Reason"/>
+    <aura:attribute name="roleError" type="boolean" default="false" description="Field to raise Error If contact Role If role in Not Legal Lessee or Full Authority" />
+    <aura:attribute name="showToolTipBoolean" type="boolean" default="false"/>
+    <aura:attribute name="showToolTipBoolean1" type="boolean" default="false"/>
+    <aura:attribute name="showToolTipBoolean2" type="boolean" default="false"/>
+    <aura:attribute name="showToolTipBoolean3" type="boolean" default="false"/>
+    <aura:attribute name="loaded" type="boolean" default="false" />
+    <aura:attribute name="acc1" type="Account"/>
+    <aura:attribute name="acr" type="AccountContactRelation"/>
+       <!--EDGE-151654 navigationfix start added by shubhi--> 
+    <aura:attribute name="site" type="string" />
+    <aura:attribute name="OrgDetails" type="string" />
+    	<!--EDGE-151654 navigationfix end-->
+    <aura:attribute name="currentUser" type="User" default="{ 'sobjectType': 'User' }"/>
+    <aura:attribute name="opp" type="Opportunity" default="{ 'sobjectType': 'Opportunity' }"/>
+    <!--lightning:spinner class="slds-hide" variant="brand" size="medium" aura:id="mySpinner"/-->
+    <aura:if isTrue="{!v.showSpinner1}">
+    	<div class="slds-spinner_container">
+        	<lightning:spinner aura:id="spinner" variant="brand" size="medium"/>
+    	</div>
+	</aura:if>
+    <div aura:id="MainDiv" >
+        <aura:if isTrue="{!v.isError}">
+            <c:customToast type="error" message="{!$Label.c.Cancellation_Requester}" title="Cancellation Requestor is mandatory" />
+        </aura:if>
+        <aura:if isTrue="{!v.isEmpty_CancelReason}">
+            <c:customToast type="error" message="{!$Label.c.Cancellation_Reason_Mandatory}" title="Cancellation Reason is mandatory" />
+        </aura:if>
+        <aura:if isTrue="{!v.roleError}">
+            <c:customToast type="error" message="{!$Label.c.User_Not_Authorized}" title="User Not Authorized" />
+        </aura:if>
+        <!-- Added isEmpty_Competitor auraif as part of EDGE-175721-->
+        <aura:if isTrue="{!v.isEmpty_Competitor}">
+            <c:customToast type="error" message="{!$Label.c.Competitor_Is_Mandatory }" title="Competitor is mandatory" />
+        </aura:if>
+        <!--section tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open overriden-modal"-->
+            <div class="slds-text-align_left" >
+                <div class="slds-size_2-of-2">
+                <!--header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Cancellation Request Details</h2>
+                </header-->
+                <!--div style="background:white" class="slds-p-around_medium" id="modal-content-id-1"-->
+                <div style="background:white" id="modal-content-id-1" >
+                    <lightning:recordEditForm onload="{!c.showRequiredFields}"
+                                              aura:id="editForm"
+                                              recordId="{!v.opportunityId}"
+                                              objectApiName="Opportunity"
+                                              onsuccess="{!c.onSuccess}"
+                                              onerror="{!c.onError}">
+                        <!--lightning:messages /-->
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col ">
+                                 <!--workaround 3-->
+                            <div>
+                            <force:recordData aura:id="recordLoader" recordId="{!v.opportunityId}"  fields="isInsolvencyCancel__c" targetFields="{!v.opp}"/>
+                            <aura:if isTrue="{!v.opp.isInsolvencyCancel__c}">
+                                <label class="slds-form-element__label slds-text-title">Insolvency Cancellation Requestor </label>
+                                <div class="slds-m-bottom_medium">
+                                    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  fields="Name" targetFields="{!v.currentUser}"/>
+                                    <p>{!v.currentUser.Name}</p>
+                                    <br/>
+                                </div>
+                                <aura:set attribute="else">
+                                    <label class="slds-form-element__label slds-text-title">Cancellation Requestor</label>
+                                    <button class="slds-button slds-button_icon slds-button slds-button_icon" aria-describedby="help" onmouseover="{!c.showToolTip}" onmouseout="{!c.HideToolTip}" aria-disabled="true">
+                                        <lightning:icon iconName="utility:info" size="xx-small" alternativeText="Help"/>
+                                        <span class="slds-assistive-text">Help</span>
+                                    </button>
+                                    <aura:if isTrue="{!v.showToolTipBoolean}" >
+                                        <div class="slds-popover slds-popover_tooltip slds-nubbin_top" role="showToolTipBoolean" id="help" style="position:absolute">
+                                            <div class="slds-popover__body">Select the customer contact who requested the cancellation</div>
+                                        </div>
+                                    </aura:if>                              
+                                    <aura:if isTrue="{!v.loaded}">
+                                        <div class="slds-m-bottom_medium">
+                                            <!-- This component is added as Part of EDGE-> 63041 to Capture Contact Role for Opportunity--> 
+                                            <c:customContactRoleLookup objectAPIName="{!v.accountId}" selectedRecord="{!v.selectedLookUpRecord}" />
+                                        </div>
+                                    </aura:if>
+                                </aura:set>
+                                </aura:if>
+                                </div>
+                                    <div>
+                                        <label for="Input_Competitor__c" class="slds-form-element__label slds-text-title">Competitor</label>
+                                        <button class="slds-button slds-button_icon slds-button slds-button_icon" aria-describedby="help1" onmouseover="{!c.showToolTip1}" onmouseout="{!c.HideToolTip1}" aria-disabled="true">
+                                          <lightning:icon iconName="utility:info" size="xx-small" alternativeText="Help"/>
+                                          <span class="slds-assistive-text">Help1</span>
+                                        </button>
+                                        <aura:if isTrue="{!v.showToolTipBoolean1}" >
+                                            <div class="slds-popover slds-popover_tooltip slds-align_absolute-center" role="showToolTipBoolean1" id="help1" style="position:absolute">
+                                                <div class="slds-popover__body">Select the competitor</div>
+                                            </div>
+                                        </aura:if>
+                                      </div>                                   
+                                    <lightning:inputField fieldName="Competitor__c" aura:id="Input_Competitor__c" variant="label-hidden"/>
+                         </div>
+                            <div class="slds-col">
+                                <div> 
+                                    <label for="Input_Competitor__c" class="slds-form-element__label slds-text-title">Cancellation Reason</label>
+                                    <button class="slds-button slds-button_icon slds-button slds-button_icon" aria-describedby="help1" onmouseover="{!c.showToolTip2}" onmouseout="{!c.HideToolTip2}" aria-disabled="true">
+                                      <lightning:icon iconName="utility:info" size="xx-small" alternativeText="Help"/>
+                                      <span class="slds-assistive-text">Help2</span>
+                                    </button>
+                                    <aura:if isTrue="{!v.showToolTipBoolean2}" >
+                                        <div class="slds-popover slds-popover_tooltip slds-align_absolute-center" role="showToolTipBoolean2" id="help1" style="position:absolute">
+                                            <div class="slds-popover__body">Provide the cancellation reason</div>
+                                        </div>
+                                    </aura:if>
+                                  </div>
+                                 <div class="slds-m-bottom_medium">
+                                <lightning:inputField class="customRequired none" aura:id="Input_Cancellation_Reason__c" fieldName="Cancellation_Reason__c" variant="label-hidden"/>
+                                 </div>
+                                <div>
+                                    <label for="Input_Competitor__c" class="slds-form-element__label slds-text-title">Details</label>
+                                    <button class="slds-button slds-button_icon slds-button slds-button_icon" aria-describedby="help1" onmouseover="{!c.showToolTip3}" onmouseout="{!c.HideToolTip3}" aria-disabled="true">
+                                      <lightning:icon iconName="utility:info" size="xx-small" alternativeText="Help"/>
+                                      <span class="slds-assistive-text">Help3</span>
+                                    </button>
+                                    <aura:if isTrue="{!v.showToolTipBoolean3}" >
+                                        <div class="slds-popover slds-popover_tooltip slds-align_absolute-center" role="showToolTipBoolean3" id="help1" style="position:absolute">
+                                            <div class="slds-popover__body">Describe the pain points and prospective solutions to meet the customers needs</div>
+                                        </div>
+                                    </aura:if>
+                                  </div>
+                                <lightning:inputField fieldName="Details__c" variant="label-hidden"/>
+                            </div>
+                     </div>
+                    </lightning:recordEditForm>
+                </div>
+                <footer class="slds-modal__footer">
+                    <!--<lightning:button label="Cancel" iconName="utility:undo" iconPosition="left" onclick="{! c.onCancel }"/> -->
+                    <lightning:button aura:id="submit" label="{!$Label.c.MAC_Update}" iconPosition="left"  variant="brand" onclick="{! c.onSave }"/>
+                </footer>
+            </div>
+        </div>
+        <!--/section-->
+    </div>
+</aura:component>

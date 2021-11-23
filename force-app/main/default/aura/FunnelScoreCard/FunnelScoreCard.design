@@ -1,0 +1,13 @@
+<design:component>
+    <design:attribute name="dashboardId" label="Dashboard ID" description="Dashboard ID for the Einstein Analytics Dashboard." />
+    <design:attribute name="filterString" label="Filter String" description="Filter string template to be used to apply to the dashboard. Use #[paramname]# in string." />    
+    <design:attribute name="height"  label="Height" default="250" />
+    <design:attribute name="showHeader"  label="Show Header" default="false" />
+    <design:attribute name="headerTitle"  label="Title" description="Title of the Score Card" />
+    <design:attribute name="CreateBSMessage"  label="Create Bluesheet Message" description="Create Bluesheet Record Message" />
+    <design:attribute name="UpdateBSCriteriaMessage"  label="Update BlueSheet Criteria Message" description="Update BlueSheet Criteria" />
+    <design:attribute name="showTitle"  label="Show Title" default="false" />
+    <design:attribute name="showSharing"  label="Show Sharing" default="false" />
+    <design:attribute name="openLocation"  label="Open Location" default="HIDE" description="Determines how 'open dashboard' button is presented: OPEN_IN_STUDIO, OPEN_IN_TAB, HIDE" /> 
+    <design:attribute name="openLinksInNewWindow" label="Open Links In New Window" default="false" />
+</design:component>

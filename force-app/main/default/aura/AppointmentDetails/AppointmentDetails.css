@@ -1,0 +1,16 @@
+.THIS .headercomp {
+  
+    text-align: center;
+    background-color:white;
+
+}
+.THIS .container{
+    background-color:white;
+    margin-right: 20px;
+    margin-left: 10px;  
+}
+.THIS .innercontainer{
+    background-color:white;
+    margin: 20px;
+   
+}

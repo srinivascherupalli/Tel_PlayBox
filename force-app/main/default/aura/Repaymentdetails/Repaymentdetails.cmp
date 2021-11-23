@@ -1,0 +1,80 @@
+<!-- 
+Name : Repaymentdetails
+Description : <Repayment Drill down UI Layout> Ability to billing consultant to view Repayment line item charge detail	
+Author: Mohammed Zeeshan
+Story: EDGE-163363
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="UsageSummaryHandler">
+    <aura:attribute type="String" name="orderNumber"/>
+    <aura:attribute type="String" name="custReference"/>
+    <aura:attribute type="String" name="deviceId"/>
+    <aura:attribute type="String" name="chargedSoFar"/>
+    <aura:attribute type="String" name="installment"/>
+    <aura:attribute type="String" name="devicePrice"/>
+    <aura:attribute type="String" name="unitPrice"/>
+    <aura:attribute type="String" name="purchaseDate"/>
+    <aura:attribute type="String" name="totalRemaining"/>
+    <aura:attribute type="String" name="errorMessage"/>
+    <aura:attribute name="LineItemRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="Charge_Id__c,Invoice_Line_Number__c,Invoice_Transaction_ID__c,Invoice__r.Name"
+                      targetFields="{!v.LineItemRecord}"
+                      targetError="{!v.recordLoadError}"
+                      recordUpdated="{!c.GetRepaymentData}"                      
+                      />
+    
+    
+    <div class="slds-section__title-action" style="padding:6px;" onclick="{!c.repaymentSectionDetails}">
+        <section class=" slds-text-align--left">
+            <div class="slds-float--left ">
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevronright" size="x-small"/>
+                <lightning:icon class="slds-show" aura:id="section" iconName="utility:chevrondown" size="x-small"/>
+            </div>
+            <div class="slds-m-left--large slds-text-heading_small "> Repayment  <aura:if isTrue="{!v.errorMessage!=null}">
+                <lightning:icon class="iconColorChange"  iconName="utility:warning" size="small"/>
+                <b style="color:red">{!v.errorMessage}</b>
+                </aura:if>
+            </div>
+        </section>
+    </div>
+    
+    
+    <div class="slds-grid slds-wrap " aura:id="section">
+        <div class="slds-size_1-of-2" style="padding-left:25px;">
+            <lightning:input  class="slds-m-around_x-small underLineLength"  readonly="true" label="Telstra Reference - Order Number" value="{!v.orderNumber}" />
+        </div>
+        <div class="slds-size_1-of-2" >
+            <lightning:input class="slds-m-around_x-small underLineLength"   readonly="true"  label="Customer Reference" value="{!v.custReference}"/>
+            
+        </div>
+        <div class="slds-size_1-of-2" style="padding-left:25px;">
+            <lightning:input class="slds-m-around_x-small underLineLength"   readonly="true"  label="Device ID" value="{!v.deviceId}"/>
+            
+        </div>
+        <div class="slds-size_1-of-2" >
+            <lightning:input  class="slds-m-around_x-small underLineLength" style="text-decoration:underline;"  readonly="true" label="Charge Start Date" value="{!v.purchaseDate}" />
+        </div>
+        <div class="slds-size_1-of-2" style="padding-left:25px;">
+            <lightning:input class="slds-m-around_x-small underLineLength"   readonly="true" label="Repayment Number" value="{!v.installment}"/>
+        </div>
+        <div class="slds-size_1-of-2" >
+            <lightning:input class="slds-m-around_x-small underLineLength"   readonly="true" label="Charged this Invoice" value="{!v.unitPrice}"/>
+        </div>
+        <div class="slds-size_1-of-2" style="padding-left:25px;" >
+            <lightning:input class="slds-m-around_x-small underLineLength"   readonly="true" label="Charged so far" value="{!v.chargedSoFar}"/>
+            
+        </div>
+        <div class="slds-size_1-of-2">
+            <lightning:input class="slds-m-around_x-small underLineLength"   readonly="true" label="Total Remaining" value="{!v.totalRemaining}"/>
+            
+        </div>
+        <div class="slds-size_1-of-2" style="padding-left:25px;">
+            <lightning:input class="slds-m-around_x-small underLineLength"   readonly="true" label="Device Price" value="{!v.devicePrice}"/>
+            
+        </div>
+        
+    </div>    
+</aura:component>

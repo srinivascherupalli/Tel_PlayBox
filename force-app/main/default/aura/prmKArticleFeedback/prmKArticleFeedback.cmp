@@ -1,0 +1,115 @@
+<!-- Description :  P2OB-7583 Creating a component for registering feedback for knowledge articles
+     Author      :  Ritika Jaiswal, Team Hawaii 
+     Created Date:  10 August 2020 
+     Jira        :  P2OB-7583
+-->
+<aura:component controller="prmKArticlefeedbackController"
+    implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:appHostable,force:hasRecordId,forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="articleDetail" type="Object" />
+    <aura:attribute name="articleUrlName" type="String" />
+    <aura:attribute name="launchFlow" type="Boolean" default="false" />
+    <aura:attribute name="showFeedback" type="Boolean" default="false" />
+    <aura:attribute name="showRaiseCase" type="Boolean" default="false" />
+    <!--P2OB-8343 Hawaii-->
+    <aura:attribute name="mdt_record" type="Object" default="true" />
+
+    <!--Added by Team Hawaii for P2OB-9099-->
+    <aura:attribute name="mailTo" type="String" default="IndirectPartners@team.telstra.com" />
+    <aura:attribute name="showCaseStudy" type="Boolean" default="True" />
+    <aura:attribute name="showHappyToHelp" type="Boolean" default="True" />
+    <aura:attribute name="showSuggestions" type="Boolean" default="True" />
+    <aura:attribute name="isCaseStudyVisible" type="Boolean" default="False" />
+
+    <c:prmPubSub aura:id="pubSub" onaction="{!c.handleEvent}"></c:prmPubSub>
+    <aura:handler name='init' action="{!c.doInit}" value="{!this}" />
+    <div>
+        <hr class="slds-hr">
+        </hr>
+        <!--Change the below Aura if placement-->
+        <div class="slds-grid slds-wrap">
+            <aura:if isTrue="{!and(v.showHappyToHelp,v.showRaiseCase)}">
+                <div class="slds-col slds-p-horizontal_x-small slds-size_1-of-2">
+                    <lightning:card class="container2 custom2">
+                        <div class="slds-m-around_small slds-grid">
+                            <img class="icon1" src="{!$Resource.submenu + '/images/RaiseACase.png'}" />
+                            <div class="slds-m-left_medium">
+                                <h3 style="font-size: 1em;">Happy to help</h3>
+                                <p style="font-size: 0.875rem;">Reach out to our professional team for assistance.</p>
+                                <div>
+                                    <a href="../case/Case/Default/" class="slds-button raiseCaseIcon"><b>Raise a
+                                            case</b></a>
+                                </div>
+                            </div>
+                        </div>
+                    </lightning:card>
+                </div>
+            </aura:if>
+
+            <aura:if isTrue="{!and(v.showSuggestions,v.showFeedback)}">
+                <div class="slds-col slds-p-horizontal_x-small slds-size_1-of-2">
+                    <lightning:card>
+                        <div class="slds-m-around_small slds-grid">
+                            <img class="icon1" src="{!$Resource.submenu + '/images/feedback_icon.png'}" />
+                            <div class="slds-m-left_medium">
+                                <h3 style="font-size: 1rem;">We welcome your suggestions</h3>
+                                <p style="font-size: 0.875rem;">We will take your feedback directly to the content
+                                    managers</p>
+                                <div class="slds-grid">
+                                    <lightning:icon iconName="utility:like" alternativeText="Like" title="Like"
+                                        size="small" class="slds-col slds-likeicon slds-grid_align-center"
+                                        onclick="{!c.addVote}" />
+                                    <lightning:icon iconName="utility:dislike" alternativeText="Dislike" title="Dislike"
+                                        size="small" class="slds-col slds-likeicon slds-grid_align-center"
+                                        onclick="{!c.subtractVote}" />
+                                </div>
+                            </div>
+                        </div>
+                    </lightning:card>
+                    <!-- <div class="slds-col slds-size_1-of-2"></div> -->
+                </div>
+            </aura:if>
+
+            <!-- Added by team Hawaii for P2OB-9099-->
+            <!-- Alignment not proper for division -->
+            <!--aura:if isTrue="{!and(v.showCaseStudy, v.isCaseStudyVisible)}"-->
+            <aura:if isTrue="{!and(v.showCaseStudy, v.isCaseStudyVisible)}">
+                <div class="slds-col slds-p-horizontal_x-small slds-size_1-of-2">
+                    <lightning:card class="container2 custom2">
+                        <div class="slds-m-around_small slds-grid">
+                            <!--Change the image icon(Not available in Static resource)-->
+                            <img class="icon1"
+                                src="{!$Resource.retaillive + '/retaillive/images/TSpeech-bubble.png'}" />
+                            <div class="slds-m-left_medium">
+                                <h3 style="font-size: 1em;">Create your case study</h3>
+                                <p style="font-size: 0.875rem;">Develop your case study with us to feature on the
+                                    portal.</p>
+                                <div>
+
+                                    <a href="{!v.mailTo}" class="slds-button raiseCaseIcon">Contact team</a>
+                                </div>
+                            </div>
+                        </div>
+                    </lightning:card>
+                </div>
+            </aura:if>
+
+        </div>
+
+        <aura:if isTrue="{!v.launchFlow}">
+            <div>
+                <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header slds-modal__header_empty">
+                            <lightning:buttonIcon iconName="utility:close" class="slds-modal__close"
+                                onclick="{!c.closeFlowModal}" />
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <lightning:flow aura:id="flowData" onstatuschange="{!c.closeModalOnFinish}" />
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>

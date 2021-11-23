@@ -1,0 +1,100 @@
+<aura:component controller="PartnerBulkLoadUtil" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:attribute name="accept" type="List" default="['.csv']"/>
+    <aura:attribute name="filecontent" type="string[]"/>
+    <aura:attribute name="multiple" type="Boolean" default="false"/>
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <aura:attribute name="Submitdisabled" type="Boolean" default="true"/>
+    <aura:attribute name="Uploaddisabled" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="hasBulktagPermission" type="Boolean" default="false"/>
+    <aura:attribute name="PageResponse" type="PartnerBulkLoadUtil.Response"/>
+    <aura:attribute name="spinner" type="boolean"/>
+
+
+    <aura:attribute name="jsonFileText"  type="String"  /> 
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+    
+    
+      <aura:if isTrue="{!v.spinner}">
+        <!-- <lightning:spinner variant="brand"  size="large" /> -->
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+        <lightning:card  >
+             <aura:set attribute="title">
+                <lightning:icon iconName="action:add_file"  size="small"/>
+               Upload Bulk Partner Tagging
+       		 </aura:set>
+         <div aura:id="fileUploadMainSec" class="slds-grid slds-grid_vertical-align-center slds-grid_align-center" style="height:350px;" >
+          <aura:if isTrue="{!v.hasBulktagPermission}">
+                <div aura:id="fileUploadsubSec" class='slds-align_absolute-center'> 
+                    <lightning:input 
+                                                                          aura:id="fileupload" 
+                                                                          accept= '.csv' 
+                                                                          onchange="{!c.handleFilesChange}" 
+                                                                          type="file" 
+                                                                          name="file" 
+                                                                          multiple="false"
+                                                                          disabled="{!v.Uploaddisabled}"/> 
+                    
+                    &nbsp;&nbsp;&nbsp;
+                    <aura:if isTrue="{!not(empty(v.filecontent))}">
+                        <div class="slds-align-bottom">
+                                <lightning:button variant="brand"
+                                                  aura:id="submit" 
+                                                  label="Submit"
+                                                  onclick="{!c.executePartnerTagging}"
+                                                  disabled="{!v.Submitdisabled}"/>
+                        </div>
+                    </aura:if>
+                     </div>
+                    
+           </aura:if>
+          <br/>
+
+           	  <aura:if isTrue="{!not(empty(v.filecontent))}">
+                  <div class="slds-grid slds-grid_align-center slds-scrollable_y" style="max-height:230px;">
+                      <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+ 					<thead class="slds-cell-fixed" style="position: sticky;z-index: 100;top: 0;">
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="OPPORTUNITY ID">OPPORTUNITY ID</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="PRODUCT CODE">PRODUCT CODE</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="PARTNER CODE">PARTNER CODE</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="SUBMITTED BY">SUBMITTED BY</div>
+                                </th>
+                            </tr>
+                        </thead>
+                           <tbody >
+                            <aura:iteration items="{!v.filecontent}" var="eachLine" indexVar="idx">
+                                <tr class="slds-hint-parent">
+                                    <aura:iteration items="{!eachLine}" var="index" indexVar="idx2">
+                                        <th data-label="Opportunity Name" scope="row">
+                                            <div class="slds-truncate" title="Cloudhub">
+                                                {!index}
+                                            </div>
+                                        </th>
+                                    </aura:iteration>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+						</table>
+ 
+                  </div>
+                
+        		</aura:if>
+             
+        </div>
+</lightning:card>
+</aura:component>

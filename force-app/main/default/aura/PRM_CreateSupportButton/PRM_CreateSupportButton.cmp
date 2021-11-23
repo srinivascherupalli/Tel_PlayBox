@@ -1,0 +1,96 @@
+<!--
+Created By : Team Hawaii 
+Jira : P2OB-3890
+Modified Date : 17/2/2021
+Description : Added additional design parameters to store channel care flow name
+Modified Date : 10-06-2021 
+Team Hawaii: P2OB-13078 As a Partner, Once I create an opportunity I should be able to specify if the Opportunity is for a tender.
+-->
+<aura:component controller="PRM_CreateSupportButtonController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >   
+    <aura:attribute name="isOpen" type="Boolean" default="false" access="private"/>
+    <aura:attribute name="isInit" type="Boolean" default="false"/>
+    <aura:attribute name="DisplayedOn" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/><!--EDGE-164004-->
+    <!--<aura:Handler name = "cmpEvent" event = "c:closeEvent" action="{!c.closeFlow}"/>-->
+    <aura:attribute name="Home" type="String" Default= "Home"/>
+    <aura:attribute name="CaseList" type="String" Default="CaseList"/>
+    <aura:attribute name="OpportunityList" type ="String" Default="OpportunityList"/>
+     <aura:attribute name="opptyid" type="String"/>
+    <aura:attribute name="ButtonLabel" type="String" Default="Create Case"/>
+    <aura:handler event="c:closeParentPopupFromThankYouScreen" action="{!c.closeFlow}"/>
+    <lightning:overlayLibrary aura:id="overlayElement"/>
+    <aura:attribute name="POR" type="String" Default="Partner Of Record"/><!-- Adedd part of EDGE-150892-->
+    <aura:attribute name="conrole" type="String" Default="UpdateContactRole"/>
+    <aura:attribute name="csmURL" type="string" default=""/><!--EDGE-164004-->
+    <!--P2OB-12617 : Added additional attribute for Channel Care flow name-->
+    <aura:attribute name="channelCareFlowName" type="String" Default= "salesup_Create_Sales_Service_Certitude_support_request_Dup"/>
+    <aura:dependency resource="markup://c:csGrandParent" />
+    <aura:html tag="style">
+        .createCaseSupportBtn{
+        width : 100%;
+        padding :1rem 2rem;
+        } 
+        .createcontarolebtn{
+        min-width: fit-content!important;
+        align:right;
+        border: 1px solid rgb(217, 219, 221) !important;
+        border-radius: 0.25rem!important;
+        border-width: 1px!important;
+    	border-style: solid!important;
+    	text-decoration: none;
+        font-family:akkuratLight!important;
+        padding: 5px;
+        font-size:14px !important;
+        text-align: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        } 
+    </aura:html>
+    <aura:if isTrue="{!v.DisplayedOn == v.CaseList}">
+        <div align="Center" >
+            <lightning:button variant="brand" label="{!v.ButtonLabel}" title="Create Case" onclick="{!c.checkUser}" class="slds-button slds-button--neutral"/>
+        </div>
+    </aura:if>
+    <!-- Added for P2OB-13078 -->
+    <aura:if isTrue ="{!v.DisplayedOn == v.OpportunityList}">
+           <div align="Center" >
+             <lightning:button variant="brand" label="{!v.ButtonLabel}" title="New Opportunity" onclick="{!c.createnewopportunity}" class="btn-xl slds-button slds-button--brand actionButton uiButton"/>
+            </div>
+    </aura:if> 
+     <aura:if isTrue="{!v.DisplayedOn == v.Home}">
+        <div>
+            <div class="prmQuickCreateAction">
+                <lightning:buttonMenu variant="container" alternativeText="Action" onselect="{! c.handleMenuSelect}" label="Quick Create"> 
+                    <lightning:menuItem label="New Case" value="New Case"/>
+                    <lightning:menuItem label="New Opportunity" value="New Opportunity"/>
+                    <lightning:menuItem class="incidentsIconconColor" label="Incident or Service Request" value="Customer incident" iconName="utility:new_window" /><!--EDGE-164004-->
+                </lightning:buttonMenu>
+            </div>
+        </div>
+    </aura:if>
+       <aura:if isTrue="{!v.DisplayedOn == v.POR}">
+        <div align="Center" > <!-- EDGE-176719 changed as part of "Partner Of Record Agreement" -->
+            <lightning:button variant="brand" label="{!v.ButtonLabel}" title="Partner Of Record Agreement" onclick="{!c.handlePOR}" class="createCaseSupportBtn"/>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.DisplayedOn == v.conrole}">
+        <div align="right" >
+         <lightning:button variant="brand" label="{!v.ButtonLabel}" title="UpdateContactRole" onclick="{!c.UpdateContactRole}" class="createcontarolebtn"/>
+            </div>
+    </aura:if>
+     <aura:if isTrue="{!v.isOpen}">
+            <div style="height: 640px;">
+                <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header slds-modal__header_empty">
+                            <lightning:buttonIcon iconName="utility:close" class="slds-modal__close" onclick="{!c.closeFlowModal}"/>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <lightning:flow aura:id="flow" onstatuschange="{!c.closeModalOnFinish}" />
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div> 
+        </aura:if>
+    </aura:component>

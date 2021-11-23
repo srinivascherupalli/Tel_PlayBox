@@ -1,0 +1,10 @@
+.THIS.toggle {
+    display: none;
+}
+.THIS.slds-cell-fixed {
+    background-color:#006DCC !important; 
+}
+.THIS.slds-spinner_container {
+  z-index: 10000;
+  position: fixed;
+}

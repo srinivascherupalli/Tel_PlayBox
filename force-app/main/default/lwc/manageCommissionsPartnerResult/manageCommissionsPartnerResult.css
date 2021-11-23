@@ -1,0 +1,23 @@
+.iconColor{
+    background-color : rgb(238, 21, 236);
+}
+.relatedListLWCStyle lightning-primitive-header-actions {
+    display: none;
+}
+
+ div.scrollDiv {
+    width: 100%;
+    overflow-y: auto;
+    height:150%
+}
+
+.emptyContentInner {
+    height: 5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+ 
+}
+.emptyContentInner p{
+    margin: 0
+}

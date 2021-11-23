@@ -1,0 +1,213 @@
+<!--
+   *  Description of the purpose of the method.
+   *  @name PortalEngineerListView
+   *  @description               : This LWC is used  to display the Statement of Work Items inline edit view and save and submit for Approval
+   *  @param SOW ID              : Statement of Work ID
+   *  @return 				 	      : - 
+   *  @Jira Story Ref            : EDGE-136071
+   *  @createdBy  				   : Purushottama Sahu, Alexandria -  20/03/2020
+-->
+<template> 
+   <article class="slds-card slds-card_boundary headerBottomBorder forceRelatedListCardDesktop" style="border: white;" data-aura-class="forceRelatedListCardDesktop">
+      <div class="slds-grid slds-page-header forceRelatedListCardHeader" data-aura-class="forceRelatedListCardHeader" style="background-color: white;padding-left: initial;">
+         <header class="slds-media slds-media--center slds-has-flexi-truncate">
+            <!--<div class="slds-media__figure stencil slds-avatar slds-avatar_small" aria-hidden="true" >
+               <div class="extraSmall forceEntityIcon" style="background-color: #3c97dd" data-aura-class="forceEntityIcon">
+                  <span class="uiImage" data-aura-class="uiImage">
+                     <lightning-icon icon-name="custom:custom19" size="small"></lightning-icon>
+                  </span>
+               </div>
+            </div>-->
+            <div class="slds-media__body">
+               <h2>
+                  <span class="slds-card__header-link baseCard__header-title-container slds-card__header-title slds-truncate slds-m-right--xx-small services-for-inclusi" title="">
+                  Services for inclusion
+                  </span>
+               </h2>
+            </div>
+         </header>
+        <template if:true={isButtonVisible}>
+            <!-- <lightning:spinner variant="brand"  size="large" /> -->
+            <div if:false={isLoaded} class="slds-is-fixed slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+         <!--<div if:false={isLoaded} class="backgroundInverse">
+            <lightning-spinner alternative-text="Loading" variant="inverse"></lightning-spinner>
+        </div>       -->     
+         <div class="slds-no-flex">
+            <div class="actionsContainer">
+               <ul class="branding-actions slds-button-group slds-m-left--xx-small small oneActionsRibbon forceActionsContainer" data-aura-rendered-by="3027:0" data-aura-class="oneActionsRibbon forceActionsContainer">
+                  <li class="slds-truncate" >
+                     <a onclick={handleSave}><p class="save-button-label">Save</p></a>
+                     <!--<lightning-button class="save-button-label" label="Save" title="" onclick={handleSave}></lightning-button>-->
+                  </li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <li class="slds-truncate ss-button-li">
+                   <lightning-button class="ss-button-label" label="Save & Submit" title="" onclick={handleSaveAndSubmit}></lightning-button>
+                  </li>
+               </ul>
+            </div>
+         </div>
+        </template>
+      </div>
+      <!--<div if:false={isLoaded} class="backgroundInverse">
+        <lightning-spinner alternative-text="Processing" variant="brand"></lightning-spinner>
+      </div>-->
+         
+      <!--Pick Deliverables Component-->
+      <template if:true={showviewUsers}>
+       <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+         <div class="slds-modal__container">
+             <header class="slds-modal__header">
+                 <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closemodelPopup}>
+                     <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+                     <span class="slds-assistive-text">Close</span>
+                 </button>
+                 <h2 class="slds-text-heading_medium slds-text-align_left sow-name"> Select deliverables </h2>
+             </header>
+             <div class="slds-modal__content slds-p-around_medium">
+              <div class="slds-scrollable_y" style="max-height: fit-content;">
+                 <template
+                     for:each={data}
+                     for:item="deliverable"
+                 >
+                     <div
+                         class="slds-p-top_small"
+                         key={deliverable.Id}
+                         onclick={getSelectedName}
+                         id={deliverable.Comment__c}
+                     >
+                     <div class="slds-border_bottom sow-description">
+                                 {deliverable.Comment__c}
+                             </div>
+                     </div>
+                 </template>
+             </div>
+                 <footer >
+                   <lightning-button variant="base" label="Cancel" title="Cancel" onclick={closemodelPopup} class='slds-float_left'>Cancel</lightning-button>
+                 </footer>
+             </div>
+             </div>
+             
+         </section>
+         <div class="slds-backdrop slds-backdrop_open"></div>
+     </template>
+     
+     <!--Pick Deliverables Component-->
+      <div class="previewMode MEDIUM forceRelatedListPreview" data-aura-class="forceRelatedListPreview">
+         <div class="useHeaderBarFix forceBaseListView forceRelatedListPreviewGrid" data-aura-class="forceBaseListView forceRelatedListPreviewGrid">
+            <div class="listViewContent" >
+               <div class="scrollable uiScroller scroller-wrapper scroll-bidirectional native" style="overflow: hidden;" tabindex="-1"  data-aura-class="uiScroller">
+<!--<                      <table class=" forceRecordLayout slds-table slds-no-row-hover slds-table_cell-buffer slds-table_fixed-layout uiVirtualDataGrid--default uiVirtualDataGrid" data-aura-class="uiVirtualDataGrid--default uiVirtualDataGrid">
+                        <thead>
+                           <tr>
+                              <th class=" " scope="col" title="Items Name" aria-label="Items Name">
+                                Name
+                              </th>
+                              <th class=" " scope="col" title="Description" aria-label="Description">
+                               Description
+                            </th>
+                              <th class="slds-text-align_center" scope="col" title="Included" aria-label="Included" style="width:10% !important">
+                                 Included
+                              </th>
+                              <th class=" " scope="col" title="Pick Deliverables" aria-label="Pick Deliverables">
+                                 Pick Deliverable
+                              </th>
+                              <th class=" " scope="col" title="Deliverable" aria-label="Deliverable">
+                                Commitment
+                              </th>
+                           </tr>
+                        </thead>
+                        <tfoot></tfoot>
+                     </table> -->
+                     <br>
+                     <template for:each={contact.data} for:item='item'>                        
+                       <!--<p key={item.id}>{item.Description__c}</p>-->
+                       <lightning-record-edit-form key={item.id} object-api-name="SOW_Items__c" 
+                          record-id={item.Id} 
+                          onload = {handleLoad}
+                          onerror={handleError}
+                          >
+                          <lightning-tile>       
+                           <div class="slds-grid"> 
+                              <div class="slds-col slds-size_1-of-100 myDlClass"></div>
+                              <div class="slds-col slds-size_99-of-100" style="max-width: fit-content">
+                                <!-- <div class="slds-col myDlClass"></div>
+                                 <div class="slds-col" style="max-width: fit-content">  -->                               
+                                         <dl class="slds-dl_horizontal">     
+                                          <!--<div class="myDlClass"></div>   
+                                          <dt class="slds-dl_horizontal__label myDlClass"> </dt>    
+                                          <dd class="slds-dl_horizontal__detail slds-tile__meta"></dd>   -->                          
+                                             <dt class="slds-dl_horizontal__label mylabelclass"> 
+                                                <div class="slds-p-left_large sow-includedcheck-label">
+                                               <template if:true={isButtonVisible}>
+                                                     <lightning-input-field variant="label-hidden"  field-name="Included__c" >                                                       
+                                                     </lightning-input-field>                                                     
+                                               </template>   
+                                               <template if:false={isButtonVisible}>                                                
+                                                <lightning-input-field disabled variant="label-hidden" field-name="Included__c">                                                       
+                                                </lightning-input-field>
+                                               </template>                                                
+                                               <p class="included-label">Included</p>                                             
+                                             </div>                                          
+                                             <!--<div class="slds-p-left_large sow-includedcheck-label">
+                                               <template if:false={isButtonVisible}>                                                
+                                                <lightning-input-field disabled variant="label-hidden" field-name="Included__c">                                                       
+                                                </lightning-input-field>
+                                                     <lightning-output-field variant="standard" field-name="Included__c" > 
+                                                     </lightning-output-field>
+                                               </template> 
+                                               <p class="included-label">Included</p> 
+                                             </div>   -->                                              
+                                             </dt>
+                                             <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                               <lightning-output-field variant="label-hidden" field-name="Name" field-class="slds-text-title_bold sow-name"> 
+                                               </lightning-output-field>
+                                             </dd>
+                                             <dt class="slds-dl_horizontal__label mylabelclass"></dt>
+                                             <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                               <lightning-output-field field-class = "sow-description" variant="label-hidden" field-name="Description__c"> 
+                                               </lightning-output-field><br/>
+                                             </dd>                                             							  
+                                             <dt class="slds-dl_horizontal__label mylabelTwoclass"></dt>
+                                             <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                                <template if:true={isButtonVisible}>
+                                                            <div class="slds-float_left pick-deliverable-label"><lightning-button label="Pick Deliverables" title="" accesskey={item.Id} onclick={onfocus} class="slds-m-left_x-small" disabled={isButtonDisabled}></lightning-button>
+                                                            </div> <br/><br/>                                                            
+                                                </template>
+                                              </dd>											   
+                                             <dt class="slds-dl_horizontal__label mylabelclass"></dt>
+                                             <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                               <p class="commitment-label"><b>Commitment</b></p>
+                                               <template if:true={isButtonVisible}>
+                                                  <lightning-input-field class="sow-description" variant="label-hidden" field-name="Comment__c" > 
+                                                  </lightning-input-field>
+                                                  <footer>
+                                                   <p class = "assistive-text">Any modifications to this field will require approval</p>
+                                                 </footer>                                                  
+                                               </template>
+                                               <template if:false={isButtonVisible}>
+                                                  <lightning-output-field field-class="sow-description" variant="label-hidden" field-name="Comment__c" > 
+                                                  </lightning-output-field>
+                                               </template>
+                                             </dd>
+                                          					
+                                         </dl>
+                                       </div>
+                                    </div>
+                                </lightning-tile>
+                                <br><br>
+                       </lightning-record-edit-form>
+                    </template>
+                     <template if:true={contact.error}>
+                        <!-- handle Apex error -->
+                     </template>
+                   </div>
+                  </div>
+               </div>
+            </div>
+   </article>
+</template>

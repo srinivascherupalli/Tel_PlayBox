@@ -1,0 +1,17 @@
+<aura:component implements="lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    
+    
+    <div class="slds-clearfix slds-card inlineEditEnabled groupDependentFieldEnabled  allow-horizontal-form wide-input-break forceDetailPanelDesktop">
+        <div class="slds-grid slds-gutters" style="">
+            <div class="slds-notify_container" style="position: relative;z-index:auto;">
+                <div class="slds-notify slds-notify--alert slds-theme--warning slds-theme--alert-texture" role="alert">
+                    <div class="notify__content">
+                        <h2 class="slds-text-heading--small">{!$Label.c.MSISDN_RESERVATION}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</aura:component>

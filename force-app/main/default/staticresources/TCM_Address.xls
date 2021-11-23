@@ -1,0 +1,2 @@
+Address_ID__c,Address_Line_1__c,cscrm__Account__c,cscrm__External_ID__c,cscrm__Country__c,Address_Status__c,TCM_status_Code__c,cscrm__Address_Type__c
+T48455930,"55 ADELAIDE ST,",0012O000002,,,CONFIRMED,,Rural

@@ -1,0 +1,31 @@
+.THIS .headerColor {
+    color:Grey;
+}
+
+.THIS .margin10{
+    margin:10px
+}
+
+.THIS .greyOut{    
+   pointer-events: none; 
+   background: #CCC; 
+   color: #333; 
+   border: 1px solid #666 
+}
+
+
+
+ 
+.THIS .blueTelstra {
+    background-color: grey ;
+   color: blue;
+    
+
+
+}
+
+
+
+.THIS .slds-button_icon-bare{
+display: none;
+}

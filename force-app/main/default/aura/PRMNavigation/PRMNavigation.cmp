@@ -1,0 +1,57 @@
+<!--P2OB-10458  Team Hawaii     Vivian Charlie  02 Nov 2020-->
+<aura:component controller="PRMPartnerPlanNavigation" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name="url" type="String"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    <lightning:navigation aura:id="navService"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <aura:attribute name="sObjectName" type="String" default="Partner_Plan__c"/>
+	<aura:attribute name="fieldSetName" type="String" default="PartnerPlanFieldSet"/>
+	<aura:attribute name="fieldSetValues" type="List"/>
+	<aura:attribute name="tableRecords" type="List"/>
+	<aura:attribute name="parentFieldName" type="String" default="Partner_Account__c"/>
+    <aura:attribute name="parentRecordId" type="String"/>
+    <aura:attribute name="parentRecordName" type="String"/>
+    <aura:attribute name="isPartner" type="Boolean" default="false"/>
+    <aura:attribute name="autoRedirect" type="Boolean" default="true"/>
+    <aura:attribute name="noRecords" type="Boolean"/>
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    
+    <div class="exampleHolder">
+        <aura:if isTrue="{!v.loaded}">
+            <aura:set attribute="else">
+                <lightning:spinner variant="brand" size="large"/>
+            </aura:set>
+        </aura:if>
+    </div>
+    <aura:if isTrue="{!v.noRecords == false}">
+        <div class="slds" style="overflow-x:auto;">
+            <table class="slds-table slds-table--bordered slds-border_left slds-border_right"> <!-- slds-table-striped -->
+                <thead>
+                    <aura:iteration items="{!v.fieldSetValues}" var="field">
+                        <th>
+                            <aura:if isTrue ="{!field.label != 'Record ID'}">
+                                {!field.label}
+                            </aura:if>
+                        </th>
+                    </aura:iteration>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.tableRecords}" var="row">
+                        <tr>
+                            <aura:iteration items="{!v.fieldSetValues}" var="field">
+                                <td>
+                                    <c:PRMLightningCell record="{!row}" field="{!field}"/>
+                                </td>
+                            </aura:iteration>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.noRecords == true}">
+        <div align="center">No matching records found</div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,58 @@
+<!-- 
+Name : paginationEventComponent
+Description : Lightning UI for implimating pagination  
+Author: Aishwarya Yeware
+Story: EDGE-80858
+-->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="PageSize" type="Integer"/>
+    <aura:attribute name="totalRecs" type="Integer"/>
+    <aura:attribute name="TotalPages" type="Integer" default="1"/>
+    <aura:attribute name="CurrentPage" type="Integer"/>
+    <aura:attribute name="columns" type="Integer"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:registerEvent name="paginationEvent" type="c:paginationEvent"/>
+    <aura:handler event="c:paginationParentEvent" action="{!c.getParentData}"/>
+    <!--EDGE -144140 Kalashree Borgaonkar Added below to call in Portincomponent-->
+    <aura:method name="nextMethod" action="{!c.handleNext}" access="PUBLIC"/> 
+    <aura:method name="previousMethod" action="{!c.handlePrevious}" access="PUBLIC"/>
+    <!--EDGE-148577: to captute the componentName from which it is fired to handle duplicate firing if handler events in same lightning component-->
+    <aura:attribute type="string" name="componentName" default=""/>
+    <!--Start of EDGE-148587: Attributes to modify CSS for Partner profile users  -->
+    <aura:attribute name="userProfile" type="Boolean" default="false" />
+    <!--EDGE-148587:  RecordStart and RecordEnd attributes for displaying record count in page for Partner users-->
+    <aura:attribute name="RecordStart" type="integer" default="0"/>
+    <aura:attribute name="RecordEnd" type="integer" default="0"/>
+    <!--End of EDGE-148587-->
+    <div>
+         
+		<aura:if isTrue="{!v.userProfile ==false}">
+		    &nbsp;&nbsp;&nbsp;&nbsp;
+        <ui:outputText value="{!v.CurrentPage}"/> OF TOTAL <ui:outputText value="{!v.TotalPages}"/>	PAGES
+        
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        </aura:if>
+        <div class="{!if(v.userProfile == true,'','slds-float_right slds-m-right_x-small')}">
+        <!--EDGE-148587: applied CSS class to hide First button for Partner Users-->
+        <lightning:button variant="brand" label="First" onclick="{! c.handleFirst }" disabled="{!v.CurrentPage==1}" class="{!if(v.userProfile == true,'slds-hidden','')}"/>
+         <!--EDGE-148587: Logic to display button instead of buttons for Partner users RecordStart and RecordEnd are first record and last record in a page-->
+        <aura:if isTrue="{!v.userProfile}">
+        <div class="slds-float_right slds-p-right_large">
+            {!v.data.length} results &emsp;&emsp; {!v.RecordStart} - {!v.RecordEnd} of {!v.data.length}  &emsp;&emsp;
+        <lightning:buttonIcon iconName="utility:chevronleft" variant="bare" onclick="{! c.handlePrevious }" disabled="{!v.CurrentPage==1}" />
+        {!v.CurrentPage}
+        <lightning:buttonIcon iconName="utility:chevronright" variant="bare" onclick="{! c.handleNext }" disabled="{!if(or(v.CurrentPage == v.TotalPages,v.TotalPages==0 ),TRUE,FALSE)}" />
+        </div>
+        <aura:set attribute="else">
+        <lightning:button variant="brand" label="Previous" onclick="{! c.handlePrevious }" disabled="{!v.CurrentPage==1}"/>
+        <lightning:button variant="brand" label="Next" onclick="{! c.handleNext }" disabled="{!if(or(v.CurrentPage == v.TotalPages,v.TotalPages==0 ),TRUE,FALSE)}"/>
+
+        </aura:set>
+        </aura:if>      
+        <!--EDGE-148587: applied CSS class to hide Last button for Partner Users-->
+       <lightning:button variant="brand" label="Last" onclick="{! c.handleLast }" disabled="{!if(or(v.CurrentPage == v.TotalPages,v.TotalPages==0 ),TRUE,FALSE)}" class="{!if(v.userProfile == true,'slds-hidden','')}"/>
+       </div>
+        </div>
+</aura:component>

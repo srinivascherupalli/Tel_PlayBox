@@ -1,0 +1,133 @@
+<!--
+* @Author   :   Maqsood Alam
+* @Date     :   18 Feb 2019
+* @Desc     :   Component for Retract Lightning Component
+* -->
+<aura:component controller="RetractContractComponent" implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+    <aura:attribute name="recordId" type="Id" />
+    <force:recordData 
+                      recordId="{!v.recordId}"
+                      targetFields="{!v.ContractRecord}"
+                      fields="Name,Status__c" 
+                      />
+    <aura:attribute name="ContractRecord" type="sObject" access="global" />
+    <aura:attribute name="options" type="List" default="[]"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <aura:attribute name="isDisable" type="Boolean" access="public" default="false"
+                    description="Other Text Visibility" />
+    <aura:attribute name="toastClass" type="String" default="slds-theme_error" />
+    <aura:attribute name="errorMsg" type="String" access="global"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="isPRMUser" type="Boolean" access="public" default="false"/>
+    <aura:attribute name="OrgDetails" type="String" default="" />
+    
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+        .slds-modal__container{
+        max-width: 100rem !important;
+        width:85% !important;
+        }
+        .toggle {
+        display: none;
+        }
+        .slds-spinner_container {
+        z-index: 100000;
+        position: fixed;
+        
+        }
+    </aura:html>  
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner aura:id="spinner" variant="brand" size="large"/>           
+    </aura:if>
+    
+    <div class="slds-col modal-header slds-modal__header">
+        <h2 class="title slds-text-heading--medium">Retract Contract</h2>
+    </div>
+    <div class="slds-col modal-body scrollable slds-p-around--medium" style="height: 350px; max-height: 400px; overflow-y: auto !important">
+        <aura:if isTrue="{!v.ContractRecord.Status__c == 'Initiated' || v.ContractRecord.Status__c == 'Pending Approval' || v.ContractRecord.Status__c == 'Customer Review'}">
+            
+            <div>
+                <div class="toggle" style="" aura:id="errorMsgId">
+                    <div class="slds-notify slds-notify_toast slds-theme_error" style="width:98.5%;" role="status">
+                        <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top">
+                            <lightning:icon iconName="utility:error" size="small" variant="inverse" />
+                        </span>
+                        <div class="slds-notify__content">
+                            <h2 class="slds-text-heading_small">
+                                {!v.errorMsg}
+                            </h2>
+                        </div>
+                        <div class="slds-notify__close">
+                            <lightning:buttonIcon iconName="utility:close" onclick="{! c.toggle }" size="small"
+                                                  variant="bare-inverse" />
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="slds-grid slds-wrap" style="padding: 1em">
+                    <div class="slds-col slds-size_1-of-2">
+                        <ui:message title="" severity="warning" closable="false">
+                            <span>Are you sure you want to retract this Agreement ? 
+                                It will Void status for reference only but cant be resent
+                            </span>
+                        </ui:message>
+                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-2" style="padding-left: 1em">
+                        <div class="slds-col">
+                            Contract Number
+                            <p class="slds-p-top_xx-small">
+                                <lightning:icon iconName="custom:custom18" size="small" />
+                                <div class="slds-p-left_x-small" style="display:inline">{!v.ContractRecord.Name}</div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2" style="padding: 3em .5em .5em .5em">
+                        <lightning:combobox aura:Id="RetractionReason"  name="RetractionReason" label="Reasons for retraction" placeholder="Select reason" options="{! v.options }" onchange="{! c.handleChange }"/><p>&nbsp;</p>
+                        <!-- <lightning:textarea name="Other" label="if Other is selected" placeholder="type here..."/>  -->
+                        <aura:if isTrue="{!v.isDisable}">
+                            <lightning:textarea aura:Id="otherText"  name="Other" label="if Other is selected" placeholder="type here..." required="{!v.isDisable}"/>
+                            <aura:set attribute="else">
+                                <p></p>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </div>
+            
+            <aura:set attribute="else">  
+                <ui:message title="Error" severity="error" closable="false">
+                    Contract can't be retracted for the given status.
+                </ui:message>
+            </aura:set>
+        </aura:if>        
+    </div>
+    
+    <div class="slds-col modal-footer slds-modal__footer">        
+        <lightning:button variant="neutral" label="Cancel" onclick="{! c.cancelClick }" /> 
+        <aura:if isTrue="{!v.ContractRecord.Status__c == 'Initiated' || v.ContractRecord.Status__c == 'Pending Approval' || v.ContractRecord.Status__c == 'Customer Review'}">
+            <lightning:button variant="brand" label="Retract" onclick="{! c.handleRetractClick }" />
+        </aura:if>
+    </div>
+</aura:component>

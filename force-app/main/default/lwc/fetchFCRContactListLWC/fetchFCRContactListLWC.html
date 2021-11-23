@@ -1,0 +1,54 @@
+<template>
+    <template if:true={showspinner}>
+        <div id="spinnerDiv" class="demo-only demo--inverse slds-is-relative">
+          <div class="slds-spinner_container">
+            <div role="status" class="slds-spinner slds-spinner_medium">
+              <span class="slds-assistive-text">Loading</span>
+              <div class="slds-spinner__dot-a"></div>
+              <div class="slds-spinner__dot-b"></div>
+            </div>
+          </div>
+        </div>
+      </template>
+  <template if:true={tableDisplay}>
+  <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+    <div class="slds-modal__container">
+        <header class="slds-modal__header">
+            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closemodelPopup}>
+                <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+            </button>
+            <h2 class="slds-text-heading_medium slds-text-align_left"> Add Users </h2>
+            <br/>
+            <div class="slds-text-body_regular slds-text-align_left">
+                Add new users and assign them to this Fulfilment Task.<br/>
+                This also provides temporary access to the customer's Adaptive Collaboration Portal.
+    
+            </div>
+        </header>
+       
+        <div class="slds-modal__content slds-p-around_medium">
+           
+            <div class="recordListStandard">    
+                <div style="height:175px;max-height:175px;">             
+                              <lightning-datatable
+                                data={data}
+                                columns={columns}
+                                key-field="id"
+                                selected-rows={selectedRows}
+                                >
+                                ></lightning-datatable>   <!--onrowselection={getSelectedName}-->               
+            </div>
+            </div>
+            <footer >
+              <lightning-button variant="brand" label="Save" title="Save" onclick={handleSave} class='slds-float_right'>Save</lightning-button>             
+              <lightning-button variant="base" label="Cancel" title="Cancel" onclick={closemodelPopup} class='slds-float_left'>Cancel</lightning-button>             
+
+            </footer>
+        </div>
+        </div>
+        
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+</template>

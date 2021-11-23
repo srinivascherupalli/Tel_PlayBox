@@ -1,0 +1,11 @@
+.THIS {
+}
+
+.THIS .sios{
+    border: solid #f5f5f0 1px;
+    border-top-style: none;
+    text-align: center;
+    color:#16325C;
+    font-size:10px;
+    width: 80px;
+}

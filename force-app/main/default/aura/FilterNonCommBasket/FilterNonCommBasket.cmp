@@ -1,0 +1,99 @@
+<aura:component controller="FilterBasketController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable"
+    access="global">
+	<aura:attribute name="recordId" type="Id" access="public" />
+     <aura:attribute name="accountId" type="string"/>
+    <aura:attribute name="basketList" type="cscfga__Product_Basket__c[]" />
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    <aura:attribute name="accountRecord" type="Object"/>
+    <aura:attribute name="viewAllBool" type="Boolean" default="false"/>
+
+    <aura:attribute name="headerviewBool" type="Boolean" default="false"/>
+
+    <aura:attribute name="isButtonClicked" type="Boolean" default="true"/>
+    <aura:attribute name="count" type="Integer"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="errors" type="Object" default="[]" />
+    <lightning:navigation aura:id="navService"/>
+    <force:recordData aura:id="recordLoader"
+    recordId="{!v.recordId}"
+    fields="Name"
+    targetFields="{!v.accountRecord}"
+    targetError="{!v.recordLoadError}"
+    />
+    
+      <aura:attribute name="headerTitle" type="Aura.Component[]">
+        <h1 class="slds-text-heading_small">
+            <aura:if isTrue="{!(empty(v.basketList))}"> 
+                <b>Non Commercial Product Baskets (0) </b>
+            </aura:if>
+            <aura:if isTrue="{!not(empty(v.basketList))}">   
+             <b>Non Commercial Product Baskets ({!(v.basketList.length)}) </b>
+            </aura:if>
+        </h1>
+    </aura:attribute>
+     <lightning:card class="slds-card_boundary" iconName="custom:custom109" variant="base">
+           <aura:set attribute="title">
+
+                <aura:if isTrue="{!v.headerviewBool}">
+                      
+
+                    {!v.headerTitle}
+                    <aura:set attribute="else">
+                        <div class="slds-text-body_regular">
+                        <lightning:breadcrumbs>
+                            <lightning:breadcrumb label="Accounts" href="path/to/place/1"
+                                onclick="{! c.navigateAccountrelated }" />
+                            <lightning:breadcrumb label="Back to Account" href="path/to/place/2"
+                                onclick="{! c.navigateAccountRec }" />
+                        </lightning:breadcrumbs></div>
+                        {!v.headerTitle}
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+         <aura:if isTrue="{!not(empty(v.basketList))}">
+         	<div class="slds-border_top slds-border_right">
+            
+                    <lightning:datatable columns="{! v.columns }" data="{!v.basketList }" keyField="Id"
+                        hideCheckboxColumn="true" onrowaction="{! c.handleRowAction }" errors="{! v.errors }"
+                        showRowNumberColumn="false" draftValues="{! v.draftValues }" onsave="{! c.handleSaveEdition }"
+                        sortedBy="{!v.sortBy}" sortedDirection="{!v.sortDirection}" onsort="{!c.handleSort}" />
+                </div>
+          		<aura:if isTrue="{!v.viewAllBool}">
+                    <div class="slds-card__footer">
+                      <!--  <center><lightning:button variant="base" title="Looks like a link" label="View All" onclick="{!c.navigateToMyComponent}"  class="slds-m-left_x-small"></lightning:button></center>-->
+                       <a href="javascript:void(0);" onclick="{!c.navigateToMyComponent}">View All</a>
+                    </div>
+                </aura:if>
+              	<aura:set attribute="else">
+                	<div Style="text-align : center"> There are no related Baskets  </div>
+            	</aura:set>
+            </aura:if>
+     </lightning:card>
+    <!--<lightning:card class="slds-card_boundary" iconName="custom:custom109" variant="base">
+        
+        <aura:if isTrue="{!not(empty(v.basketList))}">
+            <div class="slds-border_top slds-border_right">
+              <lightning:datatable data="{!v.basketList }" 
+                         columns="{!v.columns }" 
+                         keyField="Id"
+                         onrowaction="{!c.handleRowAction}"
+                         hideCheckboxColumn="true"/>
+                
+                <br/>
+             </div>
+            
+             <aura:if isTrue="{!v.viewAllBool}">
+            	<div class="slds-card__footer">
+                	<center><lightning:button variant="base" title="Looks like a link" label="View All" onclick="{!c.navigateToMyComponent}"  class="slds-m-left_x-small"></lightning:button></center>
+                </div>
+              </aura:if>
+             
+             
+            <aura:set attribute="else">
+                <div Style="text-align : center"> There are no related Baskets  </div>
+            </aura:set>
+        </aura:if>
+        
+    </lightning:card>-->
+</aura:component>

@@ -1,0 +1,50 @@
+<!-- 
+Name : StockCheckBaseMainComponent
+Description : Parent component to hold Stock check for Mobile devices on Basket and Advance stock check 
+Author: Manjunath Ediga
+Story: EDGE-144680
+Modified: Shresth(DPG-3510)
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    &nbsp;
+   <div class="slds-border_bottom headercomp slds-text-title_bold slds-text-align--center" style="font-size:20px;"> Stock Check </div>
+    
+  <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="isSC" type="Boolean" default="true" />
+    <aura:attribute type="string" name="attrJson"/> <!--Added as part of EDGE-146972 -->
+    <aura:attribute type="string" name="solutionName"/> <!--DPG-3510: Ila -->
+    <aura:attribute type="string" name="type" description="Contains the type of configuration i.e the PD name"/><!--Added as a part of DPG-3510-->
+   <lightning:tabset variant="scoped">
+       <!--DPG-3510 : Renamed tab label to Device Basket Stock Check-->
+       <lightning:tab label="Device Basket Stock Check" class= "headerbold" id="stockcheck">
+           <!--DPG-3510 : Added new paramter type containing pd name-->
+           <c:StockCheckBaseComp basketId="{!v.basketId}" attrJson="{!v.attrJson}" type="{!$Label.c.PD_Name_Mobile_Device}" solutionName="{!v.solutionName}"/> <!--DPG-3510: Ila -->
+           </lightning:tab> 
+       <!--DPG-3510 : Added new tab Accessory Basket Stock Check-->
+       <lightning:tab label="Accessory Basket Stock Check" class= "headerbold" id="accessorystockcheck">
+           <c:StockCheckBaseComp basketId="{!v.basketId}" attrJson="{!v.attrJson}" type="{!$Label.c.PD_Name_Mobile_Accessory}" solutionName="{!v.solutionName}"/> <!--DPG-3510: Ila -->
+       
+           </lightning:tab> 
+       <!--DPG-3510 : Added drop down to provide selection for device/accessory stock check. To maintain different states, two instances for AdvancedStockCheck is used-->
+        <lightning:tab label="General Stock Check" id="advancestockcheck">
+            <aura:if isTrue="{!v.solutionName=='Adaptive Mobility'}"> <!--DPG-3510: Ila -->
+                <lightning:select aura:id="select" name="Type" label="Search Type" onchange="{! c.onChange }" class="slds-m-bottom--small">
+                    <option value="">choose one...</option>
+                    <option value="{!$Label.c.PD_Name_Mobile_Device}">Device</option>
+                    <option value="{!$Label.c.PD_Name_Mobile_Accessory}">Accessory</option>
+                </lightning:select>
+                <aura:if isTrue="{!v.type==$Label.c.PD_Name_Mobile_Device}">
+                    <c:AdvancedStockCheck type="{!v.type}"/>
+                </aura:if>
+                <aura:if isTrue="{!v.type==$Label.c.PD_Name_Mobile_Accessory}">
+                    <c:AdvancedStockCheck type="{!v.type}"/>
+                </aura:if>
+                <!--DPG-3510: Ila Start -->
+            <aura:set attribute="else">
+                <c:AdvancedStockCheck/>
+    </aura:set>  <!--DPG-3510: Ila End-->
+                 </aura:if>
+        </lightning:tab> 
+    </lightning:tabset>
+            
+</aura:component>

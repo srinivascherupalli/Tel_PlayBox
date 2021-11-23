@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT" description="by this event we are pass the selected contact in the parent component">
+    <aura:attribute name="contactByEvent" type="contact"/>
+     <aura:attribute name="contactByEventDynamic" type="contact"/>
+     <!--EDGE-138687 defect fix :Added isSignatory attribute in the event-->
+     <aura:attribute name="isSignatory" type="Boolean"/>
+   </aura:event>

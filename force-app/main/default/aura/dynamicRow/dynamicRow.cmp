@@ -1,0 +1,99 @@
+<aura:component controller="BillingAccountCreate" Implements="flexipage:availableForRecordHome,force:hasRecordId">
+    <!--Init handler which is call doInit js function on component Load-->
+    <aura:handler name="init" value="{!this}" action="{!c.dynamicdoInit}" />
+	<aura:handler event="c:AppEvent" action="{!c.handleApplicationEvent}"/> 
+	<aura:handler event="c:AppEventSelectedContactList" action="{!c.handleApplicationContactListEvent}"/> 
+    
+    <aura:handler name="oSelectedContactEvent" event="c:selectedContactEvent" action="{!c.handleComponentEventBilling}" />
+    <aura:handler name="setValueOfACR" event="c:FetchAccountDetailsEvent" action="{!c.setSelectedPrimaryContact}" />
+
+    <!--Aura Attribute for store Contact Object List as Array-->
+     <aura:attribute name="isAllCon" type="Boolean" />
+    <aura:attribute name="testShowHide" type="Boolean" default="false"/>
+    <aura:attribute name="rowIndex" type="String" />
+    <aura:attribute name="rowCount" type="Integer" default="1"/>
+    <aura:attribute name="isSecondComponentCall" type="Boolean" default="false" />
+    <aura:attribute name="SearchKeyWord" type="String" />
+    <aura:attribute name="storeselectedcon" type="contact" />
+    <aura:attribute name="selectedContact" type="contact" access="global"></aura:attribute>
+    <aura:attribute name="Message" type="String" default="Search Result.." />
+    <aura:attribute name="listOfSearchRecordscon" type="Contact[]" description="Use,for store the list of search contact records which returns from apex class" />
+    <aura:attribute name="secondaryContactList" type="AccountContactRelation[]" />
+    <aura:attribute name="IconName" type="string"  default="standard:contact"/> 
+
+    <aura:attribute name="selectedRecordContactInstance" type="AccountContactRelation" default="{'sobjectType':'AccountContactRelation', 'Contact':''}" description="Use,for store SELECTED sObject Record" />
+    <aura:attribute name="AccountId" type="String" default="" />
+    <aura:attribute name="SelectedPrimaryCon" type="String" default="" />
+
+    <aura:registerEvent name="AddRowEvt" type="c:AddNewRowEvt" />
+    <aura:registerEvent name="appEventCallParentEvent" type="c:AppEventCallParentEvent"/>
+    <aura:registerEvent name="DeleteRowEvt" type="c:DeleteRowEvt" />
+
+    <!-- Table Row -->
+    <tr class="slds-text-title_caps">
+        <td>
+            {!v.rowIndex + 1}
+        </td>
+        <td>
+            <!--Billing Account Owner Lookup field-->
+            <div aura:id="searchRes2" class="slds-form-element slds-lookup slds-is-close" data-select="single" ondblclick="{!c.onblur}">
+                <!--This part is for display search bar for lookup-->
+                <div class="slds-form-element__control">
+                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                        <c:svg aura:id="icon" class="slds-input__icon slds-show" xlinkHref="{!$Resource.slds + '/assets/icons/utility-sprite/svg/symbols.svg#search'}" />
+                        <!-- This markup is for when an record is selected -->
+                        <div aura:id="lookup-pill2"  class="{!v.testShowHide?'slds-pill-container slds-show':'slds-hide'}">
+                            <span class="slds-pill">
+                            <lightning:icon iconName="{!v.IconName}" class="slds-icon slds-icon_small" size="small" alternativeText="icon" style="margin-right: 6px;"/>
+ 
+                             <span class="inputwidht slds-pill__label">
+                               {!v.selectedRecordContactInstance.Contact.Name} 
+                             </span>
+                            <button class="slds-button slds-button--icon slds-pill__remove" onclick="{!c.clearBilling}">
+                        <lightning:icon class="slds-button__icon" iconName="utility:close" size="x-small" alternativeText="search"/>  
+                        <span class="slds-assistive-text">Remove</span>
+                     </button>
+                            </span>
+                        </div>
+                        <div aura:id="lookupField2" class="{!v.testShowHide?'slds-hide':'slds-show'}">
+                            <ui:inputText updateOn="keyup" keyup="{!c.keyPressController}" value="{!v.SearchKeyWord}" click="{!c.keyPressControllerBilling}" class="slds-lookup__search-input slds-input " placeholder="Search contacts..." aura:id="bao" />
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-lookup__menu slds " aura:id="lookup-348">
+                    <div id="lookuptest" aura:id="lookuptest1" class="slds-lookup__item--label slds-text-body--small">{!v.Message}</div>
+
+                    <!--- <center> <ui:spinner aura:id="spinner"/> </center> -->
+                    <ui:scrollerWrapper class="sWrapTest">
+                    <ul aura:id="ullookuptest">
+                        <aura:iteration items="{!v.listOfSearchRecordscon}" var="singleRec">
+                            <c:customLookupResult oContact="{!singleRec}" isSecondComponentCall="false" />
+                        </aura:iteration>
+                    </ul>
+                    </ui:scrollerWrapper>
+                </div>
+            </div>
+        </td>
+        <td>
+            <aura:if isTrue="{!v.rowIndex == 0}">
+                <aura:if isTrue="{!lessthanorequal(v.rowCount,9)}">
+                    <a onclick="{!c.AddNewRow}">
+                        <lightning:icon iconName="utility:add" class="slds-icon slds-icon_small" size="small" alternativeText="add" />
+                        <span class="slds-assistive-text">Add Icon</span>
+                    </a>
+                    <aura:set attribute="else">
+                        <lightning:buttonIcon size='large' iconName="utility:add" variant="bare" alternativeText="Add" disabled='true' />
+                    </aura:set>
+                </aura:if>
+
+                <aura:set attribute="else">
+                    <a onclick="{!c.removeRow}">
+                        <lightning:icon variant="error" iconName="utility:close" class="slds-icon slds-icon_small cross" size="small" alternativeText="icon" />
+                        <span class="slds-assistive-text">Delete Icon</span>
+                    </a>
+                </aura:set>
+            </aura:if>
+        </td>
+    </tr>
+
+</aura:component>

@@ -1,0 +1,26 @@
+<aura:component implements="flexipage:availableForAllPageTypes">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="basketId" type="Id" />
+    <aura:attribute name="proceedToCancellation" type="Boolean" default='false'/>
+    <aura:registerEvent name="alertCancelAllCWP" type="c:alertAllCWPCancel"/>
+    <div aura:id="MainDiv" >
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open overriden-modal">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Warning</h2>
+                </header>
+                <div style="background:white" class="slds-p-around_medium" id="modal-content-id-1">
+                Cancelling these subscription(s) will reduce the number of Connected Workplace sites below the 2 site minimum, resulting in the cancellation of all associated Mobility services. Do you wish to continue?
+                </div>
+                
+                <footer class="slds-modal__footer">
+                	<lightning:button label="Cancel" onclick="{!c.onCancel}" />
+        			<lightning:button variant="brand" label="OK" onclick="{!c.onConfirm}" />
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open overriden-backdrop"></div>
+    </div>
+    
+	
+</aura:component>

@@ -1,0 +1,164 @@
+<!--P2OB-10028 Create New Partner Contact User-->
+<aura:component controller="PRMContactRecordEditFormController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global">
+    
+   
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="isUserForm" type="boolean" default="false" />
+    
+    <!--Init method loads on initialization of component-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--attribute to store FieldSet Name-->
+    <aura:attribute name="fieldSetName" type="String" default="Record_Form_Contact_Info_Section_Fields,Record_Form_Address_Info_Section_Fields" />
+    <!--attribute to store object Name-->
+    <aura:attribute name="objectName" type="String" default="Contact" />
+    <!--attribute to store button Label-->
+    <aura:attribute name="buttonLabel" type="String" default="New Partner User" />
+    <!--attribute to store contact fields-->
+    <aura:attribute name="contactfieldList" type="Object" />
+    <!--attribute to store contact address fields-->
+    <aura:attribute name="addressFieldList" type="Object" />
+    <!--attribute to store login user account id-->
+    <aura:attribute name="userAccountId" type="String" />
+    <!--attribute to store record Type name-->
+    <aura:attribute name="contactRecordTypeName" type="String" />
+    <!--attribute to store record Type id-->
+    <aura:attribute name="recTypeId" type="String" />
+    <!--attribute to show/hide new button-->
+    <aura:attribute name="showNewButton" type="Boolean" default="true" />
+    <!--attribute to open and close model-->
+    <aura:attribute name="isModalOpen" type="Boolean" default="false" />
+    <!--attribute to show/hide spinner-->
+    <aura:attribute name="spinner" type="boolean" default="false" />
+    <!--attribute to store error details-->
+    <aura:attribute name="errorDetail" type="String" default="" />
+    <!--attribute to conditionally show/hide error messages-->
+    <aura:attribute name="isError" type="Boolean" default="false" />
+    
+    <!--Show/hide new partner user button-->
+    <aura:if isTrue="{!v.showNewButton}">
+        <div class="genericButton">
+            <lightning:button class="slds-m-around_medium" variant="brand" label="{!v.buttonLabel}" title="Base action"
+                              onclick="{!c.handleClick}" />
+        </div>
+    </aura:if>
+    <!--Open model container on click of new partner user button-->
+    <aura:if isTrue="{!(v.showNewButton == false)}">
+        <aura:if isTrue="{!v.isModalOpen}">
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                     aria-describedby="modal-content-id-1" class="panel slds-modal slds-fade-in-open">
+                <div class="modal-container slds-modal__container">
+                    <aura:if isTrue="{!v.spinner}">
+                        <div aura:id="spinnerId" class="slds-spinner_container">
+                            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative"
+                                 role="alert">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </aura:if>
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="modal-header slds-modal__header">
+                        <!--<button class="slds-button slds-modal__close slds-button- -icon-inverse closeButton" title="Close" onclick="{!c.handleCloseModal}">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>-->
+                        <lightning:buttonIcon iconName="utility:close" class="slds-button slds-modal__close" onclick="{!c.handleCloseModal}"/>
+                        <h2 class="title slds-text-heading--medium slds-hyphenate" id="title_1128:0"
+                            data-aura-rendered-by="1:1092;a">New Contact: {!v.contactRecordTypeName}</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content"> 
+                        <aura:if isTrue="{!v.isUserForm}">
+                            <lightning:recordEditForm aura:id="finduser" onsubmit="{!c.handleSubmit}" onsuccess="{!c.handleSuccess}"
+                                                      onload="{!c.handleOnLoad}" onerror="{!c.handleOnError}" objectApiName="{!v.objectName}"
+                                                      recordTypeId="{!v.recTypeId}">
+                                <div class="modal-body scrollable slds-modal__content slds-p-around--medium modalClass"
+                                     id="modal-content-id-1123">
+                                    <!--Show errors based on conditons on click of submit button-->
+                                    <aura:if isTrue="{!v.isError}">
+                                        <div class="slds-text-color_error customError">
+                                            {!v.errorDetail}
+                                        </div>
+                                    </aura:if>
+                                    <!--Display form -->
+                                    <!--Displat Contact information section-->
+                                    <aura:if isTrue="{!v.contactfieldList.DetailPresent}">
+                                        <div class="slds-text-align_left slds-text-heading_small secTitle">
+                                            {!v.contactfieldList.SectionLabel}</div>
+                                        <div class="slds-grid slds-wrap">
+                                            <aura:iteration items="{!v.contactfieldList.ContactFieldList}" var="item">
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <!--If field name is account id then default the value of this field with login partner user account id-->
+                                                    <aura:if isTrue="{!item.fieldAPIName == 'AccountId'}">
+                                                        <lightning:inputField class="accountClass"
+                                                                              fieldName="{!item.fieldAPIName}" required="{!item.isRequired}"
+                                                                              value="{!v.userAccountId}" />
+                                                        <aura:set attribute="else">
+                                                            <!--set eMail value for the preferred communication method field-->
+                                                            <aura:if isTrue="{!item.fieldAPIName == 'Pref_Comm_Method__c'}">
+                                                                <lightning:inputField fieldName="{!item.fieldAPIName}"
+                                                                                      class="emailMethod" required="{!item.isRequired}"
+                                                                                      default="eMail" />
+                                                                <aura:set attribute="else">
+                                                                    <!--for email type field show helText-->
+                                                                    <aura:if isTrue="{!item.fieldAPIName == 'Email'}">
+                                                                        <div class="emailCustom">
+                                                                            <lightning:inputField
+                                                                                                  fieldName="{!item.fieldAPIName}"
+                                                                                                  required="{!item.isRequired}" />
+                                                                            <lightning:helptext
+                                                                                                content="{!$Label.c.PRMEmailHelpText}" />
+                                                                        </div>
+                                                                        <aura:set attribute="else">
+                                                                            <lightning:inputField
+                                                                                                  fieldName="{!item.fieldAPIName}"
+                                                                                                  required="{!item.isRequired}" />
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </div>
+                                            </aura:iteration>
+                                        </div>
+                                    </aura:if>
+                                    <!--Display Address information section-->
+                                    <aura:if isTrue="{!v.addressFieldList.DetailPresent}">
+                                        <div class="slds-text-align_left slds-text-heading_small secTitle">
+                                            {!v.addressFieldList.SectionLabel}</div>
+                                        <div class="slds-grid slds-wrap">
+                                            <aura:iteration items="{!v.addressFieldList.AddressFieldList}" var="item">
+                                                <div class="slds-col slds-size_1-of-2">
+                                                    <lightning:inputField fieldName="{!item.fieldAPIName}"
+                                                                          required="{!item.isRequired}" />
+                                                </div>
+                                            </aura:iteration>
+                                        </div>
+                                    </aura:if>
+                                </div>
+                                <!--Modal/Popup Box Footer Starts here-->
+                                <footer class="modal-footer slds-modal__footer">
+                                    <lightning:button
+                                                      class="slds-button slds-button--neutral uiButton forceActionButton cancelButton"
+                                                      variant="brand" name="cancel" label="Cancel" onclick="{!c.cancelForm}" />
+                                    <lightning:button
+                                                      class="slds-button slds-button--neutral uiButton--default uiButton--brand uiButton forceActionButton submitButton"
+                                                      variant="brand" type="submit" name="update" label="Next"/>
+                                     </footer>
+                            </lightning:recordEditForm>
+                        </aura:if>
+					<div class="slds-p-around_medium">                        
+                    <c:prmFindUserPIMS parent="{!this}" recordId="{!v.recordId}" source="prmNewUser" aura:id="prmFindUserPIMS" />                        
+                    </div>
+                    </div>
+                </div>                
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if> 
+    </aura:if>
+</aura:component>

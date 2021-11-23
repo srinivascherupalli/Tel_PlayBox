@@ -1,0 +1,17 @@
+.THIS {
+}
+.THIS .btn:focus {
+    outline: none;
+}
+
+.THIS .sitename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+    
+}
+
+.THIS .tablecollapse {
+  width: 100%;
+  table-layout: fixed;
+}

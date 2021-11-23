@@ -1,0 +1,4 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:availableForFlowScreens,lightning:availableForFlowActions" access="global" >
+	<!-- SFO P2OB-4985 : This Component can be used for refresh the page Automatically-->
+    <aura:handler name="init" value="{!this}" action="{!c.refreshPage}" />
+</aura:component>

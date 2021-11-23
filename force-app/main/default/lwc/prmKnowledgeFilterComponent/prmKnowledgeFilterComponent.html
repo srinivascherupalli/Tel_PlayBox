@@ -1,0 +1,79 @@
+<!--P20B-9098 - Filter component for knowledge articles-->
+<template>
+    <!--Display component if metadata records are available in custom setting-->
+    <template if:true={filterMetadata}>
+        <div class="slds-grid slds-wrap filterclass slds-grid_vertical-align-center">
+            <!--Label-->
+            <div class="slds-col">
+                <label>Filter by</label>
+            </div>
+            <!--Iterate on custom metadata record to display filter options based on conditions-->
+            <template for:each={filterMetadata} for:item="filters">
+                <!--show filter by date component-->
+                <template if:true={filters.dateFieldType}>
+                    <div key={filters.dateFieldType} class="slds-col slds-dropdown-trigger slds-dropdown-trigger_click">
+                            <button class="slds-button slds-button_neutral slds-picklist__label" aria-haspopup="true" onclick={handleClick}>
+                                <span class="slds-truncate" title="Date">{filters.filterLabel}</span>
+                                <lightning-icon icon-name="utility:chevrondown" size="small"></lightning-icon>
+                            </button>
+                            <!--show from and To Date-->
+                            <div class="slds-dropdown slds-dropdown_left dateDropdown">
+                                <ul class="slds-dropdown__list" role="menu">
+                                    <li class = "slds-dropdown_item" role="presentation">
+                                    <lightning-input type="date" name="fromDate" label="From" onchange={fromDateUpdate} data-fieldname={filters.data.fieldApiName}  class = 'input1'></lightning-input>
+                                    <template if:true={showFromDateError}>
+                                        <span class="errMsg slds-grid slds-p-top_x-small">{fromDateError}</span>
+                                    </template>
+                                    </li>
+                                    <li class = "slds-dropdown_item" role="presentation">
+                                    <lightning-input data-fieldname={filters.data.fieldApiName} data-fieldtype={filters.data.fieldType} type="date" name="toDate" label="To" onchange={toDateUpdate} class = 'input2'></lightning-input>
+                                    <template if:true={showToDateError}>
+                                        <span class="errMsg slds-grid slds-p-top_x-small">{toDateError}</span>
+                                    </template>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </template>
+                    <!--show radio button group-->
+                    <template if:true={filters.radioFieldType}>
+                        <div key={filters.radioFieldType} class="slds-col slds-dropdown-trigger slds-dropdown-trigger_click">
+                            <button class="slds-button slds-button_neutral slds-picklist__label" aria-haspopup="true" onclick={handleClick}>
+                                <span class="slds-truncate" title="Location">{filters.filterLabel}</span>
+                                <lightning-icon icon-name="utility:chevrondown" size="small"></lightning-icon>
+                            </button>
+                        <div class="slds-dropdown slds-dropdown_left" style="display:block">
+                            <!--Display radio options-->
+                            <lightning-radio-group name="Location"
+                                        label=""
+                                        options={filters.optionValues}
+                                        value={value}
+                                        onchange={handleChangeGroup}
+                                        type={filters.data.fieldType} data-fieldname={filters.data.fieldApiName} data-fieldtype={filters.data.fieldType} data-optionvalues={filters.optionValues} data-evtype={filters.dependentDataList.FieldVisibility} class="radioGroup">
+                            </lightning-radio-group>
+                            <!--Display city-->
+                            <template if:true={obj.showCity}>
+                                <div class="slds-p-around_medium lgc-bg">
+                                    <lightning-input type="text" label="City" data-fieldname={filters.dependentDataList.FieldAPIName} placeholder="type city name" onchange={searchArticleBasedOnCity}></lightning-input>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                <!--show picklist options-->
+                <template if:true={filters.textFieldType}>
+                    <div key={filters.textFieldType} class="slds-col slds-picklist slds-dropdown-trigger slds-dropdown-trigger_click">
+                        <button class="slds-button slds-button_neutral slds-picklist__label" aria-haspopup="true" onclick={handleClick}>
+                            <span class="slds-truncate" title="Location">{filters.filterLabel}</span>
+                            <lightning-icon icon-name="utility:chevrondown" size="small"></lightning-icon>
+                        </button>
+                    </div>
+                </template>
+            </template>
+        </Div>
+    </template>
+    <!--Show error if any-->
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+</template>

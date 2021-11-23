@@ -1,0 +1,5 @@
+<design:component>
+    <design:attribute name="ShowNotification" label="Show Notificatoin Alert" description="Show notificaton alert on the record page if the checkbox is selected." default="True"/>
+    <design:attribute name="AlertTheme" label="Alert Theme" description="Speify the theme from the alert message" default="info" datasource="info,warning,error,offline"/>
+    <design:attribute name="AlertMessage" label="Alert Message" description="Specify the altert message to show on record page." default="The contact has a corresponding Account Relationship. If contact is no longer associated, please end date the Account Contact Relationship also"/>
+</design:component>

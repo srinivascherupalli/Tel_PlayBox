@@ -1,0 +1,45 @@
+<!-- **********************************************************************************************************
+EDGE       -142351
+Component   -customerAuthorityFormFileUpload
+Descriptionc-Port Out Reversal screen to attach a signed Reversal Authority PDF document
+Author      -Dheeraj Bhatt
+************************************************************************************************************ -->
+<template>
+<div>           
+    <c-lwc-custom-toast title = {toasttitle} 
+                        message = {toastmsg}
+                        variant = {toastvariant} 
+                        auto-close="true" ></c-lwc-custom-toast>
+ <template if:false={isRegenerateCAForm}>                      
+<h1> <b>Upload Authorisation Document</b></h1>
+<br/>
+</template> 
+<div class="slds-form slds-grid slds-wrap" >
+<div class="slds-col slds-size_1-of-6 slds-p-right_small">
+<lightning-input type="date" name="Customer Authorised Date" onchange={getcustomerAuthorisedDate} label="Customer Authorised Date" value={customerAuthorisedDate} min={todayDate} ></lightning-input>
+</div>
+<div class="slds-col slds-size_1.5-of-6 slds-p-right_small" style="margin:18px;">
+<lightning-input data-id="fileId" type="file" onchange={getFileName} disabled={isFileUpload}></lightning-input> 
+</div>
+<div class="slds-col slds-size_1.5-of-6 slds-p-right_small"  style="margin:30px;font-weight: bold;">
+<lightning-formatted-text value={fileName} linkify></lightning-formatted-text>
+</div>
+<div class="slds-col slds-size_1-of-6 slds-p-right_small" style="margin:26px;">
+<lightning-button class="slds-m-top--medium" label="Save File" onclick={saveUploadFile} variant="neutral" disabled={isFileUpload}></lightning-button>
+</div>   
+</div>
+<div class="slds-border_top slds-border_left slds-border_right "> 
+<lightning-datatable
+        key-field="id"
+        data={customerAuthorityFormList}
+        columns={columns}
+        data-id="caForm"
+        hide-checkbox-column="true">
+    </lightning-datatable>
+</div>
+            <template if:true={isLoaded}>
+                <lightning-spinner variant="brand" alternative-text="Loading" class="slds-spinner_container slds-is-fixed"></lightning-spinner>
+            </template>
+</br> 
+</div>
+</template>

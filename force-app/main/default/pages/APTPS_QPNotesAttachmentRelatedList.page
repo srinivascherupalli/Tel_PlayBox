@@ -1,0 +1,225 @@
+<!-- 
+@Name: APTPS_QPNotesAttachmentRelatedList
+@Author: Akanksha Trivedi
+@CreateDate: 2nd Feb 2017.
+@Description: This page is used to show related list (Notes And Attachments) of Agreement.
+-----------------------------------------------------------------------------------------------------
+@ModifiedBy: Author who modified this process.
+@ModifiedDate: Date the process was modified.
+@ChangeDescription: A brief description of what was modified. 
+-->
+
+<apex:page id="APTPS_QPNotesAttachmentRelatedList" showheader="false" sidebar="false" standardController="Apttus__APTS_Agreement__c"
+extensions="APTPS_QPNotesAttRelatedListExtn" >
+<script>
+    var strAttachmentvalue = new Array();
+    var strAttachmentCount = 1;
+    var isHoverPopupVisible = false;
+    
+  /*  function AttachmentCounter(attachmentId, ischecked){
+        //alert(ischecked.checked);
+        if(ischecked.checked == true && attachmentId != ''){
+            if(strAttachmentvalue == '') {
+                strAttachmentvalue = attachmentId; // + strAttachmentCount + ',';
+            }else{
+                strAttachmentCount++;
+                strAttachmentvalue +=  ',' + attachmentId; // + strAttachmentCount + ',';
+            }
+            //document.getElementById('{!$Component.APTS_QPNotesAttachmentRelatedList.mainPageBlock.theAttachmentform.myHiddenField}').value = (strAttachmentvalue); 
+        } else if(ischecked.checked == false && attachmentId != '') {
+            //strAttachmentvalue = strAttachmentvalue.replace(attachmentId + ',', '');
+            strAttachmentvalue = strAttachmentvalue.replace(attachmentId, '');
+            strAttachmentvalue = strAttachmentvalue.replace(',,', ',');
+            if(strAttachmentvalue.length == 1) {
+                strAttachmentvalue='';
+            }
+            //document.getElementById('{!$Component.APTS_QPNotesAttachmentRelatedList.mainPageBlock.theAttachmentform.myHiddenField}').value = (strAttachmentvalue); 
+        }
+        if(strAttachmentvalue.substring(0,1)==',') {
+            strAttachmentvalue = strAttachmentvalue.replace(strAttachmentvalue.substring(0,1), '');
+        }
+        //alert(strAttachmentvalue);
+        if(strAttachmentvalue.substring(strAttachmentvalue.length-1,strAttachmentvalue.length)==',') {
+            strAttachmentvalue = strAttachmentvalue.substring(0,strAttachmentvalue.length-1);
+            //strAttachmentvalue = strAttachmentvalue.replace(strAttachmentvalue.substring(strAttachmentvalue.length-1,strAttachmentvalue.length), '');
+        }
+        //alert(strAttachmentvalue);  
+        document.getElementById('{!$Component.APTS_QPNotesAttachmentRelatedList.mainPageBlock.theAttachmentform.myHiddenField}').value = (strAttachmentvalue);      
+    }
+    
+    
+    function deleteQuotationHyperlinkItemJS(attachmentId){
+        //alert(attachmentId);
+        deleteQuotationHyperlinkAction(attachmentId);        
+    }
+    
+    //function to call javascript to delete notes
+    function deleteNoteJS(noteId){
+        deleteNoteAction(noteId);
+    }
+  */
+
+ /*   function mergeDocumentAfterUpdateSeq(){ */
+        /*setTimeout (function(){
+            passArryToMergeDoc();
+        }, 5000);*/
+   /*     passArryToMergeDoc();
+    }
+*/
+   
+  /*  function getParentValue(){
+        return document.getElementById('{!$Component.APTS_QPNotesAttachmentRelatedList.mainPageBlock.theAttachmentform.myHiddenField}').value;
+    }
+    
+    function setParentValue(newValue){                     
+        document.getElementById('{!$Component.APTS_QPNotesAttachmentRelatedList.mainPageBlock.theAttachmentform.myHiddenField}').value = (newValue);
+        RenderStringValues(newValue);
+    }
+    
+   
+    function showMergeDocumentPopup_1(){
+            isHoverPopupVisible = true;
+    }
+    function hideMergeDocumentPopup(divID){
+        isHoverPopupVisible = false;
+        document.getElementById(divID).style.display = "none";
+    }
+    function showMergeDocumentPopup(isShowPopup, divID){
+        var docs = document.getElementsByClassName('lookupHoverDetailCustom');
+        for (var i=0; i<docs.length; i++){
+            if (docs[i].style != null && docs[i].style.display != 'none'){
+                docs[i].style.display = 'none';
+            }
+        }
+
+        if (divID != undefined && document.getElementById(divID)!=undefined && document.getElementById(divID).style!=null){
+            if (isShowPopup || isHoverPopupVisible) {
+                document.getElementById(divID).style.display = "block";
+                isHoverPopupVisible = true;
+            } else {
+                document.getElementById(divID).style.display = "none";
+                isHoverPopupVisible = false;
+            }
+        }
+    }
+    
+   */ 
+     function parenttoreload(){
+        window.parent.location = document.referrer;
+     }
+    //function to call javascript to delete attachments
+      function deleteItemJS(attachmentId){
+        //alert(attachmentId);
+        deleteItemAction(attachmentId);        
+      }
+      //function to call javascript to delete notes
+     function deleteNoteJS(noteId){
+        deleteNoteAction(noteId);
+     }
+     //function to call javascript to delete notes
+     function deleteDocJS(docId){
+        deleteDocAction(docId);
+     }
+     function deleteRecord(e, type, value){
+            if (window.confirm('Are you sure?')){
+                 e.preventDefault();
+                 if(type == 'attachment'){
+                    deleteItemJS(value);
+                }              
+            }else{
+                e.preventDefault();
+                return false;            
+            }
+    }
+</script>
+<apex:pageMessages id="pageMessages" />
+    <apex:pageBlock id="mainPageBlock">
+        <apex:form id="theAttachmentform">
+            <apex:variable var="newNoteURL"   value="/002/e?parent_id={!agreementId}&retURL={!agreementId}" /><!-- [Added by Karsan Prajapati- 1-Sep-2016] -->
+            <apex:variable var="newAttachmentURL"   value="/p/attach/NoteAttach?pid={!agreementId}&parentname={!agreementName}&retURL={!agreementId}" /><!-- [Added by Karsan Prajapati- 1-Sep-2016] -->
+            <apex:variable var="viewAllNotesURL"    value="/ui/content/ViewAllNotesPage?id={!agreementId}&parentname={!agreementName}&retURL={!agreementId}" />
+           
+            <apex:outputPanel id="mainTable"> 
+            
+            <div align="center" id="buttonsDiv" style="margin-right: 317px;">
+                <apex:commandButton value="New Note"  onclick="window.top.location.href='{!newNoteURL}'; return false;" rerender="messages"/>
+                <apex:commandButton value="Attach File"  onclick="window.top.location.href='{!newAttachmentURL}'; return false;" rerender="messages"/>
+                <apex:commandButton value="View All"  onclick="window.top.location.href='{!viewAllNotesURL}'; return false;" rerender="messages"/>                
+            </div>
+            <apex:outputPanel rendered="{!listNotesAttachmentWrapper.size > 0}"> 
+             <div  style="overflow-y: scroll; width: 100%; height: 131px;" >
+            <apex:pageBlockTable id="mainNATable" var="naRecord" value="{!listNotesAttachmentWrapper}" rendered="{!listNotesAttachmentWrapper.size > 0}">
+              
+                    <!-- Actions -->
+                    <apex:column headerValue="Actions"> 
+                        <apex:outputPanel id="attActionPanel" rendered="{!naRecord.isAttachment}" >                            
+                            <apex:outputLink style="color: #015ba7;text-decoration: none;font-weight: normal;" rendered="{!naRecord.isAttachment}" value="/{!naRecord.attachment.Id}/e?retURL={!naRecord.attachment.ParentId}" target="_parent">Edit</apex:outputLink>&nbsp;|&nbsp;
+                            <apex:outputLink style="color: #015ba7;text-decoration: none;font-weight: normal;" rendered="{!naRecord.isAttachment}" value="/servlet/servlet.FileDownload?file={!naRecord.attachment.id}" target="_blank">View</apex:outputLink>&nbsp;|&nbsp;
+                            <apex:outputLink style="color: #015ba7;text-decoration: none;font-weight: normal;" rendered="{!naRecord.isAttachment}" value="" onClick="deleteRecord(event, 'attachment', '{!naRecord.attachment.id}');" target="_parent">Del</apex:outputLink>&nbsp;                           
+                            <apex:actionStatus id="attlinkStatusId" >
+                                <apex:facet name="start" >
+                                  <img src="/img/loading.gif" />                    
+                                </apex:facet>
+                            </apex:actionStatus> 
+                        </apex:outputPanel>
+                        <apex:outputPanel id="notesActionPanel" rendered="{!naRecord.isNotes}">
+                            <apex:outputLink style="color: #015ba7;text-decoration: none;font-weight: normal;" rendered="{!naRecord.isNotes}" value="/{!naRecord.note.id}/e?retURL={!naRecord.note.ParentId}"  target="_parent">Edit</apex:outputLink>&nbsp;|&nbsp;
+                            <apex:outputLink style="color: #015ba7;text-decoration: none;font-weight: normal;" rendered="{!naRecord.isNotes}" value="javascript:if (window.confirm('Are you sure?')) deleteNoteJS('{!naRecord.note.Id}');">Del</apex:outputLink>&nbsp;
+                        </apex:outputPanel>
+                         <apex:outputPanel id="docActionPanel" rendered="{!naRecord.isDocument}">
+                            <apex:outputLink style="color: #015ba7;text-decoration: none;font-weight: normal;" rendered="{!naRecord.isDocument}" value="/sfc/servlet.shepherd/version/download/{!naRecord.cVersionId}?asPdf=false"  target="_parent">Download</apex:outputLink>&nbsp;|&nbsp;
+                            <apex:outputLink style="color: #015ba7;text-decoration: none;font-weight: normal;" rendered="{!naRecord.isDocument}" value="javascript:if (window.confirm('Are you sure?')) deleteDocJS('{!naRecord.document.ContentDocumentId }');">Del</apex:outputLink>&nbsp;
+                        </apex:outputPanel>
+                    </apex:column>
+                    <apex:column headerValue="Type">                        
+                        <!-- Record Type -->
+                        <apex:outputText value="{!naRecord.type}" ></apex:outputText>
+                    </apex:column>
+                   
+                    <apex:column headerValue="Title" style="position: relative;">
+                        <apex:outputLink value="/{!naRecord.note.id}" rendered="{!naRecord.isNotes}"  target="_blank">{!naRecord.note.title}</apex:outputLink>
+                        <apex:outputLink value="/{!naRecord.attachment.id}" rendered="{!naRecord.isAttachment}"  target="_blank">{!naRecord.attachment.name}</apex:outputLink>
+                        <apex:outputLink value="/{!naRecord.document.ContentDocumentId}" rendered="{!naRecord.isDocument}"  target="_blank">{!naRecord.title}</apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Description">                      
+	                     <apex:outputText value="{!naRecord.attachment.Description}" ></apex:outputText>
+                    </apex:column>                          
+                    
+                    <apex:column headerValue="Last Modified">                      
+                       <apex:outputField value="{!naRecord.attachment.LastModifiedDate}" rendered="{!naRecord.isAttachment}" ></apex:outputField>
+                       <apex:outputField value="{!naRecord.note.LastModifiedDate}" rendered="{!naRecord.isNotes}" ></apex:outputField>
+                       <apex:outputField value="{!naRecord.document.ContentDocument.LastModifiedDate}" rendered="{!naRecord.isDocument}" ></apex:outputField>
+                    </apex:column>
+                     <apex:column headerValue="Created Date">                      
+                       <apex:outputField value="{!naRecord.attachment.CreatedDate}" rendered="{!naRecord.isAttachment}" ></apex:outputField>
+                       <apex:outputField value="{!naRecord.note.CreatedDate}" rendered="{!naRecord.isNotes}" ></apex:outputField>
+                       <apex:outputField value="{!naRecord.document.ContentDocument.CreatedDate}" rendered="{!naRecord.isDocument}" ></apex:outputField>
+                    </apex:column>           
+                    <apex:column headerValue="Created By">                      
+                        <!-- Last Modified By Name-->
+                        <apex:outputLink value="/{!JSENCODE(naRecord.createdById)}" target="_parent">{!naRecord.createdBy}</apex:outputLink>                       
+                    </apex:column>                          
+            </apex:pageBlockTable>
+            </div>
+            </apex:outputPanel>
+            <div class="pShowMore">           
+            <apex:outputLink onclick="window.top.location.href='/002?parent_id={!JSENCODE(agreementId)}&id={!JSENCODE(agreementId)}'; return false;"  rendered="{!if(listNotesAttachmentWrapper.size>5,true,false)}">Go to list&nbsp;»</apex:outputLink>
+            </div>
+            </apex:outputPanel>
+            <apex:outputPanel id="noRecordsPanel" rendered="{!listNotesAttachmentWrapper.size = 0}"> 
+                <apex:pageMessage summary="No Attachment" severity="info"/>
+            </apex:outputPanel>
+            <!-- Action functions -->           
+            <apex:actionFunction action="{!deleteAttachment}" rerender="pageMessages,noRecordsPanel,mainNATable,noAttachmentsTable,buttonsDiv" name="deleteItemAction" oncomplete="parenttoreload();" status="attlinkStatusId">
+                <apex:param name="delItemId" value="" assignTo="{!strdltAttachment}"/>
+            </apex:actionFunction>
+           
+            <apex:actionFunction action="{!deleteNote}" rerender="pageMessages,noRecordsPanel,mainNATable,noAttachmentsTable,buttonsDiv" name="deleteNoteAction">
+                <apex:param name="delItemId" value="" assignTo="{!strdltAttachment}" />
+            </apex:actionFunction>
+            <apex:actionFunction action="{!deleteDoc}" rerender="pageMessages,noRecordsPanel,mainNATable,noAttachmentsTable,buttonsDiv" name="deleteDocAction">
+                <apex:param name="delItemId" value="" assignTo="{!strdltAttachment}" />
+            </apex:actionFunction>
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

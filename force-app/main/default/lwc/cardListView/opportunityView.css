@@ -1,0 +1,30 @@
+/*
+* CreatedBy - Team Hawaii 
+* Description - To style and format the opportunity's cardListView component
+* Updates- 
+* 16-April-2020 : Ritika Jaiswal : P2OB-5611 - Margin for Opportunity's list 
+*/
+
+.displayPill{
+    width: 30%; 
+    border: none;
+    color: white;
+    padding: 3px 7px 2px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px 2px;
+    border-radius: 16px; 
+}
+
+.orangePill{
+    background-color:orange;
+}
+
+.greenPill{
+    background-color:green;
+}
+
+.leads-listing {
+    margin-bottom: 3rem;
+}

@@ -1,0 +1,83 @@
+<apex:page controller="CancelSubscriptionController"  >
+<link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+<style>
+        .slds-grid--align-custom 
+        {
+            position: relative;
+            left: 12%;
+        }
+        .custom1 
+        {
+            
+        }
+        .headerRow.headerStyle{background-color:#001f33!important;color:#ffffff!important}
+</style>
+    
+<script>
+function toggleContacts(className){
+    elem = document.getElementsByClassName(className)[0];
+    if(elem.style.display == 'none')
+        elem.style.display = 'block';
+    else
+        elem.style.display = 'none';
+}
+
+</script>
+
+<apex:pageMessages id="msgbox"/>
+    
+<apex:form id="form2">
+ <div class="slds">
+     <div class="slds-page-header">
+           <div class="slds-media">
+               <div class="slds-media__body">
+                  <p class="slds-page-header__title slds-truncate" style="text-align: center;"><b>Summary Of Selected Cancellation</b>
+                  </p>
+               </div>
+           </div>
+     </div>  
+     
+     
+<apex:pageBlock id="PB3"> 
+
+<!--<apex:pageBlockButtons id="PBSS">-->
+        <div align="center"> 
+           <apex:outputPanel id="OPP">
+               <apex:commandButton styleClass="slds-button slds-button--neutral" value="Back" action="{!BackToCancelProcess}" rendered="{!varBackButtonEnable}" id="Backid1" style="background-color:#98e6e6;"/>
+               <apex:commandButton styleClass="slds-button slds-button--neutral" value="Confirm" action="{!ConfirmCancellation}"  rendered="{!varBackButtonEnable}" reRender="msgbox,PB3,PBSS,OPP,Backid1,ConfirmId1" id="ConfirmId1" style="background-color:#98e6e6;"/>
+               <apex:commandButton styleClass="slds-button slds-button--neutral" value="Exit" action="{!ExitAction}" style="background-color:#98e6e6;"/>
+            </apex:outputPanel>
+        </div><br></br>
+<!--</apex:pageBlockButtons> -->
+
+<div style="border: 1px solid #4da6ff;width:800px;margin:0 auto;">
+<apex:repeat value="{!SelectedSubscriptionList}" var="a" id="RP1">
+   <!--<apex:pageBlockSection title="{!a.Wrapsub.Name}" collapsible="true" >
+     <apex:outputPanel rendered="{!if(a.Wrapsub.Subscriptions__r.size>0,true,false)}" styleClass="custom1">
+         <input type="button" onclick="toggleContacts('tbl-{!a.Wrapsub.id}');" value="+" class="btn" />
+     </apex:outputPanel>
+   </apex:pageBlockSection>-->
+     
+     <div style="border-bottom: 1px solid #ffffff; background-color: #66c2ff;">
+     <apex:outputPanel rendered="{!if(a.Wrapsub.Subscriptions__r.size==0,true,false)}" styleClass="custom1">
+     &nbsp;&nbsp;&nbsp;<b><h3 style = "color:#ffffff!important" >{!a.Wrapsub.Name}</h3></b>
+     </apex:outputPanel>
+     <apex:outputPanel rendered="{!if(a.Wrapsub.Subscriptions__r.size>0,true,false)}" styleClass="custom1">
+         <input type="button" onclick="toggleContacts('tbl-{!a.Wrapsub.id}');" value="+" class="btn" style="border:none;background-color: #4CAF50;"/>&nbsp;&nbsp;&nbsp;<b><h3 style = "color:#ffffff!important" >{!a.Wrapsub.Name}</h3></b>
+     </apex:outputPanel><br></br>
+     </div>
+    
+    <apex:outputPanel styleClass="tbl-{!a.Wrapsub.id}" style="display:none;" rendered="{!if(a.Wrapsub.Subscriptions__r.size>0,true,false)}">
+    <apex:pageBlockTable value="{!a.Wrapsub.Subscriptions__r}" var="c" style="background-color:#cce6ff;">
+      <!--<apex:facet name="header" ><I>Related Subscriptions</I></apex:facet>-->
+          <apex:column value="{!c.Name}" style="te" headerClass="headerStyle"/>
+          <apex:column value="{!c.csord__Status__c }" headerClass="headerStyle"/>
+      </apex:pageBlockTable>
+    </apex:outputPanel>
+</apex:repeat> 
+</div>
+    
+</apex:pageBlock>    
+</div>
+</apex:form>
+</apex:page>

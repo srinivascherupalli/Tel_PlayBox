@@ -1,0 +1,39 @@
+<aura:component controller="soc_ManageProductController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="pageType" type="String" default="datatable"/>
+    <aura:attribute name="selectedData" type="Object" access="global"/>
+    <aura:attribute name="parentRecord" type="Object" access="global"/>
+    <aura:attribute name="recordId" type="String" access="global" /> 
+    
+    
+        <lightning:button variant="neutral" class="slds-button slds-path__mark-complete stepAction current uiButton"
+                          label="Clone Case"
+                          title="Clone Case"
+                          onclick="{! c.openModel }" />
+        <div class="slds-m-around_xx-large">
+        <aura:if isTrue="{!v.isOpen}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Manual child Case Creation Form</b></h2>
+                    </header>
+                    
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <aura:if isTrue="{!v.pageType=='datatable'}">
+                            <c:soc_ManageProductDataTable  isOpen="{!v.isOpen}" selectedRows="{!v.selectedData}" pageType="{!v.pageType}" recordId="{!v.recordId}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!v.pageType=='caseEditForm'}">
+                            <c:soc_ManageProductCreateCloneCase  isOpen="{!v.isOpen}" selectedRows="{!v.selectedData}" pageType="{!v.pageType}" clonedCase="{!v.parentRecord}" recordId="{!v.recordId}" aura:id="mpcCmp"/>
+                        </aura:if>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+    </div>
+</aura:component>

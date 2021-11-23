@@ -1,0 +1,157 @@
+<apex:page controller="CancelSubscriptionController" id="myPage" standardStylesheets="true" >
+<link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+ <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>    
+<!--<script>
+    var j$ = jQuery.noConflict(); 
+   
+    j$(function()
+    {
+     j$("#myPage\\:fid\\:pb1\\:PBS2\\:PBTb2\\:0\\:cancelDateOfEffectId").datepicker({ minDate: 0,dateFormat: 'dd/mm/yy' });
+     j$("#myPage\\:fid\\:pb1\\:PBS2\\:PBTb2\\:0\\:cancelDateOfEffectId").datepicker();
+     //j$("#myPage\\:fid\\:pb1\\:PBS2\\:PBTb2\\:0\\:cancelDateOfEffectId").datepicker({startDate:new Date()}).datepicker('update', new Date());
+     j$("#myPage\\:fid\\:pb1\\:PBS2\\:PBTb2\\:0\\:cancelDateOfEffectId").on("change",function()
+     {       
+          j$("#ui-datepicker-div").css({"display": "none"});
+      });
+    });    
+        
+</script>-->
+<style>
+        .slds-grid--align-custom 
+        {
+            position: relative;
+            left: 12%;
+        }
+        .colHeadr
+        {
+            text-align:center !important;
+        }
+        .errorMsg
+        {
+          font-size: 12px;
+        }
+       
+
+</style>
+
+<apex:form id="fid">
+ <div class="slds">
+ <div class="slds-page-header">
+       <div class="slds-media">
+           <div class="slds-media__body">
+              <p class="slds-page-header__title slds-truncate"><b>Active Subscription for &nbsp;{!objName}</b>
+              </p>
+           </div>
+           </div>
+ </div> 
+<apex:pageBlock id="pb1">
+        <div align="center">               
+        <apex:outputPanel id="OP3" rendered="{!varEnableBlock1}" >
+            <apex:commandButton styleClass="slds-button slds-button--neutral" value="Back To Order" action="{!BackToOrder}" style="background-color:#98e6e6;" id="Bt1"/>
+            <apex:commandButton styleClass="slds-button slds-button--neutral" value="Continue Cancellation" style="background-color:#98e6e6;" action="{!ContinueCancellation}" id="Bt2" rerender="pb1,PBS1,Op1,OP2,OP3,OP4"/>        
+        </apex:outputPanel>
+  
+        <apex:outputPanel id="OP4" rendered="{!varEnableBlock2 }">
+            <apex:commandButton styleClass="slds-button slds-button--neutral" value="Back To Selection" action="{!BackToSelection}" style="background-color:#98e6e6;" id="Bt3" immediate="true"/>
+            <apex:commandButton styleClass="slds-button slds-button--neutral" value="Continue Cancellation" style="background-color:#98e6e6;" action="{!ContinueCancelSubscription}" id="Bt4"/>    
+        </apex:outputPanel>
+        </div>
+    
+    
+<apex:outputPanel id="Op1" rendered="{!varEnableBlock1}">  
+    <apex:pageBlockSection columns="1" id="PBS1" collapsible="False" > 
+        <apex:pageBlockTable value="{!WrapperList}" var="subList" id="PBTbl" rows="{!paginationSize}" >
+            <apex:column headerValue="Select" width="50px"> 
+              <apex:inputCheckbox value="{!subList.selected}" />
+            </apex:column>
+            <apex:column headerClass="colHeadr" headerValue="Subscription Id" width="200px" style="text-align:center!important;">
+              <apex:outputField value="{!subList.Wrapsub.csordtelcoa__Subscription_Number__c}" > </apex:outputField>
+            </apex:column>
+            <apex:column headerClass="colHeadr" headerValue="Subscription Name" width="200px" style="text-align:center!important;">
+              <apex:outputField value="{!subList.Wrapsub.Name}"> </apex:outputField>
+            </apex:column>  
+             <apex:column headerClass="colHeadr" headerValue="Contract End Date" width="200px" style="text-align:center!important;">
+              <apex:outputField value="{!subList.Wrapsub.csord__Order__r.csord__End_Date__c}"> </apex:outputField>
+            </apex:column>                              
+            <apex:column headerClass="colHeadr" headerValue="Total OneOff Charges" width="200px" style="text-align:center!important;">
+              <apex:outputField value="{!subList.Wrapsub.csord__Total_Service_One_Off_Charges__c}"> </apex:outputField>
+            </apex:column>
+             <apex:column headerClass="colHeadr" headerValue="Total Recurring Charges" width="200px" style="text-align:center!important;">
+              <apex:outputField value="{!subList.Wrapsub.csord__Total_Service_Recurring_Charges__c}"> </apex:outputField>
+            </apex:column>
+            <apex:column headerClass="colHeadr" headerValue="Order Number" width="200px" style="text-align:center!important;">
+              <apex:outputField value="{!subList.Wrapsub.csord__Order__r.csord__Order_Number__c}"> </apex:outputField>
+            </apex:column>
+            <apex:column headerClass="colHeadr" headerValue="Site Name" width="200px" style="text-align:center!important;">
+              <apex:outputField value="{!subList.Wrapsub.Site__r.Name}"> </apex:outputField>
+            </apex:column>        
+        </apex:pageBlockTable>
+    </apex:pageBlockSection> 
+  
+
+  <div align="Center">
+  <apex:outputPanel style="align:centerimportant!;" id="panelGrid" rendered="{!WrapperList.size != 0}">      
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="|< First" action="{!first}" reRender="PBTbl,panelGrid"/>
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Previous" disabled="{!!hasPrevious}" action="{!previous}" reRender="PBTbl,panelGrid"/>
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:outputText value="Page {!pageNumber} of {!totalPages}"/>
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Next" disabled="{!!hasNext}" action="{!next}" reRender="PBTbl,panelGrid"/>
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton styleClass="slds-button slds-button--neutral" value="Last >|" action="{!last}" reRender="PBTbl,panelGrid"/>
+   </apex:outputPanel>
+   </div>
+
+</apex:outputPanel> 
+     
+<apex:outputPanel id="OP2"> 
+    <apex:pageBlockSection columns="1" id="PBS2" collapsible="False" rendered="{!varEnableBlock2}"> 
+      <apex:pageBlockTable value="{!SelectedSubscriptionList}" var="subList" id="PBTb2" style="width:100%">
+         <apex:column headerValue="Select" width="200px"> 
+              <apex:inputCheckbox value="{!subList.selected}" disabled="true"/>
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="Subscription Id" style="width:150px !important;">
+              <apex:inputField value="{!subList.Wrapsub.csordtelcoa__Subscription_Number__c}" style="width:150px !important;"/> 
+         </apex:column>
+          <apex:column headerClass="colHeadr" headerValue="Reason for Cancellation" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.Reason_for_cancellation__c}"/> 
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="Cancellation Date of effect"  style="width:350px !important;">
+              <apex:inputField value="{!subList.Wrapsub.Cancellation_Date_of_Effect__c}" required="true" id="cancelDateOfEffectId"/> 
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="Customer Application Date" style="width:350px !important;">
+              <apex:inputField value="{!subList.Wrapsub.Customer_Application_Date__c}" required="true" id="cancelCustomerAppDate"/> 
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="Hardware Recovery Request" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.Hardware_Recovery_Request__c}" />
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="Parent TRN" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.Parent_TRN__c}"/>
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="Customer Reference Number" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.Customer_Reference_Number__c}"/> 
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="PM Details" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.PM_Details__c}"/> 
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="PM ID" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.PM_ID__c}"/>
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="Project ID" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.Project_ID__c}"/>
+         </apex:column>
+         <apex:column headerClass="colHeadr" headerValue="PM Group" width="200px">
+              <apex:inputField value="{!subList.Wrapsub.PM_Group__c }"/>
+         </apex:column>
+      </apex:pageBlockTable> 
+    </apex:pageBlockSection>
+</apex:outputPanel> 
+        
+</apex:pageBlock>
+</div>
+</apex:form>
+</apex:page>

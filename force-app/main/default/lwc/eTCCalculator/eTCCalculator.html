@@ -1,0 +1,51 @@
+<template>
+	<div>
+		<div class="app slds-var-p-around_x-small" style="width: 100%;">
+		 <template if:false={loaded}>
+            <lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+        </template>
+			<h1 style="text-align: center;" class="slds-text-heading_large"><strong>ETC Calculator</strong></h1>
+		
+			<div class="slds-grid slds-gutters">
+				<div class="slds-col">
+					<span><lightning-input label="Name :" value={serviceName} read-only="true"></lightning-input></span>
+				</div>
+			</div>
+            <div class="slds-grid slds-gutters">
+				<!-- <div class="slds-col">
+					<span><lightning-input label="Nickname :" value={nickName} read-only="true"></lightning-input></span>
+				</div> -->
+				<div class="slds-col">
+					<span><lightning-input label="Contract Term (In Months):" value={contractTerm} read-only="true"></lightning-input></span>
+				</div>
+				<div class="slds-col">
+					<span>	<lightning-input label="Activation Date :" value={activationDate} read-only="true"></lightning-input></span>
+				</div>
+			</div>
+			<div class="slds-grid slds-gutters">
+				<div class="slds-col slds-size_1-of-2">
+					<span><lightning-input type="date" name="input8" required="true" style="width:75%" label="Disconnection date : " onchange={handleDisconnectedDateChange}
+				value={disconnectionDate}></lightning-input></span>
+				</div>	
+			</div>
+			<br/>
+			<br/>
+			<lightning-button label="Calculate ETC" style="position: absolute;left: 30%;" onclick={onCalculate}
+				variant="brand">
+			</lightning-button>
+			<br/>
+			<br/>
+			
+			<div class="slds-grid slds-gutters">
+				<div class="slds-col">
+					<span><lightning-input label="ETC Charges (Inc. GST): " value={etcCharges} read-only="true"></lightning-input>
+				 </span>
+				</div>
+				<div class="slds-col">
+					<span><lightning-input label="Remaining Term (In Months): " value={remainingTerm} read-only="true"></lightning-input></span>
+				</div>
+			</div>
+			Note : {etcNotesData}
+		</div>
+	</div>
+</template>

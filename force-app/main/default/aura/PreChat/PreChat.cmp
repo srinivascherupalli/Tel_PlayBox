@@ -1,0 +1,129 @@
+<aura:component implements="lightningsnapin:prechatUI" controller="VisitorCountController">
+    <lightningsnapin:prechatAPI aura:id="prechatAPI"/>
+    <aura:attribute name="enterprise" type="boolean" default="false"/>
+    <aura:attribute name="initialpage" type="boolean" default="true"/>
+    <aura:attribute name="nonenterprisePersonal" type="boolean" default="false"/>
+    <aura:attribute name="nonenterpriseBusiness" type="boolean" default="false"/>
+    <aura:attribute name="customerror" type="boolean" default="false"/>
+    <aura:attribute name="errormessage" type="String" default=""/>
+    <aura:attribute name="enterpriseBlurb" type="String" default="Cloud, Internet networks, IoT and more"/>
+    <aura:attribute name="smallBlurb" type="String" default="Business Internet, office phones, devices"/>
+    <aura:attribute name="personalBlurb" type="String" default="Mobile Plans, sim, home phones, TV"/>
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+    <!-- Pre-chat field components to render -->
+    <aura:attribute name="prechatFieldComponents" type="Object[]" description="An array of objects representing the pre-chat fields specified in pre-chat setup."/>
+    
+    <!-- First landing page of PreChat !-->
+    <aura:if isTrue="{!v.initialpage}">
+        <div class="greeting">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="welcome">
+                        Welcome!
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="rectangle">
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="welcomeMessage">
+                        <span>So that we can get your chat to the right place, please tell us a bit more about your query today.</span>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+        
+        <div class="buttons">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="query">
+                        <span>This chat enquiry is about</span>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                    <div class="buttonsDiv">
+                        <lightning:button variant="brand" class="initialButtons" label="{!$Label.c.CHAT_BUTTON_ENTERPRISE}" onclick="{!c.handleEntrepriseClick}"/>
+                        <p class="blurb">{!v.enterpriseBlurb}</p>
+                        <div class="line"></div>
+                        <lightning:button variant="base" class="initialButtons" label="{!$Label.c.CHAT_BUTTON_PERSONAL}" onclick="{!c.handlePersonalClick}"/>
+                        <p class="blurb">{!v.personalBlurb}</p>
+                        <div class="line"></div>
+                        <lightning:button variant="base" class="initialButtons" label="{!$Label.c.CHAT_BUTTON_SMALL_BUSINESS}" onclick="{!c.handleBusinessClick}"/>
+                        <p class="blurb">{!v.smallBlurb}</p>
+                        <div class="line"></div>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>    
+        </div>
+    </aura:if>
+    
+    <!-- Section to render the Prechat page only on click of Enterprise button -->
+    <aura:if isTrue="{!v.enterprise}">
+        
+        <lightning:layout multipleRows="true">
+           
+            <!-- Section to show welecome message of PreChat page -->
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="welcomePreChat">
+                    Please fill out the form to start chatting with our team.
+                </div>
+            </lightning:layoutItem>
+
+            <!-- Section to render the input fields of the Pre chat page -->
+            <lightning:layoutItem padding="around-small" size="12">
+                <ul class="fieldsList">
+                    <aura:iteration var="item" items="{!v.prechatFieldComponents}" indexVar="indx">
+                        <div>
+                            <li class="inputSplitName embeddedServiceSidebarFormField" data-aura-rendered-by="276:0" data-aura-class="embeddedServiceSidebarFormField">
+                                {!item}
+                            </li>
+                        </div><br/>
+                    </aura:iteration>
+                </ul>
+            </lightning:layoutItem>
+            
+             <!-- Section to show any error on the data on the fields of Prechat page -->
+            <lightning:layoutItem padding="around-small" size="12">
+                <aura:if isTrue="{!v.customerror}">
+                    <div class="errormessage">{!v.errormessage}</div>
+                </aura:if>
+            </lightning:layoutItem>
+
+            <!-- Start Chat Button -->
+            <lightning:layoutItem padding="around-small" size="12">
+                    <lightning:button class="startButtonPrechat embeddedServiceSidebarButton" variant="brand" label="{!$Label.LiveAgentPrechat.StartChat}" onclick="{!c.onStartButtonClick}"/>
+            </lightning:layoutItem>
+
+             <!-- Back Button -->
+            <lightning:layoutItem padding="around-small" size="12">
+                <lightning:button class="back" label="Back" onclick="{!c.handleBackClickStart}"/>
+            </lightning:layoutItem>
+
+        </lightning:layout><br/>
+        
+    </aura:if>
+    
+    <!-- Section to render the Prechat page only on click of Personal button -->
+    <aura:if isTrue="{!v.nonenterprisePersonal}">
+        <div class="u1621">
+            <p><span>As your query does not relate to Enterprise services, please click below to be redirected to the relevant area</span></p>
+        </div>
+        <div class="buttonWrapper2 embeddedServiceSidebarForm" data-aura-rendered-by="263:0" data-aura-class="embeddedServiceSidebarForm">
+            <p><ui:button class="startButton uiButton--default uiButton embeddedServiceSidebarButton" label="{!$Label.c.CHAT_BUTTON_PERSONAL}" press="{!c.handlePersonalRedirect}"/></p>
+            <lightning:button class="back" label="Back" onclick="{!c.handleBackClick }"/>
+        </div>
+    </aura:if> 
+    
+    <!-- Section to render the Prechat page only on click of Business button -->
+    <aura:if isTrue="{!v.nonenterpriseBusiness}">
+        <div class="u1621">
+            <p><span>As your query does not relate to Enterprise services, please click below to be redirected to the relevant area</span></p>
+        </div>
+        <div class="buttonWrapper2 embeddedServiceSidebarForm" data-aura-rendered-by="263:0" data-aura-class="embeddedServiceSidebarForm">
+            <p><ui:button class="startButton uiButton--default uiButton embeddedServiceSidebarButton" label="{!$Label.c.CHAT_BUTTON_SMALL_BUSINESS}" press="{!c.handleBusinessRedirect}"/></p>
+            <lightning:button class="back" label="Back" onclick="{!c.handleBackClick }"/>
+        </div>
+    </aura:if>  
+</aura:component>

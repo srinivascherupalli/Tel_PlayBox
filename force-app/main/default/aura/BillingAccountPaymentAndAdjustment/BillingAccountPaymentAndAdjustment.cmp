@@ -1,0 +1,30 @@
+<!-- **************************************************************************
+EDGE        -88306
+component   -BillingAccountPaymentAndAdjustment
+Description -BillingAccountPaymentAndAdjustment Component is used to show the tab for payments 
+             and adjustment.
+Author      -Dheeraj Bhatt
+Change Mgmt: 1.Ravi Shankar - Made changes for enabling tabs for POR Partner users
+				as part of EDGE-162804
+             2. RaviTeja -Enabled Credit Adjustments Tab to POR partner users part of EDGE-167053
+           
+********************************************************************************* -->
+<aura:component controller="BillingAccPymtAdjController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" >
+    <aura:attribute name="billingAccountId" type="string" />    
+    <aura:attribute name="checkPOR" type="String" default="isCRM" />
+	<aura:handler name="init" action="{!c.doInit}" value="{!this}" access="global" />
+    
+	<aura:if isTrue="{!or(v.checkPOR=='isCRM',v.checkPOR=='isActivePOR')}">
+        <lightning:tabset selectedTabId="PaymentsTab">
+            <lightning:tab label="Payments" id="PaymentsTab">
+                <c:Payments billingAccountId="{!v.billingAccountId}"/>
+            </lightning:tab> 
+            <lightning:tab label="Credit Adjustments" id="CreditAdjustmentsTab">
+                <c:BANAdjustmentCmp billingAccountId="{!v.billingAccountId}"/>
+            </lightning:tab> 
+            <lightning:tab label="Invoice" id="InvoiceTab">
+                <c:InvoiceCmp billingAccountId="{!v.billingAccountId}"/>
+            </lightning:tab> 
+        </lightning:tabset>
+   </aura:if>
+</aura:component>

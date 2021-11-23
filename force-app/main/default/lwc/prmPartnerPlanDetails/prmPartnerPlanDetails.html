@@ -1,0 +1,88 @@
+<template>
+    <template if:false={allowCardView}>
+        <div class="prmPartnerPlanDetails_table slds-p-around_medium slds-m-bottom_large"
+            style="border: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));">
+
+            <div class="slds-p-bottom_medium" style="display: flex; justify-content: space-between;">
+                <div style="display: inline-flex; align-items: center;">
+                    <lightning-icon icon-name={iconName} size="small" class="slds-m-right_x-small"></lightning-icon>
+                    <b> {tableHeading}</b>
+                </div>
+                <template if:true={showSalesLink}>
+                    <div class="lgc-bg salesActivityTitle" style="display: inline-flex; align-items: center;">
+                        <a class="slds-m-right_xx-small" href={salesActivityLink}>{linkLabel}</a>
+                        <lightning-helptext content={helpText}></lightning-helptext>
+                    </div>
+                </template>
+            </div>
+
+            <div class="slds-grid slds-gutters"
+                style="margin-right: 0rem; margin-left: 0rem; border: 1px solid rgb(221, 219, 218);">
+                <div class="prmPartnerPlanDetails_dataTable slds-col slds-size_1-of-3"
+                    style="padding-right: 0; padding-left: 0;">
+
+                    <lightning-datatable key-field="id" data={recordToShow} columns={columns}
+                        hide-checkbox-column="true" sortable="false">
+                    </lightning-datatable>
+                </div>
+
+                <div class="slds-col slds-size_2-of-3" style="padding-right: 0; padding-left: 0;">
+                    <img src={imageToShow} />
+
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template if:true={allowCardView}>
+
+        <div class="prmPartnerPlanDetails_box slds-p-around_medium slds-m-bottom_large"
+            style="border: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));">
+
+
+            <lightning-card title={tableHeading} icon-name={iconName}>
+
+                <template for:each={recordToShow} for:item="record">
+
+                    <div key={record.rowLabel} class="slds-p-around_medium slds-m-bottom_medium"
+                        style="background-color: #f2f2f2; display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;">
+                        <template if:false={showEditableArea}>
+
+                            <lightning-formatted-rich-text value={record.rowValue}>
+                            </lightning-formatted-rich-text>
+                            <template if:true={showEditIcon}>
+                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" title="Edit"
+                                    onclick={showEditArea}>
+                                </lightning-button-icon>
+                            </template>
+
+                        </template>
+
+                        <template if:true={showEditableArea}>
+
+                            <div class="slds-p-bottom_small"
+                                style="font-size: 13px; font-weight: var(--lwc-fontWeightBold,700);">{record.rowLabel}
+                            </div>
+                            <lightning-input-rich-text value={record.rowValue} data-id={record.fieldApi}>
+                            </lightning-input-rich-text>
+
+
+                        </template>
+
+                    </div>
+                    <!--For loop template ends below-->
+                </template>
+
+                <template if:true={showEditableArea}>
+                    <lightning-button class="slds-m-right_medium" type="submit" variant="brand" label="Save"
+                        onclick={handleSave} value="save">
+                    </lightning-button>
+                    <lightning-button class="slds-m-right_medium" type="cancel" label="Cancel" onclick={handleCancel}
+                        value="cancel">
+                    </lightning-button>
+                </template>
+            </lightning-card>
+        </div>
+    </template>
+
+</template>

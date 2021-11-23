@@ -1,0 +1,31 @@
+<!--P2OB-8030 && P20B-7893 - Show Search option to user-->
+<template>
+    <div class="helpNtraining-wrapper">
+        <div class="helpNtraining-search">
+            <!--Display User message based on design attribute value-->
+            <template if:true={showMessageAtTop}>
+                <h2 class="title">Hi {userName}, {messageText}</h2>
+            </template>
+            <!--Display search option-->
+            <div class="helpNtraining-searchForm">
+                <div>
+                    <lightning-input type="search" name="input1" onchange={handleSearchTermChange} label="Search" variant="label-hidden" placeholder="Search"
+                        class="slds-m-right_x-large" value={searchString}></lightning-input>
+                </div>
+            </div>
+        </div>
+        <!--Show Pagination option to user if there are large number of records-->
+        <template if:true={showSearchData}>
+            <c-prm-pagination-comp page-size-option={pageSizeOption} pagesize={pageSize} onpagesize={handlePageSizeChange} currentpage={page}
+                onprevious={handlePrevious} onnext={handleNext} totalrecords={totalRecords} onpagecountchange={handlePageCountChange}></c-prm-pagination-comp>
+        </template>
+        <!--Show result if there are multiple records to display-->
+        <template if:true={showNoResultMesg}>
+            <c-Prm-knowledge-artcl-srch-rcmnd title-string='Your Search Results' is-pagination="true" knowledge-article-list={knowledgeArticleRecord}></c-Prm-knowledge-artcl-srch-rcmnd>
+        </template>
+    </div>
+    <!--Display error-->
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+</template>

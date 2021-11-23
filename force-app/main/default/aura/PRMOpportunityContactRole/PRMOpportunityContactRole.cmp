@@ -1,0 +1,52 @@
+<aura:component controller="RecordListController" implements="force:hasRecordId,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <c:SalesforceInterface aura:id="UtilityService" />
+    <aura:attribute name="title" Default="Contact Role" type="String" />
+    <aura:attribute name="OpportunityVisibilityStatus" type="String"/>
+    <aura:attribute name="where" type="String" />
+    <aura:attribute name="displayList" type="Boolean" />
+       <aura:attribute name="iconName" type="String" />
+     <aura:handler event="c:closeParentPopupFromThankYouScreen" action="{!c.closeFlow}"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <aura:html tag="style">
+        .createCaseSupportBtn{
+        width : 100%;
+        padding :1rem 2rem;
+        } 
+        .createcontarolebtn{
+        align:right;
+        padding :0rem 0rem;
+        } 
+    </aura:html>
+       <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+<!--         <lightning:card title="Contact Role" class="container">
+        <div class="slds-section slds-is-open" aura:id="collapsibleSectionContainer">
+        <h3 class="slds-section__title slds-theme_shade"/>
+            <aura:if isTrue="{!v.displayList}">
+                  <c:LC_RelatedListBaseComponent sObjectName="OpportunityContactRole" sObjectFieldsNames="Contact.Name,Contact.Email,Role" whereClause="{!v.where}" relationshipFields='{"Contact.Email":"email,Email,ContactEmail","Contact.Name":"url,Contact Name,ContactName"}' />
+            </aura:if>
+        </div>
+    </lightning:card> -->
+    <div class="slds-section slds-is-open"
+        aura:id="collapsibleSectionContainer">
+            <!-- button state defaults to false so state
+                 represents "is collapsed"
+            -->
+         <aura:if isTrue="{!v.displayList}">
+            <lightning:buttonStateful labelWhenOff="{! v.title }"
+                                      labelWhenOn="{! v.title }"
+                                      iconNameWhenOff="utility:chevrondown"
+                                      iconNameWhenOn="utility:chevronright"
+                                      onclick="{! c.handleSectionHeaderClick }"
+                                      class="slds-section__title-action" />
+ 
+      <!--EDGE-163361 Added to invoke a lC popup!-->       
+        <div class="slds-section__content" >
+      		<div  align="right">
+          <c:PRM_InvokeFlowComponet DisplayedOn="UpdateContactRole" ButtonLabel="Configure Contact Role" opptyid="{!v.recordId}" /> 
+            </div>		 
+            <c:LC_RelatedListBaseComponent sObjectName="OpportunityContactRole" sObjectFieldsNames="Contact.Name,Contact.Email,Role" whereClause="{!v.where}" relationshipFields='{"Contact.Email":"email,Email,ContactEmail","Contact.Name":"url,Contact Name,ContactName"}' />
+		</div>
+    </aura:if>
+    </div>
+</aura:component>

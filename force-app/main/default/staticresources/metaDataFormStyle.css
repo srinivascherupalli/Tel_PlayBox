@@ -1,0 +1,21 @@
+.meta-data-inputs input:read-only,
+.quick-search input:focus {
+  box-shadow: none;
+}
+
+.quick-search input {
+  border: none;
+  border-bottom: 1px solid #dddbda;
+}
+
+/* .custom-checkbox-list .slds-checkbox .slds-checkbox__label {
+  display: flex;
+}
+.custom-checkbox-list .slds-checkbox .slds-checkbox_faux {
+  display: inline-block;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 8px;
+} */

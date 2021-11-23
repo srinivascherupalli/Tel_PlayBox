@@ -1,0 +1,25 @@
+<!--
+Created By : Team Hawaii
+Date : 30/02/2020
+Jira No : P2OB-4164
+Description: This component is to display error msg if user is not selected.This is child component for 
+DynamicRowItemForOpptyTeamMember
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <!--Attribute to store error msg list-->
+    <aura:attribute name = "ListOfErrorMsg" type="String[]"/>
+    <!--Attribute to store inded-->
+    <aura:attribute name="Index" type="Integer"/>
+    <aura:attribute name="ErrorDisplay" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <tr>
+            <td colspan="5">
+				<aura:if isTrue="{!v.ErrorDisplay != ''}">
+                <span class="slds-custom--errorMsg slds-text-color_error slds-p-left_x-small">
+                    {!v.ErrorDisplay}
+                </span>
+                </aura:if>     
+            </td>
+    </tr>
+    
+</aura:component>

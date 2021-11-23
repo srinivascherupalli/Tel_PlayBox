@@ -1,0 +1,20 @@
+<template>
+    <div class="searchPaging">
+        <lightning-layout>
+            <lightning-combobox name="pagesize" label="Items per page:" value={pagesize} placeholder="" options={pageSizeOption} onchange={handleChange}></lightning-combobox>
+            <lightning-layout-item>
+                <lightning-button label="" icon-name="utility:chevronleft" onclick={handlePrevious} disabled={showFirstButton}></lightning-button>
+            </lightning-layout-item>
+            <ul>
+                <template for:each={recordNoCount} for:item='count'>
+                    <li key={count.value}>
+                        <a href='#' data-id={count.value} onclick={handlePageClickChange}>{count.value}</a>
+                    </li>
+                </template>
+            </ul>
+            <lightning-layout-item>
+                <lightning-button label="" icon-name="utility:chevronright" icon-position="right" onclick={handleNext} disabled={showLastButton}></lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+</template>

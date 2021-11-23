@@ -1,0 +1,6 @@
+<design:component >
+    <design:attribute name="type"/>
+    <design:attribute name="message" />
+    <design:attribute name="duration" />
+    <design:attribute name="mode" />
+</design:component>

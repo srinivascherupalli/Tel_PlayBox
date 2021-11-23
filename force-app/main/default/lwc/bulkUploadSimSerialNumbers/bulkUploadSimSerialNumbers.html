@@ -1,0 +1,12 @@
+<template>
+        <b>Upload SIM Serial Numbers </b>
+        <lightning-helptext content="Upload CSV file can be used to bulk SIM Serial numbers to qualify blank SIMs"></lightning-helptext>
+         <lightning-input icon-name="utility:upload" 
+         type="file" 
+         title="Upload CSV File"
+         onchange={handleUploadFinished} 
+         accept = ".csv"
+         multiple="false"
+         >
+     </lightning-input> 
+</template>

@@ -1,0 +1,19 @@
+<!--
+   
+   *  Description of the purpose of the method.
+   *  @name SOWItemDetails
+   *  @description               : This LWC is used to display related list of SOW Items.
+   *  @param                     : Functional Contact Role Record Id.
+   *  @return 				 	 : - 
+   *  @Jira Story Ref            : EDGE-129805
+   *  @createdBy  				 : Sri Ramya E, Alexandria
+-->
+<template>
+        <lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle}
+            active-section-name={activeSections}>
+            <lightning-accordion-section class="relatedListLWCStyle" name="SOW Items" label="Services for inclusion">
+                <lightning-datatable data={data} columns={columns} key-field=" id" hide-checkbox-column="true">
+                </lightning-datatable>
+            </lightning-accordion-section>
+        </lightning-accordion>
+</template>

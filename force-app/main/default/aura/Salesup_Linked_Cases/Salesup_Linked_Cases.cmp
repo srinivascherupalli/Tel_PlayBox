@@ -1,0 +1,72 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" controller="Salesup_LinkedCasesController">
+
+    <aura:attribute name="linkedCaseRecords" type="sObject[]"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="assignOption" type="String"/>
+    
+    <!-- Handlers -->
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    <lightning:card>
+
+        <!-- Set the title of the Card -->
+        <aura:set attribute="title">
+            <lightning:icon iconName="standard:case" size="small" class="iconCls"/>
+                <b>Linked Cases</b>
+        </aura:set>
+
+        <!-- Set the manu actions for the Card -->
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.assignOption == 'true'}">
+                <lightning:buttonMenu aura:id="menu" menuAlignment="right" iconSize="small" onselect="{! c.handleSelect }" alternativeText="Show menu">
+                    <lightning:menuItem value="AssignCases" label="Assign Cases to me" />
+                </lightning:buttonMenu>
+            </aura:if>
+        </aura:set>
+
+        <!-- Cards to be displayed for each record -->
+        <p class="slds-p-horizontal_small">
+            
+            <aura:if isTrue="{!v.linkedCaseRecords.length == 0}">
+                <div class="slds-text-heading_small slds-text-align_center">No linked cases found</div>
+            </aura:if>
+            
+            <aura:iteration items="{!v.linkedCaseRecords}" var="item" indexVar="indxItem" end="3">
+                <div class="{!v.linkedCaseRecords.length == (indxItem+1)? 'slds-grid rowMarginCls' : 'slds-grid slds-border_bottom rowMarginCls' }">
+
+                    <div class="slds-col slds-size_1-of-2">
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <label class="slds-form-element__label">Case Number</label>
+                            <div class="slds-form-element__control">
+                                <a data-ID="{!item.Id}" target="_blank" onclick="{!c.openCaseRecord}"> {!item.CaseNumber} </a> <br/>
+                            </div>
+                        </fieldset>
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                                <label class="slds-form-element__label">Work Required</label>
+                                <div class="slds-form-element__control">{!item.salesup_Work_Required__c}</div>
+                        </fieldset>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-2">
+                        <fieldset class="slds-form-element slds-form-element_compound">
+                            <label class="slds-form-element__label">Case Owner</label>
+                            <div class="slds-form-element__control">{!item.Owner.Name}</div>
+                        </fieldset>
+                    </div>
+                </div>  
+                
+            </aura:iteration>
+        </p>  
+        <!-- Set the footer of the card -->        
+        
+        <aura:set attribute="footer">
+            <aura:if isTrue="{!v.linkedCaseRecords.length > 0}">
+                <a onclick="{!c.viewAllLinkedCases}">View All</a>
+            </aura:if>
+        </aura:set>
+        
+    </lightning:card>
+
+</aura:component>

@@ -1,0 +1,9 @@
+<!-- 
+Story: EDGE-127943
+Name: DynamicLookupClearEvent
+Description:Event while Lookup value cleared
+Author: Pradeep Bhumi -->
+
+<aura:event type="COMPONENT" description="by this event we are pass the selected sObject(lookup list record) in the parent component">
+    <aura:attribute name="clearEvent" type="sObject"/>
+</aura:event>

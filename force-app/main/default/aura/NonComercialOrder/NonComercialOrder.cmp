@@ -1,0 +1,14 @@
+<!--
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description
+1.         Shubhi             28-Oct-2020   EDGE-182452(new)
+===============================================================================================================================
+-->
+<aura:component controller="NonCommercialOrder" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId" access="global" >
+    <aura:attribute name="enableNonCommercialOrder" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:if isTrue="{!v.enableNonCommercialOrder}">
+        <c:nonCommercialBasketButton  recordId="{!v.recordId}" onclose="{!c.closeQA}" />
+    </aura:if> 
+    
+</aura:component>

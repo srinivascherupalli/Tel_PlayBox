@@ -1,0 +1,20 @@
+<aura:component implements="force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                controller="NewBasketButtonController">
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <aura:handler name="init" value="{!this}" action="{!c.redirectTo}" default="true"/>
+    <aura:attribute name="showError" type="boolean"/>
+    <aura:attribute name="ErrorMap" type="string"/>
+
+    <aura:if isTrue="{!v.showError==False}">
+       <!-- if msg not equal to null.. display msg. -->  
+   	<aura:if isTrue="{!v.ErrorMap!=null}">
+   		   <!-- <aura:if isTrue="{!v.Error=='OpptyNotAcceptedByPartner'}"> -->
+      		<p style="color:#C23934">  {!v.ErrorMap} </p> 
+    		<!-- <aura:if isTrue="{!v.Error=='OpptyNotApprovedByTelstra'}"> 
+      		<p style="color:#C23934">  {!v.ErrorMsg} </p> </aura:if> -->
+    </aura:if>
+        </aura:if>
+    <aura:if isTrue="{!v.showError==true}">
+        <p>Loading...</p>
+    </aura:if>
+</aura:component>

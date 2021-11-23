@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" description="by this event we are pass the selected contact in the parent component">
+    <aura:attribute name="contactPPAByEvent" type="contact"/>
+     <aura:attribute name="contactPPAByEventDynamic" type="contact"/>   
+     <aura:attribute name="isPPASignatory" type="Boolean"/>
+   </aura:event>

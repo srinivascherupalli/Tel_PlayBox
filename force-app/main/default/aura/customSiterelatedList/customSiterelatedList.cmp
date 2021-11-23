@@ -1,0 +1,192 @@
+<aura:component implements="force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable"
+                controller="CreateSiteController" access="global" >
+    <aura:attribute type="cscrm__Site__c[]" name="siteList"/>
+    <aura:attribute name="siteColumns" type="List"/>
+    <aura:attribute name="ViewAllRec" type="Boolean" access="public" default="true"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <aura:attribute name="recordId" type="Id" access="public" />
+
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="parentRecordId" type="String" />
+    <aura:attribute name="accountDetails" type="sObject" default=""/>
+    <aura:attribute name="siteName" type="String" />
+    <aura:attribute name="canCreateSite" type="boolean" default="false"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="parentComp" type="String" default="CreateSiteModal"/>
+    <aura:attribute name="conIconName" type="String" default="custom:custom70"/>
+    <aura:attribute name="title" type="String" default="Create Site | Lightning Experience" />
+    <lightning:overlayLibrary aura:id="overlayLibRefId"/>
+    <aura:handler event="c:RecordDetailEvent" action="{!c.searchedCompletedAction}"/>
+    <aura:handler event="c:windowSPANotifierEvent" action="{!c.handleBubbling}"/>
+    <!--  <aura:handler name="init" value="{!this}" action="{!c.fetchSites}"/> -->
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }" />
+  <!--  <aura:handler event="force:refreshView" action="{!c.isRefreshed}" />-->
+     <lightning:navigation aura:id="navService"/>
+    <aura:html tag="style">
+       .createcontarolebtn{
+        min-width: fit-content!important;
+        align:right;
+        border: 1px solid rgb(217, 219, 221) !important;
+        border-radius: 0.25rem!important;
+        border-width: 1px!important;
+    	border-style: solid!important;
+    	text-decoration: none;
+        font-family:akkuratLight!important;
+        padding: 5px;
+        font-size:14px !important;
+        text-align: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        } 
+    </aura:html> 
+  
+
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner aura:id="spinner" variant="brand" size="large"/>           
+    </aura:if>
+   
+    <aura:if isTrue="{!v.isOpen}">
+        
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-slide-up-open">
+            <div class="slds-modal__container">
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.doCloseOperation }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="title slds-text-heading--medium">Create Site</h2>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                <div class="slds-modal__content slds-p-around_large" id="modal-content-id-1">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size_12-of-12">
+                            <br/>
+                            <div class="slds-text-align_left" style="padding-left: 2.5%">
+                                Site Name will be visible to the customer, as typed. Please use logical naming and check spelling.
+                            </div>
+                            <br/>
+                            <br/>
+                            <div class="slds-text-align_left">
+                                <div class="slds-size_2-of-2">
+                                    <div class="slds-m-around_x-small">
+                                        <div class="slds-m-around_small slds-grid slds-gutters">
+                                            <div class="slds-col" style="">
+                                                Account <p class="slds-p-top_xx-small"> <lightning:icon iconName="standard:account" size="small"/> <div class="slds-p-left_x-small" style="display:inline">{!v.accountDetails.Name}</div></p>  
+                                            </div>
+                                            <div class="slds-col" style="">
+                                            </div>
+                                            <div class="slds-col">
+                                                
+                                            </div>
+                                        </div>
+                                       <div class="slds-grid slds-wrap" style="">  
+                                            <div class="slds-size_1-of-2">
+                                                <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+                                                    <div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength">
+                                                        <div class= "slds-form-element__control">
+                                                            <lightning:input type="text" name="SiteName" aria-describedby="form-Note" aura:id="SiteName" label="Site Name" value="{!v.siteName}" required="true"/>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>   
+                                            </div>
+                                            <div class="slds-size_1-of-2">
+                                                
+                                                <div class="slds-grid full forcePageBlockSectionRow" data-aura-class ="forcePageBlockSectionRow">
+                                                    <div class="slds-has-flexi-truncate slds-form-element slds-form-element_edit slds-hint-parent slds-p-horizontal_medium siteCreateFieldLength">
+                                                        <!-- <c:strike_lookup label="Account" aura:id="accountLookup" object="Account" searchField="Name" iconName="standard:account" disabled="true"/>  -->
+                                                        <c:Strike_Lookup_Modal filter="cscrm__Address__c.cscrm__Address_Type__c!='Postal Address' AND cscrm__Address__c.Source_System__c!='TCM'" label="Site Address" 
+                                                                               aura:id="addressLookup" object="cscrm__Address__c" searchField="Name" subtitleField="NBN_Address_Status__c" overrideNewEvent="true" limit="10" 
+                                                                               allowNewRecords="true" showRecentRecords="true" placeholder="Search Addresses" customOnUpdateEvent="{!c.getSiteName}" iconName="custom:custom24" loadingMessage="Loading..." required="true"/>
+                                                    </div>
+                                                </div> 
+                                                
+                                            </div>                        
+                                        </div>                                      
+                                    </div>
+                                </div>
+                            </div> 
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </div>
+                    </div> 
+                </div>
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.doCloseOperation }"/>
+                    <lightning:button variant="brand" 
+                                      label="Save"
+                                      title="Save"
+                                      onclick="{! c.saveSite }"/>
+                </footer>
+                
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!--###### MODAL BOX Part END Here ######-->
+        
+    </aura:if>
+    
+       <!--HeaderTile for the related list-->
+    <aura:attribute name="headerTitle" type="Aura.Component[]">
+        <h1 class="slds-text-heading_small">
+               <aura:if isTrue="{!(empty(v.siteList))}"> 
+                <b>Sites(0) </b>
+            </aura:if>
+            <aura:if isTrue="{!not(empty(v.siteList))}">   
+               <aura:if isTrue="{!greaterthanorequal(v.siteList.length,6)}">
+               <!-- <b>Sites ({!(v.siteList.length)}+) </b> -->
+                     <b>Sites(6+)</b>
+                <aura:set attribute="else">
+                    <b>Sites({!(v.siteList.length)})</b>
+
+                </aura:set>
+            </aura:if>
+            </aura:if>
+        </h1>
+    </aura:attribute>
+    
+     <lightning:card class="slds-card_boundary" iconName="{!v.conIconName}" variant="base">
+          <aura:set attribute="title">{!v.headerTitle}</aura:set>
+<!--     <div class=" slds-show_inline-block" style="vertical-align: bottom;">-->
+         <aura:set attribute="actions"><!-- Changes to add new button -->
+              <aura:if isTrue="{!and((v.canCreateSite),(v.ViewAllRec))}">
+                    <div align="right" >
+                     <lightning:button variant="brand" label="New Site" title="New Site" onclick="{!c.createNewSite}" class="createcontarolebtn" />
+                 </div>
+             </aura:if>
+         </aura:set>
+
+    <lightning:datatable data="{! v.siteList }"
+                         columns="{! v.siteColumns }"
+                         keyField="id"
+                         hideCheckboxColumn="true"/>
+
+   <!-- </div>-->
+      <aura:if isTrue="{!(empty(v.siteList))}"> 
+               <div class="slds-align_absolute-center slds-p-top_large">
+                            <ui:outputText value="There are no records in this list" />
+                        </div>
+            </aura:if>
+      <!--   <aura:if isTrue="{!and(not(empty(v.siteList)),(v.ViewAllRec))}"> -->
+        <aura:if isTrue="{!and((v.siteList),(v.ViewAllRec))}">
+           <div class="slds-card__footer">
+                        <a href="javascript:void(0);" onclick="{!c.navigateToMyComponent}">View All</a>
+                    </div>
+         </aura:if>
+        
+    </lightning:card>
+</aura:component>

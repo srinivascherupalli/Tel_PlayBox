@@ -1,0 +1,78 @@
+<apex:page extensions="APTPS_Import_UpdateObligationsController" standardController="Apttus__APTS_Agreement__c" standardStylesheets="true">
+<apex:includeScript value="{!$Resource.APTPS_Jquery_Min_JS}"></apex:includeScript>
+<apex:includeScript value="{!$Resource.APTPS_Bootstrap_Min_JS}"></apex:includeScript> 
+<script>
+
+
+function fnConfirm()
+{
+    alert('The obligations records will be inserted/updated.') ;
+    CallConfirmAction();
+}
+
+</script>
+    <apex:sectionHeader subtitle="{!agreementName}" ></apex:sectionHeader>
+    <h5> <b>Select the CSV file for Inserting or Updating the Obligations</b></h5>
+    <apex:form >
+        <apex:actionFunction name="CallConfirmAction" action="{!confirm}"></apex:actionFunction>
+       
+        <apex:pagemessages />
+        <apex:pageBlock >
+          <!--  <apex:pageBlockSection> -->
+            <div id="dvFileSelection"  style="display:{!HTMLENCODE(showFileSelection)}; float:left;">
+                  <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/> 
+                  <br/>
+                  <br/>
+                  <apex:commandButton value="Upload Obligations" action="{!importUpdateCSVFile}" />
+                  <apex:commandButton value="Cancel" action="{!cancel}"  style="margin-left:1%" ></apex:commandButton>
+                  <br/>
+                  <br/>
+                  <h5 style="position:absolute;"> <b>Supported CSV Format:</b></h5>
+                  <br/>
+                  <br/>
+                  <h5 style="position:absolute;"> <b>Date format should be in <font color="red">dd/mm/yyyy</font> format for all date fields.</b></h5>
+                  <br/>
+                  <br/>
+                  <apex:image id="theImage" value="{!$Resource.APTPS_CSVFormat}" />
+                  
+           </div>
+                  <br/>
+                  
+                 
+              <!-- </apex:pageBlockSection>-->
+            
+              
+            <div id="tableGrid"  style="display:{!HTMLENCODE(showGrid)};">
+            <apex:pageBlockTable value="{!obligationsToBeDisplayed}" var="a" id="table">
+                <apex:column >
+                    <apex:image value="{!a.DisplayImage}" width="40" height="40"/>
+                    
+                </apex:column>
+                <apex:column value="{!a.Status}" headerValue="Action"/>
+                <apex:column value="{!a.Obligation_Id}" headerValue="Obligation Id" />
+                <apex:column value="{!a.Agreement_Clause}" headerValue="Clause Name"/>
+                <apex:column value="{!a.Category}" headerValue="Category"/>
+                <apex:column value="{!a.Sub_Category}" headerValue="Sub-Category"/>
+                <apex:column value="{!a.Description}" headerValue="Description"/>
+                <apex:column value="{!a.Due_Date}" headerValue="Next Due Date"/>
+                <apex:column value="{!a.Obligation_Frequency}" headerValue="Obligation Frequency"/>
+                <apex:column value="{!a.Comments}" headerValue="Comments"/>
+                <apex:column value="{!a.Responsible}" headerValue="Responsible"/>
+                <apex:column value="{!a.Accountable}" headerValue="Accountable"/>
+                <apex:column value="{!a.Consulted}" headerValue="Consulted"/>
+                <apex:column value="{!a.Informed}" headerValue="Informed"/>
+               
+            </apex:pageBlockTable>
+            <br/>
+            <br/>
+            <apex:commandButton value="Confirm"   id="btnConfirm" onclick="fnConfirm()" action="{!confirm}"/>
+            <apex:commandButton value="Upload New File" action="{!uploadNewDocument}"  style="margin-left:1%" ></apex:commandButton>
+            <apex:commandButton value="Cancel" action="{!cancel}"  style="margin-left:1%" ></apex:commandButton>
+            </div>   
+            
+        </apex:pageBlock>
+        <br/>
+        
+        
+   </apex:form>
+</apex:page>

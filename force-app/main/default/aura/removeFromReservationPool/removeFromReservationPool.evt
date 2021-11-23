@@ -1,0 +1,4 @@
+<!-- EDGE-105438
+	Author: Ila -->
+<aura:event type="APPLICATION" description="Event template">
+</aura:event>

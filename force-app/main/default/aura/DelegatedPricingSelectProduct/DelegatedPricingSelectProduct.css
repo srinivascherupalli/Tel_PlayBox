@@ -1,0 +1,21 @@
+/*******************************************************************
+    EDGE        : 114139, 114433
+    Component   : DelegatedPricingSelectProduct & Hardware Options
+    Description : Delegated Pricing select Product component.
+    Author      : T Badri Narayan Subudhi
+	Last Modified By : Manish Berad
+    **********************************************************************/
+
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}
+.THIS .FixedWidth{
+    width:160px;
+    -ms-box-sizing:content-box;
+    -moz-box-sizing:content-box;
+   -webkit-box-sizing:content-box; 
+}
+.THIS .iconColor {
+    color:Red;
+}

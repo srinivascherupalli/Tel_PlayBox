@@ -1,0 +1,17 @@
+.search-result-tab-heading{
+    font-weight:bold;
+    color:black;
+    margin-bottom:.25rem;
+}
+.reservation-pool-tab-heading{
+    text-align: left;
+    font-weight: bold;
+    color: black; 
+    margin-bottom: .25rem;
+}
+.select-all-reservation-pool_alignment{
+    text-align: right;
+}
+.select-all-reservation-pool_padding{
+    padding-right: 5px;
+}

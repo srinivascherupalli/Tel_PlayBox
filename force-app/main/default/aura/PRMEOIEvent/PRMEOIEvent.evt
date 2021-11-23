@@ -1,0 +1,11 @@
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="data" type="object"/>
+    <aura:attribute name="lead" type="Lead"/>
+    <aura:attribute name="InvalidEmail" type="boolean"/>
+    <aura:attribute name="IsinvalidABN" type="boolean"/>
+    <aura:attribute name="ABNResult" type="object"/>
+    <aura:attribute name="Bnameslist" type="string[]"/>
+    <!--Added by team Hawaii for P2OB-8478-->
+	<aura:attribute name="IsValidCompanySize" type="boolean"/>
+
+</aura:event>

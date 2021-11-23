@@ -1,0 +1,26 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="recordId" type="String"  default=""/>
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="appDetailsSimple" type="Object"/>
+    <aura:attribute name="appDetails" type="Object"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="FieldsetName" type="String" default="Applicant_operation"/>
+    <aura:registerEvent name="ApplicationBooleanEvent" type="c:ApplicationBooleanEvent"/>
+    <force:recordData aura:Id="ApplicantOperation"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.appDetailsSimple}"
+                      targetFields="{!v.appDetails}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+    
+     <div class="slds-text-heading_large slds-text-align_center">
+        <h1>Third Party Agent Application Form</h1>
+        </div>
+          <div class="slds-text-body_regular slds-text-align_left">
+        <h3>Applicant's Operations</h3>
+        </div>
+    <div area-labelledby="newAppform">
+    	<lightning:textarea label="{!v.queAndAns[0].Question}"  required="true" Name="BuseinessOp" value="{!v.appDetails.Nature_History_of_Business_Operations__c}"/>
+    	
+    </div>
+</aura:component>

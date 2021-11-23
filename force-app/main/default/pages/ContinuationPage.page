@@ -1,0 +1,54 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" 
+           applyHtmlTag="false" applyBodyTag="false" docType="html-5.0"
+    controller="ContinuationController">
+    <apex:includeLightning />
+    <html>
+    <body>
+        <script>
+            var baseUrl = window.location.toString();
+            console.log(baseUrl +'***baseUrl');
+            console.log(baseUrl.search(/partners/)+'***baseUrl');
+            var hostname = window.location.hostname;
+            var lexBaseURL="https://";
+            if((baseUrl.indexOf("/partners/")>-1) || (baseUrl.indexOf("enterprise")>-1)){                
+                lexBaseURL=lexBaseURL+window.location.hostname;
+            }else{
+                var mydomain = window.location.hostname.substr(0, hostname.indexOf("--c."));
+                lexBaseURL = lexBaseURL+ mydomain + ".lightning.force.com";
+            }
+            // var lexBaseURL = "https://" + mydomain + ".lightning.force.com";
+            //var lexBaseURL ="https://"+hostname; 
+            console.log(lexBaseURL+'***lexBaseURL');
+            window.addEventListener("message", function (event) {
+                console.log(event.origin+'***event.origin');
+                if (event.origin !== lexBaseURL) {
+                    console.log('not same event.origin');
+                    console.log(event.origin);
+                    console.log(lexBaseURL);
+                    // Not the expected origin: reject message
+                    return;
+                }
+                // Only handle messages we are interested in            
+                if (event.data.topic === "pimsContinuationCalls") {
+                    var methodName = event.data.methodName;
+                    var methodParams = event.data.methodParams;
+                    Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.ContinuationController.invoke}',
+                                                              methodName,  
+                                                              JSON.stringify(methodParams), 
+                                                              function (result,error) {
+                        var message = {
+                            invocationId: event.data.invocationId,
+                            topic: "pimsContinuationCalls",
+                            result: result,
+                            error:error
+                        };
+                        parent.postMessage(message, lexBaseURL);
+                    },{escape:false});
+                }
+            }, 
+            false);
+        </script>
+    </body>
+    </html>
+
+</apex:page>

@@ -1,0 +1,214 @@
+<aura:component controller="PRMWebtoLeadContr">
+    <aura:attribute name="leadRec" type="Lead" />
+    <aura:attribute name="spinner" type="boolean" default="false" />
+    <aura:attribute name="selectedcustseg" type="List" />
+    <aura:attribute name="CountrylistMap" type="Map" />
+    <aura:attribute name="StatelistMap" type="Map" />
+    <aura:attribute name="BusinessnamelistMap" type="Map" />
+    <aura:attribute name="CustomerSegmentMap" type="Map" />
+    <aura:attribute name="industryMap" type="Map" />
+    <aura:attribute name="AnnualRevenueMap" type="Map" />
+    <aura:attribute name="showtooltip" type="boolean" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="LeadrecordId" type="String" />
+    <!--Added by Hawaii for P2OB-8478 -->
+    <aura:attribute name="CompanySizeErrorMessage" type="String" />
+    <aura:attribute name="IsCompanySizeInValid" type="boolean" default="false" />
+
+
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'Enterprise', 'value': 'Enterprise'},
+                                                        {'label': 'Government – Local', 'value': 'Government – Local'},
+                                                        {'label': 'Government – National', 'value': 'Government – National'},
+                                                        {'label': 'Mid-size Business', 'value': 'Mid-size Business'},
+                                                        {'label': 'Small and medium business', 'value': 'Small and medium business'},
+                                                        {'label': 'Global', 'value': 'Global'},
+                                                        {'label': 'Non-Profit', 'value': 'Non-Profit'}
+                                                        ]" />
+
+
+    <aura:if isTrue="{!v.spinner}">
+        <!-- <lightning:spinner variant="brand"  size="large" /> -->
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+
+	    <!-- All Fields label changed to Custom labels by Hawaii for P2OB-8478 -->
+    <div class="slds-text-heading_medium">{!$Label.c.EOI_Company_Information}</div>
+
+
+
+    <br />
+
+
+
+
+    <div class="slds-grid" style="width:110%;">
+        <lightning:input aura:id="Leadform" label="{!$Label.c.EOI_ABN}" name="ABN" value="{!v.leadRec.ABN__c}" required="true"
+            variant="label-inline" class="slds-form-element slds-form-element_horizontal" />
+
+        &nbsp; &nbsp;
+        <lightning:button label="Validate" variant="brand" class="slds-float_right slds-button"
+            onclick="{!c.handleABNValidation}" />
+
+        <div onmouseover="{!c.displaytooltip}" onmouseout="{!c.hidetooltip}">
+            <button class="slds-button slds-button slds-button--icon slds-align_absolute-center" aria-describedby="help"
+                title="Help">
+                <lightning:helptext
+                    content="We will automatically validate your ABN with the Australian Business Register." />
+            </button>
+        </div>
+
+    </div>
+
+
+
+
+    <lightning:input aura:id="Leadform" label="{!$Label.c.EOI_Entity_Name}" name="Name" variant="label-inline"
+        value="{!v.leadRec.ABN_Registered_Name__c}" class="slds-form-element slds-form-element_horizontal"
+        placeholder="We will fill this value when you validate your ABN" required="true" disabled="true" />
+
+    <lightning:select aura:id="Leadform" variant="label-inline" name="BuninessNamelist" value="{!v.leadRec.Company}"
+        class="slds-form-element slds-form-element_horizontal" label="{!$Label.c.EOI_Business_Name}" required="true">
+        <aura:iteration items="{!v.BusinessnamelistMap}" var="BusinessName" indexVar="key">
+            <option text="{!BusinessName.value}" value="{!BusinessName.key}"
+                selected="{!BusinessName.key==v.leadRec.Company}" />
+        </aura:iteration>
+    </lightning:select>
+
+
+    <lightning:input aura:id="Leadform" label="{!$Label.c.EOI_Years_in_Operation}" name="Years in operation" variant="label-inline"
+        value="{!v.leadRec.Entity_Age_Years__c}" class="slds-form-element slds-form-element_horizontal"
+        placeholder="We will fill this value when you validate your ABN" required="true" disabled="true" />
+
+
+
+    <lightning:input aura:id="Leadform" label="{!$Label.c.EOI_Company_Website}" name="Website" variant="label-inline"
+        value="{!v.leadRec.Website}" required="true" class="slds-form-element slds-form-element_horizontal" />
+
+
+    <lightning:input aura:id="Leadform" label="{!$Label.c.EOI_Company_headquarters_address}" name="AddressLine1" variant="label-inline"
+        value="{!v.leadRec.Business_Address_Street__c}" class="slds-form-element slds-form-element_horizontal--right"
+        required="true" placeholder="Address Line 1" />
+
+
+
+    <lightning:input aura:id="Leadform" name="Address line2" variant="label-inline"
+        value="{!v.leadRec.Business_Address_Line2__c}" class="slds-form-element slds-form-element_horizontal--right"
+        placeholder="Address Line 2" />
+
+
+
+    <lightning:input aura:id="Leadform" name="City" value="{!v.leadRec.Business_Address_City__c}"
+        class="slds-form-element slds-form-element_horizontal" placeholder="City" variant="label-inline" />
+
+    <lightning:input aura:id="Leadform" name="State" value="{!v.leadRec.Business_Address_State_province__c}"
+        class="slds-form-element slds-form-element_horizontal" placeholder="State" variant="label-inline" />
+
+
+
+    <lightning:input aura:id="Leadform" name="Postal code" value="{!v.leadRec.Business_Address_Zip_Postal_Code__c}"
+        class="slds-form-element slds-form-element_horizontal" placeholder="Postal code" variant="label-inline" />
+    <lightning:input aura:id="Leadform" name="Country" value="{!v.leadRec.Business_Address_Country__c}"
+        class="slds-form-element slds-form-element_horizontal" placeholder="Country" variant="label-inline" />
+
+
+
+
+    <lightning:select aura:id="Leadform" name="select" label="{!$Label.c.EOI_Company_Size}" value="{!v.leadRec.Company_Size__c}"
+        class="slds-form-element slds-form-element_horizontal" required="true" onchange="{!c.checkCompanySize}">
+        <option value="">Select a size</option>
+        <option value="1-5">1-5</option>
+        <option value="6-10">6-10</option>
+        <option value="11-20">11-20</option>
+        <option value="21-50">21-50</option>
+        <option value="51-100">51-100</option>
+        <option value="1010500">101-500</option>
+        <option value="501-1000">501-1000</option>
+        <option value="1000+">1000+</option>
+    </lightning:select>
+
+    <!-- Added by Hawaii for P2OB-8478 -->
+    <aura:if isTrue="{!v.IsCompanySizeInValid}">
+        <div class="cPRMEOICompanyInformation">
+            <div class="slds-form-element__help slds-text-color_error error">{!v.CompanySizeErrorMessage}</div>
+        </div>
+    </aura:if>
+
+
+    <lightning:select aura:id="Leadform" value="{!v.leadRec.Annual_Revenue__c}" name="Annual revenue "
+        variant="label-inline" label="{!$Label.c.EOI_Annual_Revenue}" class="slds-form-element slds-form-element_horizontal"
+        required="true">
+        <option value="">Select annual revenue</option>
+        <!--<aura:iteration items="{!v.AnnualRevenueMap}" var="ind" indexVar="key">
+                        <option text="{!ind.value}" value="{!ind.key}" selected="{!ind.key==v.leadRec.Annual_Revenue__c}" />
+        </aura:iteration>-->
+        <option value="Below $2M">Below $2M</option>
+        <option value="$2-5M">$2-5M</option>
+        <option value="$5M-$10M">$5M-$10M</option>
+        <option value="$10M+">$10M+</option>
+    </lightning:select>
+
+    <lightning:select aura:id="Leadform" value="{!v.leadRec.Industry_Vertical__c}" name="industryPicklist"
+        label="{!$Label.c.EOI_Industry_Veritcal}" variant="label-inline" class="slds-form-element slds-form-element_horizontal"
+        required="true">
+        <option value="">Select industry vertical</option>
+        <aura:iteration items="{!v.industryMap}" var="ind" indexVar="key">
+            <option text="{!ind.value}" value="{!ind.key}" selected="{!ind.key==v.leadRec.Industry_Vertical__c}" />
+        </aura:iteration>
+    </lightning:select>
+
+    <br />
+    <div>
+        <div class="slds-form-element slds-form-element_horizontal slds-form-element__label ">
+            <abbr class="slds-required" title="required">*</abbr>
+            <span>{!$Label.c.EOI_Types_of_customers}</span>
+            <!-- adding helptext for Story P2OB-7471 by Ayush -->
+            <lightning:helptext iconName="utility:info" class="slds-helpText" content="Tick all options that apply" />
+        </div>
+
+        <lightning:checkboxGroup aura:id="Leadform" name="Types of customers you sell to" options="{! v.options }"
+            variant="label-inline" value="{! v.selectedcustseg}"
+            class="slds-form-element slds-form-element_horizontal slds-form-element__control" />
+
+
+    </div>
+
+    <lightning:select aura:id="Leadform" name="select"
+        label="{!$Label.c.EOI_Working_with_telstra_rep}"
+        value="{!v.leadRec.Working_with_Telstra_Partner_Sales_rep__c}" required="true"
+        class="slds-form-element slds-form-element_horizontal">
+        <option value="">--Select--</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+
+    </lightning:select>
+
+    <br /><br />
+
+    <lightning:input aura:id="Leadform" label="{!$Label.c.EOI_Enter_Rep_Name}" name="If Yes, please enter their name"
+        variant="label-inline" value="{!v.leadRec.Existing_Telstra_Partner_Sales_rep__c}"
+        class="slds-form-element slds-form-element_horizontal" />
+
+    <lightning:select aura:id="Leadform" name="Current Aggriments" variant="label-inline"
+        label="{!$Label.c.EOI_Vendor_Agreement}"
+        value="{!v.leadRec.Has_Telstra_Agreement__c}" class="slds-form-element slds-form-element_horizontal"
+        required="true">
+        <option value="">--Select--</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </lightning:select>
+    <br /><br />
+
+    <lightning:input aura:id="AggrimentType" variant="label-inline" label="{!$Label.c.EOI_Enter_Agreement_Type}"
+        name="If Yes, please enter Agreement Type  " value="{!v.leadRec.Current_agreements_with_telstra__c}"
+        class="slds-form-element slds-form-element_horizontal" />
+
+
+
+</aura:component>

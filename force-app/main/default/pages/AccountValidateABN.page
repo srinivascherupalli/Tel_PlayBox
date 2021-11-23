@@ -1,0 +1,55 @@
+<apex:page standardController="Account" extensions="AccountValidateABNController" showHeader="false" sidebar="true" standardStylesheets="true">
+
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <link rel="stylesheet" href="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+
+        <apex:form >
+            <div class="slds" style="height:500px!important">
+                <div class="slds-page-header">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <p class="slds-page-header__title slds-truncate"><b>ABN Validator</b></p>
+                        </div>
+                    </div>
+                </div>
+                <apex:pageBlock id="pBlock">
+                    <apex:pageMessages />
+                    <apex:pageBlockSection columns="2" collapsible="false">                                                            
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel styleClass="slds-form-element__label" value="ABN" />
+                            <apex:outputText styleClass="slds-form-element__label" value="{!account.ABN__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel styleClass="slds-form-element__label" value="ABN Status" />
+                            <apex:image value="{!If(account.ABN_Status__c == 'Active', $Resource.cscfga__ok_icon, If((account.ABN_Status__c == 'Not Validated' || account.ABN_Status__c == '' || account.ABN_Status__c == null), '' , $Resource.Invalid))}" height="12px" width="12px" alt="">
+                                <apex:outputText styleClass="slds-form-element__label" value="{!account.ABN_Status__c}"/>
+                            </apex:image>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!account.ABN_Status__c != 'Error' && account.ABN_Status__c != 'Not Validated'}">
+                            <apex:outputLabel styleClass="slds-form-element__label" value="ABN Type" />
+                            <apex:outputText styleClass="slds-form-element__label" value="{!account.ABN_Type__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!account.ABN_Status__c != 'Error' && account.ABN_Status__c != 'Not Validated'}">
+                            <apex:outputLabel styleClass="slds-form-element__label" value="ABN Registered Name" />
+                            <apex:outputText styleClass="slds-form-element__label" value="{!account.ABN_Registered_Name__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!account.ABN_Status__c != 'Error' && account.ABN_Status__c != 'Not Validated'}">
+                            <apex:outputLabel styleClass="slds-form-element__label" value="ABN Trading Name" />
+                            <apex:outputText styleClass="slds-form-element__label" value="{!account.ABN_Trading_Name__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!account.ABN_Status__c == 'Error'}">
+                            <apex:outputLabel styleClass="slds-form-element__label" value="Error Description" />
+                            <apex:outputText styleClass="slds-form-element__label" value="{!account.Error_description__c}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:commandButton styleClass="slds-button slds-button--neutral" action="{!callout}" value="Validate" status="InitStatus" reRender="pBlock"/>
+                        <apex:actionStatus id="InitStatus">
+                            <apex:facet name="start">
+                                <img src="/img/loading.gif" />
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </div>
+        </apex:form>
+    </html>
+</apex:page>

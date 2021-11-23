@@ -1,0 +1,23 @@
+<!-- Description :  P2OB-6525 Creating a generic component to launch any flow
+     Author      :  Vivian Charlie, Team Hawaii 
+     Created Date:  13 May 2020 
+     Jira        :  P2OB-6525
+	 Updates     :  18 May 2020 : Ritika Jaiswal : P2OB-6525 - Updates done for calling the commponent from button-override
+-->
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="flowName" type="String"/>
+    <aura:attribute name="redirectURL" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }     
+         .slds-modal__content{
+        overflow-y:auto !important;
+        height:unset !important;  
+        }
+    </aura:html>
+    <aura:if isTrue="{!not(empty(v.flowName))}">
+         <lightning:flow aura:id="flowData" onstatuschange="{!c.closeModalOnFinish}"/>
+    </aura:if>    
+</aura:component>

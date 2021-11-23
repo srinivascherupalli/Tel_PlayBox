@@ -1,0 +1,54 @@
+<aura:component controller="applicationRecordContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="recordId" type="String"  default=""/>
+    <aura:attribute name="queAndAns" type="QuestionAndAnswerWrapper[]"/>
+    <aura:attribute name="recordError" type="String"/>
+    <aura:attribute name="appDetailsSimple" type="Object"/>
+    <aura:attribute name="appDetails" type="Object"/>
+ 	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name="FieldsetName" type="String" default="Relationship_to_Telstra"/>
+    <aura:registerEvent name="ApplicationBooleanEvent" type="c:ApplicationBooleanEvent"/>
+	<aura:registerEvent name="closeModalEvent" type="c:closeModalEvent"/>    
+    <force:recordData aura:Id="ApplicantPageFour"
+                      recordId="{!v.recordId}"
+                      targetRecord="{!v.appDetailsSimple}"
+                      targetFields="{!v.appDetails}"
+                      layoutType="FULL"
+                      mode="EDIT"></force:recordData>
+
+    
+    <div class="slds-text-heading_large slds-text-align_center">
+	        <h1>Third Party Agent Application Form</h1>
+    	    </div>
+        	 <div class="slds-text-body_regular slds-text-align_left">
+                 <h3>Relationship to Telstra</h3>
+        </div>
+    <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>
+    <div area-labelledby="newAppform">
+    <fieldset class="slds-box slds-theme--default">
+    <form class="slds-form--stacked"> 
+    <div class="slds-form-element slds-is-required"> 
+        
+        <lightning:textarea label="{!v.queAndAns[0].Question}" required="true"  Name="litigation_Disp1" value="{!v.appDetails.Prev_Current_relationships_with_Telstra__c}" aura:id="expenseform"/>
+        <Lightning:textarea label="{!v.queAndAns[0].Question}" required="true" Name="RelationshipswithTelstra" value="{!v.appDetails.Prev_Current_relationships_with_Telstra__c}" aura:id="expenseform" class="slds-hidden"/>
+         <aura:if isTrue="{!not(empty(v.recordError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.recordError}
+            </ui:message>
+        </div>
+    </aura:if>  
+       	 		<div class="slds-modal__footer">
+                <lightning:button label="Save" variant="brand" onclick="{!c.handleSaveRecord}" />
+                <lightning:button label="Next" variant="brand" onclick="{!c.navigateToMyComponent}" />
+            </div>
+            </div>
+        </form>
+        </fieldset>
+    </div>
+</aura:component>

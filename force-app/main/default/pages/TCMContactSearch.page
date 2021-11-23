@@ -1,0 +1,139 @@
+<apex:page controller="TCMContactSearchController" showChat="false" showHeader="false" docType="html-5.0">
+   
+    <style>
+        .activeTab {background-color: lightblue; color:white; background-image:none; font-weight: strong;}
+        .inactiveTab { background-color: lightgrey; color:black; background-image:none; font-weight: strong;}
+        .disabledTab { background-color: orange; color:red; background-image:none; font-weight: strong;}
+        .integrationError { color: green; font-weight: strong;}
+    </style>
+
+    <script>
+                
+            
+            function getId(elem) {
+                return "j_id0:j_id2:j_id3:j_id4:"+elem;
+            }
+
+            function getElement(ele) {
+                return document.getElementById(getId(ele));
+            }
+            
+            function disableText(elemId){
+                var element = getElement(elemId);
+                element.value = '';
+                element.disabled = true;
+            }
+            
+            function enableText(elemId){
+                getElement(elemId).disabled = false;
+            }
+            
+            function validateUUID() {
+                var val = getElement("uuid").value;
+                if(val.length > 0){
+                    disableText("firstName");
+                    disableText("lastName");
+                    disableText("birthDate");
+                    disableText("emailAddress");
+                }
+                else{
+                    enableText("firstName");
+                    enableText("lastName");
+                    enableText("birthDate");
+                    enableText("emailAddress");
+                }
+            }
+            
+            function validateFirstName() {
+                var val = getElement("firstName").value;
+                if(val.length > 0){
+                    disableText("uuid");
+                }
+                else{
+                    enableText("uuid");
+                }
+            }
+
+            function validateLastName() {
+                var val = getElement("lastName").value;
+                if(val.length > 0){
+                    disableText("uuid");
+                }
+                else{
+                    enableText("uuid");
+                }
+            }
+            
+            function validateBirthDate() {
+                var val = getElement("birthDate").value;
+                if(val.length > 0){
+                    disableText("uuid");
+                    disableText("emailAddress");
+                }
+                else{
+                    enableText("uuid");
+                    enableText("emailAddress");
+                }
+            }
+
+            function validateEmailAddress() {
+                var val = getElement("emailAddress").value;
+                if(val.length > 0){
+                    disableText("uuid");
+                    disableText("birthDate");
+                }
+                else{
+                    enableText("uuid");
+                    enableText("birthDate");
+                }
+            }
+            
+
+        </script>
+
+    <apex:pageBlock title="Search TCM Contact">
+        <apex:tabPanel switchType="client" selectedTab="nameBirthdate" id="TCMSearchTabPanel" tabClass="activeTab" inactiveTabClass="inactiveTab" disabledTabClass="disabledTab">
+            
+            <apex:tab label="ContactSearch" name="contactSearch" id="contactSearch" disabled="false">
+                <apex:form >
+                    <apex:pageBlockSection title="Search Criteria" columns="1">
+                        <apex:inputText id="firstName" value="{!firstName}" label="First Name" onkeyup="validateFirstName()"/>
+                        <apex:inputText id="lastName" value="{!lastName}" label="Last Name" onkeyup="validateLastName()"/>
+                        <apex:inputText id="birthDate" value="{!birthDate}" label="BirthDate" onkeyup="validateBirthDate()"/>
+                        <apex:inputText id="emailAddress" value="{!emailAddress}" label="Email Address" onkeyup="validateEmailAddress()"/>
+                        <apex:inputText id="uuid" value="{!uuid}" label="UUID" onkeyup="validateUUID()"/>
+
+                        <apex:pageBlockSection title="Command" columns="3" showHeader="false" >
+                            <apex:commandButton action="{!startSearch}" value="search" reRender="contacts_1"/>
+                            <!--apex:commandButton action="{!startSearch}" value="convert" reRender="contacts_2"/-->
+                        </apex:pageBlockSection>
+                    </apex:pageBlockSection>
+                    
+                    
+                </apex:form>
+               
+                <apex:pageBlockSection title="Contacts" id="contacts_1" columns="1">
+                    <apex:outputText value="{!err}"/>
+                    <apex:pageBlockTable value="{!contactList}" var="cont" rendered="{!IF(contactList!=null, true, false)}">
+                        <apex:column value="{!cont.firstName}" headerValue="First Name"/>
+                        <apex:column value="{!cont.lastName}" headerValue="Last Name" />
+                        <apex:column value="{!cont.middleName}" headerValue="Middle Name"/>
+                        <apex:column value="{!cont.id}" headerValue="ID"/>
+                     </apex:pageBlockTable>
+                     
+                     <apex:form >
+                     <apex:panelGrid id="pg1" columns="3" border="0" width="10%">
+                        <apex:commandButton action="{!previous}" value="<< Previous" rendered="{!IF(contactList!=null, true, false)}"/>
+                        <apex:outputLabel value=""/>
+                        <apex:commandButton action="{!next}" value="Next >>" rendered="{!IF(contactList!=null, true, false)}"/>
+                    </apex:panelGrid>
+                    </apex:form>
+                </apex:pageBlockSection>
+                
+                
+                
+            </apex:tab>
+            
+        </apex:tabPanel>
+    </apex:pageBlock>
+</apex:page>

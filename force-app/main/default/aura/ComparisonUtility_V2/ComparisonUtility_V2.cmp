@@ -1,0 +1,544 @@
+<!--
+===============================================================================================================================
+Component Name : ComparisonUtility_v2
+Developer Name : Ravi
+COntroller Class : CompUtilityReplicatorManager
+===============================================================================================================================
+Sr.No.    Developer Name       	Modified  Date          Story Description
+1.        Shubhi,Harsh,Rohit     23/5/2019     			CheckEligibilitySolution (EDGE-66570 ,EDGE-72453,EDGE-73521)
+2.        Maq (Eureka)                                  Complete redesign to handle intregration with S2P on per click basis
+3. 		  Kalashree				 2/2/2021				Removed transitionSelect LWC being called from this component. (EDGE-194266)
+===============================================================================================================================
+-->
+<aura:component controller="CompUtilityReplicatorManager"
+                implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"
+                access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:attribute name="storedJSON" type="Boolean" default="false" />
+    <aura:attribute name="sites" type="ReplicatorGetServiceDataObject" access="global" />
+    <aura:attribute name="sites_new" type="ReplicatorGetServiceDataObject_V2" access="global" />
+    <aura:attribute name="allSitesWrapper" type="Map" access="global" />
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <!--EDGE-164031 changes by Rahul to dynamically calculate the count-->
+    <aura:attribute name="selectedRows" type="Integer" access="global" />
+    <aura:attribute name="selectedRowsNgUC" type="Integer" access="global" />
+    <aura:attribute name="sitesMap" type="Map" />
+    <aura:attribute name="sitesMap_V2" type="Map" />
+    <aura:attribute name="siteDTOMap" type="Map" />
+    <aura:attribute name="basketId" type="String" access="global" />
+    <aura:attribute name="isBohProfile" type="Boolean" access="global" /> <!-- EDGE-188078 -->
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false" />
+    <aura:attribute name="ProdBasket" type="cscfga__Product_Basket__c" />
+    <aura:attribute name="mapProdIds" type="Map" />
+    <aura:attribute name="mapProdIds_V2" type="Map" />
+    <aura:attribute name="selectedProd" type="String[]" access="global" />
+    <aura:attribute name="selectedProd_V2" type="String[]" access="global" />
+    <aura:attribute name="selectedProdFinal" type="String[]" access="global" />
+    <aura:attribute name="selectedProdFinal_V2" type="String[]" access="global" />
+    <aura:attribute name="readOnlyProd" type="String[]" access="global" />
+    <aura:attribute name="readOnlyProd_V2" type="String[]" access="global" />
+    <aura:attribute name="readOnlySelectedProd" type="String[]" access="global" />
+    <aura:attribute name="mobileResponseTable" type="List" access="global" />
+    <aura:attribute name="mobilityColumns" type="List" />
+    <aura:attribute name="ngUCResponseTable" type="List" access="global" />
+    <aura:attribute name="ngUcColumns" type="List" access="global" />
+    <aura:attribute name="readOnlySelectedProd_V2" type="String[]" access="global" />
+    <aura:attribute name="displayTransBtn" type="Boolean" default="false" />
+    <aura:attribute name="selectedSite" type="ReplicatorGetServiceDataObject" access="global" />
+    <aura:attribute name="selectedSite_V2" type="ReplicatorGetServiceDataObject_V2" access="global" />
+    <aura:attribute name="checkEligibilityInprogress" type="Boolean" default="false"
+                    description="Boolean to show Refresh Button" />
+    <aura:attribute name="checkEligibilityComplete" type="Boolean" default="false"
+                    description="Boolean to show Modify Button" />
+    <aura:attribute name="checkReviewConfirm" type="Boolean" default="false"
+                    description="Boolean to show Review and Confirm Button" />
+    <aura:attribute name="ifInTranstion" type="Boolean" default="false" />
+    <aura:registerEvent name="callSelectedProduct" type="c:CallGetSelectedProduct" />
+    <aura:handler event="c:GetSelectedProduct" action="{!c.handleGetSelectedProduct}" />
+    <aura:handler event="c:GetServicesEvent" action="{!c.handleGetServicesEvent}" />
+    <aura:handler name="getTabName" event="c:CompUtilityGetTab" action="{!c.handleSaveButtonOnTabClick}" />
+    <aura:handler event="c:MobilityEventBus" action="{!c.mobileSelectionCompleted}" />
+    <aura:handler event="c:RequestSupportEvent" action="{!c.isRequestSupportVisible}" /><!--EDGE-200766-->
+    <aura:attribute name="value" type="Integer" default="0"
+                    description="To store number of sites Processed for Eligibilty Check" />
+    <aura:attribute name="valuemax" type="Integer" default="0"
+                    description="To store number of sites Triggered for Eligibilty Check" />
+    <aura:attribute name="variant" type="String" default="warning" description="Variable to set Variant for Icon" />
+    <aura:attribute name="showProgressRing" type="Boolean" default="false"
+                    description="Boolean to show Progress Ring while callout" />
+    <aura:attribute name="showRing" type="Boolean" default="false" description="Boolean to show Ring while callout" />
+    <aura:attribute name="isJsonAttachmentPresent" type="Boolean" default="false"
+                    description="Boolean to Check Json Attachment" />
+    <aura:attribute name="loadingFixedSpinner" type="Boolean" default="false"
+                    description="Boolean to run Spinner while callout" />
+    <aura:attribute name="data" type="List" description="review and confirm table data" />
+    <aura:attribute name="listReviewConfirmCWP" type="list" description="review and confirm table data" />
+    <aura:attribute name="dataReviewNConfirmCWP" type="Map" description="review and confirm table data" />
+    <aura:attribute name="columns" type="List" default="[]" description="review and confirm table columns" />
+    <aura:attribute name="reviewConfirmdisabled" type="Boolean" default="true"
+                    description="used for handling review confirm button Edge-90448"></aura:attribute>
+    <aura:attribute name="ProdbuttonMap" type="Map" />
+    <aura:attribute name="hideCheckboxColumn" type="Boolean" default="false"
+                    description="To hide checkbox of tree grid" />
+    <aura:attribute name="siteClickedFlag" type="Boolean" access="global" />
+    <aura:attribute name="fetchProdFamilyFmBasket" type="Map" access="global" />
+    <aura:attribute name="selectedMobileRecrod" type="List" access="global" />
+    <aura:attribute name="mobileTransitionData" type="TransitionDataDTO" access="global" />
+    <aura:attribute name="selectedNgUCRecrod" type="List" access="global" />
+    <aura:attribute name="ngUcTransitionData" type="TransitionDataDTO" access="global" />
+    <aura:attribute name="isMobilityProduct" type="String" access="global" />
+    <aura:attribute name="sendCalloutBoolean" type="Boolean" default="false" />
+    <aura:attribute name="MROScreenenabled" type="Boolean" default="false"/>
+    <aura:attribute name="productconflist" type="object" />
+    <aura:attribute name="MROList" type="List" />   
+    <aura:attribute name="tableCount" type="Integer" />
+    <aura:attribute name="activelwcSection" type="String" />
+    <aura:attribute name="ConfirmMessage" type="String" />
+    
+    <aura:attribute name="searchFinalVal" type="String" default = ''/>
+    
+    <aura:attribute name="allServicesClicked" type="Map" description="All services need to be clicked atleast once" />
+    <div aura:id="container" />
+    <aura:attribute name="spinner" type="Boolean" default = "false"/>
+    <aura:attribute name="openModal" type="boolean" default="false"/>
+    <aura:attribute name="showOnScreenRetreival" type="Boolean" default="false" />
+     <aura:attribute name="isRequestSupportdisable" type="Boolean" default="true" /><!--EDGE-200766-->
+    <aura:attribute name="fnnsList" type="list" /><!--EDGE-200766-->
+    <aura:attribute name="transitionId" type="String" /><!--EDGE-200766-->
+
+    <!--START OF EDGE-199057 by Abhishek from Osaka Team for Mobile TM1 check eligibility -->
+    <aura:attribute name="callFrom" type="String" default = ''/>
+    <aura:attribute name="eigibilityCheckFromMobile" type="boolean" default = "false"/>
+    <aura:attribute name="selectedCIDN" type="List" access="global" />
+    <aura:attribute name="isCidnHierarchy" type="Boolean" access="global" />
+    <!--END OF EDGE-199057-->
+    <aura:attribute name="caseId" type="String" />
+    <aura:attribute name="CaseNumber" type="String" />
+    <aura:attribute name="isCaseModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="isCaseCreated" type="Boolean" default="false"/>
+    <aura:attribute name="CommunityUrl" type="String"/>
+    <!--Start of EDGE-198188 by Abhishek(Osaka) to restrict Migration BOH user from selecting services with different BANs-->
+    <aura:attribute name="validateMultipleBan" type="boolean" default = "false"/>
+    <aura:attribute name="openModalBoh" type="boolean" default = "false"/>
+    <aura:attribute name="confirmMessageBoh" type="String" />
+    <!--End of EDGE-198188 by Abhishek(Osaka) -->
+    
+    <!--Start of EDGE-209985 by Abhishek(Osaka) for sending Product Family(Selected on-screen) to replicator -->
+    <aura:attribute name="productFamily" type="List" access="global" default="[]"/>
+    <!--End of EDGE-209985 by Abhishek(Osaka) -->
+
+    <!--Start of DIGI-18348 By Abhishek(Osaka) to fix intermittent multiple json issue -->
+    <aura:attribute name="enableCEButton" type="boolean" default = "true" description="To enable/disable Check Eligibility Button"/>
+    <aura:attribute name="enableSaveSelButton" type="boolean" default = "false" description="To enable/disable Save Selection Button"/>
+    <!--End of DIGI-18348 By Abhishek(Osaka) to fix intermittent multiple json issue -->
+
+    <!--Start of DIGI-1741 by Abhishek(Osaka) to hit validation for Plan Configuration Mode on confirm button-->
+    <aura:attribute name="planConfigMode" type="String"/>
+    <aura:attribute name="sioModal" type="boolean" default = "false"/>
+    <aura:attribute name="customMetadatRec" type="Map"/>
+    <aura:attribute name="popUpMessage" type="String"/>
+    <!--End of DIGI-1741 by Abhishek(Osaka) to hit validation for Plan Configuration Mode on confirm button-->
+    <aura:attribute name="sioConfigMode" type="String" /><!--Added for DIGI-1681-->
+    <!-- <aura:registerEvent name="TransitionModalCloseEvent" type="c:TransitionModalCloseEvent"/> -->
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner variant="brand" size="large" />
+    </aura:if>
+    <br />
+    <div  aura:id="onscreenRetreive" > 
+        <aura:if isTrue="{!v.MROScreenenabled}"> 
+            <aura:if isTrue="{!v.ProdBasket.cscfga__Opportunity__r.Type == 'Migration'}"><!--EDGE-209973-->
+                <b>  {!v.MROList.length} services selected for migration </b><br />
+                <aura:set attribute="else">
+                    <b>  {!v.MROList.length} services selected for transition </b><br />
+                </aura:set>
+            </aura:if><!--EDGE-209973-->
+            <c:transitionMROscreen tableCount="{!v.MROCount}" mapkeyvaluestore="{!v.MROList}" activeSections="{!v.activelwcSection}"/> 
+            <aura:if isTrue="{!v.spinner}">
+                <div aura:id="spinnerId" class="slds-spinner_container slds-is-relative">
+                    <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                        <p style="transform: translate(-32%, -50%) rotate(-90deg);width: 320px;text-align: center;">  <br/> Retrieving Data <br/> Please wait </p>
+                    </div>
+                </div>     
+            </aura:if>
+        </aura:if>  
+        
+        <!--<span style="font-size:large">Checkpoint(Basket-{!v.ProdBasket.Name}
+    Stage-{!v.ProdBasket.csordtelcoa__Basket_Stage__c})</span>
+  <hr />-->
+        <aura:if isTrue="{!v.checkReviewConfirm}">
+            <div aura:id="cmpBody">
+                
+                <div style="width: 98%;max-width:98%; margin-left: 2%;margin-right: 2%; ">
+                    <!--EDGE-185056: Rename order type to Migration for Migration type -->
+                    <aura:if isTrue="{!v.ProdBasket.cscfga__Opportunity__r.Type == 'Migration'}">
+                        <b style="color:#0a0a0a; font-size:x-large;padding-left: .5rem;">Review &amp; Confirm Services for
+                            Migration Selection</b> <br /><br />
+                        <aura:set attribute="else">
+                            <b style="color:#0a0a0a; font-size:x-large;padding-left: .5rem;">Review &amp; Confirm Services for
+                                Transition Selection</b> <br /><br />
+                        </aura:set>
+                    </aura:if>
+                    <!-- EDGE-96442 mobile transition -->
+                    <aura:if isTrue="{!not(empty(v.mobileResponseTable))}">
+                        <!--EDGE - 168642 START -->
+                        <div class="slds-float--right">
+                            <lightning:button label="Download CSV Copy" title="Download CSV Copy" iconName="utility:download" iconPosition="right" onclick="{!c.downloadCSV }"/>
+                        </div> <br/> <br/>
+                        <!-- EDGE - 168642 END -->
+                        <div style="padding-right: 3%;">
+                            <div
+                                 style="padding-left: .5rem;background-color: rgb(242, 242, 242);color: black; height: 2.5rem; padding-top: 0.7%;">
+                                <!-- EDGE-172052 Renaming CMP to Mobile:Osaka: Ramya -->
+                                <b style="color:#0a0a0a; font-size:medium;">Mobile</b>
+                            </div>
+                            <!--EDGE-164031 changes by Rahul to dynamically calculate the count-->
+                            <div><b style="color:#0a0a0a; font-size:medium;">{!v.selectedRows} Selected</b></div>
+                            <lightning:datatable data="{!v.mobileResponseTable}" columns="{!v.mobilityColumns}"
+                                                 keyField="Id" selectedRows="{!v.selectedRows}" aura:id="mobileDataTable" hideCheckboxColumn="true"
+                                                 class="slds-table_bordered slds-table_col-bordered" />
+                        </div>
+                    </aura:if>
+                    <!-- Display NgUc Data on Review and Confirm Screen END -->
+                    <aura:if isTrue="{!not(empty(v.ngUCResponseTable))}">
+                        <!--DIGI-1757 changes by Pradeep from Osaka Team START-->
+                        <div class="slds-float--right">
+                            <lightning:button label="Download CSV Copy" title="Download CSV Copy"  iconName="utility:download" iconPosition="right" onclick="{!c.downloadCSVNGUC }"/>
+                            </div> <br/> <br/>
+                              <!--DIGI-1757 END -->
+                        <div style="padding-right: 3%;">
+                            <div
+                                 style="padding-left: .5rem;background-color: rgb(242, 242, 242);color: black; height: 2.5rem; padding-top: 0.7%;">
+                                <b style="color:#0a0a0a; font-size:medium;">Telstra Collaboration</b>
+                            </div>
+                            <!--EDGE-164031 changes by Rahul to dynamically calculate the count-->
+                            <div><b style="color:#0a0a0a; font-size:medium;">{!v.selectedRowsNgUC} Selected</b></div>
+                            <lightning:datatable data="{!v.ngUCResponseTable}" columns="{!v.ngUcColumns}" keyField="Id"
+                                                 aura:id="ngUCDataTable" hideCheckboxColumn="true"
+                                                 class="slds-table_bordered slds-table_col-bordered" />
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!not(empty(v.listReviewConfirmCWP))}">
+                        <div style="padding-right: 3%;">
+                            <div
+                                 style="padding-left: .5rem;background-color: rgb(242, 242, 242);color: black; height: 2.5rem; padding-top: 0.7%;">
+                                <b style="color:#0a0a0a; font-size:medium;">Connected Workplace</b>
+                            </div>
+                            <aura:iteration items="{!v.listReviewConfirmCWP}" var="dataSite" indexVar="tidx">
+                                <div
+                                     style="padding-left: .5rem;background-color: rgb(242, 242, 242);color: black; height: 2.5rem; padding-top: 0.7%;">
+                                    <b
+                                       style="font-family: 'Arial', sans-serif;font-weight: 400; font-style: normal; letter-spacing: normal; color: #333333; line-height: normal;">{!dataSite[0].siteName
+                                        } </b>
+                                </div>
+                                <lightning:datatable aura:id="test" keyField="siteId" columns="{! v.columns }"
+                                                     data="{! dataSite}" hideCheckboxColumn="true"
+                                                     class="slds-table_bordered slds-table_col-bordered" />
+                            </aura:iteration>
+                        </div>
+                    </aura:if>
+                </div>
+                
+                <!-- EDGE-96442 mobile transition END -->
+                <br /><br />
+                <div class="slds-text-align_right" style="padding-right: 3%;">
+                    <lightning:button aura:id="goBack" label="Modify Selection" variant="neutral" onclick="{! c.goBack}" />
+                    <!--  <lightning:button aura:id="goToBasket" label="Go to Basket" variant="brand"
+                    onclick="{! c.navigateToRollCall}" /> -->
+                    <!-- EDGE-180109 : Handling validation on Click on Confirm Button --> 
+                    <button class="slds-button slds-button--brand" onclick="{!c.handleOpenModal}">Confirm</button>  
+                    <div class="slds-m-around--xx-large">
+                        <aura:if isTrue="{!v.openModal}">
+                            <!--Modal Box Start-->
+                            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                                <div class="slds-modal__container">
+                                    <div class="slds-modal__
+                                                er">
+                                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.handleCloseModal}">
+                                            X
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                        <h1 class="slds-text-heading--medium">Warning</h1>
+                                    </div>
+                                    
+                                    <!--Modal Box Header-->
+                                    <div class="slds-modal__content slds-p-around--medium">
+                                        <center> <p><b>
+                                            {!v.ConfirmMessage}                   </b>
+                                            </p></center>
+                                    </div>
+                                    <!--Modal Box Button-->
+                                    <div class="slds-modal__footer">
+                                        <button class="slds-button slds-button--brand" onclick="{!c.handleCloseModal}">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-backdrop slds-backdrop--open"></div>            
+                        </aura:if>
+                    </div>
+                    
+                </div>
+            </div>
+            <aura:set attribute="else">
+                <div class="slds-card__header" style="position:relative">
+                    <div class="slds-form--compound">
+                        <div>
+                            <aura:if isTrue="{!v.ifInTranstion}">
+                                <div class="slds-scrollable_y">
+                                    <div class="slds slds-grid">
+                                        <div class="slds-col slds-size_3-of-8" style="width: 34.5%  !important;">
+                                            <c:CompUtilityProdBasket siteDTOMap="{!v.siteDTOMap}"
+                                                                     ProdBasket="{!v.ProdBasket}" sitesMap_V2="{!v.sitesMap_V2}"
+                                                                     aura:id="GetSiteComp" cidn="{!v.ProdBasket.csbb__Account__r.CIDN__c}" 
+                                                                     />
+                                        </div>
+                                    </div>
+                                    <div class="slds slds-grid">
+                                    <div class="slds-col slds-size_8-of-8"
+                                         style="background-color:white;width: 100%  !important;">
+                                             <!--Added for CIDN hierarchy and selected CIDN as a part of EDGE-198196. (OSAKA)-->
+                                             <!--EDGE-209985: Added productFamily to send Product Family(selected on-screen) to replicator by Abhishek(Osaka) -->
+                                            <c:ComparisonUtilityDetails_V2 sites="{!v.sites}" sites_new="{!v.sites_new}"
+                                                                           sitesMap="{!v.sitesMap}" sitesMap_V2="{!v.sitesMap_V2}"
+                                                                           basketId="{!v.basketId}" selectedProd="{!v.selectedProd}"
+                                                                           readOnlyProd="{!v.readOnlyProd}"
+                                                                           readOnlySelectedProd="{!v.readOnlySelectedProd}"
+                                                                           ProdBasket="{!v.ProdBasket}"
+                                                                           reviewConfirmdisabled="{!v.reviewConfirmdisabled}"
+                                                                           hideCheckboxColumn="{!v.hideCheckboxColumn}" 
+                                                                           selectedCIDN="{!v.selectedCIDN}" 
+                                                                           isCidnHierarchy="{!v.isCidnHierarchy}"
+																		   productFamily = "{!v.productFamily}"
+                                                                           sioConfigMode = "{!v.sioConfigMode}"/><!--Added for DIGI-1681-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </aura:if>
+                        </div>
+                        <aura:if isTrue="{!v.loadingFixedSpinner}">
+                            <div class="slds-spinner_container" aura:id="uploadSpinner">
+                                <div class="slds-spinner slds-spinner--medium" aria-hidden="false" role="alert">
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                            
+                        </aura:if>
+                    </div>
+                </div>
+                
+                <hr style="margin-right: 1%; margin-top: 1px; margin-bottom: 1px" />
+                
+                <div>
+                    <!-- FOOTER -->
+                    <footer role="contentinfo" class="slds-card__footer slds-p-around_large">
+                        <!-- LAYOUT GRID -->
+                        <div>
+                            <div class="slds-grid slds-grid_align-end">
+                                <aura:if isTrue="{!v.ProdBasket.Transition_basket_stage__c=='Initial'}">
+                                    <div class="slds-col slds-align-bottom ">
+                                        <!-- ui:button class="slds-button slds-button_outline-brand" aura:id="button" label="Save" press="{!c.processTransition}" disabled="false"/-->
+                                        
+                                        <!--DIGI-18348 : Added disabled attribute to Save Selection and Check Eligibility by Abhishek(Osaka) -->
+                                        <lightning:button class="slds-button" aura:id="button" label="Save Selection"
+                                                          disabled="{!v.enableSaveSelButton}"
+                                                          onclick="{!c.saveSelection}" />
+                                        <!-- c:customHelpText text="Save any changes and close Checkpoint, or Cancel to discard changes and revert to last saved."/-->
+                                    </div>
+                                    &nbsp;
+                                    <div class="slds-col slds-align-bottom">
+                                        <lightning:button class="slds-button" aura:id="button" label="Check Eligibility"
+                                                          disabled="{!v.enableCEButton}"
+                                                          onclick="{!c.checkEligibility}" />
+                                    </div>
+                                </aura:if>
+                            </div>
+                            <aura:if isTrue="{!v.ProdBasket.Transition_basket_stage__c=='Check Eligibility Triggered'}">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_9-of-12">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-12">
+                                                <lightning:icon iconName="utility:info" size="small" />
+                                            </div>
+                                            <div class="slds-col slds-size_11-of-12 slds-p-left_small">
+                                                <div class="slds-text-align_left">
+                                                    We are checking compatibility of the chosen products. The average time
+                                                    needed for this process range from 5 mins to few hours:
+                                                    You can close this window without losing your progress. To get the
+                                                    latest update, Please refesh the window</div>
+                                                <div class="slds-col slds-align-bottom">
+                                                    
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <!--p class="slds-text-heading_small">Transition Eligibility check has been initiated.This request may take time to complete, depending on the numbers of site selected.
+                                                Please click the refresh button to monitor progress.</p-->
+                                    </div>
+                                    
+                                    <div class="slds-col slds-size_2-of-12">
+                                        <aura:if isTrue="{!v.showRing}">
+                                            <c:progressRing value="{!v.value}" valuemax="{!v.valuemax}" />
+                                        </aura:if>
+                                    </div> 
+                                    <div class="slds-col slds-align-bottom">
+                                        <lightning:button aura:id="refresh" label="Refresh Page" variant="brand"
+                                                          onclick="{!c.refreshLoader}" />
+                                    </div>
+                                    
+                                </div>
+                            </aura:if>         
+                            <aura:if isTrue="{!v.ProdBasket.Transition_basket_stage__c=='Check Eligibility Completed'}">
+                                <div class="slds-has-block-links_space">
+                                    <div class="slds-clearfix slds-float_left slds-list_horizontal">
+                                        <aura:if isTrue="{!v.reviewConfirmdisabled}">
+                                            <lightning:icon iconName="utility:warning" variant="warning" />
+                                            <P class="slds-text-heading_small">
+                                                Ineligible services discovered. To proceed , modify your
+                                                selection to remove ineligible numbers from transition.
+                                            </P>
+                                        </aura:if>
+                                        <!--p>	Ineligible services discovered. To proceed , modify your selection to remove ineligible numbers from transition.</p-->
+                                    </div>
+                                    <aura:if isTrue="{!v.MROScreenenabled == false}">  
+                                        <div class="slds-clearfix slds-float_right slds-list_horizontal">
+                                            <lightning:button aura:id="requestsupportbutton" label="Request Support"
+															  iconPosition="left" variant="brand"
+															  onclick="{! c.requestSupport}" disabled="{!v.isRequestSupportdisable}"/>
+                                            <lightning:button aura:id="modifyselectionbutton" label="Modify Selection"
+                                                              iconPosition="left" iconName="utility:edit" variant="neutral"
+                                                              onclick="{! c.modifySelected}" />
+                                            <lightning:button aura:id="reviewandconfirm" label="Next"
+                                                              iconPosition="left" variant="brand" onclick="{! c.navigateToReviewConfirm}"
+                                                              disabled="{!v.reviewConfirmdisabled}" />
+                                        </div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.MROScreenenabled}">         
+                                        <div class="slds-clearfix slds-float_right slds-list_horizontal">
+                                            <lightning:button aura:id="back" label="Back"
+                                                              iconPosition="left" variant="Neutral"
+                                                              onclick="{! c.refreshLoader}" />
+                                            <div style="padding-left:30px;">
+                                                <lightning:button  aura:id="review" label="Review" disabled = "{!v.spinner}"
+                                                                  iconPosition="left" variant="brand" onclick="{!c.navigateToReviewConfirm}"
+                                                                  />
+                                            </div>
+                                        </div>
+                                    </aura:if>  
+                                </div>
+                            </aura:if>
+                            <div class="slds-grid slds-grid_align-end">
+                                <aura:if isTrue="{!v.ProdBasket.Transition_basket_stage__c=='Modify Selection'}">
+                                    <div class="slds-col slds-align-bottom">
+                                        <!-- ui:button class="slds-button slds-button_outline-brand" aura:id="button" label="Save" press="{!c.processTransition}" disabled="false"/-->
+                                        
+                                        <!--DIGI-18348 : Added disabled attribute to Save Selection and Check Eligibility by Abhishek(Osaka) -->
+                                        <lightning:button class="slds-button" aura:id="button" label="Save Selection"
+                                                          disabled="{!v.enableSaveSelButton}"
+                                                          onclick="{!c.saveSelection}" />
+                                        <!-- c:customHelpText text="Save any changes and close Checkpoint, or Cancel to discard changes and revert to last saved."/-->
+                                    </div>
+                                    &nbsp;
+                                    <div class="slds-col slds-align-bottom">
+                                        <lightning:button class="slds-button" aura:id="button" label="Check Eligibility"
+                                                          disabled="{!v.enableCEButton}"
+                                                          onclick="{!c.checkEligibility}" />
+                                    </div>
+                                </aura:if>        
+                            </div>       
+                            <div class="slds-m-around_xx-large">
+            
+                                <!--Use aura:if tag to display/hide popup based on isCaseModalOpen value EDGE-200766-->  
+                                <aura:if isTrue="{!v.isCaseModalOpen}">
+                                    
+                                    <!-- Modal/Popup Box starts here-->
+                                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                                        <div class="slds-modal__container">                  
+                                            <!--Modal/Popup Box Body Starts here-->
+                                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                                <center><p><b> Case <a data-caseid="{!v.caseId}" href="javascript:void(0)" onclick="{!c.handleClick}" >{!v.CaseNumber}</a> was created. </b></p></center>
+                                            </div>
+                                            <!--Modal/Popup Box Footer Starts here-->
+                                            <footer class="slds-modal__footer">
+                                                <lightning:button variant="neutral"
+                                                                  label="Close"
+                                                                  title="Close"
+                                                                  onclick="{! c.closeModel }"/>                        
+                                            </footer>
+                                        </div>
+                                    </section>
+                                    <div class="slds-backdrop slds-backdrop_open"></div>
+                                </aura:if>
+                            </div>                            
+                        </div>
+                    </footer>
+                </div>
+            </aura:set>
+        </aura:if>
+        <!--- Start of EDGE-198188 by Abhishek(Osaka) to restrict Migration BOH user from selecting services with different BANs-->
+        <div class="slds-m-around--xx-large">
+            <aura:if isTrue="{!v.openModalBoh}">
+                <!--Modal Box Start-->
+                <div role="dialog" class="slds-modal slds-fade-in-open ">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__header">
+                            <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.handleCloseModal}">
+                                X
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h1 class="slds-text-heading--medium">Error</h1>
+                        </div>
+                        
+                        <!--Modal Box Header-->
+                        <div class="slds-modal__content slds-p-around--medium">
+                            <center> <p><b>
+                                {!v.confirmMessageBoh}                   </b>
+                                </p></center>
+                        </div>
+                        <!--Modal Box Button-->
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button--brand" onclick="{!c.handleCloseModal}">Close</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop--open"></div>            
+            </aura:if>
+        </div>
+        <!--- End of EDGE-198188 -->
+
+        <!--- Start of DIGI-1741 by Abhishek(Osaka) to hit validation for Plan Configuration Mode on confirm button-->
+        <div class="slds-m-around--xx-large">
+            <aura:if isTrue="{!v.sioModal}">
+                <!--Modal Box Start-->
+                <div role="dialog" class="slds-modal slds-fade-in-open ">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__header">
+                            <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.handleCancel}">
+                                X
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h1 class="slds-text-heading--medium">Auto SIO Config</h1>
+                        </div>
+                        
+                        <!--Modal Box Header-->
+                        <div class="slds-modal__content slds-p-around--medium">
+                            <center> <p><b>
+                                {!v.popUpMessage}                  </b>
+                                </p></center>
+                        </div>
+                        <!--Modal Box Button-->
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button--brand" onclick="{!c.handleConfirm}">Confirm</button>
+                            <button class="slds-button slds-button--brand" onclick="{!c.handleCancel}">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop--open"></div>            
+            </aura:if>
+        </div>
+        <!--- End of DIGI-1741 -->
+    </div>
+</aura:component>

@@ -1,0 +1,19 @@
+.THIS .installationAddressLookup {
+    max-width:50%;
+}
+.THIS .accountLookupFieldLength{
+    max-width:40%;
+}
+.THIS .createSiteFooter{
+    border-top :2px solid rgb(216, 221, 230);
+    background-color: rgb(244, 246, 249);
+}
+.THIS .forceToastMessage.slds-notify--toast{
+    background-color : #407216;
+}
+.THIS .buttonWidth{
+    width: 137px;
+}
+.THIS .inputWidth{
+    width:400px;
+}

@@ -1,0 +1,23 @@
+@isTest
+global class MockHttpResponseGenerator implements HttpCalloutMock {
+    // Implement this interface method
+    global HTTPResponse respond(HTTPRequest req) {
+        // Optionally, only send a mock response for a specific endpoint
+        // and method.
+        System.assertEquals('http://abr.business.gov.au/abrxmlsearch/AbrXmlSearch.asmx/ABRSearchByABN', req.getEndpoint());
+        System.assertEquals('GET', req.getMethod());
+        String endPoint = req.getEndpoint();
+        System.debug('endPoint : '+endPoint);
+        String strTmp = '<ABRPayloadSearchResults xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://abr.business.gov.au/ABRXMLSearch/"><request><identifierSearchRequest><authenticationGUID>efffade1-8320-45b5-a0e8-c2a38a5aa1bd</authenticationGUID><identifierType>ABN</identifierType><identifierValue>83914571672</identifierValue><history>N</history></identifierSearchRequest></request><response><dateRegisterLastUpdated>0001-01-01</dateRegisterLastUpdated><dateTimeRetrieved>2016-12-13T09:45:03.9427502+11:00</dateTimeRetrieved><exception><exceptionDescription>Search text is not a valid ABN or ACN</exceptionDescription><exceptionCode>WEBSERVICES</exceptionCode></exception></response></ABRPayloadSearchResults>';
+        // Create a fake response
+        String successStr = '<ABRPayloadSearchResults xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://abr.business.gov.au/ABRXMLSearch/"><request><identifierSearchRequest><authenticationGUID>efffade1-8320-45b5-a0e8-c2a38a5aa1bd</authenticationGUID><identifierType>ABN</identifierType><identifierValue>83914571673</identifierValue><history>N</history></identifierSearchRequest></request><response><businessEntity><recordLastUpdatedDate>2013-11-22</recordLastUpdatedDate><ABN><identifierValue>83914571673</identifierValue><isCurrentIndicator>Y</isCurrentIndicator><replacedFrom>0001-01-01</replacedFrom></ABN><entityStatus><entityStatusCode>Active</entityStatusCode><effectiveFrom>2000-01-12</effectiveFrom><effectiveTo>0001-01-01</effectiveTo></entityStatus><ASICNumber/><entityType><entityTypeCode>TRT</entityTypeCode><entityDescription>Other trust</entityDescription></entityType><mainName><organisationName>The Trustee for CARPENTER FAMILY TRUST</organisationName><effectiveFrom>2008-04-17</effectiveFrom></mainName><mainTradingName><organisationName>CLEARWATER SOFTWARE PTY LTD</organisationName><effectiveFrom>2000-04-09</effectiveFrom></mainTradingName><otherTradingName><organisationName>CLEARWATER CENTRE FOR HEALTH AND WELLBEING</organisationName><effectiveFrom>2008-07-01</effectiveFrom></otherTradingName><otherTradingName><organisationName>CLEARWATER HEALTH AND WELLBEING PTY LTD</organisationName><effectiveFrom>2008-04-17</effectiveFrom></otherTradingName><legalName><givenName>ARUN</givenName><otherGivenName/><familyName>BALACHANDRAN NAIR</familyName><effectiveFrom>2015-12-08</effectiveFrom><effectiveTo>0001-01-01</effectiveTo></legalName></businessEntity><exception><exceptionDescription>Search text is not a valid ABN or ACN</exceptionDescription><exceptionCode>WEBSERVICES</exceptionCode></exception></response></ABRPayloadSearchResults>';
+        String cancelStr = '<ABRPayloadSearchResults xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://abr.business.gov.au/ABRXMLSearch/"><request><identifierSearchRequest><authenticationGUID>efffade1-8320-45b5-a0e8-c2a38a5aa1bd</authenticationGUID><identifierType>ABN</identifierType><identifierValue>83500721618</identifierValue><history>N</history></identifierSearchRequest></request><response><businessEntity><ABN><identifierValue>83500721618</identifierValue><isCurrentIndicator>Y</isCurrentIndicator><replacedFrom>0001-01-01</replacedFrom></ABN><entityStatus><entityStatusCode>Cancelled</entityStatusCode><effectiveFrom>2015-12-08</effectiveFrom><effectiveTo>0001-01-01</effectiveTo></entityStatus><ASICNumber/><entityType><entityTypeCode>IND</entityTypeCode><entityDescription>Individual/Sole Trader</entityDescription></entityType><legalName><givenName>ARUN</givenName><otherGivenName/><familyName>BALACHANDRAN NAIR</familyName><effectiveFrom>2015-12-08</effectiveFrom><effectiveTo>0001-01-01</effectiveTo></legalName></businessEntity></response></ABRPayloadSearchResults>';
+        HttpResponse res = new HttpResponse();
+        System.debug('PP response : '+res);
+        res.setBody(successStr);
+        res.setStatusCode(200);
+        return res;
+    }
+    
+    
+}

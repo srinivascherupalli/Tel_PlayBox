@@ -1,0 +1,11 @@
+.helpNtraining-search{
+    position: absolute;
+}
+    
+.helpNtraining-wrapper > div:last-child{
+    margin-top: 2.5rem;
+}
+
+h2.title {
+    margin-bottom: -10px;
+}

@@ -1,0 +1,136 @@
+<!--     
+* @Author : Suyash Chiplunkar
+* @Date : 1 July 2020
+* @Jira : DPG-1964
+/****History of Updates
+Sr.No.    Developer Name      Date          Story Description
+* Aruna Aware 27-07-2021 DIGI-5330 - In Rate Card, not finding the Excess Usage Rates/MB Column
+  2        Nikhil Sharma    05-08-2021       DIGI-603
+****/ 
+-->
+<aura:component controller="RateMatrixForIoTController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="String" name="solutionType" description = 'Assist the rate matrix to render according to solution type'/>
+    <aura:attribute type="String" name="errorMessage" description = "Contains the error message"/>
+   <!-- <aura:attribute type="Boolean" name="isRightPlan"/> -->
+    <aura:attribute type="String" name="CallingPlan"/>
+    <aura:attribute type="String" name="offerid" />
+    <aura:attribute type="Object" name="RateCardMap"/>
+    <aura:attribute type="List" name="ColumnHeaders"/>
+    <aura:attribute type="String" name="rateMatrixFor"/>   
+    <aura:attribute type="String" name="commProdId"/><!--DPG-2319-->
+    <!--Start: Added attributes as a part of EDGE-189788-->
+    <aura:attribute type="Object" name="jsonsios" default=""/>  
+    <aura:attribute type="boolean" name="isNewBasket" default="false"/>
+    <!-- by shashank : DIGI-37779  -->
+    <aura:attribute type="boolean" name="isDMSRateMatrixActive" default="true"/>
+    <aura:attribute type="String" name="changeType"/>
+    <aura:attribute type="String" name="guid"/>
+    <aura:attribute type="String" name="solutionId"/><!--Vamsi-->
+    <aura:attribute type="String" name="basketStage"/>
+    <aura:attribute type="String" name="componentName"/>
+    <aura:attribute type="String" name="basketId"/>
+    <aura:attribute type="String" name="selectplanname"/>
+    <!--End: Added attributes as a part of EDGE-189788-->
+    
+    <aura:if isTrue="{!v.RateCardMap}">
+        <div class="slds-p-around_x-small">
+            <div style="margin-bottom: 5px;padding :5px;border-bottom: 2px solid lightgrey">
+                <span style="font-size:x-large">Rate Card</span>
+            </div>
+            <div style="padding :5px">
+                <!--<span style="font-size:medium">IoT {!v.CallingPlan} - Monthly Charges (excl. GST )</span>-->
+                <span style="font-size:medium">{!v.solutionType} {!v.CallingPlan} - Monthly Charges (excl. GST )</span>
+            </div>
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">                
+                <tr>
+                    <th class="rateHeader">Plan</th>
+                    <aura:iteration items="{!v.ColumnHeaders}" var="cus" indexVar="key">
+                        <th class="rateHeader2">{!cus.key} - {!cus.value}</th>
+                    </aura:iteration>
+                    <aura:if isTrue="{!v.solutionType == 'MS' || v.solutionType == 'TMDM' || v.solutionType == 'DMS' || v.solutionType == 'AMMSLC'}">
+                        <aura:if isTrue="{!v.isNewBasket}">
+                            <th class="rateHeader2">Expected<br/>SIOs
+                                <lightning:helptext iconName="utility:info" content="Please enter expected SIOs based on discussion with your customer" />
+                            </th>
+                            <aura:set attribute="else">
+                                <th class="rateHeader2">Actual<br/>SIOs
+                                    <lightning:helptext iconName="utility:info" content="Please enter actual SIOs based on customer usage" />
+                                </th>
+                            </aura:set>
+                        </aura:if>
+                    </aura:if>
+                     <!-- Modified by Nikhil as part of DIGI-603 -->
+                    <aura:if isTrue="{!v.solutionType != 'DMS'}">
+                        <th class="rateHeader">Excess Usage rates/MB</th>
+                    </aura:if> 
+                </tr>
+                <!-- DIGI-5330 In Rate Card, not finding the Excess Usage Rates/MB Column -->
+                <aura:iteration items="{!v.RateCardMap}" var="rateCardList" indexVar="key">
+                    <tr>
+                        <td class="unitPrice paddingAll" >{!rateCardList.key}</td>
+                        <aura:iteration items="{!rateCardList.value}" var="rateCard" indexVar="key">
+      							<aura:iteration items="{!v.ColumnHeaders}" var="cus" indexVar="key">
+                               		<aura:if isTrue="{!rateCard.rangeFrom==cus.key}">
+                                    	<td class="unitPrice" >${!rateCard.recurringCharge}</td>
+                                	</aura:if>
+                            	</aura:iteration>
+                        </aura:iteration>
+                        <aura:iteration items="{!rateCardList.value}" var="rateCard" indexVar="key">
+                            <aura:if isTrue="{!rateCard.excessCharge}">
+                                <td class="unitPrice" >${!rateCard.capValue}</td>
+                            </aura:if>
+                        </aura:iteration>
+                        <aura:if isTrue="{!v.solutionType == 'MS' || v.solutionType == 'TMDM' || v.solutionType == 'DMS'  || v.solutionType == 'AMMSLC'}">
+                        <aura:if isTrue="{!v.isNewBasket}">
+                           <td class="unitPrice">
+                                <ui:inputNumber class="sios" value="{!rateCardList.value[0].expectedSIO}" updateOn="keyup" disabled="{!or(rateCardList.value[0].isSIODisabled, and(v.basketStage != 'Draft',v.basketStage != 'Commercial Configuration'))}"/>
+                            </td>
+                            <aura:set attribute="else">
+                                <td class="unitPrice">
+                                    <ui:inputNumber class="sios" value="{!rateCardList.value[0].actualSIO}" updateOn="keyup" disabled="{!or(rateCardList.value[0].isSIODisabled, and(v.basketStage != 'Draft',v.basketStage != 'Commercial Configuration'))}"/>
+                                </td>
+                            </aura:set>
+                        </aura:if>
+                      </aura:if>
+                    </tr>
+                </aura:iteration>
+            </table>
+        </div>
+        <!--Start: Added below two button as a part of EDGE-189788-->
+        <aura:if isTrue="{!v.solutionType == 'MS' || v.solutionType == 'TMDM' || v.solutionType == 'DMS'  || v.solutionType == 'AMMSLC'}">
+            <div class="slds-col slds-size_2-of-2 slds-p-top_xx-large" style="background:white;height: 3.5rem;">
+                <div class="slds-page-header slds-page-header_related-list" style="background:white">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title" style="text-align: center;">
+                        </div>
+                        <div class="slds-page-header__col-actions">
+                            <div class="slds-page-header__controls">
+                                <div class="slds-page-header__control">
+                                    <button class="slds-button  slds-button_neutral"
+                                            onclick="{!c.handleCancel}"
+                                            label="Cancel">Cancel</button>
+                                    <!-- Modified by Nikhil as part of DIGI-603 -->
+                                    <!--isDMSRateMatrixActive added by shashank DIGI-37779 -->
+                                    <aura:if isTrue="{!v.isDMSRateMatrixActive}"> 
+                                        <button class="slds-button  slds-button_neutral slds-p-left_x-large"
+                                                onclick="{!c.handleSave}"
+                                                label="Cancel">Save</button>
+                                    </aura:if> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+       <!--End: Added below two button as a part of EDGE-189788-->
+    </aura:if>
+
+    <aura:if isTrue="{!v.errorMessage}">
+    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error >" style="height:5rem;margin-top:5px" role="alert">
+        <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" variant="inverse"/>
+        <h2>{!v.errorMessage}</h2>
+      </div>
+    </aura:if>
+</aura:component>

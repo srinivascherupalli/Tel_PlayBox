@@ -1,0 +1,20 @@
+<aura:component >
+	
+ <div class="slds-align_absolute-center">
+     
+                           <lightning:icon class="slds-theme--success slds-avatar_circle" iconName="utility:success" alternativeText="Success!" variant="inverse" />
+
+    <!-- <lightning:icon size="large" class="slds-float_center" iconName="utility:success" alternativeText="Success!" />
+        --></div>
+            <div class="slds-text-title_bold slds-align_absolute-center">Submitted</div>
+            <br/>
+	 <div style="text-align:center">
+        
+    
+Thank you for your interest in becoming a Telstra Partner, we look forward to working with you.
+<br/>
+You will receive an email shortly with confirmation and our team will be in contact once we have reviewed your application.
+
+    
+    </div>
+    </aura:component>

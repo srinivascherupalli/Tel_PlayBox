@@ -1,0 +1,21 @@
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+  <apex:form >
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <apex:includeLightning />
+     
+    <script>
+       //EDGE-194266. Kalashree Borgaonkar. Changed the component to be called
+      $Lightning.use("c:LightningAppDependencyHandler", function () {
+        $Lightning.createComponent(
+            "c:TransitionSelectBaseComp", // commented for bulk import
+            // "c:ServiceTransitionHome",
+          {/*"basketId": "a3Q2O00000070YW"*/ },
+          "lightning",
+          function (cmp) {
+            console.log("Component created!");
+          });
+      });
+    </script>
+    <div id="lightning"></div>
+  </apex:form>
+</apex:page>

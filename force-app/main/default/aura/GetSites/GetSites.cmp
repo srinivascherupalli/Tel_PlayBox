@@ -1,0 +1,154 @@
+<aura:component implements="force:appHostable,force:hasRecordId,force:lightningQuickActionWithoutHeader" controller="ReplicatorManager" access="global">
+	
+    <aura:attribute name="sites" type="ReplicatorGetSiteDataObject" access="global"/>
+    <aura:attribute name="selectedAdborId" type="String" access="global"/>
+    <aura:attribute name="selectedAdborIdArray" type="String[]" access="global"/>
+    <aura:attribute name="isOpen" type="boolean" access="global"/>
+    <aura:attribute name="cidn" type="String" access="global" default="empty"/>
+    <aura:attribute name="moreinfo" type="ReplicatorGetSiteDataObject.SiteDTO" access="global"/>
+    <aura:attribute name="inflightCheck" type="Boolean" access="global"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="record" type="object"/>
+    <aura:attribute name="fields" type="object"/>
+    <aura:attribute name="error" type="string"/>
+    <aura:attribute name="loadingSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="siteName" type="String" access="global"/>
+    <aura:attribute name="siteNameArray" type="String[]" access="global"/>
+    <aura:attribute name="oppId" type="String" access="global"/>
+    
+    <aura:if isTrue="{!v.loadingSpinner}">
+        <lightning:spinner variant="brand" size="large"/>
+    </aura:if>
+
+    <force:recordData aura:id="forceRecordCmp" 
+                recordId="{!v.recordId}"
+                layoutType="COMPACT" 
+                fields="cidn__c" 
+                mode="VIEW"
+                targetRecord="{!v.record}"
+                targetFields="{!v.fields}"
+                targetError="{!v.error}"
+      />
+
+    <div class="slds slds-m-bottom_xx-large"> 
+    <table class="slds-table slds-table--bordered slds-table--striped">
+        <thead>
+            <tr class="slds-text-heading--label">
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>Select</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>Site Nick Name</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-size_1-of-3"><b>Catenated Address</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>RFS Date</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>NBN Access Type</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>Service Class</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>Inflight Order Flag</b></span></th>
+                <th scope="col" class="head slds-size_1-of-8"><span class="slds-truncate"><b>Additional Info</b></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.sites.Site}" var="siteList" indexVar="idx">
+                <tr>
+                    <td class="cell">
+                        <div aura:id="checkbox" onchange="{!c.onSelectSite}" data-value="{!siteList.ADBoR_ID}" data-record="{!idx}">
+                            <ui:inputCheckbox aura:id="multiSelect" disabled="{!siteList.In_Flight_Order == 'Y' ? 'true' : 'false'}"/>
+                        </div>
+                    </td>
+                    <td class="slds-size_1-of-8">{!siteList.Site_Nick_Name}</td>
+                    <td class="slds-size_1-of-8">{!siteList.concatenatedAddress}</td>
+                    <td class="slds-size_1-of-8">{!siteList.RFS_Date}</td>
+                    <td class="slds-size_1-of-8">{!siteList.NBN_Access_Type}</td>
+                    <td class="slds-size_1-of-8">{!siteList.Service_Class}</td>
+                    <td class="slds-size_1-of-8">{!siteList.In_Flight_Order}</td>
+                    <td class="slds-size_1-of-8">
+                         <div class="slds-card"  data-record="{!idx}"  onclick="{!c.onMoreInfo}">
+                            <button class="slds-button slds-button--brand btn-lg">More info</button>           
+                        </div>  
+                    </td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+  	<div align="Center" draggable="false" style="padding-top: 20px">
+        <lightning:button variant="brand" disabled="true" label="Proceed" aura:id="proceedButton" onclick="{!c.onProceed }" />
+        </div>
+        <aura:if isTrue="{!v.isOpen}">
+            <!--###### MODAL BOX Start From Here ######--> 
+            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open slds-modal--large">
+                <div class="slds-modal__container">
+                    
+                    <!--###### MODAL BOX HEADER Start From Here ######-->
+                    <div class="slds-modal__header">
+                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="header99" class="slds-text-heading--medium">Detail view of selected site</h2>
+                    </div>
+                    <!--###### MODAL BOX HEADER End From Here ######-->
+                    
+                    <!--###### MODAL BOX BODY Part Start From Here ######-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <div class="slds-scrollable">
+                            <table class="slds-table slds-table--bordered slds-table--striped">
+                                <thead>
+                                    <tr class="slds-text-heading--label">
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Media Type</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Site Nick Name</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>ADBOR ID</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Catenated Address</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>INITIAL DISCONNECTION DATE</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Last Replicator Update Date</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>In-Flight Order Flag</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>RFS Site Flag</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>RFS Date</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Serviceability</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>NBN Access Type</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Disconnect Wave</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Address Status</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>NBN Location Id</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>SiteComposition</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Complex Site Flag</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Migration Flag</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Order Stability Date</b></span></th>
+                                        <th scope="col" class="head"><span class="slds-truncate"><b>Service Class</b></span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="cell">{!v.moreinfo.Media_Type}</td>
+                                        <td class="cell">{!v.moreinfo.Site_Nick_Name}</td>
+                                        <td class="cell">{!v.moreinfo.ADBoR_ID}</td>
+                                        <td class="cell">{!v.moreinfo.concatenatedAddress}</td>
+                                        <td class="cell">{!v.moreinfo.Disconnection_Date}</td>
+                                        <td class="cell">{!v.moreinfo.LastReplicator_UpdateDate}</td>
+                                        <td class="cell">{!v.moreinfo.In_Flight_Order}</td>
+                                        <td class="cell">{!v.moreinfo.RFS_Site}</td>
+                                        <td class="cell">{!v.moreinfo.RFS_Date}</td>
+                                        <td class="cell">{!v.moreinfo.Serviceability}</td>
+                                        <td class="cell">{!v.moreinfo.NBN_Access_Type}</td>
+                                        <td class="cell">{!v.moreinfo.Disconnect_Wave}</td>
+                                        <td class="cell">{!v.moreinfo.Site_Address_Status}</td>
+                                        <td class="cell">{!v.moreinfo.NBN_Location_Id}</td>
+                                        <td class="cell">{!v.moreinfo.Site_Composition}</td>
+                                        <td class="cell">{!v.moreinfo.Complex_Site_Flag}</td>
+                                        <td class="cell">{!v.moreinfo.Site_Migration_Flag}</td>
+                                        <td class="cell">{!v.moreinfo.Order_Stability_Date}</td>
+                                        <td class="cell">{!v.moreinfo.Service_Class}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--###### MODAL BOX BODY Part End From Here ######-->
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+        </aura:if>
+    </div>
+    <style>
+     .btn-lg{
+         height: 30px;
+         width: 160px;
+      }
+    </style>
+</aura:component>

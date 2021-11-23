@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   id="icon"
+   viewBox="0 0 64 64"
+   version="1.1">
+   <defs
+     id="defs52">
+    <style
+       id="style50">.cls-1{fill:none;}.cls-1,.cls-2,.cls-3{stroke:#032e61;stroke-linecap:round;stroke-linejoin:round;stroke-width:4px;}.cls-2{fill:#00a1e0;}.cls-3{fill:#fff;}</style>
+  </defs>
+  <title
+     id="title54">analytics-hide</title>
+  <line
+     class="cls-1"
+     x1="56"
+     y1="55"
+     x2="8"
+     y2="55"
+     id="line56" />
+  <rect
+     class="cls-2"
+     x="14"
+     y="39"
+     width="12"
+     height="16"
+     id="rect58" />
+  <rect
+     class="cls-3"
+     x="26"
+     y="24"
+     width="12"
+     height="31"
+     id="rect60" />
+  <rect
+     class="cls-2"
+     x="38"
+     y="9"
+     width="12"
+     height="46"
+     id="rect62" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#55d400;fill-opacity:1;stroke:none;"
+     x="2.6620495"
+     y="18.208416"
+     id="text73"><tspan
+       id="tspan71"
+       x="2.6620495"
+       y="18.208416">URL</tspan></text>
+</svg>

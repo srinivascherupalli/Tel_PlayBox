@@ -1,0 +1,494 @@
+<apex:page sidebar="false" showHeader="false" Controller="GetPriceScheduleController"  lightningStyleSheets="true">
+    <!--Added lightningStyleSheets attribute to page - by Samish for EDGE-132203 on 8-2-2020-->
+    <apex:includeScript value="{!$Resource.cometd}"/>
+    <apex:includeScript value="{!$Resource.jquery}"/>
+    <apex:includeScript value="{!$Resource.json2}"/>
+    <apex:includeScript value="{!$Resource.jquery_cometd}"/>
+    <apex:includeScript value="{!$Resource.cometdReplayExtension}"/>    
+    <apex:slds /><!--Added by Samish for EDGE-132203 on 8-2-2020-->
+<script type='text/javascript'>
+
+    var cometd;
+    var subscribedToChannel;
+    var isExtensionEnabled;
+    var metaConnectListener;
+    var metaDisconnectListener;
+    var metaHandshakeListener;
+    var metaSubscribeListener;
+    var metaUnSubscribeListener
+    var metaUnSucessfulListener;
+    var REPLAY_FROM_KEY = 'replay';
+    var _connected = false;
+    var correlationId
+    var secondsInRequest = "";       //Added by Samish for EDGE-132203
+    var secondsInResponse = "";       //Added by Samish for EDGE-132203
+    var TIMEOUT_SECONDS = '{!$Label.PriceScheduleTimeoutValueInSec}'; //Added by Samish for EDGE-132203
+    var  IsDiscountCheckNeeded="{!JSENCODE($CurrentPage.parameters.IsDiscountCheckNeeded)}";
+    console.log('IsDiscountCheckNeeded--->@@'+IsDiscountCheckNeeded);     
+    getTest($)
+    function getTest($){
+      $(document).ready(function(){
+
+        
+        cometd = $.cometd;
+        var REPLAY_FROM = '-2';
+        var channel = '/event/PriceScheduleEvent__e';
+        var topicsubscription = false;    
+        
+        console.log('REPLAY_FROM-->'+REPLAY_FROM);
+        console.log('channel-->'+channel);
+         
+        correlationId='{!JSENCODE(correlationId)}';
+        console.log('correlationId-->'+correlationId);
+        var DiscountApplicableStatus='{!DiscountApplicableStatus}';
+        console.log('DiscountApplicableStatus##############'+DiscountApplicableStatus);
+        var notApplicableGuidList='{!notApplicableGuidList}';
+        console.log('notApplicableGuidList-->'+notApplicableGuidList);
+        passCorrelationIdToEMJs();
+        if(notApplicableGuidList && notApplicableGuidList!=null){
+            console.log('Inside notApplicableGuidList---');
+            validateNotApplicableConfigsVF();
+        }
+        if(DiscountApplicableStatus && DiscountApplicableStatus=='No discount applicable'){
+            console.log('Inside notApplicableGuidList---');
+            unlockbasketAndValidateBasket();
+            validateNotApplicableConfigsVF();
+        }
+        if(DiscountApplicableStatus && DiscountApplicableStatus=='Already triggered'){
+
+            
+            var payload ={
+                command: 'Already triggered',
+                data: 'Already triggered',
+                caller: 'Enterprise Mobility'
+            };
+            console.log('payload Already triggered --->'+payload);
+            window.parent.postMessage(payload, '*') ;
+            //window.parent.postMessage("close", '*') 
+            console.log('payload Is --->'+payload);
+            sessionStorage.setItem("payload", JSON.stringify(payload));
+            // sessionStorage.setItem("close", "close");
+            //setInterval(function(){sessionStorage.setItem("close", "close");},30000);
+        }
+
+        function unlockbasketAndValidateBasket(){
+            var payload ={
+                command: 'unlockBasket',
+                data: notApplicableGuidList,
+                caller: 'Enterprise Mobility'
+            };
+            console.log('payload unlockBasket --->'+payload);
+            window.parent.postMessage(payload, '*') ;
+            //window.parent.postMessage("close", '*') 
+            console.log('payload Is --->'+payload);
+            sessionStorage.setItem("payload", JSON.stringify(payload));
+            // sessionStorage.setItem("close", "close");
+            //setInterval(function(){sessionStorage.setItem("close", "close");},30000);
+        } 
+        function validateNotApplicableConfigsVF(){
+            var payload ={
+                command: 'validNotApplicableConfigs',
+                data: notApplicableGuidList,
+                caller: 'Enterprise Mobility'
+            };
+            console.log('payload validNotApplicableConfigs --->'+payload);
+            window.parent.postMessage(payload, '*') ;
+            //window.parent.postMessage("close", '*') 
+            sessionStorage.setItem("payload", JSON.stringify(payload));
+            // sessionStorage.setItem("close", "close");
+            //setInterval(function(){sessionStorage.setItem("close", "close");},30000);
+        }             
+            // ensure extension isn't already registered
+        if (cometd.getExtension(REPLAY_FROM) != null) {
+            cometd.unregisterExtension(REPLAY_FROM, replayExtension);
+            console.log('cometd.getExtension::'+replayExtension);
+        }
+        
+        // register durable generic streaming replayFrom extension
+        var replayExtension = new cometdReplayExtension();
+        replayExtension.setChannel(channel);
+        replayExtension.setReplay(-2);
+        if(isExtensionEnabled) {
+            replayExtension.setExtensionEnabled(isExtensionEnabled);
+        }
+        cometd.registerExtension(REPLAY_FROM, replayExtension);         
+        
+        // unsubscribe if you have already subscribed
+        if(subscribedToChannel) {
+            cometd.unsubscribe(subscribedToChannel, null, function(unsubscribeReply) {
+                subscribedToChannel = subscribe(channel); 
+                console.log('subscribedToChannel::'+subscribedToChannel);
+            });
+        }
+        
+        //var _connected = false;
+        if(!metaConnectListener) {
+            metaConnectListener = cometd.addListener('/meta/connect', function(message) {        
+                if (cometd.isDisconnected()) {
+                    $('#content').append('Disconnected: '+JSON.stringify(message)+'<br><br>');
+                    console.log('Disconnected::');
+                    return;
+                }
+                //------------------Added by Samish for EDGE-132203 START------------------//
+                var currtime = new Date().toISOString();
+                console.log('currtime in listener==='+currtime);
+                var time = currtime.split("T")[1]; //e.g "08:06:10Z" (hh:mm:ss)
+                var timeFractions = time.split(":"); //e.g "08","06","10Z"
+
+                //Minutes are worth 60 seconds. Hours are worth 60 minutes
+                
+                var secondsInListener = (+timeFractions[0]) * 60 * 60 + (+timeFractions[1]) * 60 + (+timeFractions[2].split("Z")[0]);
+                secondsInListener = parseInt(secondsInListener);
+                console.log('secondsInListener===='+secondsInListener+', secondsInRequest==== '+secondsInRequest+', secondsInResponse==== '+secondsInResponse);
+
+                if((secondsInRequest!=null && secondsInRequest!="") && (secondsInResponse=="" || secondsInResponse==null) && secondsInRequest < secondsInListener){
+                    var differenceInListenerAndRequestSeconds = secondsInListener - secondsInRequest;
+                    console.log('elapsed time(sec) after request===='+differenceInListenerAndRequestSeconds);
+                    if(differenceInListenerAndRequestSeconds > parseInt(TIMEOUT_SECONDS)){
+                        console.log('timeOut occurred::::elapsed time(sec)=== '+differenceInListenerAndRequestSeconds);
+                        timeoutOccurred();
+                    }
+                }
+                //------------------Added by Samish for EDGE-132203 END------------------//
+                var wasConnected = _connected;
+                console.log('wasConnected in metaConnectListener'+wasConnected);
+                var topic='/event/PriceScheduleEvent__e';
+                _connected = message.successful;
+                console.log('_connected in metaConnectListener'+_connected);
+                console.log('!wasConnected in metaConnectListener'+!wasConnected);
+                if (!wasConnected && _connected) {
+                    $('#content').append('DEBUG: Connection Successful : '+JSON.stringify(message)+'<br><br>');
+                    console.log('topic in metaConnectListener'+topic+'<br>');
+                    subscribe(topic);                       
+                } else if (wasConnected && !_connected) {
+                    $('#content').append('DEBUG: Disconnected from the server'+JSON.stringify(message)+'<br><br>');
+                    console.log('Disconnected from the server');
+                }
+            }); 
+        }           
+            
+        if(!metaDisconnectListener) {
+            metaDisconnectListener = cometd.addListener('/meta/disconnect', function(message) {  
+                $('#content').append('DEBUG: /meta/disconnect message: '+JSON.stringify(message)+' <br><br>');
+                console.log('/meta/disconnect');
+            });
+        }
+    
+        if(!metaHandshakeListener) {
+            metaHandshakeListener = cometd.addListener('/meta/handshake', function(message) {
+                if (message.successful) {
+                    $('#content').append('<br><br> DEBUG: Handshake Successful: '+JSON.stringify(message)+' <br><br>');                            
+                    
+                    if (message.ext && message.ext[REPLAY_FROM_KEY] == true) {
+                        isExtensionEnabled = true;
+                    }                    
+                    subscribedToChannel = subscribe(channel);
+                } else
+                    $('#content').append('DEBUG: Handshake Unsuccessful: '+JSON.stringify(message)+' <br><br>');
+            });
+        }
+        
+        if(!metaSubscribeListener) {
+            metaSubscribeListener = cometd.addListener('/meta/subscribe', function(message) {  
+                if (message.successful) {
+                    $('#content').append('DEBUG: Subscribe Successful '+channel+': '+JSON.stringify(message)+' <br><br>');
+                } else {
+                    $('#content').append('DEBUG: Subscribe Unsuccessful '+channel+': '+JSON.stringify(message)+' <br><br>');                
+                }    
+            });
+        }
+        
+        if(!metaUnSubscribeListener) {
+            metaUnSubscribeListener = cometd.addListener('/meta/unsubscribe', function(message) {  
+                if (message.successful) {
+                    $('#content').append('DEBUG: Unsubscribe Successful '+JSON.stringify(message)+' <br><br>');
+                } else {
+                    $('#content').append('DEBUG: Unsubscribe Unsuccessful '+JSON.stringify(message)+' <br><br>');                
+                }
+            });    
+        }
+
+        // notifies any failures
+        if(!metaUnSucessfulListener) {
+            metaUnSucessfulListener = cometd.addListener('/meta/unsuccessful', function(message) {  
+                $('#content').append('DEBUG:  /meta/unsuccessful Error: '+JSON.stringify(message)+' <br><br>');
+            });
+        }
+             
+        cometd.websocketEnabled = false;
+      
+       // Connect to the CometD endpoint
+        cometd.configure({
+            url: window.location.protocol+'//'+window.location.hostname+ (null != window.location.port ? (':'+window.location.port) : '') +'/cometd/37.0/',
+            requestHeaders: { Authorization: 'OAuth {!$Api.Session_ID}'},
+            appendMessageTypeToURL : false
+        });  
+        console.log('Configure successfull:');
+        cometd.handshake(); 
+        console.log('handshake successfull in end');
+      });
+    }(jQuery)
+    
+    function subscribe(topic) {  
+    console.log('_connected :If::::'+_connected);
+    console.log('topic inside subscribe()'+topic);      
+            if(_connected) {
+            if (topic == null || name.topic == 0) {
+                console.log('<br>Please enter a topic<br>');
+                return;
+            }   
+            channel = topic;
+            console.log('channel :::::'+channel);
+            topicsubscription = cometd.subscribe(channel,'',receive); 
+            console.log('topicsubscription :::::'+topicsubscription);           
+            } else {
+                console.log('<br>DEBUG: Cannot subscribe due to unsuccessful connection<br>');
+            }                
+        }            
+    
+        function unsubscribe() {
+            if(topicsubscription) {
+                cometd.unsubscribe(topicsubscription);
+                console.log('Unsubscribed successfully');   
+            }
+            topicsubscription = null;
+        }
+        function passDataToEMJs(){
+            let payload ={
+                command: 'ResponseReceived',
+                data: correlationId,
+                caller: 'Enterprise Mobility'
+            };
+            window.parent.postMessage(payload, '*') ;
+            //window.parent.postMessage("close", '*') 
+            console.log('payload In passDataToEMJs ---'+payload);
+            sessionStorage.setItem("payload", JSON.stringify(payload));
+            // sessionStorage.setItem("close", "close");
+            //setInterval(function(){sessionStorage.setItem("close", "close");},10000);
+        }
+        function passCorrelationIdToEMJs(){
+            let payload ={
+                command: 'correlationId',
+                data: correlationId,
+                caller: 'Enterprise Mobility'
+            };
+            window.parent.postMessage(payload, '*') ;
+            //window.parent.postMessage("close", '*') 
+            console.log('payload In passCorrelationIdToEMJs ---'+payload);
+            sessionStorage.setItem("payload", JSON.stringify(payload));
+            // sessionStorage.setItem("close", "close");
+            //setInterval(function(){sessionStorage.setItem("close", "close");},10000);
+        }
+        //------------------ Added by Samish for EDGE-132203 on 10-02-2020 START ------------------//
+        function timeoutOccurred(){
+            let payload ={
+                command: 'timeout',
+                data: 'timeout',
+                caller: 'Enterprise Mobility'
+            };
+            window.parent.postMessage(payload, '*') ;
+            window.parent.postMessage("close", '*');
+            console.log('payload for timeout ---'+payload);
+            sessionStorage.setItem("payload", JSON.stringify(payload));
+            sessionStorage.setItem("close", "close");
+        }
+        //------------------ Added by Samish for EDGE-132203 on 10-02-2020 END ------------------//
+        function receive(message) {
+            console.log('message::::'+message);
+            data = message.data; 
+            
+            console.log(JSON.stringify(data));
+            var responseData = JSON.parse(JSON.stringify(data));
+            console.log('On receive event');
+            console.log(responseData);
+            console.log('message received:-->'+responseData.payload.CorrelationId__c);
+            /*--- Added by Samish for EDGE-132203 on 8-2-2020 for Error handling START ---*/
+            if(responseData.payload.CorrelationId__c != null && responseData.payload.CorrelationId__c != '' && responseData.payload.eventType__c != null && responseData.payload.eventType__c != ''){
+                
+                console.log('responseData CorrelationId__c==='+responseData.payload.CorrelationId__c);
+                console.log('responseData eventType__c==='+responseData.payload.eventType__c);
+                console.log('global correlationId==='+correlationId);
+                
+                var responseDataCreatedDate = responseData.payload.CreatedDate;     //e.g "2020-02-09T08:06:10Z"
+                console.log('responseDataCreatedDate--> '+responseDataCreatedDate);
+                var time = responseDataCreatedDate.split("T")[1];                   //e.g "08:06:10Z" (hh:mm:ss)
+                var timeFractions = time.split(":");                                //e.g "08","06","10Z"
+                var total_seconds = (+timeFractions[0]) * 60 * 60 + (+timeFractions[1]) * 60 + (+timeFractions[2].split("Z")[0]);
+                if(/*correlationId === responseData.payload.CorrelationId__c && */ responseData.payload.eventType__c.toLowerCase()=='request'){
+                    console.log('Received request');                   
+                    
+                    //Minutes are worth 60 seconds. Hours are worth 60 minutes
+                    secondsInRequest = total_seconds;
+                    console.log('secondsInRequest===='+secondsInRequest);  
+                }
+            }
+            /*--- Added by Samish for EDGE-132203 on 8-2-2020 for Error handling END ---*/
+            if(correlationId === responseData.payload.CorrelationId__c && responseData.payload.eventType__c.toLowerCase()=='response'){
+                //---Added by Samish for EDGE-132203 on 8-2-2020 for Error handling START ---//
+                secondsInResponse = total_seconds;           
+                console.log('secondsInResponse===='+secondsInResponse);
+                secondsInRequest = "";
+                //---Added by Samish for EDGE-132203 on 8-2-2020 for Error handling END ---//
+                unsubscribe();
+                passDataToEMJs();
+                document.getElementById("loader").style.visibility="hidden";
+                document.getElementById("afterResult").innerHTML = "Response Received";
+            } 
+        }
+        function disconnect() {
+            if (cometd) {
+                cometd.removeListener(metaConnectListener);
+                cometd.removeListener(metaDisconnectListener);
+                cometd.removeListener(metaHandshakeListener);
+                cometd.removeListener(metaSubscribeListener);
+                cometd.removeListener(metaUnSubscribeListener);
+                cometd.unsubscribe(subscribedToChannel);
+                cometd.disconnect();
+                console.log('Inside disconnect');
+            }
+        }    
+    window.onbeforeunload = disconnect;
+</script>
+<style>
+        /* Center the loader */
+        /*----Commented by Samish for EDGE-132203 on 8-2-2020----
+        #loader {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          z-index: 1;
+          width: 150px;
+          height: 150px;
+          margin: -75px 0 0 -75px;
+          border: 16px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 16px solid #3498db;
+          width: 120px;
+          height: 120px;
+          -webkit-animation: spin 2s linear infinite;
+          animation: spin 2s linear infinite;
+        }
+        */
+        
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        /* Add animation to "page content" */
+        .animate-bottom {
+          position: relative;
+          -webkit-animation-name: animatebottom;
+          -webkit-animation-duration: 1s;
+          animation-name: animatebottom;
+          animation-duration: 1s
+        }
+        
+        @-webkit-keyframes animatebottom {
+          from { bottom:-100px; opacity:0 } 
+          to { bottom:0px; opacity:1 }
+        }
+        
+        @keyframes animatebottom { 
+          from{ bottom:-100px; opacity:0 } 
+          to{ bottom:0; opacity:1 }
+        }        
+        #myDiv {
+          display: none;
+          text-align: center;
+        }
+        p{  font-family: verdana;
+            font-size: 20px;
+             text-align:center;
+             margin: auto;
+         }
+        .center {
+          margin: auto;
+          width: 60%;     
+          padding: 10px;
+        }
+        p.msgLeft{              /*-- Added by Samish for EDGE-132203 on 8-2-2020 --*/
+            font-size: 17px;
+            padding-left: 25px;
+            padding-top: 25px;
+            text-align:left;
+        }
+</style>
+    <!-- Modified by Samish for EDGE-132203 on 8-2-2020 START -->
+    <!-- LIGHTNING HEADER INFO-->
+    <apex:outputPanel rendered="{!DiscountApplicableStatus !='Initial'}" >
+        <div class="modal-header slds-modal__header slds-theme--info slds-theme--alert-texture">
+            <h2 class="title slds-text-heading--medium slds-hyphenate" id="pricingHead">
+                <lightning-formatted-text>Generate Pricing Schedules</lightning-formatted-text>
+            </h2>
+        </div>
+    </apex:outputPanel>
+    <!-- LIGHTNING HEADER INFO-->
+    <!-- LIGHTNING HEADER ERROR-->
+    <apex:outputPanel rendered="{!DiscountApplicableStatus =='Initial'}" >
+        <div class="modal-header slds-modal__header slds-theme--error slds-theme--alert-texture">
+            <h2 class="title slds-text-heading--medium slds-hyphenate" id="pricingHead">
+                <lightning-formatted-text>Generate Pricing Schedules</lightning-formatted-text>
+            </h2>
+        </div>
+    </apex:outputPanel>
+    <!-- LIGHTNING HEADER ERROR-->
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Discount Applicable'}" >
+         <!-- <div id="loader"></div> --><!--Commented by Samish for EDGE-132203 on 8-2-2020-->
+         <!-- SPINNER --><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+        <div id="loader" role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+            <div class="slds-spinner__dot-a"></div>
+            <div class="slds-spinner__dot-b"></div>
+        </div>
+        <!-- / SPINNER -->
+        <p id="afterResult" class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+            <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+                Price schedule generation is initiated and will take sometime for processing. Until schedule generation, solution will be locked for modifications
+            </lightning-formatted-text>
+        </p>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Waiting for response'}" >
+        <!-- <div id="loader"></div> --><!-- Commented by Samish for EDGE-132203 on 8-2-2020 -->
+        <!-- SPINNER --><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+        <div id="loader" role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+            <div class="slds-spinner__dot-a"></div>
+            <div class="slds-spinner__dot-b"></div>
+        </div>
+        <!-- / SPINNER -->
+        <p id="afterResult"><lightning-formatted-text></lightning-formatted-text></p><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='No discount applicable'}" >
+         <div class="center">
+            <p class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+                <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+                    There are no applicable charges for this solution
+                </lightning-formatted-text>
+            </p>
+         </div>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Initial'}" >
+         <div class="center">ac
+            <p class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+                <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+                    Price schedule could not be generated. Please try generating price schedule after sometime. If it continues to error out, please raise case.
+                </lightning-formatted-text>
+            </p>
+            <button class="slds-button slds-button--neutral" tabindex="-1">OK</button><!-- Added by Samish for EDGE-132203 on 10-2-2020 -->
+         </div>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!DiscountApplicableStatus=='Already triggered'}" >
+         <div class="center">
+            <p class="msgLeft"><!-- Modified by Samish for EDGE-132203 on 8-2-2020 -->
+                <lightning-formatted-text><!-- Added by Samish for EDGE-132203 on 8-2-2020 -->
+                    Price schedule is already generated
+                </lightning-formatted-text>
+            </p>
+         </div>
+    </apex:outputPanel>
+    <!-- Modified by Samish for EDGE-132203 on 8-2-2020 END -->
+</apex:page>

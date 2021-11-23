@@ -1,0 +1,32 @@
+<!--
+* @Author   :   Manish Berad
+* @Date     :   23 june 2020
+* @Desc     :   EDGE-153347  vf page linked to "Contract Authorisation" button 
+*				on CS Basket to capture Pre-Authorisation details for MACD Orders
+* -->
+<apex:page showHeader="false">
+    <apex:includeLightning />
+    <div  id="PreauthContainer" />
+    <script>
+    $Lightning.use("c:contractAuthorisationModalWindowApp", function() {
+        var attributes = {
+            basketId: "{!JSENCODE($CurrentPage.parameters.basketId)}",
+            OppId: "{!JSENCODE($CurrentPage.parameters.OppId)}"
+        };
+        $Lightning.createComponent("c:contractAuthorisationModalWindow",attributes,
+                                   "PreauthContainer",
+                                   function(cmp) {
+                                       $A.eventService.addHandler({
+                                           event: 'force:navigateToSObject',
+                                           handler: function(event) {
+                                               try{
+                                                   window.top.location.href=event.Zb.recordId;
+                                               } catch(e){
+                                                   window.top.location.href=event.$b.recordId;
+                                               }
+                                           }
+                                       });
+                                   });
+    });
+    </script>
+</apex:page>

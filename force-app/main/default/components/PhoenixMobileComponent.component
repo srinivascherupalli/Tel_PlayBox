@@ -1,0 +1,83 @@
+<apex:component >
+ <apex:slds />
+    <head>
+        <style>
+.intl-tel-input{
+    width: 100%;
+}
+    </style>
+        <meta charset="utf-8" />
+<!--         <link rel="stylesheet" href="{!URLFOR($Resource.telephonejs,'/build/css/intlTelInput.css')}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.telephonejs,'/build/css/demo.css')}" />
+ -->    </head>  
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="{!URLFOR($Resource.telephonejs,'/build/js/intlTelInput-jquery.js')}" />
+    <script src="{!URLFOR($Resource.telephonejs,'/build/js/intlTelInput.js')}" />   
+  <script>
+    var isValidNumber=false;
+    // here, the index maps to the error code returned from getValidationError - see readme
+    $(document).ready(function() {
+        var errorMsg = window.parent.document.querySelector("#error-msg");
+        var validMsg = window.parent.document.querySelector("#valid-msg");
+        var input = window.parent.document.querySelector("#phone");
+        var errorMap = ["Please provide valid phone number", "Invalid country code", "Phone number too short", "Phone number too long", "Please provide valid phone number"];
+        // initialise plugin
+        var iti = window.intlTelInput(input, {
+            // dropdownContainer: 'body',
+            // scrollListener: '.input-container',
+            utilsScript: "/sfsites/c/resource/telephonejs/build/js/utils.js",
+            separateDialCode: true,
+            placeholderNumberType: "MOBILE",
+            formatOnDisplay: true,
+            initialCountry: "auto",
+            hiddenInput: "full_number",
+            geoIpLookup: function(callback) {
+                $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                    var countryCode = (resp && resp.country) ? resp.country : "";
+                    callback(countryCode);
+                    console.log(resp);
+                });
+            },
+        });
+        var reset = function() {
+            input.classList.remove("error");
+            errorMsg.innerHTML = "";
+            errorMsg.classList.add("hide");
+            errorMsg.classList.add("slds-hide");
+            validMsg.classList.add("hide");
+            validMsg.classList.add("slds-hide");
+            window.parent.document.querySelector('.phone').classList.remove('slds-has-error');
+        };
+        // on blur: validate
+        input.addEventListener('blur', function() {
+            reset();
+            if (input.value.trim()) {
+                console.log(iti.isValidNumber);
+                if (iti.isValidNumber()) {
+                    isValidNumber=true;
+                    console.log(iti.getNumber());
+                    $('#phone2').val(iti.getNumber());
+                    window.parent.document.querySelector('#phone2').value=iti.getNumber();
+                   // validMsg.classList.remove("hide");
+                    //validMsg.classList.remove("slds-hide");
+                    window.parent.document.querySelector('.phone').classList.remove('slds-has-error');
+                } else {
+                    isValidNumber=false;
+                    input.classList.add("error");
+                    window.parent.document.querySelector('.phone').classList.add('slds-has-error');
+                    var errorCode = iti.getValidationError();
+                    console.log(errorCode);
+                    errorMsg.innerHTML = errorMap[errorCode];
+                    errorMsg.classList.remove("hide");
+                    errorMsg.classList.remove("slds-hide");
+                }
+            }
+        });
+        // on keyup / change flag: reset
+        input.addEventListener('change', reset);
+        input.addEventListener('keyup', reset);
+    });
+   
+    </script>
+</apex:component>

@@ -1,0 +1,15 @@
+<!--Shreyansh Sharma, Team Jaipur, P2OB-10675
+ Date: 2/1/2021,
+ Description:Lightning component to register event on button click-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowScreens,forceCommunity:availableForAllPageTypes" 
+                access="global" >
+    <aura:attribute name ="checkPrevVal" type="String" access="global" default="true"/>
+    <aura:attribute name ="Can_Go_Back" type="Boolean" access="global" default="true"/>
+    <aura:attribute name="ButtonLabel" type="String" access="global" default="Previous"/> 
+    <aura:registerEvent name="jprScreenNavigationEvent" type="c:jprScreenNavigationEvent"/>
+    <aura:if isTrue="{!v.Can_Go_Back}">
+        <div class="prevBut">
+        <lightning:button label="{!v.ButtonLabel}" variant="Neutral" onclick="{!c.handleButtonClick}"/>
+        </div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,94 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId"
+                access="global"
+                controller="mhScorecardCriteriaController">
+    
+    
+    <aura:attribute name="criteria" type="List" />
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="criteriaChoice" type="List" default="[
+                                                       {'label': 'Yes', 'value': 'Yes'},
+                                                       {'label': 'Unknown', 'value': 'Unknown'},
+                                                       {'label': 'No', 'value': 'No'}                                            		  
+                                                       ]"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    
+    <aura:html tag="style">
+   	   .slds-modal__container{ 
+                margin: auto;
+        		width: 100%!important;
+        max-width:75rem;
+        } 
+   	   .slds-modal__footer{ 
+     	 		margin: auto;
+                min-width: 85%; 
+   		}
+        .slds-backdrop_open{
+         opacity:0!important;
+        }
+        .slds-modal__content{
+        heigh:100%;
+        }
+	</aura:html>
+    	
+
+    <div class="slds-m-around_large"> 
+       <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+     	
+            		<!-- Header -->
+            		<header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{!c.doCancel}"
+                                              alternativeText="Close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Update Bluesheet Scorecard</h2>
+                    </header>
+           
+            		<!-- Body -->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+   						<table class="slds-table slds-table_bordered slds-border_top slds-table_stripped slds-table_cell-buffer slds-border_left slds-border_right" role="grid">
+                          <thead>
+                             <tr class="slds-text-heading_label">
+                                 <th scope="col" style=""><div class="slds-truncate" title="Name">Name</div></th>
+                                 <th scope="col" style=""><div class="slds-truncate" title="Criteria">Criteria</div></th>
+                                 <th scope="col" style=""><div class="slds-truncate" title="Choose Response">Choose Response</div></th>                
+                             </tr>
+                          </thead>
+             		<tbody>
+                    <aura:iteration items="{!v.criteria}" var="scCriteria">
+                        <tr class="slds-hint-parent">
+                            <td><div class="slds-truncate" title="{!scCriteria.Name}">{!scCriteria.Name}</div></td>
+                            <td><div class="slds-truncate" title="{!scCriteria.Criteria_Definition__c}">{!scCriteria.Criteria_Definition__c}</div></td>
+                            <td>
+                            <div class="slds-truncate">
+                              <lightning:radioGroup 
+                                  aura:id="optionList"
+                                  name="{!scCriteria.Id}"
+                                  options="{!v.criteriaChoice}"
+                                  value="{!scCriteria.Answer__c}"
+                                  type="radio"
+                                  class="customRadioCls"
+                                  />
+                            </div>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+              </tbody>
+            </table>              
+            </div>
+            
+            <!-- Footer -->
+             <div>
+              <footer class="slds-modal__footer">
+                <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.doCancel}" />
+                <lightning:button variant="Brand" class="slds-button" label="Save" onclick="{!c.doSave}" />
+              </footer>
+ 			</div>
+       </div>
+    </section> 
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+</aura:component>

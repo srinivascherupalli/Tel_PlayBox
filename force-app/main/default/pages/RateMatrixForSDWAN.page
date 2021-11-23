@@ -1,0 +1,45 @@
+<!-- 
+*@Author : PDF-Oeygen (Lalit Motiray)
+*@Description : VF page to user RateMatrixForSDWAN lightning component in SDWAN solution
+*@Date : 28 OCT 2020
+*@Jira   : DPG-3110
+===============================================================================================================================
+Sr.No.    Developer Name      Date          Story Description 
+1
+===============================================================================================================================
+-->
+<apex:page lightningStylesheets="true" sidebar="false" showHeader="false">
+    <apex:slds />
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+    <apex:includeLightning />
+    
+    <script>
+   
+    var planId = "{!JSENCODE($CurrentPage.parameters.planId) }";
+    
+    $Lightning.use("c:LightningAppDependencyHandler", function() {
+        $Lightning.createComponent(
+            "c:RateMatrixForSDWAN",
+            {   
+             	"planId": planId
+            },
+            "lightning",
+            function(cmp){
+                console.log("Component created!");
+                var div = document.getElementById("spinnerContainer");   
+                div.style.display = "none";   
+            });
+    });
+    </script>
+    
+    <div id="lightning" ></div>
+    <div style="height:6rem" id="spinnerContainer">
+        <div class="slds-spinner_container">
+            <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                <span class="slds-assistive-text">Loading Rate Card</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </div>
+</apex:page>

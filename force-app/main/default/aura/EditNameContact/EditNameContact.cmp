@@ -1,0 +1,154 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:hasRecordId,force:lightningQuickActionWithoutHeader,forceCommunity:availableForAllPageTypes" access="global" controller="GetContactInformation">
+    <!--Sprint-19.03,EDGE-589	EditName On Contact-->
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="ActivePOR" type="boolean" default="false"/>
+    <aura:attribute name="isPartner" type="boolean" default="false"/> 
+    <aura:attribute name="contactInfo" type="Contact" />
+    <aura:attribute name="parentId" type="String"/>
+    <aura:attribute name="contact" type="Sobject" default = ""/>
+    <aura:attribute name="CurrentContact" type="string"/>
+    <aura:attribute name="Name" type="string"/>
+    <aura:attribute name="contactName" type="string"/>
+    <aura:attribute name="recordTypeId" type = "string"/>
+    <aura:attribute name="CurrentFirstName" type="string"/>
+    <aura:attribute name="CurrentMiddleName" type="string"/>
+    <aura:attribute name="clearmidname" type="boolean" default="false" />
+    <aura:attribute name="CurrentLastName" type="string"/>
+    <aura:handler name="init" value="{!this}" action="{!c.getContactRecordDetails}"/>
+    <!--<aura:handler name="init" value="{!this}" action="{!c.selectedNamechange}"/>-->
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+     <!-- EDGE-176104 Added for Active POR flag check-->
+    <lightning:notificationsLibrary aura:id="notificationsLibrary"/>
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:visible !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+      
+    </aura:html>
+    
+    <!--loading spinner start... style=Brand Medium (blue dots)-->
+     
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--medium slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- Loading spinner end-->
+	
+	<!-- Component Record Edit Form Begin -->
+    <lightning:recordEditForm aura:id="editForm"                              
+                              objectApiName="Update_Personal_Details__c" 
+                              recordTypeId="{!v.recordTypeId}"
+                              class="slds-card__body_inner" onsuccess="{!c.handleSuccess}"
+                              onsubmit="{!c.handleOnSubmit }">
+		
+         <lightning:messages/>
+        <!--EDGE-176104 Hide if POR flag is inactive -->
+         <aura:if isTrue="{!v.ActivePOR}">   
+     	 <div>
+             &nbsp;  &nbsp;  &nbsp;
+        </div>
+
+ 	 <aura:set attribute="else">
+       <!--Record Edit Form Header -->
+        <div class="modal-header slds-modal__header">
+            <div class="forceChangeRecordTypeHeader">
+                <div class="title slds-text-heading--medium">
+                    Edit Name
+                </div>
+            </div>
+        </div>
+        <div>
+        </div>
+		<!--Record Edit Form Header End -->
+       
+  
+        <!--Record Edit Form Body Start -->
+        <div  class="slds-grid slds-wrap">
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium"> 
+               <lightning:input type = "text" label = "Contact" value = "{!v.contactInfo.FirstName + ' ' + v.contactInfo.MiddleName + ' ' + v.contactInfo.LastName}" disabled = "true"/> 
+            </div>
+			<div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:select label = "Name Change Reason" aura:id="mySelect" onchange="{!c.selectedNamechange}" required = "true">
+                    <option value = "">No Change Reason Selected</option>
+                    <option value = "{!$Label.c.ContactFirstAndMiddleName}">First/Middle Name Change (Spelling)</option>
+                    <option value = "{!$Label.c.ContactLastName}">Last Name Change (Spelling)</option>
+                    <option value = "{!$Label.c.Name_Marriage_or_Divorce}">Name Change (Marriage Or Divorce)</option>
+                    <option value = "{!$Label.c.Name_Legal_Name_Change_Deed_Poll}">Name Change (Legal Deed Poll)</option>
+                    <option value = "{!$Label.c.Name_Gender_Reassignment}">Name Change (Gender Reassignment)</option>
+                </lightning:select>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type = "text" label = "Current Title" value = "{!v.contactInfo.Salutation}" aura:id="Title" disabled = "true"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:select label = "New Title" aura:id="NewTitle" disabled = "true">
+					<option value = "">--None--</option>    
+					<option value = "Mr">Mr</option>
+					<option value = "Mrs">Mrs</option>
+					<option value = "Ms">Ms</option>
+					<option value = "Miss">Miss</option>
+					<option value = "Dr">Dr</option>
+					<option value = "Prof">Prof</option>
+					<option value = "Sir">Sir</option>
+					<option value = "Brother">Brother</option>
+					<option value = "Sister">Sister</option>
+					<option value = "Father">Father</option>
+					<option value = "Pastor">Pastor</option>
+					<option value = "Reverend">Reverend</option>
+					<option value = "Sergeant">Sergeant</option>
+				</lightning:select>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type = "text" label = "Current First Name" value = "{!v.contactInfo.FirstName}" aura:id="FirstName" disabled = "true"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type = "text" label = "New First Name" aura:id="NewFirstName" disabled = "true"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type = "text" label = "Current Middle Name" value = "{!v.contactInfo.MiddleName}" aura:id="MiddleName" disabled = "true"/> 
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type = "text" label = "New Middle Name" aura:id="NewMiddleName" disabled = "true"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium slds-hidden">
+                <lightning:inputfield fieldName = "Contact__c" aura:id = "ContactID" diabled = "true" />
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type = "checkbox" label = "Clear Middle Name" value="{!v.clearmidname}" aura:id="ClearMiddleName"  disabled = "true"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type = "text" label = "Current Last Name" value = "{!v.contactInfo.LastName}" aura:id="LastName" disabled = "true"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 slds-p-around_medium">
+                <lightning:input type="text" label = "New Last Name" aura:id="NewLastName" disabled = "true"/>
+            </div>
+        </div>
+         
+      		<!-- Record Edit Form Body End -->
+		<!-- Record Edit Form Footer Start -->
+        <div class="modal-footer slds-modal__footer">
+			<div class="forceChangeRecordTypeFooter">
+				<lightning:button variant="brand" label="Cancel" type="cancel" onclick="{!c.handleCancel}"/>
+				<lightning:button variant="brand" label="Save" type="submit" />
+            </div>
+        </div>
+           </aura:set> 
+        </aura:if>
+        <!-- Record Edit Form Footer End -->
+	</lightning:recordEditForm>
+</aura:component>

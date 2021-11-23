@@ -1,0 +1,79 @@
+<aura:component controller="AccountContactRelationshipCascadeOptOut" implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId,lightning:isUrlAddressable" access="global" >
+    <aura:attribute name="testList" type="AccountContactRelation[]"/>
+    <aura:attribute name="lengthOfList" type="Integer"/>
+    <aura:attribute name="message" type="String" default=""/>
+    <aura:attribute name="isEnabled" type="boolean" default="false" /> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:attribute name="arrowDirection" type="string" default="arrowup" description="Use for change arrow sign direction on header based on click"/>
+    <aura:attribute name="isAsc" type="String" default="ASC" description="flag for pass sorting condition to apex class"/> 
+    <aura:attribute name="selectedTabsoft" type="string" default="Name" description="Use for show/hide arraow sign on header based on conditions"/>
+    <div class="demo-only" style="height: 400px;">
+        <div class="slds-modal__container slds-modal_large" style="height: 400px;width:580px">
+            <aura:if isTrue="{!v.message.length> 0}">
+                    <b><h1 class="slds-align_absolute-center"><ui:outputText value="{!v.message}"/></h1></b>   
+            </aura:if>  
+            <aura:if isTrue="{!v.testList.length > 0}">  
+                <header class="slds-modal__header slds-align_absolute-center" style="min-height: 90px; padding-top:40px">
+                    <h3 class="slds-text-heading--medium">Cascade Opt Out Preferences to Other Accounts</h3> 
+                </header>
+                <div class="slds-modal__content slds-p-around_medium slds-align_absolute-center slds-scrollable" style="width:100%;height:50%;padding-top :40px;padding-bottom :200px;min-height: 410px">
+                    <table class="slds-table slds-table--bordered slds-table--striped" >
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <label class="slds-checkbox">
+                                                <ui:inputCheckbox  aura:id="boxPack" value="" click="{!c.selectAllRecords}"/>
+                                                <span class="slds-checkbox--faux"></span>
+                                                <span class="slds-form-element__label text"></span>
+                                            </label>
+                                        </div>
+                                    </div> 
+                                </th>
+                                <th class="slds-is-sortable" scope="col" onclick="{!c.sortByName}"><a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span class="slds-truncate" title="Name">Name</span>  
+                                    <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Account.name') }">&nbsp;  &#9660; </aura:if>  
+                                    <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Account.name') }"> &nbsp;  &#9650; </aura:if>                        
+                                    </a></th>
+                                <th>Roles</th>
+                                <th class="slds-is-sortable" scope="col" onclick="{!c.sortByEndDate}"><a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">Relationship End Date
+                                <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'Relationship_End_Date__c') }">&nbsp;  &#9660; </aura:if>  
+                                <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'Relationship_End_Date__c') }"> &nbsp;  &#9650; </aura:if>
+                                </a>
+                                </th>
+                             </tr>
+                            </thead>
+                        <tbody> 
+                            <aura:iteration items="{!v.testList}" var="item"> 
+                                <tr> 
+                                    <td scope="row">
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox">
+                                                    <!-- <ui:inputRadio text="{!expense}" aura:id="boxPack" value="{!v.myBool}" updateOn="keyup"/> -->
+                                                    <ui:inputCheckbox  aura:id="boxPackSingle" text="{!item.Id}" change="{!c.checkSingleRecords}"/>
+                                                    <span class="slds-checkbox--faux"></span>
+                                                    <span class="slds-form-element__label text"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td scope="row"><div class="slds-truncate" ><a>{!item.Name}</a></div></td>
+                                    <td scope="row"><div class="slds-truncate" ><a>{!item.Roles}</a></div></td>
+                                    <td scope="row"><div class="slds-truncate" ><a>{!item.Relationship_End_Date__c}</a></div></td>
+                                </tr>
+                            </aura:iteration> 
+                        </tbody>
+                    </table>
+                </div>
+            </aura:if>
+        </div>
+        <footer class="slds-shrink-none" >
+            <div class="slds-col_bump-left slds-text-align_center">
+                <ui:button class="slds-button_brand" disabled="{!v.isEnabled}" press="{!c.continueButton}" label="Continue"/>
+            </div>
+        </footer>
+    </div>
+</aura:component>

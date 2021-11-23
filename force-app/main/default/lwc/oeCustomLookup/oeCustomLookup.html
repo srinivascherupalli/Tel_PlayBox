@@ -1,0 +1,118 @@
+<template>
+  <div class="slds-form-element">
+    <label
+      class="slds-form-element__label"
+      for="combobox-id"
+      id="combobox-label-id-41"
+    >
+      <abbr title="required" class="slds-required" if:true={required}>*</abbr
+      >{label}</label
+    >
+    <div class="slds-form-element__control">
+      <div class="slds-combobox_container">
+        <div class={boxClass} data-id="outerDivList">
+          <template if:true={selectedLabel}>
+            <div class="slds-pill-container">
+              <lightning-pill
+                class="pillSize"
+                label={selectedLabel}
+                name={selectedLabel}
+                onremove={handleRemovePill}
+              ></lightning-pill>
+            </div>
+          </template>
+          <template if:false={selectedLabel}>
+            <div
+              class="
+                slds-combobox__form-element
+                slds-input-has-icon slds-input-has-icon_right
+              "
+              role="none"
+            >
+              <lightning-input
+                id="combobox-id"
+                variant="label-hidden"
+                label={label}
+                type="text"
+                class={inputClass}
+                aria-autocomplete="list"
+                aria-controls="listbox-id"
+                aria-expanded="true"
+                aria-haspopup="listbox"
+                autocomplete="off"
+                role="combobox"
+                placeholder={placeholder}
+                onfocus={onFocus}
+                onblur={onBlur}
+                onchange={onChange}
+                read-only={readOnly}
+              >
+              </lightning-input>
+              <lightning-icon
+                size="x-small"
+                class="
+                  slds-icon_container
+                  slds-icon-utility-search
+                  slds-input__icon slds-input__icon_right
+                "
+                icon-name="utility:search"
+                aria-hidden="true"
+              >
+              </lightning-icon>
+            </div>
+          </template>
+          <div
+            id="listbox-id"
+            class="
+              slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid
+            "
+            role="listbox"
+          >
+            <div if:true={spinnerActive} class="slds-var-p-vertical_small">
+              <lightning-spinner
+                alternative-text="Loading"
+                size="small"
+              ></lightning-spinner>
+            </div>
+            <ul
+              if:false={spinnerActive}
+              class="slds-listbox slds-listbox_vertical overflowList"
+              role="presentation"
+            >
+              <template for:each={options} for:item="record">
+                <li
+                  key={record.value}
+                  role="presentation"
+                  class="slds-listbox__item"
+                  onclick={onSelect}
+                  data-id={record.value}
+                  data-name={record.label}
+                >
+                  <div
+                    id={record.value}
+                    class="
+                      slds-media
+                      slds-listbox__option slds-listbox__option_entity
+                    "
+                    role="option"
+                    tabindex="0"
+                  >
+                    <span class="slds-media__body">
+                      <span
+                        class="
+                          slds-listbox__option-text
+                          slds-listbox__option-text_entity
+                        "
+                        >{record.label}</span
+                      >
+                    </span>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
