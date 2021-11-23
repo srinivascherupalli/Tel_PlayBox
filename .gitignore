@@ -3,23 +3,20 @@
 # For useful gitignore templates see: https://github.com/github/gitignore
 
 # Salesforce cache
-.sfdx/
-.localdevserver/
+.forceignore
+.husky/
+.prettierignore
+.prettierrc
+.vscode/
+README.md
+config/
+jest.config.js
+manifest/
+package.json
+scripts/
 .eslintignore
- .forceignore
- .gitignore
- .prettierignore
- .prettierrc
- .vscode/
- README.md
- config/
- jest.config.js
- package.json
- scripts/
- sfdx-project.json
- manifest/
- mdapipkg/
- package/
+.sfdx/
+sfdx-project.json
 
 # LWC VSCode autocomplete
 **/lwc/jsconfig.json
